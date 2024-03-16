@@ -1,0 +1,29 @@
+% arara: pdflatex
+% arara: bib2gls: { group: on }
+% arara: pdflatex
+% arara: pdflatex
+\documentclass[toc=listof]{scrreport}
+
+\usepackage{texjavahelp}
+
+\title{\TeX\ Java Help}
+\author{Nicola L.C. Talbot}
+
+\GlsXtrLoadResources[\TeXJavaHelpGlsResourceOptions]
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\chapter{Introduction}
+\label{sec:intro}
+
+This is the documentation for \TeX\ Java Help (\gls{texjavahelp}).
+Use the \gls{help} switch for help and the \gls{version} switch
+for the version information.
+
+This is still under construction.
+
+\printunsrtglossary
+
+\end{document}

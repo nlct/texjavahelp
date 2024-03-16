@@ -1,0 +1,48 @@
+\NeedsTeXFormat{LaTeX2e}
+
+\ProvidesPackage{texjavahelp}[2024/03/16 v0.1a (NLCT)]
+
+\RequirePackage{hyperref}
+\hypersetup{colorlinks}
+
+\RequirePackage[record=nameref]{glossaries-extra}
+
+\appto\glsxtrresourceinit{\GlsXtrResourceInitEscSequences}
+
+\glsaddstoragekey{shortswitch}{}{\shortswitchvalue}
+
+\newcommand{\TeXJavaHelpGlsResourceOptions}{
+  entry-type-aliases=
+   {
+     application=index,
+     package=index,
+     class=index,
+     option=index,
+     switch=index
+   },
+  assign-fields=
+   {
+      name = "\cs{appfmt}{" + entrylabel->original + "}"
+        [ entrytype->original = "application"], 
+      name = "\cs{styfmt}{" + entrylabel->original + "}"
+        [ entrytype->original = "package"], 
+      name = "\cs{clsfmt}{" + entrylabel->original + "}"
+        [ entrytype->original = "class"], 
+      name = "\cs{optfmt}{" + entrylabel->original + "}"
+        [ entrytype->original = "option"], 
+      name = "\cs{longswitchfmt}{" + entrylabel->original + "}"
+        [ entrytype->original = "switch"], 
+      shortswitch =[o] "\cs{shortswitchfmt}{" + entrylabel->original + "}"
+        [ entrytype->original = "switch" & shortswitch <> \NULL], 
+   },
+}
+
+\newcommand{\appfmt}[1]{\texttt{#1}}
+\newcommand{\styfmt}[1]{\texttt{#1}}
+\newcommand{\clsfmt}[1]{\texttt{#1}}
+\newcommand{\optfmt}[1]{\texttt{#1}}
+
+\newcommand{\longswitchfmt}[1]{\texttt{-\/-#1}}
+\newcommand{\shortswitchfmt}[1]{\texttt{-#1}}
+
+\endinput

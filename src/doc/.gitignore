@@ -1,0 +1,9 @@
+*.aux
+*.glg
+*.glstex
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+texjavahelp.pdf
