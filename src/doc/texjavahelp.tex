@@ -6,6 +6,8 @@
 
 \usepackage{texjavahelp}
 
+\hypersetup{colorlinks,linkcolor=blue}
+
 \title{\TeX\ Java Help}
 \author{Nicola L.C. Talbot}
 
@@ -18,12 +20,54 @@
 \chapter{Introduction}
 \label{sec:intro}
 
-This is the documentation for \TeX\ Java Help (\gls{texjavahelp}).
-Use the \gls{help} switch for help and the \gls{version} switch
-for the version information.
+This is the documentation for \TeX\ Java Help.
 
-This is still under construction.
+\begin{warning}
+Under construction.
+\end{warning}
 
-\printunsrtglossary
+\begin{itemize}
+\item \gls{texjavahelp}: a \LaTeX\ package to help create the \gls{pdf} version of
+the documentation from the \LaTeX\ source.
+
+\item \gls{texjavahelpmk}: a \gls{cli} application that uses the \TeX\ Parser
+Library to create the \gls{html} files from the \LaTeX\ source.
+
+\item \gls{texjavahelp.lib}: a Java library that provides a \gls{gui} 
+component to display the \gls{html} files created by \gls{texjavahelpmk}.
+
+\item \gls{texjavahelpdemo}: a \gls{gui} demo application.
+\end{itemize}
+
+\chapter{The \glsfmttext{texjavahelp} \LaTeX\ Package}
+\label{sec:texjavahelpsty}
+
+\stydef{texjavahelp}
+
+\chapter{The \glsfmttext{texjavahelpmk} Command Line Application}
+\label{sec:texjavahelpmk}
+
+\clidef{texjavahelpmk}
+
+Use the \gls{help} switch (or \shortswitch{help}) for help and the
+\gls{version} switch (or \shortswitch{version}) for the version information.
+
+\switchdef{help}
+Display help message and exit.
+
+\switchdef{version}
+Display version information and exit.
+
+\chapter{The \TeX\ Java Help Library (\glsfmttext{texjavahelp.lib})}
+
+% Summary of texjavahelpmk switches
+% Either:
+%\listentry{texjavahelpmk}
+% Or:
+\listentrydescendents[title={Summary of \glsfmttext{texjavahelpmk} Switches}]{texjavahelpmk}
+
+\printterms
+
+\printindex
 
 \end{document}

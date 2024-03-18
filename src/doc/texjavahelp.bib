@@ -1,16 +1,43 @@
 % Encoding: UTF-8
 
-@application{texjavahelp,
-  description={\TeX\ Java Help}
+@application{texjavahelpdemo}
+
+@application{texjavahelpmk,
+ syntax={\oargm{options} \meta{tex-file} \meta{out-dir}}
 }
 
 @switch{help,
+  parent={texjavahelpmk},
   shortswitch={h},
   description={Prints help and exits}
 }
 
 @switch{version,
+  parent={texjavahelpmk},
   shortswitch={v},
   description={Prints version information and exits}
 }
 
+@file{texjavahelp.lib}
+
+@package{texjavahelp}
+
+@abbreviation{cli,
+  short = {CLI},
+  long = {command line interface}
+}
+
+@abbreviation{gui,
+  short = {GUI},
+  long = {graphical user interface}
+}
+
+@commonabbreviation{pdf,
+  short = {PDF},
+  long = {portable document format}
+}
+
+@commonabbreviation{html,
+  short = {HTML},
+  long = {hypertext markup language}
+}
