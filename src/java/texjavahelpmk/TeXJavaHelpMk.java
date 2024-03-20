@@ -19,23 +19,18 @@
 
 package com.dickimawbooks.texjavahelpmk;
 
-import java.util.Properties;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Map;
-import java.util.Locale;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 import java.text.MessageFormat;
-import java.text.ChoiceFormat;
 
 import java.io.*;
 
 import java.nio.file.*;
 import java.nio.charset.Charset;
-
-import java.net.URL;
 
 import java.awt.Dimension;
 
@@ -45,120 +40,34 @@ import com.dickimawbooks.texparserlib.latex.KeyValList;
 import com.dickimawbooks.texparserlib.latex.color.ColorSty;
 import com.dickimawbooks.texparserlib.html.*;
 
+import com.dickimawbooks.texjavahelplib.MessageSystem;
 import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 
 public class TeXJavaHelpMk implements TeXApp
 {
-
-   // Localisation and messages
-
-   protected String getLanguageFileName(String tag)
+   protected void loadDictionary() throws IOException
    {
-      return String.format("/resources/texjavahelpmk-%s.xml", tag);
-   }
-
-   protected URL getLanguageFile() throws FileNotFoundException
-   {
-      Locale locale = Locale.getDefault();
-      String tag = locale.toLanguageTag();
-
-      String dict = getLanguageFileName(tag);
-
-      URL url = getClass().getResource(dict);
-
-      if (url != null) return url;
-
-      String lang = locale.getLanguage();
-      String region = locale.getCountry();
-
-      if (!region.isEmpty())
-      {
-         tag = String.format("%s-%s", lang, region);
-
-         dict = getLanguageFileName(tag);
-         url = getClass().getResource(dict);
-
-         if (url != null) return url;
-      }
-
-      dict = getLanguageFileName(lang);
-      url = getClass().getResource(dict);
-
-      if (url != null) return url;
-
-      dict = getLanguageFileName("en");
-      url = getClass().getResource(dict);
-
-      if (url == null)
-      {
-         throw new FileNotFoundException
-         (
-            "Can't find dictionary resource file matching locale "+locale+" or fallback \"en\""
-         );
-      }
-
-      return url;
-   }
-
-   public void loadDictionary()
-      throws IOException
-   {
-      URL url = getLanguageFile();
-
-      InputStream in = null;
-
-      try
-      {
-         in = url.openStream();
-
-         Properties dictionary = new Properties();
-         dictionary.loadFromXML(in);
-
-         messages = new Hashtable<String,MessageFormat>();
-
-         for (Object key : dictionary.keySet())
-         {
-            messages.put((String)key, new MessageFormat((String)dictionary.get(key)));
-         }
-      }
-      finally
-      {
-         if (in != null)
-         {
-            in.close();
-         }
-      }
+      messages = new MessageSystem("texjavahelpmk");
    }
 
    public String getMessageWithFallback(String label,
        String fallbackFormat, Object... params)
    {
-      MessageFormat fmt = null;
-
-      if (messages != null)
+      if (messages == null)
       {
-         fmt = messages.get(label);
+         MessageFormat fmt = new MessageFormat(fallbackFormat);
+
+         return fmt.format(params);
       }
 
-      if (fmt == null)
-      {
-         fmt = new MessageFormat(fallbackFormat);
-         debug("Can't find message for label "+label);
-      }
-
-      return fmt.format(params);
+      return messages.getMessageWithFallback(label, fallbackFormat, params);
    }
 
    public String getMessageIfExists(String label, Object... args)
    {
-      MessageFormat msg = messages.get(label);
+      if (messages == null) return null;
 
-      if (msg == null)
-      {
-         return null;
-      }
-
-      return msg.format(args);
+      return messages.getMessageIfExists(label, args);
    }
 
    @Override
@@ -177,7 +86,7 @@ public class TeXJavaHelpMk implements TeXApp
          return String.format("%s[%s]", label, param);
       }
 
-      MessageFormat msg = messages.get(label);
+      String msg = messages.getMessage(label, params);
 
       if (msg == null)
       {
@@ -186,45 +95,13 @@ public class TeXJavaHelpMk implements TeXApp
          return label;
       }
 
-      return msg.format(params);
+      return msg;
    }
 
    public String getChoiceMessage(String label, int argIdx,
       String choiceLabel, int numChoices, Object... args)
    {
-      String[] part = new String[numChoices];
-
-      double[] limits = new double[numChoices];
-
-      for (int i = 0; i < numChoices; i++)
-      {
-         String tag = String.format("message.%d.%s", i, choiceLabel);
-
-         MessageFormat fmt = messages.get(tag);
-
-         if (fmt == null)
-         {
-            throw new IllegalArgumentException(
-             "Invalid message label: "+tag);
-         }
-
-         part[i] = fmt.toPattern();
-         limits[i] = i;
-      }
-
-      MessageFormat fmt = messages.get(label);
-
-      if (fmt == null)
-      {
-         throw new IllegalArgumentException(
-          "Invalid message label: "+label);
-      }
-
-      ChoiceFormat choiceFmt = new ChoiceFormat(limits, part);
-
-      fmt.setFormatByArgumentIndex(argIdx, choiceFmt);
-
-      return fmt.format(args);
+      return messages.getChoiceMessage(label, argIdx, choiceLabel, numChoices, args);
    }
 
    public void warning(String message)
@@ -1569,7 +1446,6 @@ public class TeXJavaHelpMk implements TeXApp
       }
    }
 
-   private Hashtable<String,MessageFormat> messages;
    private Hashtable<String,String> kpsewhichResults;
    private File texmf;
    private boolean shownVersion = false;
@@ -1584,6 +1460,7 @@ public class TeXJavaHelpMk implements TeXApp
    private File tmpDir = null;
    private File logFile = null;
    private PrintWriter logWriter = null;
+   private MessageSystem messages;
 
    private int debugMode = 0;
 
