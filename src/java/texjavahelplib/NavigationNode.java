@@ -249,10 +249,10 @@ public class NavigationNode implements TreeNode
       out.println("</node>");
    }
 
-   public static NavigationNode readTree(Reader in)
+   public static NavigationNode readTree(MessageSystem messageSystem, Reader in)
       throws IOException,SAXException
    {
-      NavigationTreeReader reader = new NavigationTreeReader();
+      NavigationTreeReader reader = new NavigationTreeReader(messageSystem);
 
       reader.parse(new InputSource(in));
 
@@ -270,9 +270,10 @@ public class NavigationNode implements TreeNode
 
 class NavigationTreeReader extends XMLReaderAdapter
 {
-   protected NavigationTreeReader() throws SAXException
+   protected NavigationTreeReader(MessageSystem messageSystem) throws SAXException
    {
       super();
+      this.messageSystem = messageSystem;
    }
 
    public NavigationNode getRootNode()
@@ -292,7 +293,8 @@ class NavigationTreeReader extends XMLReaderAdapter
          if (navTagFound)
          {
             throw new SAXException(
-              String.format("more than 1 <%s> found", qName));
+              messageSystem.getMessageWithFallback(
+              "error.xml.more_than_one_tag", "more than 1 <{0}> found", qName));
          }
 
          navTagFound = true;
@@ -302,20 +304,26 @@ class NavigationTreeReader extends XMLReaderAdapter
          if (previousQname != null)
          {
             throw new SAXException(
-              String.format("<%s> found inside <%s>", qName, previousQname));
+              messageSystem.getMessageWithFallback(
+              "error.xml.tag_found_inside",
+              "<{0}> found inside <{1}>", qName, previousQname));
          }
 
          if (!navTagFound || navEndTagFound)
          {
             throw new SAXException(
-              String.format("<%s> found outside <navigation>", qName));
+              messageSystem.getMessageWithFallback(
+              "error.xml.tag_found_outside",
+              "<{0}> found outside <{1}>", qName, "navigation"));
          }
 
          String key = attrs.getValue("key");
 
          if (key == null)
          {
-            throw new SAXException("Missing 'key' in <node> tag");
+            throw new SAXException(messageSystem.getMessageWithFallback(
+             "error.xml.missing_attr_in_tag", 
+             "Missing ''{0}'' attribute in <{0}>", "key", "node"));
          }
 
          currentParent = currentNode;
@@ -332,7 +340,9 @@ class NavigationTreeReader extends XMLReaderAdapter
          if (previousQname != null)
          {
             throw new SAXException(
-              String.format("<%s> found inside <%s>", qName, previousQname));
+              messageSystem.getMessageWithFallback(
+              "error.xml.tag_found_inside", "<{0}> found inside <{1}>",
+                qName, previousQname));
          }
 
          previousQname = qName;
@@ -341,7 +351,8 @@ class NavigationTreeReader extends XMLReaderAdapter
       }
       else
       {
-         throw new SAXException(String.format("Unknown tag <%s>", qName));
+         throw new SAXException(messageSystem.getMessageWithFallback(
+          "error.xml.unknown_tag", "Unknown tag <{0}>", qName));
       }
    }
 
@@ -359,13 +370,17 @@ class NavigationTreeReader extends XMLReaderAdapter
       {
          if (currentNode.title == null)
          {
-            throw new SAXException(String.format("Missing <%s> for node \"%s\"",
+            throw new SAXException(messageSystem.getMessageWithFallback(
+              "error.xml.missing_tag_for_node",
+              "Missing <{0}> for node ''{1}''",
               "title", currentNode.getKey()));
          }
 
          if (currentNode.filename == null)
          {
-            throw new SAXException(String.format("Missing <%s> for node \"%s\"",
+            throw new SAXException(messageSystem.getMessageWithFallback(
+              "error.xml.missing_tag_for_node",
+              "Missing <{0}> for node ''{1}''",
               "filename", currentNode.getKey()));
          }
 
@@ -405,7 +420,9 @@ class NavigationTreeReader extends XMLReaderAdapter
       }
       else
       {
-         throw new SAXException(String.format("Unknown end tag </%s>", qName));
+         throw new SAXException(messageSystem.getMessageWithFallback(
+          "error.xml.unknown_end_tag",
+          "Unknown end tag </{0}> found", qName));
       }
    }
 
@@ -421,8 +438,10 @@ class NavigationTreeReader extends XMLReaderAdapter
          {
             if (!Character.isWhitespace(ch[start+i]))
             {
-               throw new SAXException(String.format("Unexpected content \"%s\" found",
-                 new String(ch, start+i, length-i)));
+               throw new SAXException(
+                 messageSystem.getMessageWithFallback("error.xml.unexpected_chars",
+                   "Unexpected content ''{0}'' found", 
+                   new String(ch, start+i, length-i)));
             }
          }
       }
@@ -439,5 +458,7 @@ class NavigationTreeReader extends XMLReaderAdapter
    private boolean navTagFound = false, navEndTagFound = false;
 
    private String previousQname = null;
+
+   private MessageSystem messageSystem;
 }
 

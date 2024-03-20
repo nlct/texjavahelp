@@ -40,22 +40,20 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
    {
       super();
 
-      this.tagPrefix = tagPrefix;
-
-      loadDictionary();
+      loadDictionary(tagPrefix);
    }
 
-   protected String getLanguageFileName(String tag)
+   protected String getLanguageFileName(String tagPrefix, String tag)
    {
       return String.format("/resources/%s-%s.xml", tagPrefix, tag);
    }
 
-   protected URL getLanguageFile() throws FileNotFoundException
+   protected URL getLanguageFile(String tagPrefix) throws FileNotFoundException
    {
       Locale locale = Locale.getDefault();
       String tag = locale.toLanguageTag();
 
-      String dict = getLanguageFileName(tag);
+      String dict = getLanguageFileName(tagPrefix, tag);
 
       URL url = getClass().getResource(dict);
 
@@ -68,18 +66,18 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
       {
          tag = String.format("%s-%s", lang, region);
 
-         dict = getLanguageFileName(tag);
+         dict = getLanguageFileName(tagPrefix, tag);
          url = getClass().getResource(dict);
 
          if (url != null) return url;
       }
 
-      dict = getLanguageFileName(lang);
+      dict = getLanguageFileName(tagPrefix, lang);
       url = getClass().getResource(dict);
 
       if (url != null) return url;
 
-      dict = getLanguageFileName("en");
+      dict = getLanguageFileName(tagPrefix, "en");
       url = getClass().getResource(dict);
 
       if (url == null)
@@ -93,10 +91,10 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
       return url;
    }
 
-   protected void loadDictionary()
+   public void loadDictionary(String tagPrefix)
       throws IOException
    {
-      URL url = getLanguageFile();
+      URL url = getLanguageFile(tagPrefix);
 
       InputStream in = null;
 
@@ -196,5 +194,4 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
       return fmt.format(args);
    }
 
-   private String tagPrefix;
 }

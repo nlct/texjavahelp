@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>English language file for texjavahelplib</comment>
+
+<!--  Errors -->
+<entry key="error.xml.more_than_one_tag">More than 1 &lt;{0}&gt; found</entry>
+<entry key="error.xml.missing_attr_in_tag">Missing ''{0}'' attribute in &lt;{1}&gt;</entry>
+<entry key="error.xml.tag_found_outside">&lt;{0}&gt; found outside &lt;{1}&gt;</entry>
+<entry key="error.xml.tag_found_inside">&lt;{0}&gt; found inside &lt;{1}&gt;</entry>
+<entry key="error.xml.unknown_tag">Unknown tag &lt;{0}&gt;</entry>
+<entry key="error.xml.missing_tag_for_node">Missing &lt;{0}&gt; for node ''{1}''</entry>
+<entry key="error.xml.unknown_end_tag">Unknown end tag &lt;/{0}&gt; found</entry>
+<entry key="error.xml.unexpected_chars">Unexpected content ''{0}'' found</entry>
+
+</properties>

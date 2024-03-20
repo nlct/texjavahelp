@@ -48,6 +48,7 @@ public class TeXJavaHelpMk implements TeXApp
    protected void loadDictionary() throws IOException
    {
       messages = new MessageSystem("texjavahelpmk");
+      messages.loadDictionary("texjavahelplib");
    }
 
    public String getMessageWithFallback(String label,
