@@ -40,6 +40,9 @@ import java.net.URL;
 import java.awt.Dimension;
 
 import com.dickimawbooks.texparserlib.*;
+import com.dickimawbooks.texparserlib.latex.LaTeXSty;
+import com.dickimawbooks.texparserlib.latex.KeyValList;
+import com.dickimawbooks.texparserlib.latex.color.ColorSty;
 import com.dickimawbooks.texparserlib.html.*;
 
 public class TeXJavaHelpMk implements TeXApp
@@ -130,7 +133,7 @@ public class TeXJavaHelpMk implements TeXApp
    {
       MessageFormat fmt = null;
 
-      if (messages == null)
+      if (messages != null)
       {
          fmt = messages.get(label);
       }
@@ -138,7 +141,7 @@ public class TeXJavaHelpMk implements TeXApp
       if (fmt == null)
       {
          fmt = new MessageFormat(fallbackFormat);
-         warning("Can't find message for label "+label);
+         debug("Can't find message for label "+label);
       }
 
       return fmt.format(params);
@@ -156,6 +159,7 @@ public class TeXJavaHelpMk implements TeXApp
       return msg.format(args);
    }
 
+   @Override
    public String getMessage(String label, Object... params)
    {
       if (messages == null)
@@ -231,6 +235,7 @@ public class TeXJavaHelpMk implements TeXApp
       logAndStdErrMessage(e, String.format("%s: %s", getApplicationName(), message));
    }
 
+   @Override
    public void warning(TeXParser parser, String message)
    {     
       File file = parser.getCurrentFile();
@@ -249,6 +254,7 @@ public class TeXJavaHelpMk implements TeXApp
       logAndStdErrMessage(String.format("%s: %s", getApplicationName(), message));
    }
 
+   @Override
    public void error(Exception e)
    {
       if (e instanceof TeXSyntaxException)
@@ -352,6 +358,7 @@ public class TeXJavaHelpMk implements TeXApp
       logAndPrintMessage(text);
    }
 
+   @Override
    public String requestUserInput(String message)
      throws IOException
    {
@@ -612,56 +619,49 @@ public class TeXJavaHelpMk implements TeXApp
       }
    }
 
+   public boolean isConvertImagesOn()
+   {
+      return convertImages;
+   }
+
+   public int getSplitLevel()
+   {
+      return splitLevel;
+   }
+
+   public boolean isSplitBaseNamePrefixOn()
+   {
+      return splitUseBaseNamePrefix;
+   }
+
+   public boolean isUseHtmlEntitiesOn()
+   {
+      return useHtmlEntities;
+   }
+
+   public boolean isUseMathJaxOn()
+   {
+      return mathJax;
+   }
+
+   public boolean isParsePackagesOn()
+   {
+      return true;
+   }
+
+   public String getExtraHeadCode()
+   {
+      return extraHead;
+   }
+
+   public File getOutDirectory()
+   {
+      return outDir;
+   }
+
    protected void run() throws IOException
    {
-      L2HConverter listener = new L2HConverter(this, mathJax, outDir,
-        outCharset, true, splitLevel)
-      {
-         public L2HImage toImage(String preamble,
-          String content, String mimeType, TeXObject alt, String name,
-          boolean crop)
-         throws IOException
-         {
-            if (convertImages)
-            {
-               try
-               {
-                  return createImage(getParser(), preamble, content, mimeType, alt,
-                    name, crop);
-               }
-               catch (InterruptedException e)
-               {
-                  throw new TeXSyntaxException(e, parser,
-                    getMessage("error.interrupted"));
-               }
-            }
-            else
-            {
-               return null;
-            }
-         }
-
-         public Dimension getImageSize(File file, String mimetype)
-         {
-            try
-            {
-               return getImageFileDimensions(getParser(), file, mimetype);
-            }
-            catch (IOException | InterruptedException e)
-            {
-               return null;
-            }
-         }
-      };
-
-      listener.setSplitUseBaseNamePrefix(splitUseBaseNamePrefix);
-
-      listener.setUseEntities(useHtmlEntities);
-
-      if (extraHead != null)
-      {
-         listener.addToHead(extraHead);
-      }
+      TJHListener listener = new TJHListener(this, outCharset);
 
       TeXParser parser = new TeXParser(listener);
 
@@ -768,8 +768,11 @@ public class TeXJavaHelpMk implements TeXApp
             dir = new File(".");
          }
 
-         debug(getMessageWithFallback("message.running",
-           "Running {0}", String.format("%s \"%s\"", invoker, name)));
+         if (isDebuggingOn())
+         {
+            debug(getMessageWithFallback("message.running",
+              "Running {0}", String.format("%s \"%s\"", invoker, name)));
+         }
          
          ProcessBuilder pb = new ProcessBuilder(invoker, name);
 
@@ -1057,8 +1060,11 @@ public class TeXJavaHelpMk implements TeXApp
       StringBuilder result, int maxLines, String... cmd)
      throws IOException,InterruptedException
    {
-      debug(getMessageWithFallback("message.running",
-        "Running {0}", cmdListToString(cmd)));
+      if (isDebuggingOn())
+      {
+         debug(getMessageWithFallback("message.running",
+           "Running {0}", cmdListToString(cmd)));
+      }
          
       Process process = null;
       int exitCode = -1;
@@ -1082,58 +1088,56 @@ public class TeXJavaHelpMk implements TeXApp
          return exitCode;
       }
 
+      if (exitCode != 0)
+      {
+         warning(getMessageWithFallback("error.app_failed",
+           "{0} failed with exit code {1}",
+           cmdListToString(cmd),  exitCode));
+      }
+
       if (result != null)
       {
          String line = null;
          int lineNum = 0;
 
-         if (exitCode == 0)
+         InputStream stream = process.getInputStream();
+
+         if (stream == null)
          {
-            InputStream stream = process.getInputStream();
+            throw new IOException(
+             getMessageWithFallback("error.cant.open.process.stream",
+             "Unable to open input stream from process: {0}",
+             cmdListToString(cmd)));
+         }
 
-            if (stream == null)
+         BufferedReader reader = null;
+
+         try
+         {
+            reader = new BufferedReader(new InputStreamReader(stream));
+
+            while (lineNum < maxLines)
             {
-               throw new IOException(
-                getMessageWithFallback("error.cant.open.process.stream",
-                "Unable to open input stream from process: {0}",
-                cmdListToString(cmd)));
-            }
+               line = reader.readLine();
 
-            BufferedReader reader = null;
+               if (line == null) break;
 
-            try
-            {
-               reader = new BufferedReader(new InputStreamReader(stream));
+               lineNum++;
 
-               while (lineNum < maxLines)
+               if (lineNum > 1)
                {
-                  line = reader.readLine();
-
-                  if (line == null) break;
-
-                  lineNum++;
-
-                  if (lineNum > 1)
-                  {
-                     result.append(String.format("%n"));
-
-                     result.append(line);
-                  }
+                  result.append(String.format("%n"));
                }
-            }
-            finally
-            {
-               if (reader != null)
-               {
-                  reader.close();
-               }
+
+               result.append(line);
             }
          }
-         else if (isDebuggingOn())
+         finally
          {
-            logAndStdErrMessage(getMessageWithFallback("error.app_failed",
-              "{0} failed with exit code {1}",
-              cmd,  exitCode));
+            if (reader != null)
+            {
+               reader.close();
+            }
          }
 
          debug(getMessageWithFallback("message.process.result",
@@ -1144,15 +1148,13 @@ public class TeXJavaHelpMk implements TeXApp
    }
 
    @Override
-   public String kpsewhich(String name)
+   public String kpsewhich(String arg)
      throws IOException,InterruptedException
    {
-      if (name.indexOf("\\") != -1)
+      if (arg.indexOf("\\") != -1)
       {
-         throw new IOException(getMessage("error.bksl_in_kpsewhich", name));
+         throw new IOException(getMessage("error.bksl_in_kpsewhich", arg));
       }
-
-      String arg = "--var-value="+name;
 
       if (kpsewhichResults == null)
       {
@@ -1178,9 +1180,9 @@ public class TeXJavaHelpMk implements TeXApp
       if (result.length() > 0)
       {
          line = result.toString();
-      }
 
-      kpsewhichResults.put(arg, line);
+         kpsewhichResults.put(arg, line);
+      }
 
       return line;
    }
@@ -1602,5 +1604,5 @@ public class TeXJavaHelpMk implements TeXApp
 
    public static final String NAME = "texjavahelpmk";
    public static final String VERSION = "0.1a";
-   public static final String DATE = "2024-03-18";
+   public static final String DATE = "2024-03-20";
 }

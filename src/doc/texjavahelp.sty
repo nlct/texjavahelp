@@ -1,14 +1,17 @@
+% This is adapted from nlctuserguide.sty which already has some support
+% in the TeX Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
 \ProvidesPackage{texjavahelp}[2024/03/16 v0.1a (NLCT)]
 
 \RequirePackage{fontawesome}
+\RequirePackage{twemojis}
+\RequirePackage{upquote}
+\RequirePackage{hologo}
+\RequirePackage{xcolor}
 
 \PassOptionsToPackage{breakable,skins,listings}{tcolorbox}
 \RequirePackage{tcolorbox}
-
-\PassOptionsToPackage{hidelinks}{hyperref}
-\RequirePackage{hyperref}
 
 \PassOptionsToPackage{
  record=nameref,
@@ -19,20 +22,408 @@
  style=alttree
 }{glossaries-extra}
 
+\newcommand{\nlct@definesymbols}{%
+  \nlct@definefontsymbols
+}
+
+\newcommand{\nlct@definefontsymbols}{%
+% requires stix or boisk
+ \newrobustcmd{\tabsym}{%
+  \BeginAccSupp{method=hex,unicode,ActualText=21B9}%
+  \ensuremath{\barleftarrowrightarrowbar}%
+  \EndAccSupp{}%
+ }
+% requires stix
+ \newrobustcmd{\upsym}{%
+  \BeginAccSupp{method=hex,unicode,ActualText=2B71}%
+  \ensuremath{\baruparrow}%
+  \EndAccSupp{}%
+ }
+}
+
+\newcommand{\nlct@definetikzsymbols}{%
+  \RequirePackage{tikz}%
+  \usetikzlibrary{arrows.meta}%
+  \newsavebox\tabsbox
+  \sbox\tabsbox{%
+   \resizebox{!}{8pt}{%
+   \begin{tikzpicture}[thick]
+   \draw[arrows={Bar[width=8pt]Triangle[width=6pt,length=5pt]-}]
+     (0,0) -- (14pt,0);
+   \draw[arrows={-Triangle[width=6pt,length=5pt]Bar[width=8pt]}]
+     (0,-7pt) -- (14pt,-7pt);
+   \end{tikzpicture}%
+   }%
+  }
+  \newrobustcmd{\tabsym}{%
+   \BeginAccSupp{method=hex,unicode,ActualText=21B9}%
+   \thinspace
+   \usebox\tabsbox
+   \thinspace
+   \EndAccSupp{}%
+  }%
+  \newrobustcmd{\upsym}{%
+   \BeginAccSupp{method=hex,unicode,ActualText=2B71}%
+   \begin{tikzpicture}
+   \draw[arrows={-To[width=6pt,length=5pt]Bar[width=8pt]}]
+   (0,0) -- (0,2ex);
+   \end{tikzpicture}
+   \EndAccSupp{}%
+  }%
+}
+
+\DeclareOption{fontsymbols}{%
+  \renewcommand{\nlct@definesymbols}{%
+    \nlct@definefontsymbols
+  }%
+}
+
+\DeclareOption{tikzsymbols}{%
+  \renewcommand{\nlct@definesymbols}{%
+    \nlct@definetikzsymbols
+  }%
+}
+
+\DeclareOption*{\PassOptionsToPackage{\CurrentOption}{glossaries-extra}}
+
+\ProcessOptions
+
+\PassOptionsToPackage{hidelinks}{hyperref}
+\RequirePackage{hyperref}
+
 \RequirePackage{glossaries-extra}
+
+% Title page information
+
+\newcommand{\nlct@v@version}{}
+\newcommand{\nlct@version}{}
+\newcommand{\nlct@date}{}
+\ExplSyntaxOn
+\NewDocumentCommand \versiondate { m m }
+{
+ \tl_set:Nx \nlct@version { \tl_trim_spaces:n { #1 } }
+ \tl_set:Nx \nlct@date { \tl_trim_spaces:n { #2 } }
+ \tl_if_empty:NF \nlct@version
+ {
+   \tl_set:Nx \nlct@v@version { version ~ \nlct@version }
+ }
+ \tl_if_empty:NF \nlct@date
+ {
+   \tl_put_right:Nx  \nlct@v@version { ~ \nlct@date }
+ }
+ \date{\nlct@v@version}
+}
+
+\renewcommand{\title}[1]{\gdef\@title{#1}\hypersetup{pdftitle={\text_purify:n{#1}}}}
+\ExplSyntaxOff
+
+\newrobustcmd{\visiblespace}{%
+  \texttt{\verbvisiblespace}%
+}
+
+\newcommand{\TeXLive}{\TeX\ Live}
+\newcommand{\MikTeX}{Mik\TeX}
+
+% Cross-referencing
+
+\newcommand{\refslistsep}{, }
+\newcommand{\refslistlastsep}{ \& }
+
+\newcommand*{\@refslist}[4]{%
+ \bgroup
+  \renewcommand{\DTLlistformatitem}{\ref}%
+  \renewcommand*{\DTLlistformatsep}{#2}%
+  \renewcommand*{\DTLlistformatlastsep}{#3}%
+  #1\DTLformatlist{#4}%
+ \egroup
+}
+
+\newcommand*{\s@refslist}[4]{%
+ \bgroup
+  \renewcommand{\DTLlistformatitem}{\ref*}%
+  \renewcommand*{\DTLlistformatsep}{#2}
+  \renewcommand*{\DTLlistformatlastsep}{#3}%
+  #1\DTLformatlist{#4}%
+ \egroup
+}
+
+\newcommand*{\@ref@numname}[1]{\ref{#1} (\nameref{#1})}
+\newcommand*{\s@ref@numname}[1]{\ref*{#1} (\nameref*{#1})}
+
+\newcommand*{\@numname@refslist}[4]{%
+ \bgroup
+  \let\DTLlistformatitem\@ref@numname
+  \renewcommand*{\DTLlistformatsep}{#2}%
+  \renewcommand*{\DTLlistformatlastsep}{#3}%
+  #1\DTLformatlist{#4}%
+ \egroup
+}
+
+\newcommand*{\s@numname@refslist}[4]{%
+ \bgroup
+  \let\DTLlistformatitem\s@ref@numname
+  \renewcommand*{\DTLlistformatsep}{#2}%
+  \renewcommand*{\DTLlistformatlastsep}{#3}%
+  #1\DTLformatlist{#4}%
+ \egroup
+}
+
+
+\newcommand{\sectionrefprefix}{\S}
+\newrobustcmd{\sectionref}{\@ifstar\s@sectionref\@sectionref}
+\MFUblocker{\sectionref}
+
+\newcommand*{\@sectionref}[1]{\sectionrefprefix\ref{#1}}
+\newcommand*{\s@sectionref}[1]{\sectionrefprefix\ref*{#1}}
+
+\newcommand{\Sectionrefprefix}{\S}
+\newrobustcmd{\Sectionref}{\@ifstar\s@Sectionref\@sectionref}
+
+\newcommand*{\@Sectionref}[1]{\Sectionrefprefix\ref{#1}}
+\newcommand*{\s@Sectionref}[1]{\Sectionrefprefix\ref*{#1}}
+
+\MFUaddmap{\sectionref}{\Sectionref}
+\MFUaddmap{\sectionrefprefix}{\Sectionrefprefix}
+
+\newcommand{\sectionsrefprefix}{\S\S}
+\newrobustcmd{\sectionsref}{%
+ \@ifstar
+  {\s@refslist{\sectionsrefprefix}{\refslistsep}{\refslistlastsep}}%
+  {\@refslist{\sectionsrefprefix}{\refslistsep}{\refslistlastsep}}%
+}
+\MFUblocker{\sectionsref}
+
+\newcommand{\Sectionsrefprefix}{\S\S}
+\newrobustcmd{\Sectionsref}{%
+ \@ifstar
+  {\s@refslist{\Sectionsrefprefix}{\refslistsep}{\refslistlastsep}}%
+  {\@refslist{\Sectionsrefprefix}{\refslistsep}{\refslistlastsep}}%
+}
+\MFUaddmap{\sectionsref}{\Sectionsref}
+\MFUaddmap{\sectionsrefprefix}{\Sectionsrefprefix}
+
+\newcommand{\tablerefprefix}{Table~}
+\newcommand{\Tablerefprefix}{Table~}
+
+\newrobustcmd*{\tableref}{\@ifstar\s@tableref\@tableref}
+\newrobustcmd*{\Tableref}{\@ifstar\s@Tableref\@Tableref}
+
+\newcommand*{\@tableref}[1]{\tablerefprefix\nlct@ns@ref@cs{#1}}
+\newcommand*{\s@tableref}[1]{\tablerefprefix\ref*{#1}}
+
+\newcommand*{\@Tableref}[1]{\Tablerefprefix\nlct@ns@ref@cs{#1}}
+\newcommand*{\s@Tableref}[1]{\Tablerefprefix\ref*{#1}}
+
+\MFUaddmap{\tableref}{\Tableref}
+
+\newcommand{\tablesrefprefix}{tables~}
+\newcommand{\Tablesrefprefix}{Tables~}
+
+\newrobustcmd{\tablesref}{%
+ \@ifstar
+  {\s@refslist{\tablesrefprefix}{\refslistsep}{\refslistlastsep}}%
+  {\@refslist{\tablesrefprefix}{\refslistsep}{\refslistlastsep}}%
+}
+
+\newrobustcmd{\Tablesref}{%
+ \@ifstar
+  {\s@refslist{\Tablesrefprefix}{\refslistsep}{\refslistlastsep}}%
+  {\@refslist{\Tablesrefprefix}{\refslistsep}{\refslistlastsep}}%
+}
+\MFUaddmap{\tablesref}{\Tablesref}
+
+\newcommand{\figurerefprefix}{figure~}
+\newcommand{\Figurerefprefix}{Figure~}
+
+\newrobustcmd*{\figureref}{\@ifstar\s@figureref\@figureref}
+\newrobustcmd*{\Figureref}{\@ifstar\s@Figureref\@Figureref}
+
+\newcommand*{\@figureref}[1]{\figurerefprefix\nlct@ns@ref@cs{#1}}
+\newcommand*{\s@figureref}[1]{\figurerefprefix\ref*{#1}}
+
+\newcommand*{\@Figureref}[1]{\Figurerefprefix\nlct@ns@ref@cs{#1}}
+\newcommand*{\s@Figureref}[1]{\Figurerefprefix\ref*{#1}}
+
+\MFUaddmap{\figureref}{\Figureref}
+
+\newcommand{\figuresrefprefix}{figures~}
+\newcommand{\Figuresrefprefix}{Figures~}
+
+\newrobustcmd{\figuresref}{%
+ \@ifstar
+  {\s@refslist{\figuresrefprefix}{\refslistsep}{\refslistlastsep}}%
+  {\@refslist{\figuresrefprefix}{\refslistsep}{\refslistlastsep}}%
+}
+
+\newrobustcmd{\Figuresref}{%
+ \@ifstar
+  {\s@refslist{\Figuresrefprefix}{\refslistsep}{\refslistlastsep}}%
+  {\@refslist{\Figuresrefprefix}{\refslistsep}{\refslistlastsep}}%
+}
+\MFUaddmap{\figuresref}{\Figuresref}
+
+\providecommand{\examplerefprefix}{Example~}
+\providecommand{\Examplerefprefix}{Example~}
+
+\newrobustcmd*{\exampleref}{\@ifstar\s@exampleref\@exampleref}
+\newcommand*{\@exampleref}[1]{\examplerefprefix\nlct@ns@ref@cs{#1}}
+\newcommand*{\s@exampleref}[1]{\examplerefprefix\ref*{#1}}
+
+\newrobustcmd*{\examplenameref}[1]{\exampleref{#1} (\nameref{#1})}
+
+\newrobustcmd*{\Exampleref}{\@ifstar\s@Exampleref\@Exampleref}
+\newcommand*{\@Exampleref}[1]{\Examplerefprefix\nlct@ns@ref@cs{#1}}
+\newcommand*{\s@Exampleref}[1]{\Examplerefprefix\ref*{#1}}
+
+\MFUaddmap{\exampleref}{\Exampleref}
+
+\newcommand{\examplesrefprefix}{examples~}
+\newcommand{\Examplesrefprefix}{Examples~}
+
+\newrobustcmd{\examplesref}{%
+ \@ifstar
+  {\s@refslist{\examplesrefprefix}{\refslistsep}{\refslistlastsep}}%
+  {\@refslist{\examplesrefprefix}{\refslistsep}{\refslistlastsep}}%
+}
+
+\newrobustcmd{\examplesnameref}{%
+ \@ifstar
+  {\s@numname@refslist{\examplesrefprefix}{\refslistsep}{\refslistlastsep}}%
+  {\@numname@refslist{\examplesrefprefix}{\refslistsep}{\refslistlastsep}}%
+}
+
+\newrobustcmd{\Examplesref}{%
+ \@ifstar
+  {\s@refslist{\Examplesrefprefix}{\refslistsep}{\refslistlastsep}}%
+  {\@refslist{\Examplesrefprefix}{\refslistsep}{\refslistlastsep}}%
+}
+\MFUaddmap{\examplesref}{\Examplesref}
+
+\newrobustcmd{\mExampleref}[1]{\Exampleref{#1}\examplemarginref{#1}}
+\newrobustcmd{\mexampleref}[1]{\exampleref{#1}\examplemarginref{#1}}
+
+\newrobustcmd{\examplemarginref}[1]{%
+ \marginpar{\footnotesize\hyperref[#1]{\codesym}\ref{#1}\plabel{#1-backref}}%
+}
+
+\newcommand*{\plabel}[2][]{\protected@edef\@currentlabelname{#1}\label{#2}}
+\newcommand*{\pref}[2][]{on page~\pageref{#2}}
+\newcommand*{\phyperref}[2]{\hyperref[#2]{#1} on page~\pageref{#2}}
+
+% Symbols and punctuation
+
+\newcommand*{\dash}{\,---\,}
+\newcommand{\Slash}{\,\slash\,}
+
+\newcommand*{\tick}{\ding{51}}
+
+\newcommand*{\yes}{\ding{52}}
+\newcommand*{\no}{\ding{56}}
+
+\newrobustcmd{\advantagefmt}[1]{\textcolor{green}{#1}}
+\newrobustcmd{\disadvantagefmt}[1]{\textcolor{red}{#1}}
+
+\newcommand*{\proyes}{\advantagefmt{\yes}}
+\newcommand*{\prono}{\disadvantagefmt{\no}}
+ 
+\newcommand*{\conyes}{\disadvantagefmt{\yes}}
+\newcommand*{\conno}{\advantagefmt{\no}}
+
+\newcommand{\unlimited}{$\infty$}
+
+{\catcode`\^^I12\relax
+\gdef\nlctliteraltabchar{^^I}
+}
+
+\newcommand{\fnsymmark}[1]{\rlap{#1}}
+
+\newcommand{\asteriskmarker}{\textasteriskcentered}
+\newcommand{\daggermarker}{\textdagger}
+\newcommand{\doubledaggermarker}{\textdaggerdbl}
+\newcommand{\sectionmarker}{\textsection}
+\newcommand{\lozengemarker}{$\lozenge$}
+\newcommand{\pilcrowmarker}{\textparagraph}
+\newcommand{\hashmarker}{\#}
+\newcommand{\referencemarker}{{\fontfamily{cmr}\selectfont\textreferencemark}}
+\newcommand{\vdoubleasteriskmarker}{\shortstack{*\\[-1.5ex]*}}
+\newcommand{\starmarker}{$\star$}
+\newcommand{\florettemarker}{\ding{94}}
+
+\newcommand{\fnsymmarker}[1]{%
+  \ifcase#1\relax
+  \or \asteriskmarker 
+  \or \daggermarker
+  \or \doubledaggermarker 
+  \or \sectionmarker
+  \or \lozengemarker
+  \or \pilcrowmarker
+  \or \hashmarker
+  \or \referencemarker
+  \or \vdoubleasteriskmarker
+  \or \starmarker
+  \or \florettemarker
+  \else
+    \number#1
+  \fi
+}
+
+\newrobustcmd*{\fnsym}{\@ifstar\s@fnsym\@fnsym}
+
+\newcommand{\@fnsym}[1]{%
+ \tablefnmark
+ {%
+   \fnsymmark
+   {%
+     \fnsymmarker{#1}%
+   }%
+ }%
+}
+
+\newcommand{\s@fnsym}[1]{%
+ \tablefnmark
+ {%
+   \fnsymmarker{#1}%
+ }%
+}
+
+\newcommand{\tablefns}[1]{\par
+ \parbox{0.8\linewidth}
+ {\raggedright
+   \smallskip\hrulefill\par\smallskip
+   \par#1%
+ }\par
+}
+
+\newcommand*{\tablefnmark}[1]{\textsuperscript{#1}}
+\newcommand{\tablefnfmt}[1]{{\footnotesize#1\par}}
+\newrobustcmd{\tablefntext}[2]{\tablefnfmt{\tablefnmark{#1}#2}}
+\newrobustcmd{\fnsymtext}[2]{\tablefntext{\fnsymmarker{#1}}{#2}}
+
+\newcommand{\settabcolsep}[1]{\setlength{\tabcolsep}{#1}}
+
+% Glossary information
 
 \appto\glsxtrresourceinit{\GlsXtrResourceInitEscSequences}
 
-\glsaddkey{shortswitch}{}{\shortswitchvalue}{\Shortswitchvalue}{\shortswitch}{\Shortswitch}{\SHORTSWITCH}
+\glsaddkey{shortswitch}{}{\shortswitchvalue}{\Shortswitchvalue}{\shortswitchref}{\Shortswitchref}{\SHORTSWITCHREF}
 
 \glsaddstoragekey{defaultkeys}{}{\defaultkeys}
 \glsaddstoragekey{syntax}{}{\syntax}
+\glsaddstoragekey{defaultvalue}{}{\optdefval}
+\glsaddstoragekey{initvalue}{}{\optinitval}
+\glsaddstoragekey{note}{}{\note}
   
 \renewcommand{\glslinkpresetkeys}{%
  \glsxtrifhasfield*{defaultkeys}{\glslabel}
  {\expandafter\setupglslink\expandafter{\glscurrentfieldvalue}}%
  {}%
 } 
+
+\ifdef\GlsXtrSetPlusModifier
+{\GlsXtrSetPlusModifier{format=glsnumberformat}}{}
+
+\ifdef\GlsXtrSetAltModifier
+{\GlsXtrSetAltModifier{!}{format=glsignore}}{}
 
 \setabbreviationstyle[commonabbreviation]{short-nolong}
 
@@ -51,60 +442,177 @@
      class=index,
      option=index,
      switch=index,
+     environment=index,
+     counter=index,
+     menu=index,
+     menuitem=index,
+     dialog=index,
      term=entry,
      commonabbreviation=abbreviation
    },
   category = same as original entry,
   assign-fields=
    {
+% applications
+      name = "\cs{appfmt}{" + \MGP{1} + "}"
+        [ entrytype->original = "application" & entrylabel->original=/app\.(.+)/], 
       name = "\cs{appfmt}{" + entrylabel->original + "}"
         [ entrytype->original = "application"], 
+% menus
+      name = "\cs{menufmt}{" + \MGP{1} + "}"
+        [ entrytype->original = "menu" & entrylabel->original=/menu\.(.+)/], 
+      name = "\cs{menufmt}{" + entrylabel->original + "}"
+        [ entrytype->original = "menu"], 
+% dialogue boxes
+      name = "\cs{dialogfmt}{" + \MGP{1} + "}"
+        [ entrytype->original = "dialog" & entrylabel->original=/dialog\.(.+)/], 
+      name = "\cs{dialogfmt}{" + entrylabel->original + "}"
+        [ entrytype->original = "dialog"], 
+% files
+      name = "\cs{filefmt}{" + \MGP{1} + "}"
+        [ entrytype->original = "file" & entrylabel->original=/file\.(.+)/], 
       name = "\cs{filefmt}{" + entrylabel->original + "}"
         [ entrytype->original = "file"], 
+% packages
+      name = "\cs{styfmt}{" + \MGP{1} + "}"
+        [ entrytype->original = "package" & entrylabel->original=/sty\.(.+)/], 
       name = "\cs{styfmt}{" + entrylabel->original + "}"
         [ entrytype->original = "package"], 
+% classes
+      name = "\cs{clsfmt}{" + \MGP{1} + "}"
+        [ entrytype->original = "class" & entrylabel->original=/cls\.(.+)/], 
       name = "\cs{clsfmt}{" + entrylabel->original + "}"
         [ entrytype->original = "class"], 
+% options
+      name = "\cs{optfmt}{" + \MGP{1} + "}"
+        [ entrytype->original = "option" & entrylabel->original=/opt\.(.+)/], 
       name = "\cs{optfmt}{" + entrylabel->original + "}"
         [ entrytype->original = "option"], 
-      name = "\cs{longswitchfmt}{" + entrylabel->original + "}"
+% switches
+      name = "\cs{longargfmt}{" + \MGP{1} + "}"
+        [ entrytype->original = "switch" & entrylabel->original=/switch\.(.+)/], 
+      name = "\cs{longargfmt}{" + entrylabel->original + "}"
         [ entrytype->original = "switch"], 
-      shortswitch =[o] "\cs{shortswitchfmt}{" + shortswitch + "}"
+      shortswitch =[o] "\cs{shortargfmt}{" + shortswitch + "}"
         [ entrytype->original = "switch" & shortswitch <> \NULL], 
+% counters
+      name = "\cs{ctrfmt}{" + \MGP{1} + "}"
+        [ entrytype->original = "counter" & entrylabel->original=/ctr\.(.+)/], 
+      name = "\cs{ctrfmt}{" + entrylabel->original + "}"
+        [ entrytype->original = "counter"], 
+% common
       defaultkeys = "format=glsignore"
-        [ entrytype->original = /common/ ]
+        [ entrytype->original = /common.*/ ]
    },
    save-child-count,
 }
 
-\newcommand{\appfmt}[1]{\texttt{#1}}
+% Semantic commands
+
+\newcommand*{\widgetfmt}[1]{\textsf{\bfseries #1}}
+
+\newcommand*{\dialogfmt}[1]{\textsf{#1}}
+
+\newcommand*{\menufmt}[1]{\textsf{#1}}
+\newcommand*{\menusep}{\,\ding{220}\,}
+\newrobustcmd*{\menu}[1]{%
+  \def\nlct@menusep{}%
+  \menufmt
+  {%
+    \@for\@menu@item:=#1\do{%
+      \nlct@menusep\@menu@item
+      \let\nlct@menusep\menusep
+    }%
+  }%
+}
+
+\newcommand{\appfmt}[1]{\texorpdfstring{\texttt{#1}}{#1}}
 \MFUblocker{\appfmt}
 
-\newcommand{\filefmt}[1]{\texttt{#1}}
+\newcommand{\filefmt}[1]{\texorpdfstring{\texttt{#1}}{#1}}
 \MFUblocker{\filefmt}
 
-\newcommand{\styfmt}[1]{\texttt{#1}}
+\newcommand{\styfmt}[1]{\texorpdfstring{\texttt{#1}}{#1}}
 \MFUblocker{\styfmt}
 
-\newcommand{\clsfmt}[1]{\texttt{#1}}
+\newcommand{\clsfmt}[1]{\texorpdfstring{\texttt{#1}}{#1}}
 \MFUblocker{\clsfmt}
 
-\newcommand{\optfmt}[1]{\texttt{#1}}
+\newcommand{\optfmt}[1]{\texorpdfstring{\texttt{#1}}{#1}}
 \MFUblocker{\optfmt}
 
-\newcommand{\longswitchfmt}[1]{\texttt{-\/-#1}}
-\MFUblocker{\longswitchfmt}
+\newcommand*{\envfmt}[1]{\texorpdfstring{\textsf{#1}}{#1}}
+\MFUblocker{\envfmt}
 
-\newcommand{\shortswitchfmt}[1]{\texttt{-#1}}
-\MFUblocker{\shortswitchfmt}
+\newcommand*{\ctrfmt}[1]{\texorpdfstring{\textsf{#1}}{#1}}
+\MFUblocker{\ctrfmt}
 
-\ifdef\GlsXtrSetPlusModifier
-{\GlsXtrSetPlusModifier{format=glsnumberformat}}{}
+\newcommand{\longswitch}{-\/-}
+\newcommand\pdflongswitch{\string-\string-}
 
-\ifdef\GlsXtrSetAltModifier
-{\GlsXtrSetAltModifier{!}{format=glsignore}}{}
+\newcommand*{\longargfmt}[1]{%
+ \texorpdfstring{\texttt{\longswitch #1}}{\pdflongswitch#1}%
+}
+\MFUblocker{\longargfmt}
 
-\newcommand{\cs}[1]{\texttt{\glsbackslash #1}}
+\newcommand{\shortswitch}{\string-}
+
+\newcommand*{\shortargfmt}[1]{\texorpdfstring{\texttt{\shortswitch#1}}{\string-#1}}
+\MFUblocker{\shortargfmt}
+
+% \defsemanticcmd[colour]{cs}{font-cs}{prefix}
+\newcommand*{\defsemanticcmd}[4][]{%
+  \ifstrempty{#1}%
+  {%
+    \ifstrempty{#3}%
+    {%
+      \newcommand#2[1]{#4##1}%
+    }
+    {%
+      \newcommand#2[1]{\texorpdfstring{\fmtorcode#3{#4##1}}{#4##1}}%
+    }%
+  }%
+  {%
+    \ifstrempty{#3}%
+    {%
+      \newcommand#2[1]{\texorpdfstring{{\color{#1}#4##1}}{#4##1}}%
+    }%
+    {%
+      \newcommand#2[1]{\texorpdfstring{\fmtorcode#3{\color{#1}#4##1}}{#4##1}}%
+    }%
+  }%
+}
+
+\newcommand{\faded}[1]{\texorpdfstring{\textcolor{gray}{#1}}{#1}}
+
+
+\newcommand*{\qt}[1]{``#1''}
+\newcommand*{\qtt}[1]{``\,\texttt{#1}\,''}
+
+\newcommand*{\csfmtfont}[1]{\ifmmode \mbox{\texttt{#1}}\else\texttt{#1}\fi}
+\newcommand*{\csfmtcolourfont}[1]{\texttt{\textcolor{cs}{#1}}}
+
+\newcommand*{\csfmt}[1]{\csfmtfont{\codebackslash #1}}
+\newcommand*{\cspuncfmt}[1]{\csfmt{#1}}
+
+\newcommand{\codebackslash}{\texorpdfstring{\char`\\}{\string\\}}
+
+\newcommand{\csmetafmt}[3]{%
+ \texorpdfstring
+  {\csfmt{#1\ifstrempty{#1}{}{\-}\meta{#2}\ifstrempty{#3}{}{\-}#3}}%
+  {\string\\#1\string<#2\string>#3}%
+}
+\newcommand{\csmetametafmt}[5]{%
+ \texorpdfstring{\csfmt{#1\meta{#2}#3\meta{#4}#5}}{\string\\#1\string<#2\string>#3\string<#4\string>#5}%
+}
+
+\newcommand{\starredcs}[1]{\gls{#1}[\csfmtfont{*}]}
+\newcommand{\starredenv}[1]{\gls{env.#1}[\envfmt{*}]}
+
+\newcommand{\thectr}[1]{\glslink{ctr.#1}{\csfmt{the#1}}}
+\newcommand{\theHctr}[1]{\glslink{ctr.#1}{\csfmt{theH#1}}}
+
+\newcommand*{\glscsname}[2][]{\glslink[#1]{#2}{\csfmtfont{#2}}}
 
 \newrobustcmd*{\texmeta}[1]{{\normalfont$\langle$\emph{#1}$\rangle$}}
 
@@ -146,10 +654,10 @@
 }
 
 \NewDocumentCommand\clidef{O{}m}{%
- \begin{terminal}[#1]%
+ \begin{pinnedbox}[#1]%
  \let\glsxtrpostnameapplication\postclihook
  \glsxtrglossentry{#2}%
- \end{terminal}% 
+ \end{pinnedbox}% 
 }
 
 \newcommand{\postswitchhook}{%
@@ -160,15 +668,15 @@
 }
 
 \NewDocumentCommand\switchdef{O{}m}{%
- \begin{plaincodebox}[#1]%
+ \begin{pinnedbox}[#1]%
  \let\glsxtrpostnameswitch\postswitchhook
  \glsxtrglossentry{#2}%
- \end{plaincodebox}% 
+ \end{pinnedbox}% 
 }
 
 \NewDocumentCommand\stydef{O{}m}{%
  \begin{codebox}[#1]%
- \cs{usepackage}%
+ \cmd{usepackage}%
  \glsxtrifhasfield{syntax}{#2}{\oarg{\glscurrentfieldvalue}}{}%
  \marg{\glsxtrglossentry{#2}}%
  \end{codebox}% 
@@ -176,7 +684,7 @@
 
 \NewDocumentCommand\clsdef{O{}m}{%
  \begin{codebox}[#1]%
- \cs{documentclass}%
+ \cmd{documentclass}%
  \glsxtrifhasfield{syntax}{#2}{\oarg{\glscurrentfieldvalue}}{}%
  \marg{\glsxtrglossentry{#2}}%
  \end{codebox}% 
@@ -304,80 +812,386 @@
 
 \ExplSyntaxOff
 
+\newcommand{\nlctguideindexinitpostnamehooks}{%
+  \glsdefpostname{abbreviation}{\abbrpostnamehook}%
+  \glsdefpostname{package}{ package}%
+  \glsdefpostname{class}{ class}%
+  \glsdefpostname{environment}{ environment}%
+  \glsdefpostname{counter}{ counter}%
+}
+
 \NewDocumentCommand\printindex{O{}}{%
   {%
-    \let\glsxtrpostnameabbreviation\abbrpostindexnamehook
-    \let\glsxtrpostnamepackage\packagenamehook
-    \let\glsxtrpostnameclass\classnamehook
+    \nlctguideindexinitpostnamehooks
     \printunsrtglossary[style=bookindex,title=\indexname]%
   }%
 }
 
-\newcommand{\abbrpostindexnamehook}{%
+\newcommand{\abbrpostnamehook}{%
   \ifglshaslong\glscurrententrylabel
   {\space (\glsfmtlong{\glscurrententrylabel})}%
   {}%
 }
 
-\newcommand{\packagenamehook}[1]{\space package}
-\newcommand{\classnamehook}[1]{\space class}
+% logos
+
+\newcommand*{\BibTeX}{\hologo{BibTeX}}
+\newcommand*{\eTeX}{\hologo{eTeX}}
+\newcommand*{\XeLaTeX}{\hologo{XeLaTeX}}
+\newcommand*{\LuaLaTeX}{\hologo{LuaLaTeX}}
+\newcommand*{\pdfLaTeX}{\hologo{pdfLaTeX}}
+\newcommand*{\LuaTeX}{\hologo{LuaTeX}}
+\newcommand*{\XeTeX}{\hologo{XeTeX}}
+\newcommand*{\pdfTeX}{\hologo{pdfTeX}}
+
 
 % tcolorbox Boxes
 
 \newlength\boxtitleshift
 \setlength{\boxtitleshift}{-2.5mm}
 
-\newcommand{\terminalicon}{\faTerminal}
-\newcommand{\codeicon}{\faFileTextO}
-\newcommand{\warningicon}{\faExclamationTriangle}
-\newcommand{\importanticon}{\faInfo}
-\newcommand{\informationicon}{\faInfoCircle}
+\newcommand*{\warningsym}{\faExclamationTriangle}
+\newcommand*{\warningtext}{Warning}
+\newcommand*{\warningdesc}{a warning}
+
+\newcommand*{\importantsym}{\faInfo}
+\newcommand*{\importanttext}{Important}
+\newcommand*{\importantdesc}{an important message}
+
+\newcommand*{\informationsym}{\faInfoCircle}
+\newcommand*{\informationtext}{Information}
+\newcommand*{\informationdesc}{prominent information}
+
+\newcommand*{\definitionsym}{\faThumbTack}
+\newcommand*{\definitiontext}{Definition}
+\newcommand*{\definitiondesc}{the syntax and usage of a command,
+environment or option etc}
+
+\newcommand*{\valuesettingsym}{\faSliders}
+\newcommand*{\valuesettingtext}{Setting}
+\newcommand*{\valuesettingdesc}{an option that takes a value}
+
+\newcommand*{\novaluesettingsym}{\faBars}
+\newcommand*{\novaluesettingtext}{Valueless Setting}
+\newcommand*{\novaluesettingdesc}{an option that doesn't take a value}
+
+\newcommand*{\toggleonsettingsym}{\faToggleOn}
+\newcommand*{\toggleonsettingtext}{Toggle (On)}
+\newcommand*{\toggleonsettingdesc}{a boolean option that is initially true}
+
+\newcommand*{\toggleoffsettingsym}{\faToggleOff}
+\newcommand*{\toggleoffsettingtext}{Toggle (Off)}
+\newcommand*{\toggleoffsettingdesc}{a boolean option that is initially false}
+
+\newcommand*{\optionvaluesym}{\faTag}
+\newcommand*{\optionvaluetext}{Option Value Definition}
+\newcommand*{\optionvaluedesc}{the definition of an option value}
+
+\newcommand*{\countersym}{\textnumero}
+\newcommand*{\countertext}{Counter}
+\newcommand*{\counterdesc}{a counter is being described}
+
+\definecolor{banned}{rgb}{0.8,0,0}
+
+\newrobustcmd{\deprecatedorbannedfmt}[1]{\textcolor{banned}{#1}}
+
+\newcommand*{\deprecatedsym}{\deprecatedorbannedfmt{\faTrashO}}
+\newcommand*{\deprecatedtext}{Deprecated}
+\newcommand*{\deprecateddesc}{a command, environment or option that
+is now deprecated}
+
+\newcommand*{\bannedsym}{\deprecatedorbannedfmt{\faBan}}
+\newcommand*{\bannedtext}{Don't use}
+\newcommand*{\banneddesc}{a command, environment or option that
+should not be used with \thispackage}
+
+\newcommand*{\terminalsym}{\faTerminal}
+\newcommand*{\terminaltext}{Terminal}
+\newcommand*{\terminaldesc}{a command-line application invocation
+that needs to be entered into a
+\href{https://www.dickimaw-books.com/latex/novices/html/terminal.html}{terminal
+or command prompt}}
+
+\newcommand*{\codesym}{\faFileTextO}
+\newcommand*{\codetext}{Input}
+\newcommand*{\codedesc}{\LaTeX\ code to insert into your document}
+
+\newrobustcmd*{\badcodesym}{\faFileTextO\llap{\deprecatedorbannedfmt{\scriptsize\faBan}}}
+\newcommand*{\badcodetext}{Problematic Input}
+\newcommand*{\badcodedesc}{problematic code which should be avoided}
+
+\newrobustcmd*{\unicodesym}{\faFileO\llap{\textsl{\tiny Uni}}}
+\newcommand*{\unicodetext}{Unicode Input}
+\newcommand*{\unicodedesc}{code that requires a native Unicode
+engine (\XeLaTeX\ or \LuaLaTeX)}
+
+\newcommand*{\resultsym}{\faFilePdfO}
+\newcommand*{\resulttext}{Result}
+\newcommand*{\resultdesc}{how the example code should appear in the PDF}
+
+\newcommand*{\transcriptsym}{\twemoji{1f50e}}
+\newcommand*{\transcripttext}{Transcript}
+\newcommand*{\transcriptdesc}{Text in a transcript or log file or written to STDOUT or STDERR}
+
+\newignoredglossary{icons}
+
+\ExplSyntaxOn
+\cs_new:Nn \__texjavahelp_new_icon:n
+{
+ \exp_args:Nne
+ \newglossaryentry
+   {sym.#1}
+   {
+    type=icons,
+    name={\expandafter\expandonce\csname #1text\endcsname},
+    symbol={\expandafter\noexpand\csname #1sym\endcsname},
+    description={\expandafter\expandonce\csname #1desc\endcsname}
+  }
+}
+
+\__texjavahelp_new_icon:n { definition }
+\__texjavahelp_new_icon:n { important }
+\__texjavahelp_new_icon:n { information }
+\__texjavahelp_new_icon:n { warning }
+\__texjavahelp_new_icon:n { valuesetting }
+\__texjavahelp_new_icon:n { novaluesetting }
+\__texjavahelp_new_icon:n { toggleonsetting }
+\__texjavahelp_new_icon:n { toggleoffsetting }
+\__texjavahelp_new_icon:n { optionvalue }
+\__texjavahelp_new_icon:n { counter }
+\__texjavahelp_new_icon:n { deprecated }
+\__texjavahelp_new_icon:n { banned }
+\__texjavahelp_new_icon:n { terminal }
+\__texjavahelp_new_icon:n { code }
+\__texjavahelp_new_icon:n { badcode }
+\__texjavahelp_new_icon:n { unicode }
+\__texjavahelp_new_icon:n { result }
+\__texjavahelp_new_icon:n { transcript }
+
+\ExplSyntaxOff
+
+\newcounter{icon}
+\newcommand*{\icon}[1]{\stepcounter{icon}\glssymbol[counter=icon]{sym.#1}}
+\newcommand*{\icontext}[1]{\stepcounter{icon}\glstext[counter=icon]{sym.#1}}
 
 \newtcolorbox{warning}[1][]{breakable,
- before upper={\parindent12pt\noindent}, 
- title={\warningicon},
+ before upper={\parindent12pt\noindent},
+ title={\icon{warning}},
  coltitle=red,colbacktitle=red!20!white,
  colframe=red,colback=red!5!white,
  enhanced,attach boxed title to top right={yshift=\boxtitleshift},#1}
 
-\newtcolorbox{important}[1][]{breakable,title={\importanticon},
+\newtcolorbox{important}[1][]{breakable,title={\icon{important}},
  before upper={\parindent12pt\noindent},
  coltitle=red,colbacktitle=red!20!white,
  colframe=red,colback=red!5!white,
  enhanced,attach boxed title to top right={yshift=\boxtitleshift},#1}
-  
-\newtcolorbox{information}[1][]{breakable,title={\informationicon},
+
+\newtcolorbox{information}[1][]{breakable,title={\icon{information}},
  before upper={\parindent12pt\noindent},
  coltitle=teal,colbacktitle=teal!20!white,
  colframe=teal,colback=teal!5!white,
  enhanced,attach boxed title to top right={yshift=\boxtitleshift},#1}
-  
-
-\newcommand{\displayboxdefaultafter}{\par\noindent\ignorespacesafterend}
 
 % NB These boxes aren't set up for verbatim
 
-\newtcolorbox{terminal}[1][]{unbreakable,title={\terminalicon},
+\definecolor{defbackground}{rgb}{1,1,0.75}
+\definecolor{optiondefbackground}{rgb}{1,1,0.89}
+\definecolor{optionvaluedefbackground}{rgb}{1,1,0.96}
+
+\newcommand{\nlctdefaultafter}{\par\noindent\ignorespacesafterend}
+
+\newcommand{\nlctpinnedafter}{\nlctdefaultafter} 
+\newcommand{\nlctpinnedbefore}{\allowbreak\par\noindent} 
+
+\newtcolorbox{pinnedbox}[1][]{unbreakable,title={\icon{definition}},
+ coltitle=black,colbacktitle=defbackground,
+ colframe=black,colback=defbackground,halign=flush left,
+ enhanced,attach boxed title to top right={yshift=\boxtitleshift},
+ after={\nlctpinnedafter},before={\nlctpinnedbefore},
+ #1
+}
+
+\newcommand{\nlctdefnafter}{\nopagebreak\nlctdefaultafter}
+\newcommand{\nlctdefnbefore}{\allowbreak\par\noindent}
+
+\newtcolorbox{defnbox}[1][]{unbreakable,
+ colframe=black,colback=defbackground,halign=flush left,
+ after={\nlctdefnafter},before={\nlctdefnbefore},
+ #1
+}
+
+\newcommand{\nlctsettingsafter}{\nopagebreak\nlctdefaultafter}
+\newcommand{\nlctsettingsbefore}{\allowbreak\par\noindent}
+
+\newtcolorbox{settingsbox}[1][]{title={\icon{valuesetting}},unbreakable,
+ coltitle=black,colbacktitle=defbackground!20!white,
+ colframe=black,colback=defbackground!20!white,halign=flush left,
+ enhanced,attach boxed title to top right={yshift=\boxtitleshift},
+ after={\nlctsettingsafter}, before={\nlctsettingsbefore},
+ #1
+}
+
+\newtcolorbox{terminal}[1]{unbreakable,title={\icon{terminal}},
  colframe=black,
  enhanced,attach boxed title to top right={yshift=\boxtitleshift},
- after={\displayboxdefaultafter},
+ after={\nlctdefaultafter},
  halign=flush left,fontupper=\ttfamily,before upper={\frenchspacing\obeylines},
  #1
 }
 
-\newtcolorbox{codebox}[1][]{unbreakable,title={\codeicon},
+\newtcolorbox{transcript}{unbreakable,title={\icon{transcript}},
  colframe=black,
  enhanced,attach boxed title to top right={yshift=\boxtitleshift},
- after={\displayboxdefaultafter},
- halign=flush left,fontupper=\ttfamily,before upper={\frenchspacing\obeylines},
- #1
+ after={\nlctdefaultafter},
+ halign=flush left,fontupper=\ttfamily,before upper={\frenchspacing\obeylines}
 }
 
-\newtcolorbox{plaincodebox}[1][]{unbreakable,
- after={\displayboxdefaultafter},
- halign=flush left,fontupper=\ttfamily,before upper={\frenchspacing\obeylines},
- #1
+\newcommand{\code@cmd}[1]{\char`\\ #1}
+\newcommand{\cmd}[1]{\texttt{\code@cmd{#1}}}
+\newcommand{\code@cbeg}[1]{\cmd{begin}\marg{#1}}
+\newcommand{\code@cend}[1]{\cmd{end}\marg{#1}}
+{\obeylines\newcommand{\code@comment}[1]{%
+ \mbox{\textcolor{comment}{\glspercentchar\ #1}}\@ifnextchar
+{}{\par}}\global\let\code@comment\code@comment\newcommand{\code@comment@dbsp}[1]{%
+ \mbox{\textcolor{comment}{\glspercentchar\ #1}}\@ifnextchar
+{}{\par}\dbspace}\global\let\code@comment@dbsp\code@comment@dbsp}
+\newcommand{\araraline}[1]{\glspercentchar\ arara: #1}
+\newcommand{\araracont}{\araraline{-\/-> }}
+
+\newcommand*{\setupcodeenvfmts}{%
+ \let\cbeg\code@cbeg
+ \let\cend\code@cend
+ \let\comment\code@comment
+ \let\commentdbsp\code@comment@dbsp
+ \def\nl{\mbox{}\newline}%
+ \def\nlsp{\nl\null\space}%
+ \def\dbspace{\mbox{}\space\space}%
+ \def\dbdbspace{\dbspace\dbspace}%
+ \def\dbdbdbspace{\dbspace\dbspace\dbspace}%
+ \def\nldbsp{\nl\null\dbspace}%
+ \def\nldbdbsp{\nl\null\dbdbspace}%
+ \def\nlsbdbdbsp{\nl\null\dbdbdbspace}%
+ \renewcommand*{\envfmt}[1]{##1}%
+ \renewcommand*{\styfmt}[1]{##1}%
+ \renewcommand*{\clsfmt}[1]{##1}%
+ \renewcommand*{\ctrfmt}[1]{##1}%
+ \renewcommand*{\csfmtfont}[1]{\textcolor{cs}{##1}}%
+ \let\fmtorcode\@secondoftwo
+ \let\code\@firstofone
 }
+
+\newcommand*{\initcodeenv}{%
+ \GlsXtrStartUnsetBuffering
+ \setupcodeenvfmts
+ \obeylines\frenchspacing\@vobeyspaces
+ \parindent\z@\parfillskip\@flushglue
+}
+
+\newcommand{\codefont}{\ttfamily}
+
+% inline
+\newcommand{\code}[1]{\texorpdfstring{\@code{#1}}{#1}}
+\newrobustcmd{\@code}[1]{{\setupcodeenvfmts\codefont\obeyspaces #1}}
+
+\definecolor{codebackground}{gray}{0.95}
+
+\newtcolorbox{codebox}[1][]{title={\icon{code}},
+ enhanced,breakable,attach boxed title to top right={yshift=\boxtitleshift},
+ halign=flush left,fontupper=\codefont,colback=codebackground,
+  before upper={%
+  \preto\glslinkpresetkeys{\setkeys{glslink}{format=glsignore}}%
+  \initcodeenv
+  },
+  after upper={\GlsXtrDiscardUnsetBuffering},
+  after={\nlctdefaultafter},
+  #1
+}
+
+\newtcolorbox{codebox*}[1][]{title={\icon{code}},
+ enhanced,breakable,
+ attach boxed title to top right={yshift=\boxtitleshift},
+ halign=flush left,fontupper=\codefont,colback=codebackground,
+  before upper={\initcodeenv},
+  after upper={\GlsXtrDiscardUnsetBuffering},
+  after={\nlctdefaultafter},
+  #1
+}
+
+\newenvironment{badcodebox}%
+{\begin{codebox}[title={\icon{badcode}}]}
+{\end{codebox}\noindent\ignorespacesafterend}
+
+\newenvironment{unicodebox}%
+{\begin{codebox}[title={\icon{unicode}}]}
+{\end{codebox}\noindent\ignorespacesafterend}
+
+\newtcolorbox{compactcodebox}[1][]{%
+  halign=flush left,fontupper=\codefont,colback=codebackground,
+  before upper={%
+  \renewcommand{\glslinkpresetkeys}{\setkeys{glslink}{format=glsignore}}%
+  \initcodeenv},
+  after upper={\GlsXtrDiscardUnsetBuffering},
+  after={\nlctdefaultafter},
+  #1
+}
+
+\newtcolorbox{compactcodebox*}[1][]{%
+  halign=flush left,fontupper=\codefont,colback=codebackground,
+  before upper={\initcodeenv},
+  after upper={\GlsXtrDiscardUnsetBuffering},
+  after={\nlctdefaultafter},
+  #1
+}
+
+\newcommand*{\result@attachtag}{}
+
+\newtcolorbox{resultbox}[1][]{title={\icon{result}},
+ coltitle=black,colbacktitle=white,
+ colframe=black,colback=white,
+ after={\nlctdefaultafter},
+ enhanced,attach boxed title to top right={yshift=\boxtitleshift},#1}
+
+\newtcolorbox{coderesult}[1][]{skin=bicolor,
+title={\icon{code} \icon{result}},
+attach boxed title to top center={yshift=\boxtitleshift},
+sidebyside,
+sidebyside align=top,
+colbacklower=white,
+fontupper=\codefont,
+before upper={%
+\renewcommand{\glslinkpresetkeys}{\setkeys{glslink}{format=glsignore}}%
+  \initcodeenv},
+after upper={\GlsXtrDiscardUnsetBuffering},
+halign upper=flush left,halign lower=justify,
+valign upper=top,valign lower=top,
+after lower={\noindent},
+#1
+}
+
+\newtcolorbox{coderesult*}[1][]{skin=bicolor,
+title={\icon{code} \icon{result}},
+attach boxed title to top center={yshift=\boxtitleshift},
+sidebyside,
+sidebyside align=top,
+colbacklower=white,
+fontupper=\codefont,
+before upper={\initcodeenv},
+after upper={\GlsXtrDiscardUnsetBuffering},
+after lower={\noindent},
+valign upper=top,valign lower=top,
+halign upper=flush left,halign lower=justify,
+#1
+}
+
+\newenvironment{unicoderesult}%
+{\begin{coderesult}[title={\icon{unicode} \icon{result}}]}
+{\end{coderesult}\noindent\ignorespacesafterend}
+
+\newenvironment{unicoderesult*}%
+{\begin{coderesult*}[title={\icon{unicode} \icon{result}}]}
+{\end{coderesult*}\noindent\ignorespacesafterend}
+
 
 
 \endinput

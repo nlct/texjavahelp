@@ -4,6 +4,12 @@ else
   target_version =
 endif
 
+lib/resources/helpset/index.xml	: lib/texjavahelpmk.jar doc/texjavahelp.pdf
+	bin/texjavahelpmk doc/texjavahelp.tex lib/resources/helpset
+
+doc/texjavahelp.pdf	: doc/texjavahelp.tex doc/texjavahelp.sty doc/texjavahelp.bib
+	arara -d doc texjavahelp
+
 lib/texjavahelpmk.jar	: java/texjavahelpmk/Manifest.txt \
 	classes/com/dickimawbooks/texjavahelpmk/TeXJavaHelpMk.class
 	cd classes; \
@@ -20,3 +26,9 @@ classes/com/dickimawbooks/texjavahelpmk/TeXJavaHelpMk.class	: classes/com/dickim
 
 classes/com/dickimawbooks/texjavahelpmk	:
 	mkdir -p classes/com/dickimawbooks/texjavahelpmk
+
+clean	:
+	\rm -rf classes
+	\rm -f doc/*.glstex
+	\rm -f doc/*.aux
+	\rm -f doc/*.toc
