@@ -227,22 +227,22 @@ public class NavigationNode implements TreeNode
    {
       // The key shouldn't have any awkward characters, but just in case
 
-      out.printf("<node key=\"%s\">", TeXJavaHelpLib.encodeHTML(key, true));
+      out.printf("<node key=\"%s\">%n", TeXJavaHelpLib.encodeHTML(key, true));
 
       if (prefix != null)
       {
-         out.printf(" <prefix>%s</prefix>", TeXJavaHelpLib.encodeHTML(prefix, false));
+         out.printf(" <prefix>%s</prefix>%n", TeXJavaHelpLib.encodeHTML(prefix, false));
       }
 
-      out.printf(" <title>%s</title>", TeXJavaHelpLib.encodeHTML(title, false));
+      out.printf(" <title>%s</title>%n", TeXJavaHelpLib.encodeHTML(title, false));
 
-      out.printf(" <filename>%s</filename>", TeXJavaHelpLib.encodeHTML(filename, false));
+      out.printf(" <filename>%s</filename>%n", TeXJavaHelpLib.encodeHTML(filename, false));
 
       if (children != null)
       {
          for (NavigationNode child : children)
          {
-            saveSubTree(out);
+            child.saveSubTree(out);
          }
       }
 

@@ -21,8 +21,10 @@ package com.dickimawbooks.texjavahelpmk;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 
 import java.awt.Dimension;
 
@@ -32,6 +34,10 @@ import com.dickimawbooks.texparserlib.latex.LaTeXSty;
 import com.dickimawbooks.texparserlib.latex.color.ColorSty;
 import com.dickimawbooks.texparserlib.html.L2HConverter;
 import com.dickimawbooks.texparserlib.html.L2HImage;
+import com.dickimawbooks.texparserlib.html.DivisionNode;
+import com.dickimawbooks.texparserlib.auxfile.DivisionInfo;
+
+import com.dickimawbooks.texjavahelplib.NavigationNode;
 
 public class TJHListener extends L2HConverter
 {
@@ -51,6 +57,44 @@ public class TJHListener extends L2HConverter
          addToHead(extraHead);
       }
 
+      File outDir = app.getOutDirectory();
+
+      setNavigationFile(new File(outDir, "navigation."+suffix));
+      setNavigationXmlFile(new File(outDir, "navigation.xml"));
+   }
+
+   public void setNavigationXmlFile(File file)
+   {
+      navigationXmlFile = file;
+   }
+
+   @Override
+   protected void writeNavigationFile(TeXObjectList stack)
+     throws IOException
+   {
+      super.writeNavigationFile(stack);
+
+      DivisionInfo divInfo = divisionData.firstElement();
+      DivisionNode divNode = (DivisionNode)divInfo.getSpecial();
+
+      NavigationNode rootNode = NavigationNode.createTree(divNode);
+
+      PrintWriter writer = null;
+
+      try
+      {
+         writer = new PrintWriter(
+           Files.newBufferedWriter(navigationXmlFile.toPath(), getHtmlCharset()));
+
+         rootNode.saveTree(writer, getHtmlCharset());
+      }
+      finally
+      {
+         if (writer != null)
+         {
+            writer.close();
+         }
+      }
    }
 
    @Override
@@ -116,4 +160,5 @@ public class TJHListener extends L2HConverter
       return (TeXJavaHelpMk)getTeXApp();
    }
 
+   protected File navigationXmlFile;
 }
