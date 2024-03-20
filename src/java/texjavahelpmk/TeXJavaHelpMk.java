@@ -45,6 +45,8 @@ import com.dickimawbooks.texparserlib.latex.KeyValList;
 import com.dickimawbooks.texparserlib.latex.color.ColorSty;
 import com.dickimawbooks.texparserlib.html.*;
 
+import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
+
 public class TeXJavaHelpMk implements TeXApp
 {
 

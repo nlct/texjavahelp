@@ -17,18 +17,36 @@ lib/texjavahelpmk.jar	: java/texjavahelpmk/Manifest.txt \
 	com/dickimawbooks/texjavahelpmk/*.class
 
 classes/com/dickimawbooks/texjavahelpmk/TeXJavaHelpMk.class	: classes/com/dickimawbooks/texjavahelpmk \
-	java/texjavahelpmk/*.java
+	java/texjavahelpmk/*.java lib/texjavahelplib.jar
 	cd java/texjavahelpmk; \
+	javac $(target_version) -d ../../classes \
+	 -Xlint:unchecked -Xlint:deprecation \
+	-cp ../../lib/texparserlib.jar:../../lib/texjavahelplib.jar \
+	*.java
+
+classes/com/dickimawbooks/texjavahelpmk	:
+	mkdir -p classes/com/dickimawbooks/texjavahelpmk
+
+lib/texjavahelplib.jar	: classes/com/dickimawbooks/texjavahelplib/TeXJavaHelpLib.class
+	cd classes; \
+	jar cf ../lib/texjavahelplib.jar \
+	com/dickimawbooks/texjavahelplib/*.class
+
+classes/com/dickimawbooks/texjavahelplib/TeXJavaHelpLib.class	: classes/com/dickimawbooks/texjavahelplib \
+	java/texjavahelplib/*.java
+	cd java/texjavahelplib; \
 	javac $(target_version) -d ../../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
 	-cp ../../lib/texparserlib.jar \
 	*.java
 
-classes/com/dickimawbooks/texjavahelpmk	:
-	mkdir -p classes/com/dickimawbooks/texjavahelpmk
+classes/com/dickimawbooks/texjavahelplib	:
+	mkdir -p classes/com/dickimawbooks/texjavahelplib
 
 clean	:
 	\rm -rf classes
 	\rm -f doc/*.glstex
 	\rm -f doc/*.aux
 	\rm -f doc/*.toc
+	\rm -f lib/texjavahelplib.jar
+	\rm -f lib/texjavahelpmk.jar
