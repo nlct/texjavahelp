@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>English language file for texjavahelpdemo</comment>
+
+<!--  Messages -->
+<entry key="message.confirm_quit.title">Confirm Quit</entry>
+<entry key="message.confirm_quit">Are you sure you want to quit?</entry>
+
+<!--  Warnings -->
+<entry key="warning.title">Warning</entry>
+
+<!--  Errors -->
+<entry key="error.title">Error</entry>
+
+</properties>

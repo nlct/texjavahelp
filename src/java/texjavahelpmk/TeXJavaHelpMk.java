@@ -41,9 +41,10 @@ import com.dickimawbooks.texparserlib.latex.color.ColorSty;
 import com.dickimawbooks.texparserlib.html.*;
 
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
+import com.dickimawbooks.texjavahelplib.TeXJavaHelpLibApp;
 import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 
-public class TeXJavaHelpMk implements TeXApp
+public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
 {
    protected void initHelpLibrary() throws IOException
    {
@@ -100,11 +101,13 @@ public class TeXJavaHelpMk implements TeXApp
       return helpLib.getChoiceMessage(label, argIdx, choiceLabel, numChoices, args);
    }
 
+   @Override
    public void warning(String message)
    {
       logAndStdErrMessage(String.format("%s: %s", getApplicationName(), message));
    }
 
+   @Override
    public void warning(String message, Throwable e)
    {
       logAndStdErrMessage(e, String.format("%s: %s", getApplicationName(), message));
@@ -131,6 +134,7 @@ public class TeXJavaHelpMk implements TeXApp
       }
    }
 
+   @Override
    public void error(String message)
    {
       logAndStdErrMessage(String.format("%s: %s", getApplicationName(), message));
@@ -147,6 +151,17 @@ public class TeXJavaHelpMk implements TeXApp
       {
          error(e.getMessage());
       }
+
+      if (debugMode > 0)
+      {
+         e.printStackTrace();
+      }
+   }
+
+   @Override
+   public void error(String message, Throwable e)
+   {
+      error(message);
 
       if (debugMode > 0)
       {

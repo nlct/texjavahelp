@@ -4,6 +4,27 @@ else
   target_version =
 endif
 
+lib/texjavahelpdemo.jar	: java/texjavahelpdemo/Manifest.txt \
+	classes/com/dickimawbooks/texjavahelpdemo/TeXJavaHelpDemo.class
+	cd classes; \
+	jar cmf ../java/texjavahelpdemo/Manifest.txt ../lib/texjavahelpdemo.jar \
+	com/dickimawbooks/texjavahelpdemo/*.class
+
+classes/com/dickimawbooks/texjavahelpdemo/TeXJavaHelpDemo.class	: classes/com/dickimawbooks/texjavahelpdemo \
+	java/texjavahelpdemo/*.java lib/texjavahelplib.jar \
+	lib/resources/helpset/index.xml
+	cd java/texjavahelpdemo; \
+	javac $(target_version) -d ../../classes \
+	 -Xlint:unchecked -Xlint:deprecation \
+	-cp ../../lib/texparserlib.jar:../../lib/texjavahelplib.jar \
+	*.java
+
+demo:	lib/texjavahelpdemo.jar
+	bin/texjavahelpdemo
+
+classes/com/dickimawbooks/texjavahelpdemo	:
+	mkdir -p classes/com/dickimawbooks/texjavahelpdemo
+
 lib/resources/helpset/index.xml	: lib/texjavahelpmk.jar doc/texjavahelp.pdf
 	bin/texjavahelpmk doc/texjavahelp.tex lib/resources/helpset
 

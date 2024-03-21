@@ -29,14 +29,14 @@ import com.dickimawbooks.texparserlib.TeXParser;
 
 public class TeXJavaHelpLib
 {
-   public TeXJavaHelpLib(TeXApp texApp) throws IOException
+   public TeXJavaHelpLib(TeXJavaHelpLibApp application) throws IOException
    {
-      this(texApp, texApp.getApplicationName(),
-         texApp.getApplicationName().toLowerCase(),
+      this(application, application.getApplicationName(),
+         application.getApplicationName().toLowerCase().replaceAll(" ", ""),
          "/resources");
    }
 
-   public TeXJavaHelpLib(TeXApp texApp,
+   public TeXJavaHelpLib(TeXJavaHelpLibApp application,
       String applicationName, String dictPrefix, String resourcebase)
     throws IOException
    {
@@ -125,25 +125,60 @@ public class TeXJavaHelpLib
 
    public void warning(String message)
    {
-      if (texApp == null)
+      if (application == null)
       {
-         System.err.println(String.format("%s: %s", getApplicationName(), message));
+         System.err.println(message);
       }
       else
       {
-         texApp.warning(null, message);
+         application.warning(message);
       }
    }
 
-   public void warning(TeXParser parser, String message)
+   public void error(String message)
    {
-      if (texApp == null)
+      if (application == null)
       {
-         System.err.println(String.format("%s: %s", getApplicationName(), message));
+         System.err.println(message);
       }
       else
       {
-         texApp.warning(parser, message);
+         application.error(message);
+      }
+   }
+
+   public void error(Exception e)
+   {
+      if (application == null)
+      {
+         String msg = e.getMessage();
+
+         if (msg == null)
+         {
+            msg = e.toString();
+         }
+
+         System.err.println(msg);
+
+         e.printStackTrace();
+      }
+      else
+      {
+         application.error(e);
+      }
+   }
+
+   public void error(String message, Exception e)
+   {
+      if (application == null)
+      {
+         System.err.println(message);
+
+         e.printStackTrace();
+      }
+      else
+      {
+         application.error(message, e);
       }
    }
 
@@ -152,14 +187,14 @@ public class TeXJavaHelpLib
       return applicationName;
    }
 
-   public void setTeXApp(TeXApp texApp)
+   public void setTeXJavaHelpLibApp(TeXJavaHelpLibApp application)
    {
-      this.texApp = texApp;
+      this.application = application;
    }
 
-   public TeXApp getTeXApp()
+   public TeXJavaHelpLibApp getApplication()
    {
-      return texApp;
+      return application;
    }
 
    public String getResourcePath()
@@ -212,5 +247,5 @@ public class TeXJavaHelpLib
 
    protected MessageSystem messages;
    protected String applicationName;
-   protected TeXApp texApp;
+   protected TeXJavaHelpLibApp application;
 }
