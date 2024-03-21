@@ -42,9 +42,15 @@ import com.dickimawbooks.texparserlib.html.DivisionNode;
  */
 public class NavigationNode implements TreeNode
 {
-   protected NavigationNode(String key, NavigationNode parentNode)
+   protected NavigationNode(String key, String ref)
+   {
+      this(key, ref, null);
+   }
+
+   protected NavigationNode(String key, String ref, NavigationNode parentNode)
    {
       this.key = key;
+      this.ref = ref;
       this.parent = parentNode;
 
       if (parent != null)
@@ -58,17 +64,14 @@ public class NavigationNode implements TreeNode
       }
    }
 
-   protected NavigationNode(String key, String prefix, String title, String filename)
-   {
-      this.key = key;
-      this.prefix = prefix;
-      this.title = title;
-      this.filename = filename;
-   }
-
    public String getKey()
    {
       return key;
+   }
+
+   public String getRef()
+   {
+      return ref;
    }
 
    public String getPrefix()
@@ -181,12 +184,11 @@ public class NavigationNode implements TreeNode
             DivisionNode childDivNode = it.next();
 
             NavigationNode childNavNode = new NavigationNode(
-              childDivNode.getRef(), childDivNode.getPrefix(),
-              childDivNode.getTitle(), childDivNode.getFile().getName());
+              childDivNode.getId(), childDivNode.getRef(), this);
 
-            childNavNode.parent = this;
-
-            children.add(childNavNode);
+            childNavNode.prefix = childDivNode.getPrefix();
+            childNavNode.title = childDivNode.getTitle();
+            childNavNode.filename = childDivNode.getFile().getName();
 
             childNavNode.addChildren(childDivNode);
          }
@@ -196,8 +198,11 @@ public class NavigationNode implements TreeNode
    public static NavigationNode createTree(DivisionNode divNode)
    {
       NavigationNode navNode = new NavigationNode(
-        divNode.getRef(), divNode.getPrefix(), divNode.getTitle(),
-        divNode.getFile().getName());
+        divNode.getId(), divNode.getRef());
+
+      navNode.prefix = divNode.getPrefix();
+      navNode.title = divNode.getTitle();
+      navNode.filename = divNode.getFile().getName();
 
       navNode.addChildren(divNode);
 
@@ -227,7 +232,10 @@ public class NavigationNode implements TreeNode
    {
       // The key shouldn't have any awkward characters, but just in case
 
-      out.printf("<node key=\"%s\">%n", TeXJavaHelpLib.encodeHTML(key, true));
+      out.printf("<node key=\"%s\" ref=\"%s\">%n",
+        TeXJavaHelpLib.encodeHTML(key, true),
+        TeXJavaHelpLib.encodeHTML(ref, true)
+       );
 
       if (prefix != null)
       {
@@ -259,7 +267,7 @@ public class NavigationNode implements TreeNode
       return reader.getRootNode();
    }
 
-   protected final String key;
+   protected final String key, ref;
    protected String prefix;
    protected String title;
    protected String filename;
@@ -326,8 +334,17 @@ class NavigationTreeReader extends XMLReaderAdapter
              "Missing ''{0}'' attribute in <{0}>", "key", "node"));
          }
 
+         String ref = attrs.getValue("ref");
+
+         if (ref == null)
+         {
+            throw new SAXException(messageSystem.getMessageWithFallback(
+             "error.xml.missing_attr_in_tag", 
+             "Missing ''{0}'' attribute in <{0}>", "ref", "node"));
+         }
+
          currentParent = currentNode;
-         currentNode = new NavigationNode(key, currentParent);
+         currentNode = new NavigationNode(key, ref, currentParent);
 
          if (rootNode == null)
          {
