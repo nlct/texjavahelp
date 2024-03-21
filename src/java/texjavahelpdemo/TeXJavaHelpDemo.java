@@ -19,7 +19,14 @@
 
 package com.dickimawbooks.texjavahelpdemo;
 
+import java.util.Locale;
+import java.util.Properties;
+
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.File;
+import java.io.PrintWriter;
 
 import java.text.MessageFormat;
 
@@ -42,26 +49,135 @@ public class TeXJavaHelpDemo extends JFrame implements TeXJavaHelpLibApp
 
    protected void init() throws IOException
    {
-      helpLib = new TeXJavaHelpLib(this);
+      loadProperties();
+
+      helpLib = new TeXJavaHelpLib(this,
+       getLocaleProperty("messages.locale", Locale.getDefault()),
+       getLocaleProperty("helpset.locale", Locale.getDefault()));
+
       initGui();
       setVisible(true);
    }
 
+   protected File getPropertyFile()
+   {
+      return null;
+   }
+
+   protected void loadProperties() throws IOException
+   {
+      File file = getPropertyFile();
+      properties = new Properties();
+
+      if (file == null || !file.exists())
+      {
+         return;
+      }
+
+      BufferedReader in = null;
+
+      try
+      {
+         in = new BufferedReader(new FileReader(file));
+         properties.load(in);
+      }
+      finally
+      {
+         if (in != null)
+         {
+            in.close();
+         }
+      }
+   }
+
+   protected void saveProperties() throws IOException
+   {
+      File file = getPropertyFile();
+
+      if (file != null)
+      {
+         PrintWriter writer = null;
+
+         try
+         {
+            writer = new PrintWriter(file);
+            properties.store(writer,
+             getMessage("properties.comment", getApplicationName()));
+         }
+         finally
+         {
+            if (writer != null)
+            {
+               writer.close();
+            }
+         }
+      }
+   }
+
+   public Locale getLocaleProperty(String propName, Locale defaultValue)
+   {
+      Object value = properties.get(propName);
+
+      if (value == null)
+      {
+         return defaultValue;
+      }
+
+      if (value instanceof Locale)
+      {
+         return (Locale)value;
+      }
+      else
+      {
+         return Locale.forLanguageTag(value.toString());
+      }
+   }
+
+   public String getStringProperty(String propName, String defaultValue)
+   {
+      Object value = properties.get(propName);
+
+      if (value == null)
+      {
+         return defaultValue;
+      }
+
+      return value.toString();
+   }
+
    protected void initGui()
    {
+      String lookandfeel = getStringProperty("lookandfeel", null);
+
+      if (lookandfeel != null)
+      {
+         try
+         {
+            setUI(lookandfeel);
+         }
+         catch (Exception e)
+         {
+            error(getMessage("error.lookandfeel_failed", lookandfeel), e);
+            properties.remove("lookandfeel");
+         }
+      }
+
       setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
       addWindowListener(new WindowAdapter()
       {
          public void windowClosing(WindowEvent evt)
          {
-            if (confirmYesNo("message.confirm_quit")
-               == JOptionPane.YES_OPTION)
-            {
-               quit();
-            }
+            quit();
          }
       });
+
+      ImageIcon ic = getLogoIcon();
+
+      if (ic != null)
+      {
+         setIconImage(ic.getImage());
+      }
 
       Toolkit tk = Toolkit.getDefaultToolkit();
       Dimension dim = tk.getScreenSize();
@@ -70,16 +186,49 @@ public class TeXJavaHelpDemo extends JFrame implements TeXJavaHelpLibApp
       setLocationRelativeTo(null);
    }
 
+   public void setUI(String lookandfeel)
+    throws ClassNotFoundException,
+           InstantiationException,
+           IllegalAccessException,
+           UnsupportedLookAndFeelException
+   {
+      UIManager.setLookAndFeel(lookandfeel);
+
+      SwingUtilities.updateComponentTreeUI(this);
+
+      properties.setProperty("lookandfeel", lookandfeel);
+   }
+
+   public ImageIcon getLogoIcon()
+   {
+      return null;
+   }
+
    public void quit()
    {
+      if (confirmYesNo("message.confirm_quit")
+         != JOptionPane.YES_OPTION)
+      {
+         return;
+      }
+
+      try
+      {
+         saveProperties();
+      }
+      catch (Exception e)
+      {
+         error(getMessage("error.saveprops_failed", getPropertyFile()), e);
+      }
+
       System.exit(0);
    }
 
    public int confirmYesNo(String tag)
    {
       return JOptionPane.showConfirmDialog(this,
-         helpLib.getMessage(tag),
-         helpLib.getMessage(tag+".title"),
+         getMessage(tag),
+         getMessage(tag+".title"),
         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
    }
 
@@ -94,6 +243,11 @@ public class TeXJavaHelpDemo extends JFrame implements TeXJavaHelpLibApp
       }
 
       return helpLib.getMessageWithFallback(label, fallbackFormat, params);
+   }
+
+   public String getMessage(String label, Object... params)
+   {
+      return helpLib.getMessage(label, params);
    }
 
    @Override
@@ -213,6 +367,8 @@ public class TeXJavaHelpDemo extends JFrame implements TeXJavaHelpLibApp
    }
 
    private TeXJavaHelpLib helpLib;
+
+   private Properties properties;
 
    public final static String APP_NAME = "TeX Java Help Demo";
 }

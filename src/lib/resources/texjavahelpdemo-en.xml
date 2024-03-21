@@ -3,7 +3,10 @@
 <properties>
 <comment>English language file for texjavahelpdemo</comment>
 
-<!--  Messages -->
+<!-- Application properties -->
+<entry key="properties.comment">Properties file for {0}</entry>
+
+<!--  Information Messages -->
 <entry key="message.confirm_quit.title">Confirm Quit</entry>
 <entry key="message.confirm_quit">Are you sure you want to quit?</entry>
 
@@ -12,5 +15,7 @@
 
 <!--  Errors -->
 <entry key="error.title">Error</entry>
+<entry key="error.lookandfeel_failed">Failed to set Look &ampl; Feel to ''{0}''</entry>
+<entry key="error.saveprops_failed">Failed to save properties file ''{0}''</entry>
 
 </properties>

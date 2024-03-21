@@ -18,6 +18,8 @@
 */
 package com.dickimawbooks.texjavahelplib;
 
+import java.util.Locale;
+
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
@@ -31,19 +33,36 @@ public class TeXJavaHelpLib
 {
    public TeXJavaHelpLib(TeXJavaHelpLibApp application) throws IOException
    {
+      this(application, Locale.getDefault(), Locale.getDefault());
+   }
+
+   public TeXJavaHelpLib(TeXJavaHelpLibApp application,
+       Locale messagesLocale, Locale helpsetLocale)
+     throws IOException
+   {
       this(application, application.getApplicationName(),
          application.getApplicationName().toLowerCase().replaceAll(" ", ""),
-         "/resources");
+         "/resources", messagesLocale, helpsetLocale);
    }
 
    public TeXJavaHelpLib(TeXJavaHelpLibApp application,
       String applicationName, String dictPrefix, String resourcebase)
     throws IOException
    {
+      this(application, applicationName, dictPrefix, resourcebase,
+        Locale.getDefault(), Locale.getDefault());
+   }
+
+   public TeXJavaHelpLib(TeXJavaHelpLibApp application,
+      String applicationName, String dictPrefix, String resourcebase,
+      Locale messagesLocale, Locale helpsetLocale)
+    throws IOException
+   {
       this.applicationName = applicationName;
       this.resourcebase = resourcebase;
+      this.helpsetLocale = helpsetLocale;
 
-      messages = new MessageSystem(getResourcePath(), "texjavahelplib");
+      messages = new MessageSystem(getResourcePath(), "texjavahelplib", messagesLocale);
 
       if (dictPrefix != null)
       {
@@ -204,15 +223,92 @@ public class TeXJavaHelpLib
 
    public String getHelpSetResourcePath()
    {
-      return resourcebase + "/" + helpsetdir;
+      if (helpsetsubdir == null || helpsetsubdir.isEmpty())
+      {
+         return resourcebase + "/" + helpsetdir;
+      }
+      else
+      {
+         return resourcebase + "/" + helpsetdir + "/" + helpsetsubdir;
+      }
    }
 
    public InputStream getNavigationXMLInputStream()
      throws FileNotFoundException
    {
-      String path = getHelpSetResourcePath() + "/" + navxmlfilename;
+      String path;
+      InputStream stream = null;
 
-      InputStream stream = getClass().getResourceAsStream(path);
+      if (helpsetLocale == null || helpsetsubdir != null)
+      {
+         path = getHelpSetResourcePath() + "/" + navxmlfilename;
+         stream = getClass().getResourceAsStream(path);
+      }
+      else
+      {
+         helpsetsubdir = helpsetLocale.toLanguageTag();
+
+         path = getHelpSetResourcePath() + "/" + helpsetsubdir
+            + "/" + navxmlfilename;
+
+         stream = getClass().getResourceAsStream(path);
+
+         if (stream == null)
+         {
+            String lang = helpsetLocale.getLanguage();
+            String country = helpsetLocale.getCountry();
+
+            if (country == null || country.isEmpty())
+            {
+               helpsetsubdir = lang;
+
+               path = getHelpSetResourcePath() + "/" + helpsetsubdir
+                  + "/" + navxmlfilename;
+            }
+            else
+            {
+               helpsetsubdir = lang + "-" + country;
+
+               path = getHelpSetResourcePath() + "/" + helpsetsubdir
+                  + "/" + navxmlfilename;
+
+               stream = getClass().getResourceAsStream(path);
+
+               if (stream == null)
+               {
+                  helpsetsubdir = lang;
+
+                  path = getHelpSetResourcePath() + "/" + helpsetsubdir
+                     + "/" + navxmlfilename;
+               }
+            }
+
+            stream = getClass().getResourceAsStream(path);
+
+            if (stream == null)
+            {
+               String script = helpsetLocale.getScript();
+
+               if (script != null && !script.isEmpty())
+               {
+                  helpsetsubdir = lang + "-" + script;
+
+                  path = getHelpSetResourcePath() + "/" + helpsetsubdir
+                     + "/" + navxmlfilename;
+
+                  stream = getClass().getResourceAsStream(path);
+               }
+
+               if (stream == null)
+               {
+                  path = getHelpSetResourcePath() + "/" + navxmlfilename;
+                  helpsetsubdir = "";
+
+                  stream = getClass().getResourceAsStream(path);
+               }
+            }
+         }
+      }
 
       if (stream == null)
       {
@@ -241,6 +337,8 @@ public class TeXJavaHelpLib
    protected String resourcebase = "/resources";
 
    protected String helpsetdir = "helpset";
+   protected String helpsetsubdir = null;
+   protected Locale helpsetLocale;
    protected NavigationTree navigationTree;
    protected String navhtmlfilename, navxmlfilename;
    protected String htmlsuffix = "html";

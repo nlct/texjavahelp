@@ -41,11 +41,23 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
       this("/resources", tagPrefix);
    }
 
+   public MessageSystem(String tagPrefix, Locale locale) throws IOException
+   {
+      this("/resources", tagPrefix, locale);
+   }
+
    public MessageSystem(String resourcebase, String tagPrefix) throws IOException
+   {
+      this(resourcebase, tagPrefix, Locale.getDefault());
+   }
+
+   public MessageSystem(String resourcebase, String tagPrefix, Locale locale)
+     throws IOException
    {
       super();
 
       this.resourcebase = resourcebase;
+      this.locale = locale;
 
       loadDictionary(tagPrefix);
    }
@@ -57,7 +69,6 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
 
    protected URL getLanguageFile(String tagPrefix) throws FileNotFoundException
    {
-      Locale locale = Locale.getDefault();
       String tag = locale.toLanguageTag();
 
       String dict = getLanguageFileName(tagPrefix, tag);
@@ -204,5 +215,11 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
       return fmt.format(args);
    }
 
+   public Locale getLocale()
+   {
+      return locale;
+   }
+
    protected String resourcebase;
+   protected Locale locale;
 }
