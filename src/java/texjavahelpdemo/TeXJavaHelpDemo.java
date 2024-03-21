@@ -32,7 +32,10 @@ import java.text.MessageFormat;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.FlowLayout;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowAdapter;
 
@@ -40,7 +43,8 @@ import javax.swing.*;
 
 import com.dickimawbooks.texjavahelplib.*;
 
-public class TeXJavaHelpDemo extends JFrame implements TeXJavaHelpLibApp
+public class TeXJavaHelpDemo extends JFrame
+  implements TeXJavaHelpLibApp, ActionListener
 {
    protected TeXJavaHelpDemo()
    {
@@ -179,6 +183,26 @@ public class TeXJavaHelpDemo extends JFrame implements TeXJavaHelpLibApp
          setIconImage(ic.getImage());
       }
 
+      JMenuBar mBar = new JMenuBar();
+      setJMenuBar(mBar);
+
+      JMenu fileM = createJMenu("menu.file");
+      mBar.add(fileM);
+
+      fileM.add(createJMenuItem("menu.file", "quit"));
+
+      JMenu helpM = createJMenu("menu.help");
+      mBar.add(helpM);
+
+      helpM.add(createJMenuItem("menu.help", "manual"));
+
+      JPanel mainPanel = new JPanel(new FlowLayout());
+
+      getContentPane().add(mainPanel, "Center");
+
+      mainPanel.add(createJLabel("label.demo"));
+      mainPanel.add(createJButton("button.demo"));
+
       Toolkit tk = Toolkit.getDefaultToolkit();
       Dimension dim = tk.getScreenSize();
       setSize(dim.width*3/4, dim.height*3/4);
@@ -224,12 +248,77 @@ public class TeXJavaHelpDemo extends JFrame implements TeXJavaHelpLibApp
       System.exit(0);
    }
 
+   @Override
+   public void actionPerformed(ActionEvent evt)
+   {
+      String action = evt.getActionCommand();
+
+      if (action == null) return;
+
+      if (action.equals("quit"))
+      {
+         quit();
+      }
+   }
+
+   public JMenu createJMenu(String tag)
+   {
+      return helpLib.createJMenu(tag);
+   }
+
+   public JMenuItem createJMenuItem(String tag)
+   {
+      return helpLib.createJMenuItem(tag);
+   }
+
+   public JMenuItem createJMenuItem(String parentTag, String action)
+   {
+      return helpLib.createJMenuItem(parentTag, action, this);
+   }
+
+   public JMenuItem createJMenuItem(String parentTag, String action,
+     ActionListener actionListener)
+   {
+      return helpLib.createJMenuItem(parentTag, action, actionListener);
+   }
+
+   public JLabel createJLabel(String tag)
+   {
+      return helpLib.createJLabel(tag);
+   }
+
+   public JButton createJButton(String tag)
+   {
+      return helpLib.createJButton(tag);
+   }
+
+   public JButton createJButton(String parentTag, String action)
+   {
+      return helpLib.createJButton(parentTag, action, this);
+   }
+
+   public JButton createJButton(String parentTag, String action,
+     ActionListener actionListener)
+   {
+      return helpLib.createJButton(parentTag, action, actionListener);
+   }
+
    public int confirmYesNo(String tag)
    {
       return JOptionPane.showConfirmDialog(this,
          getMessage(tag),
          getMessage(tag+".title"),
         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+   }
+
+   public int getMnemonic(String label)
+   {
+      return helpLib.getMnemonic(label);
+   }
+
+   public String getMessageIfExists(String label, Object... args)
+   {
+      return helpLib.getMessageIfExists(label, args);
    }
 
    public String getMessageWithFallback(String label,

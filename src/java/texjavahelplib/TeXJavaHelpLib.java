@@ -24,6 +24,13 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+
 import org.xml.sax.SAXException;
 
 import com.dickimawbooks.texparserlib.TeXApp;
@@ -332,6 +339,137 @@ public class TeXJavaHelpLib
       navxmlfilename = navBaseName+".xml";
 
       navigationTree = NavigationTree.load(this);
+   }
+
+   // GUI components
+
+   public int getMnemonic(String label)
+   {
+      String text = getMessageIfExists(label);
+
+      if (text == null || text.isEmpty()) return -1;
+
+      return text.codePointAt(0);
+   }
+
+   public JMenu createJMenu(String tag)
+   {
+      JMenu jmenu = new JMenu(getMessage(tag));
+
+      int mnemonic = getMnemonic(tag+".mnemonic");
+
+      if (mnemonic > 0)
+      {
+         jmenu.setMnemonic(mnemonic);
+      }
+
+      String tooltip = getMessageIfExists(tag+".tooltip");
+
+      if (tooltip != null)
+      {
+         jmenu.setToolTipText(tooltip);
+      }
+
+      return jmenu;
+   }
+
+   public JMenuItem createJMenuItem(String tag)
+   {
+      return createJMenuItem(tag, null, null);
+   }
+
+   public JMenuItem createJMenuItem(String parentTag, String action,
+     ActionListener actionListener)
+   {
+      String tag = action == null ? parentTag : parentTag+"."+action;
+
+      JMenuItem item = new JMenuItem(getMessage(tag));
+
+      if (action != null)
+      {
+         item.setActionCommand(action);
+      }
+
+      if (actionListener != null)
+      {
+         item.addActionListener(actionListener);
+      }
+
+      int mnemonic = getMnemonic(tag+".mnemonic");
+
+      if (mnemonic > 0)
+      {
+         item.setMnemonic(mnemonic);
+      }
+
+      String tooltip = getMessageIfExists(tag+".tooltip");
+
+      if (tooltip != null)
+      {
+         item.setToolTipText(tooltip);
+      }
+
+      return item;
+   }
+
+   public JLabel createJLabel(String tag)
+   {
+      JLabel jlabel = new JLabel(getMessage(tag));
+
+      int mnemonic = getMnemonic(tag+".mnemonic");
+
+      if (mnemonic > 0)
+      {
+         jlabel.setDisplayedMnemonic(mnemonic);
+      }
+
+      String tooltip = getMessageIfExists(tag+".tooltip");
+
+      if (tooltip != null)
+      {
+         jlabel.setToolTipText(tooltip);
+      }
+
+      return jlabel;
+   }
+
+   public JButton createJButton(String tag)
+   {
+      return createJButton(tag, null, null);
+   }
+
+   public JButton createJButton(String parentTag, String action,
+     ActionListener actionListener)
+   {
+      String tag = action == null ? parentTag : parentTag+"."+action;
+
+      JButton button = new JButton(getMessage(tag));
+
+      if (action != null)
+      {
+         button.setActionCommand(action);
+      }
+
+      if (actionListener != null)
+      {
+         button.addActionListener(actionListener);
+      }
+
+      int mnemonic = getMnemonic(tag+".mnemonic");
+
+      if (mnemonic > 0)
+      {
+         button.setMnemonic(mnemonic);
+      }
+
+      String tooltip = getMessageIfExists(tag+".tooltip");
+
+      if (tooltip != null)
+      {
+         button.setToolTipText(tooltip);
+      }
+
+      return button;
    }
 
    protected String resourcebase = "/resources";
