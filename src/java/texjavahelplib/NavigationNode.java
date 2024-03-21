@@ -108,6 +108,11 @@ public class NavigationNode implements TreeNode
       return children == null ? null : children.elements();
    }
 
+   public Iterable<NavigationNode> getChildren()
+   {
+      return children;
+   }
+
    @Override
    public TreeNode getParent()
    {

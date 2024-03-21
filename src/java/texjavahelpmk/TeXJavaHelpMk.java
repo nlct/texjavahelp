@@ -40,41 +40,45 @@ import com.dickimawbooks.texparserlib.latex.KeyValList;
 import com.dickimawbooks.texparserlib.latex.color.ColorSty;
 import com.dickimawbooks.texparserlib.html.*;
 
-import com.dickimawbooks.texjavahelplib.MessageSystem;
+import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 
 public class TeXJavaHelpMk implements TeXApp
 {
-   protected void loadDictionary() throws IOException
+   protected void initHelpLibrary() throws IOException
    {
-      messages = new MessageSystem("texjavahelpmk");
-      messages.loadDictionary("texjavahelplib");
+      helpLib = new TeXJavaHelpLib(this);
+   }
+
+   public TeXJavaHelpLib getHelpLib()
+   {
+      return helpLib;
    }
 
    public String getMessageWithFallback(String label,
        String fallbackFormat, Object... params)
    {
-      if (messages == null)
+      if (helpLib == null)
       {
          MessageFormat fmt = new MessageFormat(fallbackFormat);
 
          return fmt.format(params);
       }
 
-      return messages.getMessageWithFallback(label, fallbackFormat, params);
+      return helpLib.getMessageWithFallback(label, fallbackFormat, params);
    }
 
    public String getMessageIfExists(String label, Object... args)
    {
-      if (messages == null) return null;
+      if (helpLib == null) return null;
 
-      return messages.getMessageIfExists(label, args);
+      return helpLib.getMessageIfExists(label, args);
    }
 
    @Override
    public String getMessage(String label, Object... params)
    {
-      if (messages == null)
+      if (helpLib == null)
       {// message system hasn't been initialised
 
          String param = (params.length == 0 ? "" : params[0].toString());
@@ -87,22 +91,13 @@ public class TeXJavaHelpMk implements TeXApp
          return String.format("%s[%s]", label, param);
       }
 
-      String msg = messages.getMessage(label, params);
-
-      if (msg == null)
-      {
-         warning("Can't find message for label: "+label);
-
-         return label;
-      }
-
-      return msg;
+      return helpLib.getMessage(label, params);
    }
 
    public String getChoiceMessage(String label, int argIdx,
       String choiceLabel, int numChoices, Object... args)
    {
-      return messages.getChoiceMessage(label, argIdx, choiceLabel, numChoices, args);
+      return helpLib.getChoiceMessage(label, argIdx, choiceLabel, numChoices, args);
    }
 
    public void warning(String message)
@@ -118,15 +113,22 @@ public class TeXJavaHelpMk implements TeXApp
    @Override
    public void warning(TeXParser parser, String message)
    {     
-      File file = parser.getCurrentFile();
-      int lineNum = parser.getLineNumber();
+      if (parser == null)
+      {
+         warning(message);
+      }
+      else
+      {
+         File file = parser.getCurrentFile();
+         int lineNum = parser.getLineNumber();
 
-      if (file != null && lineNum > 0)
-      {  
-         message = String.format("%s:%d: %s%n", file.getName(), lineNum, message);
-      }  
+         if (file != null && lineNum > 0)
+         {  
+            message = String.format("%s:%d: %s%n", file.getName(), lineNum, message);
+         }  
 
-      logAndStdErrMessage(message);
+         logAndStdErrMessage(message);
+      }
    }
 
    public void error(String message)
@@ -1429,7 +1431,7 @@ public class TeXJavaHelpMk implements TeXApp
 
       try
       {
-         app.loadDictionary();
+         app.initHelpLibrary();
          app.parseArgs(args);
          app.run();
       }
@@ -1461,7 +1463,7 @@ public class TeXJavaHelpMk implements TeXApp
    private File tmpDir = null;
    private File logFile = null;
    private PrintWriter logWriter = null;
-   private MessageSystem messages;
+   private TeXJavaHelpLib helpLib;
 
    private int debugMode = 0;
 

@@ -37,7 +37,7 @@ public class TeXJavaHelpSty extends UserGuideSty
      boolean loadParentOptions, ColorSty colorSty)
    throws IOException
    {
-      super(options, "texjavahelpsty", listener, loadParentOptions, colorSty);
+      super(options, "texjavahelp", listener, loadParentOptions, colorSty);
    }
 
    @Override

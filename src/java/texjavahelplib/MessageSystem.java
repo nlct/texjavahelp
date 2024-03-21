@@ -38,14 +38,21 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
 {
    public MessageSystem(String tagPrefix) throws IOException
    {
+      this("/resources", tagPrefix);
+   }
+
+   public MessageSystem(String resourcebase, String tagPrefix) throws IOException
+   {
       super();
+
+      this.resourcebase = resourcebase;
 
       loadDictionary(tagPrefix);
    }
 
    protected String getLanguageFileName(String tagPrefix, String tag)
    {
-      return String.format("/resources/%s-%s.xml", tagPrefix, tag);
+      return String.format("%s/%s-%s.xml", resourcebase, tagPrefix, tag);
    }
 
    protected URL getLanguageFile(String tagPrefix) throws FileNotFoundException
@@ -84,7 +91,10 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
       {
          throw new FileNotFoundException
          (
-            "Can't find dictionary resource file matching locale "+locale+" or fallback \"en\""
+            "Can't find dictionary resource file matching locale "
+             + locale
+             + " or fallback \"en\" matching "
+             + getLanguageFileName(tagPrefix, "*")
          );
       }
 
@@ -194,4 +204,5 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
       return fmt.format(args);
    }
 
+   protected String resourcebase;
 }
