@@ -16,7 +16,7 @@ classes/com/dickimawbooks/texjavahelpdemo/TeXJavaHelpDemo.class	: classes/com/di
 	cd java/texjavahelpdemo; \
 	javac $(target_version) -d ../../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
-	-cp ../../lib/texparserlib.jar:../../lib/texjavahelplib.jar \
+	-cp ../../lib/texjavahelplib.jar \
 	*.java
 
 demo:	lib/texjavahelpdemo.jar

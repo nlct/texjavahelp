@@ -24,12 +24,15 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
+import java.net.URL;
+
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 
 import org.xml.sax.SAXException;
 
@@ -240,6 +243,22 @@ public class TeXJavaHelpLib
       }
    }
 
+   public URL getHelpSetResource(String filename)
+    throws FileNotFoundException
+   {
+      String path = getHelpSetResourcePath() + "/" + filename;
+
+      URL url = getClass().getResource(path);
+
+      if (url == null)
+      {
+         throw new FileNotFoundException(
+           getMessage("error.resource_not_found", path));
+      }
+
+      return url;
+   }
+
    public InputStream getNavigationXMLInputStream()
      throws FileNotFoundException
    {
@@ -253,10 +272,11 @@ public class TeXJavaHelpLib
       }
       else
       {
+         String base = resourcebase + "/" + helpsetdir;
+
          helpsetsubdir = helpsetLocale.toLanguageTag();
 
-         path = getHelpSetResourcePath() + "/" + helpsetsubdir
-            + "/" + navxmlfilename;
+         path = base + "/" + helpsetsubdir + "/" + navxmlfilename;
 
          stream = getClass().getResourceAsStream(path);
 
@@ -264,20 +284,19 @@ public class TeXJavaHelpLib
          {
             String lang = helpsetLocale.getLanguage();
             String country = helpsetLocale.getCountry();
+            String tag = lang + "-" + country;
 
-            if (country == null || country.isEmpty())
+            if (country == null || country.isEmpty() || helpsetsubdir.equals(tag))
             {
                helpsetsubdir = lang;
 
-               path = getHelpSetResourcePath() + "/" + helpsetsubdir
-                  + "/" + navxmlfilename;
+               path = base + "/" + helpsetsubdir + "/" + navxmlfilename;
             }
             else
             {
-               helpsetsubdir = lang + "-" + country;
+               helpsetsubdir = tag;
 
-               path = getHelpSetResourcePath() + "/" + helpsetsubdir
-                  + "/" + navxmlfilename;
+               path = base + "/" + helpsetsubdir + "/" + navxmlfilename;
 
                stream = getClass().getResourceAsStream(path);
 
@@ -285,8 +304,7 @@ public class TeXJavaHelpLib
                {
                   helpsetsubdir = lang;
 
-                  path = getHelpSetResourcePath() + "/" + helpsetsubdir
-                     + "/" + navxmlfilename;
+                  path = base + "/" + helpsetsubdir + "/" + navxmlfilename;
                }
             }
 
@@ -300,7 +318,7 @@ public class TeXJavaHelpLib
                {
                   helpsetsubdir = lang + "-" + script;
 
-                  path = getHelpSetResourcePath() + "/" + helpsetsubdir
+                  path = base + "/" + helpsetsubdir
                      + "/" + navxmlfilename;
 
                   stream = getClass().getResourceAsStream(path);
@@ -308,7 +326,7 @@ public class TeXJavaHelpLib
 
                if (stream == null)
                {
-                  path = getHelpSetResourcePath() + "/" + navxmlfilename;
+                  path = base + "/" + navxmlfilename;
                   helpsetsubdir = "";
 
                   stream = getClass().getResourceAsStream(path);
@@ -335,13 +353,69 @@ public class TeXJavaHelpLib
    public void initHelpSet(String helpsetdir, String navBaseName)
     throws IOException,SAXException
    {
+      initHelpSet(helpsetdir, navBaseName,
+        getMessageWithFallback("manual.title", "Manual"));
+   }
+
+   public void initHelpSet(String helpsetdir, String navBaseName, String title)
+    throws IOException,SAXException
+   {
       navhtmlfilename = navBaseName+"."+htmlsuffix;
       navxmlfilename = navBaseName+".xml";
 
       navigationTree = NavigationTree.load(this);
+
+      helpFrame = new HelpFrame(this, title);
+   }
+
+   public NavigationTree getNavigationTree()
+   {
+      return navigationTree;
    }
 
    // GUI components
+
+   public HelpFrame getHelpFrame()
+   {
+      return helpFrame;
+   }
+
+   public void openHelp() throws HelpSetNotInitialisedException
+   {
+      if (helpFrame == null)
+      {
+         throw new HelpSetNotInitialisedException(
+           getMessageWithFallback(
+           "error.no_helpset", "Helpset has not been initialised"));
+      }
+
+      helpFrame.setVisible(true);
+      helpFrame.toFront();
+   }
+
+   public void openHelpForId(String id)
+    throws UnknownNodeException,IOException,HelpSetNotInitialisedException
+   {
+      if (helpFrame == null)
+      {
+         throw new HelpSetNotInitialisedException(
+           getMessageWithFallback(
+           "error.no_helpset", "Helpset has not been initialised"));
+      }
+
+      NavigationNode node = navigationTree.getNodeById(id);
+
+      if (node == null)
+      {
+         throw new UnknownNodeException(getMessageWithFallback(
+           "error.node_id_not_found", "Node with ID ''{0}'' not found", id));
+      }
+
+      URL url = getHelpSetResource(node.getFileName());
+
+      helpFrame.setPage(url);
+      openHelp();
+   }
 
    public int getMnemonic(String label)
    {
@@ -370,6 +444,13 @@ public class TeXJavaHelpLib
          jmenu.setToolTipText(tooltip);
       }
 
+      String desc = getMessageIfExists(tag+".description");
+
+      if (desc != null)
+      {
+         jmenu.getAccessibleContext().setAccessibleDescription(desc);
+      }
+
       return jmenu;
    }
 
@@ -380,6 +461,12 @@ public class TeXJavaHelpLib
 
    public JMenuItem createJMenuItem(String parentTag, String action,
      ActionListener actionListener)
+   {
+      return createJMenuItem(parentTag, action, actionListener, null);
+   }
+
+   public JMenuItem createJMenuItem(String parentTag, String action,
+     ActionListener actionListener, KeyStroke accelerator)
    {
       String tag = action == null ? parentTag : parentTag+"."+action;
 
@@ -395,6 +482,11 @@ public class TeXJavaHelpLib
          item.addActionListener(actionListener);
       }
 
+      if (accelerator != null)
+      {
+         item.setAccelerator(accelerator);
+      }
+
       int mnemonic = getMnemonic(tag+".mnemonic");
 
       if (mnemonic > 0)
@@ -407,6 +499,13 @@ public class TeXJavaHelpLib
       if (tooltip != null)
       {
          item.setToolTipText(tooltip);
+      }
+
+      String desc = getMessageIfExists(tag+".description");
+
+      if (desc != null)
+      {
+         item.getAccessibleContext().setAccessibleDescription(desc);
       }
 
       return item;
@@ -428,6 +527,13 @@ public class TeXJavaHelpLib
       if (tooltip != null)
       {
          jlabel.setToolTipText(tooltip);
+      }
+
+      String desc = getMessageIfExists(tag+".description");
+
+      if (desc != null)
+      {
+         jlabel.getAccessibleContext().setAccessibleDescription(desc);
       }
 
       return jlabel;
@@ -469,6 +575,13 @@ public class TeXJavaHelpLib
          button.setToolTipText(tooltip);
       }
 
+      String desc = getMessageIfExists(tag+".description");
+
+      if (desc != null)
+      {
+         button.getAccessibleContext().setAccessibleDescription(desc);
+      }
+
       return button;
    }
 
@@ -480,6 +593,8 @@ public class TeXJavaHelpLib
    protected NavigationTree navigationTree;
    protected String navhtmlfilename, navxmlfilename;
    protected String htmlsuffix = "html";
+
+   protected HelpFrame helpFrame;
 
    protected MessageSystem messages;
    protected String applicationName;

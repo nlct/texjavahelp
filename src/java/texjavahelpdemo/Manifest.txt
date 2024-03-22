@@ -1,2 +1,2 @@
 Main-Class: com/dickimawbooks/texjavahelpdemo/TeXJavaHelpDemo
-Class-Path: . texparserlib.jar texjavahelplib.jar
+Class-Path: . texjavahelplib.jar

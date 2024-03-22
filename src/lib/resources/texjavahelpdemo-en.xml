@@ -15,6 +15,7 @@
 <entry key="menu.file.quit">Quit</entry>
 <entry key="menu.file.quit.mnemonic">Q</entry>
 <entry key="menu.file.quit.tooltip">Exit application</entry>
+<entry key="menu.file.quit.description">This menu item quits the application</entry>
 
 <entry key="menu.help">Help</entry>
 <entry key="menu.help.mnemonic">H</entry>

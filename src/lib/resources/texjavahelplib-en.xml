@@ -13,5 +13,7 @@
 <entry key="error.xml.unknown_end_tag">Unknown end tag &lt;/{0}&gt; found</entry>
 <entry key="error.xml.unexpected_chars">Unexpected content ''{0}'' found</entry>
 <entry key="error.resource_not_found">Resource file ''{0}'' not found</entry>
+<entry key="error.no_helpset">Helpset has not been initialised</entry>
+<entry key="error.node_id_not_found">Node with ID ''{0}'' not found</entry>
 
 </properties>

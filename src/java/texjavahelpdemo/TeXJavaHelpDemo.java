@@ -38,8 +38,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.*;
+
+import org.xml.sax.SAXException;
 
 import com.dickimawbooks.texjavahelplib.*;
 
@@ -51,7 +54,7 @@ public class TeXJavaHelpDemo extends JFrame
       super(APP_NAME);
    }
 
-   protected void init() throws IOException
+   protected void init() throws IOException,SAXException
    {
       loadProperties();
 
@@ -59,7 +62,12 @@ public class TeXJavaHelpDemo extends JFrame
        getLocaleProperty("messages.locale", Locale.getDefault()),
        getLocaleProperty("helpset.locale", Locale.getDefault()));
 
+      helpLib.initHelpSet();
+
       initGui();
+
+      helpLib.getHelpFrame().setLocationRelativeTo(this);
+
       setVisible(true);
    }
 
@@ -189,12 +197,14 @@ public class TeXJavaHelpDemo extends JFrame
       JMenu fileM = createJMenu("menu.file");
       mBar.add(fileM);
 
-      fileM.add(createJMenuItem("menu.file", "quit"));
+      fileM.add(createJMenuItem("menu.file", "quit",
+        KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK)));
 
       JMenu helpM = createJMenu("menu.help");
       mBar.add(helpM);
 
-      helpM.add(createJMenuItem("menu.help", "manual"));
+      helpM.add(createJMenuItem("menu.help", "manual",
+        KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0)));
 
       JPanel mainPanel = new JPanel(new FlowLayout());
 
@@ -219,6 +229,7 @@ public class TeXJavaHelpDemo extends JFrame
       UIManager.setLookAndFeel(lookandfeel);
 
       SwingUtilities.updateComponentTreeUI(this);
+      SwingUtilities.updateComponentTreeUI(helpLib.getHelpFrame());
 
       properties.setProperty("lookandfeel", lookandfeel);
    }
@@ -255,7 +266,11 @@ public class TeXJavaHelpDemo extends JFrame
 
       if (action == null) return;
 
-      if (action.equals("quit"))
+      if (action.equals("manual"))
+      {
+         helpLib.openHelp();
+      }
+      else if (action.equals("quit"))
       {
          quit();
       }
@@ -277,9 +292,22 @@ public class TeXJavaHelpDemo extends JFrame
    }
 
    public JMenuItem createJMenuItem(String parentTag, String action,
+     KeyStroke accelerator)
+   {
+      return helpLib.createJMenuItem(parentTag, action, this, accelerator);
+   }
+
+   public JMenuItem createJMenuItem(String parentTag, String action,
      ActionListener actionListener)
    {
       return helpLib.createJMenuItem(parentTag, action, actionListener);
+   }
+
+   public JMenuItem createJMenuItem(String parentTag, String action,
+     ActionListener actionListener, KeyStroke accelerator)
+   {
+      return helpLib.createJMenuItem(parentTag, action, actionListener,
+       accelerator);
    }
 
    public JLabel createJLabel(String tag)
