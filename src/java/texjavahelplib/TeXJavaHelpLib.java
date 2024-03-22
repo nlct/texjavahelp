@@ -33,6 +33,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+import javax.swing.ImageIcon;
 
 import org.xml.sax.SAXException;
 
@@ -70,6 +71,7 @@ public class TeXJavaHelpLib
    {
       this.applicationName = applicationName;
       this.resourcebase = resourcebase;
+      this.resourceIconBase = resourcebase + "/icons";
       this.helpsetLocale = helpsetLocale;
 
       messages = new MessageSystem(getResourcePath(), "texjavahelplib", messagesLocale);
@@ -229,6 +231,80 @@ public class TeXJavaHelpLib
    public String getResourcePath()
    {
       return resourcebase;
+   }
+
+   public String getIconPath()
+   {
+      return resourceIconBase;
+   }
+
+   public void setIconPath(String relpath)
+   {
+      resourceIconBase = relpath;
+   }
+
+   public String getSmallIconSuffix()
+   {
+      return smallIconSuffix;
+   }
+
+   public void setSmallIconSuffix(String suffix)
+   {
+      smallIconSuffix = suffix;
+   }
+
+   public ImageIcon getSmallIcon(String base)
+   {
+      return getSmallIcon(base, "png", "jpg", "jpeg", "gif");
+   }
+
+   public ImageIcon getSmallIcon(String base, String... extensions)
+   {
+      String basename = resourceIconBase + "/" + base + smallIconSuffix;
+
+      for (String ext : extensions)
+      {
+         URL url = getClass().getResource(basename + "." + ext);
+
+         if (url != null)
+         {
+            return new ImageIcon(url);
+         }
+      }
+
+      return null;
+   }
+
+   public String getLargeIconSuffix()
+   {
+      return largeIconSuffix;
+   }
+
+   public void setLargeIconSuffix(String suffix)
+   {
+      largeIconSuffix = suffix;
+   }
+
+   public ImageIcon getLargeIcon(String base)
+   {
+      return getLargeIcon(base, "png", "jpg", "jpeg", "gif");
+   }
+
+   public ImageIcon getLargeIcon(String base, String... extensions)
+   {
+      String basename = resourceIconBase + "/" + base + largeIconSuffix;
+
+      for (String ext : extensions)
+      {
+         URL url = getClass().getResource(basename + "." + ext);
+
+         if (url != null)
+         {
+            return new ImageIcon(url);
+         }
+      }
+
+      return null;
    }
 
    public String getHelpSetResourcePath()
@@ -411,9 +487,7 @@ public class TeXJavaHelpLib
            "error.node_id_not_found", "Node with ID ''{0}'' not found", id));
       }
 
-      URL url = getHelpSetResource(node.getFileName());
-
-      helpFrame.setPage(url);
+      helpFrame.setPage(node);
       openHelp();
    }
 
@@ -586,6 +660,9 @@ public class TeXJavaHelpLib
    }
 
    protected String resourcebase = "/resources";
+   protected String resourceIconBase = "/resources/icons";
+   protected String smallIconSuffix = "-16x16";
+   protected String largeIconSuffix = "-32x32";
 
    protected String helpsetdir = "helpset";
    protected String helpsetsubdir = null;

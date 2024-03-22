@@ -203,8 +203,21 @@ public class TeXJavaHelpDemo extends JFrame
       JMenu helpM = createJMenu("menu.help");
       mBar.add(helpM);
 
+/*
       helpM.add(createJMenuItem("menu.help", "manual",
         KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0)));
+*/
+      TJHAbstractAction manualAction = new TJHAbstractAction(helpLib,
+        "menu.help", "manual", KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0))
+       {
+          @Override
+          public void actionPerformed(ActionEvent evt)
+          {
+             helpLib.openHelp();
+          }
+       };
+
+      helpM.add(new JMenuItem(manualAction));
 
       JPanel mainPanel = new JPanel(new FlowLayout());
 

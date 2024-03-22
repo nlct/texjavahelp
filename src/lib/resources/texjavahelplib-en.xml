@@ -3,6 +3,27 @@
 <properties>
 <comment>English language file for texjavahelplib</comment>
 
+<!-- Navigation -->
+<entry key="menu.navigation">Navigation</entry>
+<entry key="menu.navigation.mnemonic">N</entry>
+
+<entry key="navigation.home">Home</entry>
+<entry key="navigation.home.tooltip">Home Page</entry>
+<entry key="navigation.home.description">Go to the first page</entry>
+<entry key="navigation.home.mnemonic">H</entry>
+<entry key="navigation.up">Up</entry>
+<entry key="navigation.up.mnemonic">U</entry>
+<entry key="navigation.up.tooltip">Up</entry>
+<entry key="navigation.up.description">Go up a section</entry>
+<entry key="navigation.previous">Previous</entry>
+<entry key="navigation.previous.mnemonic">P</entry>
+<entry key="navigation.previous.tooltip">Previous Page</entry>
+<entry key="navigation.previous.description">Go to the previous page</entry>
+<entry key="navigation.next">Next</entry>
+<entry key="navigation.next.mnemonic">N</entry>
+<entry key="navigation.next.tooltip">Next Page</entry>
+<entry key="navigation.next.description">Go to the next page</entry>
+
 <!--  Errors -->
 <entry key="error.xml.more_than_one_tag">More than 1 &lt;{0}&gt; found</entry>
 <entry key="error.xml.missing_attr_in_tag">Missing ''{0}'' attribute in &lt;{1}&gt;</entry>

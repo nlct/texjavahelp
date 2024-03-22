@@ -61,6 +61,7 @@ public class NavigationNode implements TreeNode
          }
 
          parent.children.add(this);
+         siblingIndex = parent.children.size()-1;
       }
    }
 
@@ -115,6 +116,11 @@ public class NavigationNode implements TreeNode
 
    @Override
    public TreeNode getParent()
+   {
+      return parent;
+   }
+
+   public NavigationNode getParentNode()
    {
       return parent;
    }
@@ -272,10 +278,92 @@ public class NavigationNode implements TreeNode
       return reader.getRootNode();
    }
 
+   public NavigationNode getNextNode()
+   {
+      NavigationNode node = null;
+
+      if (!isLeaf())
+      {
+         node = children.firstElement();
+      }
+      else
+      {
+         node = getNextSibling();
+      }
+
+      return node;
+   }
+
+   protected NavigationNode getNextSibling()
+   {
+      NavigationNode node = null;
+
+      if (parent != null)
+      {
+         Vector<NavigationNode> siblings = parent.children;
+
+         assert siblings != null;
+
+         int nextIdx = siblingIndex+1;
+
+         if (nextIdx < parent.getChildCount())
+         {
+            node = siblings.get(nextIdx);
+         }
+         else
+         {
+            node = parent.getNextSibling();
+         }
+      }
+
+      return node;
+   }
+
+   public NavigationNode getPreviousNode()
+   {
+      NavigationNode node = null;
+
+      if (siblingIndex == 0)
+      {
+         node = parent;
+      }
+      else
+      {
+         node = getPreviousSibling();
+      }
+
+      return node;
+   }
+
+   protected NavigationNode getPreviousSibling()
+   {
+      NavigationNode node = null;
+
+      if (parent != null)
+      {
+         Vector<NavigationNode> siblings = parent.children;
+
+         int prevIdx = siblingIndex-1;
+
+         if (prevIdx < 0)
+         {
+            node = parent;
+         }
+         else
+         {
+            node = siblings.get(prevIdx);
+         }
+      }
+
+      return node;
+   }
+
    protected final String key, ref;
    protected String prefix;
    protected String title;
    protected String filename;
+
+   protected int siblingIndex=0;
 
    protected Vector<NavigationNode> children;
    protected NavigationNode parent;

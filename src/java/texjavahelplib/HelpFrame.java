@@ -24,9 +24,16 @@ import java.net.URL;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
+import java.awt.event.ActionEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JToolBar;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.KeyStroke;
 
 /**
  * Frame for showing pages of the manual.
@@ -40,9 +47,75 @@ public class HelpFrame extends JFrame
 
       this.helpLib = helpLib;
 
+      JMenuBar mBar = new JMenuBar();
+      setJMenuBar(mBar);
+
+      JMenu navMenu = helpLib.createJMenu("menu.navigation");
+      mBar.add(navMenu);
+
       helpPage = new HelpPage(helpLib);
 
       getContentPane().add(new JScrollPane(helpPage), "Center");
+
+      toolBar = new JToolBar();
+
+      getContentPane().add(toolBar, "North");
+
+      TJHAbstractAction homeAction = new TJHAbstractAction(helpLib,
+        "navigation", "home",
+        KeyStroke.getKeyStroke(KeyEvent.VK_HOME, ActionEvent.ALT_MASK))
+      {
+         @Override
+         public void actionPerformed(ActionEvent evt)
+         {
+            homePage();
+         }
+      };
+
+      toolBar.add(homeAction);
+      navMenu.add(homeAction);
+
+      TJHAbstractAction previousAction = new TJHAbstractAction(helpLib,
+        "navigation", "previous",
+        KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, ActionEvent.ALT_MASK))
+      {
+         @Override
+         public void actionPerformed(ActionEvent evt)
+         {
+            prevPage();
+         }
+      };
+
+      toolBar.add(previousAction);
+      navMenu.add(previousAction);
+
+      TJHAbstractAction upAction = new TJHAbstractAction(helpLib,
+        "navigation", "up",
+        KeyStroke.getKeyStroke(KeyEvent.VK_UP, ActionEvent.ALT_MASK))
+      {
+         @Override
+         public void actionPerformed(ActionEvent evt)
+         {
+            upPage();
+         }
+      };
+
+      toolBar.add(upAction);
+      navMenu.add(upAction);
+
+      TJHAbstractAction nextAction = new TJHAbstractAction(helpLib,
+        "navigation", "next",
+        KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, ActionEvent.ALT_MASK))
+      {
+         @Override
+         public void actionPerformed(ActionEvent evt)
+         {
+            nextPage();
+         }
+      };
+
+      toolBar.add(nextAction);
+      navMenu.add(nextAction);
 
       Toolkit tk = Toolkit.getDefaultToolkit();
       Dimension dim = tk.getScreenSize();
@@ -50,11 +123,57 @@ public class HelpFrame extends JFrame
 
    }
 
-   public void setPage(URL url) throws IOException 
+   public void setPage(NavigationNode node) throws IOException
    {
-      helpPage.setPage(url);
+      helpPage.setPage(node);
+   }
+
+   public void prevPage()
+   {
+      try
+      {
+         helpPage.prevPage();
+      }
+      catch (IOException e)
+      {
+      }
+   }
+
+   public void nextPage()
+   {
+      try
+      {
+         helpPage.nextPage();
+      }
+      catch (IOException e)
+      {
+      }
+   }
+
+   public void upPage()
+   {
+      try
+      {
+         helpPage.upPage();
+      }
+      catch (IOException e)
+      {
+      }
+   }
+
+   public void homePage()
+   {
+      try
+      {
+         helpPage.homePage();
+      }
+      catch (IOException e)
+      {
+      }
    }
 
    protected TeXJavaHelpLib helpLib;
    protected HelpPage helpPage;
+   protected JSplitPane splitPane;
+   protected JToolBar toolBar;
 }
