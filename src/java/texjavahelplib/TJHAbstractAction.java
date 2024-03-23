@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
+import javax.swing.JComponent;
 
 public abstract class TJHAbstractAction extends AbstractAction
 {
@@ -39,19 +40,43 @@ public abstract class TJHAbstractAction extends AbstractAction
    public TJHAbstractAction(TeXJavaHelpLib helpLib, String parentTag, String action,
      KeyStroke keyStroke)
    {
-      this(helpLib, parentTag, action, keyStroke, null);
+      this(helpLib, parentTag, action, keyStroke, null, null);
    }
 
    public TJHAbstractAction(TeXJavaHelpLib helpLib, String parentTag, String action,
-     KeyStroke keyStroke, Boolean selectedState)
+     KeyStroke keyStroke, JComponent comp)
+   {
+      this(helpLib, parentTag, action, keyStroke, null, comp);
+   }
+
+   public TJHAbstractAction(TeXJavaHelpLib helpLib, String parentTag, String action,
+     KeyStroke keyStroke, Boolean selectedState, JComponent comp)
+   {
+      this(helpLib, parentTag, action, action, action, keyStroke, selectedState, comp);
+   }
+
+   public TJHAbstractAction(TeXJavaHelpLib helpLib,
+     String parentTag, String childTag, String actionName, String iconPrefix,
+     KeyStroke keyStroke, Boolean selectedState, JComponent comp)
    {
       super();
 
-      putValue(ACTION_COMMAND_KEY, action);
+      this.helpLib = helpLib;
+
+      if (actionName != null)
+      {
+         putValue(ACTION_COMMAND_KEY, actionName);
+      }
 
       if (keyStroke != null)
       {
          putValue(ACCELERATOR_KEY, keyStroke);
+
+         if (actionName != null && comp != null)
+         {
+            comp.getInputMap().put(keyStroke, actionName);
+            comp.getActionMap().put(actionName, this);
+         }
       }
 
       if (selectedState != null)
@@ -59,7 +84,7 @@ public abstract class TJHAbstractAction extends AbstractAction
          putValue(SELECTED_KEY, selectedState);
       }
 
-      String tag = parentTag == null ? action : parentTag+"."+action;
+      String tag = parentTag == null ? childTag : parentTag+"."+childTag;
 
       String text = helpLib.getMessageIfExists(tag);
 
@@ -89,14 +114,14 @@ public abstract class TJHAbstractAction extends AbstractAction
          putValue(LONG_DESCRIPTION, tooltip);
       }
 
-      ImageIcon ic = helpLib.getLargeIcon(action);
+      ImageIcon ic = helpLib.getLargeIcon(iconPrefix);
 
       if (ic != null)
       {
          putValue(LARGE_ICON_KEY, ic);
       }
 
-      ic = helpLib.getSmallIcon(action);
+      ic = helpLib.getSmallIcon(iconPrefix);
 
       if (ic != null)
       {
@@ -113,4 +138,5 @@ public abstract class TJHAbstractAction extends AbstractAction
       doAction();
    }
 
+   protected TeXJavaHelpLib helpLib;
 }

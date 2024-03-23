@@ -191,6 +191,9 @@ public class TeXJavaHelpDemo extends JFrame
          setIconImage(ic.getImage());
       }
 
+      JToolBar toolbar = new JToolBar();
+      getContentPane().add(toolbar, "North");
+
       JMenuBar mBar = new JMenuBar();
       setJMenuBar(mBar);
 
@@ -203,28 +206,18 @@ public class TeXJavaHelpDemo extends JFrame
       JMenu helpM = createJMenu("menu.help");
       mBar.add(helpM);
 
-/*
-      helpM.add(createJMenuItem("menu.help", "manual",
-        KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0)));
-*/
-      TJHAbstractAction manualAction = new TJHAbstractAction(helpLib,
-        "menu.help", "manual", KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0))
-       {
-          @Override
-          public void doAction()
-          {
-             helpLib.openHelp();
-          }
-       };
+      TJHAbstractAction manualAction = helpLib.createHelpAction();
 
       helpM.add(new JMenuItem(manualAction));
+      toolbar.add(manualAction);
 
       JPanel mainPanel = new JPanel(new FlowLayout());
 
       getContentPane().add(mainPanel, "Center");
 
       mainPanel.add(createJLabel("label.demo"));
-      mainPanel.add(createJButton("button.demo"));
+      mainPanel.add(new JButton(helpLib.createHelpAction("sec:intro", mainPanel)));
+      mainPanel.add(new JTextField("sample"));
 
       Toolkit tk = Toolkit.getDefaultToolkit();
       Dimension dim = tk.getScreenSize();

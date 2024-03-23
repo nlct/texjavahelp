@@ -25,6 +25,8 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
+import java.net.URL;
+
 import org.xml.sax.SAXException;
 
 
@@ -33,14 +35,14 @@ import org.xml.sax.SAXException;
  */
 public class NavigationTree
 {
-   public NavigationTree(String base, NavigationNode rootNode)
+   public NavigationTree(TeXJavaHelpLib helpLib, NavigationNode rootNode)
    {
-      if (base == null || rootNode == null)
+      if (helpLib == null || rootNode == null)
       {
          throw new NullPointerException();
       }
 
-      this.base = base;
+      this.helpLib = helpLib;
       this.rootNode = rootNode;
 
       createMap();
@@ -50,6 +52,7 @@ public class NavigationTree
    {
       idToNodeMap = new HashMap<String,NavigationNode>();
       refToNodeMap = new HashMap<String,NavigationNode>();
+      urlToNodeMap = new HashMap<URL,NavigationNode>();
 
       addToMaps(rootNode);
    }
@@ -58,6 +61,20 @@ public class NavigationTree
    {
       idToNodeMap.put(node.getKey(), node);
       refToNodeMap.put(node.getRef(), node);
+
+      try
+      {
+         URL url = helpLib.getHelpSetResource(node.getFileName());
+         node.setURL(url);
+         urlToNodeMap.put(url, node);
+      }
+      catch (Exception e)
+      {
+         System.err.println(helpLib.getMessageWithFallback(
+           "error.resource_not_found_for_node",
+           "Resource file ''{0}'' not found for node ''{1}''",
+            node.getFileName(), node));
+      }
 
       if (!node.isLeaf())
       {
@@ -78,6 +95,33 @@ public class NavigationTree
       return refToNodeMap.get(ref);
    }
 
+   public NavigationNode getNodeByURL(URL url)
+   {
+      NavigationNode node = urlToNodeMap.get(url);
+
+      if (node == null)
+      {
+         String ref = url.getRef();
+
+         if (ref != null)
+         {
+            node = getNodeById(ref);
+
+            if (node != null)
+            {
+               URL otherURL = node.getURL();
+
+               if (otherURL == null || !url.sameFile(otherURL))
+               {
+                  node = null;
+               }
+            }
+         }
+      }
+
+      return node;
+   }
+
    public NavigationNode getRoot()
    {
       return rootNode;
@@ -85,7 +129,7 @@ public class NavigationTree
 
    public String getBase()
    {
-      return base;
+      return helpLib.getHelpSetResourcePath();
    }
 
    public static NavigationTree load(TeXJavaHelpLib helpLib)
@@ -109,10 +153,11 @@ public class NavigationTree
          }
       }
 
-      return new NavigationTree(helpLib.getHelpSetResourcePath(), node);
+      return new NavigationTree(helpLib, node);
    }
 
-   protected String base;
+   protected TeXJavaHelpLib helpLib;
    protected NavigationNode rootNode;
    protected HashMap<String,NavigationNode> idToNodeMap, refToNodeMap;
+   protected HashMap<URL,NavigationNode> urlToNodeMap;
 }

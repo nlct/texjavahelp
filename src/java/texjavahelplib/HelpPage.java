@@ -57,14 +57,15 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
      throws IOException
    {
       currentNode = node;
-      setPage(helpLib.getHelpSetResource(node.getFileName()));
-   }
+      URL url = node.getURL();
 
-   @Override
-   public void setPage(URL url) throws IOException
-   {
-      currentURL = url;
-      super.setPage(url);
+      if (url == null)
+      {
+         url = helpLib.getHelpSetResource(node.getFileName());
+         node.setURL(url);
+      }
+
+      setPage(url);
    }
 
    public void nextPage() throws IOException
@@ -108,28 +109,53 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
       if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
       {
          URL url = evt.getURL();
+         NavigationNode node = helpLib.getNavigationTree().getNodeByURL(url);
 
-         String ref = url.getRef();
-
-         if (url.sameFile(currentURL))
+         try
          {
-            scrollToReference(ref);
+            if (node == null)
+            {
+               setPage(url);
+            }
+            else
+            {
+               String ref = url.getRef();
+               setPage(node);
+
+               if (ref != null)
+               {
+                  scrollToReference(ref);
+               }
+
+               helpLib.getHelpFrame().updateNavWidgets();
+            }
+         }
+         catch (Throwable t)
+         {
+            t.printStackTrace();
+         }
+      }
+      else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED)
+      {
+         URL url = evt.getURL();
+         NavigationNode node = helpLib.getNavigationTree().getNodeByURL(url);
+
+         if (node != null)
+         {
+            setToolTipText(node.getTitle());
          }
          else
          {
-            try
-            {
-               setPage(evt.getURL());
-            }
-            catch (Throwable t)
-            {
-               t.printStackTrace();
-            }
+            setToolTipText(null);
          }
+      }
+      else if (evt.getEventType() == HyperlinkEvent.EventType.EXITED)
+      {
+         setToolTipText(null);
       }
    }
 
    protected TeXJavaHelpLib helpLib;
    protected NavigationNode currentNode;
-   protected URL currentURL;
+
 }

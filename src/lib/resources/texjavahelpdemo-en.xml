@@ -4,10 +4,7 @@
 <comment>English language file for texjavahelpdemo</comment>
 
 <!-- Main Frame Widgets -->
-<entry key="label.demo">Demo Label</entry>
-<entry key="button.demo">Demo Button</entry>
-<entry key="button.demo.mnemonic">B</entry>
-<entry key="button.demo.tooltip">A sample button</entry>
+<entry key="label.demo">Demo Label (Introduction)</entry>
 
 <!-- Menus -->
 <entry key="menu.file">File</entry>
@@ -16,11 +13,6 @@
 <entry key="menu.file.quit.mnemonic">Q</entry>
 <entry key="menu.file.quit.tooltip">Exit application</entry>
 <entry key="menu.file.quit.description">This menu item quits the application</entry>
-
-<entry key="menu.help">Help</entry>
-<entry key="menu.help.mnemonic">H</entry>
-<entry key="menu.help.manual">Manual</entry>
-<entry key="menu.help.manual.mnemonic">M</entry>
 
 <!-- Application properties -->
 <entry key="properties.comment">Properties file for {0}</entry>

@@ -27,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.net.URL;
 
 import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -34,6 +35,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+
+import java.awt.event.KeyEvent;
 
 import org.xml.sax.SAXException;
 
@@ -489,6 +493,67 @@ public class TeXJavaHelpLib
 
       helpFrame.setPage(node);
       openHelp();
+   }
+
+   public TJHAbstractAction createHelpAction()
+   {
+      return new TJHAbstractAction(this,
+        "menu.help", "manual", KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0))
+        {
+           @Override
+           public void doAction()
+           {
+              helpLib.openHelp();
+           }
+        };
+   }
+
+   public TJHAbstractAction createHelpAction(String helpID)
+   {
+      return createHelpAction(helpID, "action", "help", 
+       "help", "help", null, null);
+   }
+
+   public TJHAbstractAction createHelpAction(String helpID, JComponent comp)
+   {
+      return createHelpAction(helpID, "action", "help", "help", "help", 
+       KeyStroke.getKeyStroke(KeyEvent.VK_F1, ActionEvent.SHIFT_MASK), comp);
+   }
+
+   public TJHAbstractAction createHelpAction(String helpID,
+      KeyStroke keyStroke, JComponent comp)
+   {
+      return createHelpAction(helpID, "action", "help", 
+       "manual."+helpID, "help", keyStroke, comp);
+   }
+
+   public TJHAbstractAction createHelpAction(String helpID,
+      String msgParentTag, String childTag, String action, String iconPrefix)
+   {
+      return createHelpAction(helpID, msgParentTag, childTag, action, iconPrefix,
+        null, null);
+   }
+
+   public TJHAbstractAction createHelpAction(final String helpID,
+      String msgParentTag, String childTag, String action,
+      String iconPrefix, KeyStroke keyStroke, JComponent comp)
+   {
+      return  new TJHAbstractAction(this,
+        msgParentTag, childTag, action, iconPrefix, keyStroke, null, comp)
+        {
+           @Override
+           public void doAction()
+           {
+              try
+              {
+                 helpLib.openHelpForId(helpID);
+              }
+              catch (Exception e)
+              {
+                 helpLib.getApplication().error(e);
+              }
+           }
+        };
    }
 
    public int getMnemonic(String label)

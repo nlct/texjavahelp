@@ -264,7 +264,7 @@ public class HelpFrame extends JFrame
       return jlabel;
    }
 
-   protected void updateNavWidgets()
+   public void updateNavWidgets()
    {
       NavigationNode currentNode = helpPage.getCurrentNode();
 

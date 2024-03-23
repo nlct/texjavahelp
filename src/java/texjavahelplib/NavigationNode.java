@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
 
+import java.net.URL;
+
 import java.nio.charset.Charset;
 
 import java.util.Vector;
@@ -361,9 +363,13 @@ public class NavigationNode implements TreeNode
 
    public TreePath getTreePath()
    {
-      if (parent == null)
+      if (treePath != null)
       {
-         return new TreePath(this);
+         return treePath;
+      }
+      else if (parent == null)
+      {
+         treePath = new TreePath(this);
       }
       else
       {
@@ -373,8 +379,10 @@ public class NavigationNode implements TreeNode
 
          pushAncestors(objects);
 
-         return new TreePath(objects.toArray());
+         treePath = new TreePath(objects.toArray());
       }
+
+      return treePath;
    }
 
    protected void pushAncestors(Vector<NavigationNode> objects)
@@ -386,10 +394,23 @@ public class NavigationNode implements TreeNode
       }
    }
 
+   public void setURL(URL url)
+   {
+      this.url = url;
+   }
+
+   public URL getURL()
+   {
+      return url;
+   }
+
    protected final String key, ref;
    protected String prefix;
    protected String title;
    protected String filename;
+   protected URL url;
+
+   protected TreePath treePath;
 
    protected int siblingIndex=0;
 
