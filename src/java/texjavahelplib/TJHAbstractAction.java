@@ -18,6 +18,8 @@
 */
 package com.dickimawbooks.texjavahelplib;
 
+import java.awt.event.ActionEvent;
+
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
@@ -101,6 +103,14 @@ public abstract class TJHAbstractAction extends AbstractAction
          putValue(SMALL_ICON, ic);
       }
 
+   }
+
+   public abstract void doAction();
+
+   @Override
+   public void actionPerformed(ActionEvent evt)
+   {
+      doAction();
    }
 
 }

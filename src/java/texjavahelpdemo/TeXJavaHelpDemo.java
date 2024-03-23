@@ -211,7 +211,7 @@ public class TeXJavaHelpDemo extends JFrame
         "menu.help", "manual", KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0))
        {
           @Override
-          public void actionPerformed(ActionEvent evt)
+          public void doAction()
           {
              helpLib.openHelp();
           }

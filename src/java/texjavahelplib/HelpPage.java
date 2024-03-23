@@ -48,10 +48,15 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
       addHyperlinkListener(this);
    }
 
+   public NavigationNode getCurrentNode()
+   {
+      return currentNode;
+   }
+
    public void setPage(NavigationNode node)
      throws IOException
    {
-      currentPage = node;
+      currentNode = node;
       setPage(helpLib.getHelpSetResource(node.getFileName()));
    }
 
@@ -64,7 +69,7 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
 
    public void nextPage() throws IOException
    {
-      NavigationNode node = currentPage.getNextNode();
+      NavigationNode node = currentNode.getNextNode();
 
       if (node != null)
       {
@@ -74,7 +79,7 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
 
    public void prevPage() throws IOException
    {
-      NavigationNode node = currentPage.getPreviousNode();
+      NavigationNode node = currentNode.getPreviousNode();
 
       if (node != null)
       {
@@ -84,7 +89,7 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
 
    public void upPage() throws IOException
    {
-      NavigationNode node = currentPage.getParentNode();
+      NavigationNode node = currentNode.getParentNode();
 
       if (node != null)
       {
@@ -125,6 +130,6 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
    }
 
    protected TeXJavaHelpLib helpLib;
-   protected NavigationNode currentPage;
+   protected NavigationNode currentNode;
    protected URL currentURL;
 }

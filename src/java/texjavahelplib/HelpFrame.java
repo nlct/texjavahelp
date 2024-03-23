@@ -24,8 +24,12 @@ import java.net.URL;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.BorderLayout;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -33,7 +37,18 @@ import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
+import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.SwingConstants;
+
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+
+import javax.swing.tree.TreePath;
 
 /**
  * Frame for showing pages of the manual.
@@ -55,18 +70,52 @@ public class HelpFrame extends JFrame
 
       helpPage = new HelpPage(helpLib);
 
-      getContentPane().add(new JScrollPane(helpPage), "Center");
+      navTree = new JTree(helpLib.getNavigationTree().getRoot());
+      navTree.setEditable(false);
+      navTree.setDragEnabled(false);
+      navTree.addTreeSelectionListener(new TreeSelectionListener()
+       {
+          @Override
+          public void valueChanged(TreeSelectionEvent evt)
+          {
+             TreePath path = navTree.getSelectionPath();
 
-      toolBar = new JToolBar();
+             if (path != null)
+             {
+                NavigationNode node = (NavigationNode)path.getLastPathComponent();
+
+                if (!node.equals(helpPage.getCurrentNode()))
+                {
+                   try
+                   {
+                      setPage(node);
+                   }
+                   catch (IOException e)
+                   {// shouldn't happen
+                   }
+                }
+             }
+          }
+       });
+
+      JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+        new JScrollPane(navTree), new JScrollPane(helpPage));
+
+      getContentPane().add(splitPane, "Center");
+
+      JToolBar toolBar = new JToolBar();
 
       getContentPane().add(toolBar, "North");
+
+      JPanel navPanel = new JPanel(new BorderLayout());
+      getContentPane().add(navPanel, "South");
 
       TJHAbstractAction homeAction = new TJHAbstractAction(helpLib,
         "navigation", "home",
         KeyStroke.getKeyStroke(KeyEvent.VK_HOME, ActionEvent.ALT_MASK))
       {
          @Override
-         public void actionPerformed(ActionEvent evt)
+         public void doAction()
          {
             homePage();
          }
@@ -75,12 +124,12 @@ public class HelpFrame extends JFrame
       toolBar.add(homeAction);
       navMenu.add(homeAction);
 
-      TJHAbstractAction previousAction = new TJHAbstractAction(helpLib,
+      previousAction = new TJHAbstractAction(helpLib,
         "navigation", "previous",
         KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, ActionEvent.ALT_MASK))
       {
          @Override
-         public void actionPerformed(ActionEvent evt)
+         public void doAction()
          {
             prevPage();
          }
@@ -89,12 +138,17 @@ public class HelpFrame extends JFrame
       toolBar.add(previousAction);
       navMenu.add(previousAction);
 
-      TJHAbstractAction upAction = new TJHAbstractAction(helpLib,
+      previousLabel = createNavLabel(previousAction, 
+        SwingConstants.RIGHT, SwingConstants.LEFT);
+
+      navPanel.add(previousLabel, "West");
+
+      upAction = new TJHAbstractAction(helpLib,
         "navigation", "up",
         KeyStroke.getKeyStroke(KeyEvent.VK_UP, ActionEvent.ALT_MASK))
       {
          @Override
-         public void actionPerformed(ActionEvent evt)
+         public void doAction()
          {
             upPage();
          }
@@ -103,12 +157,16 @@ public class HelpFrame extends JFrame
       toolBar.add(upAction);
       navMenu.add(upAction);
 
-      TJHAbstractAction nextAction = new TJHAbstractAction(helpLib,
+      upLabel = createNavLabel(upAction,
+         SwingConstants.RIGHT, SwingConstants.CENTER);
+      navPanel.add(upLabel, "Center");
+
+      nextAction = new TJHAbstractAction(helpLib,
         "navigation", "next",
         KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, ActionEvent.ALT_MASK))
       {
          @Override
-         public void actionPerformed(ActionEvent evt)
+         public void doAction()
          {
             nextPage();
          }
@@ -116,6 +174,12 @@ public class HelpFrame extends JFrame
 
       toolBar.add(nextAction);
       navMenu.add(nextAction);
+
+      nextLabel = createNavLabel(nextAction,
+         SwingConstants.LEFT, SwingConstants.RIGHT);
+      navPanel.add(nextLabel, "East");
+
+      updateNavWidgets();
 
       Toolkit tk = Toolkit.getDefaultToolkit();
       Dimension dim = tk.getScreenSize();
@@ -126,6 +190,7 @@ public class HelpFrame extends JFrame
    public void setPage(NavigationNode node) throws IOException
    {
       helpPage.setPage(node);
+      updateNavWidgets();
    }
 
    public void prevPage()
@@ -137,6 +202,8 @@ public class HelpFrame extends JFrame
       catch (IOException e)
       {
       }
+
+      updateNavWidgets();
    }
 
    public void nextPage()
@@ -148,6 +215,8 @@ public class HelpFrame extends JFrame
       catch (IOException e)
       {
       }
+
+      updateNavWidgets();
    }
 
    public void upPage()
@@ -159,6 +228,8 @@ public class HelpFrame extends JFrame
       catch (IOException e)
       {
       }
+
+      updateNavWidgets();
    }
 
    public void homePage()
@@ -170,10 +241,126 @@ public class HelpFrame extends JFrame
       catch (IOException e)
       {
       }
+
+      updateNavWidgets();
+   }
+
+   protected JLabel createNavLabel(TJHAbstractAction action, int textPos, int hPos)
+   {
+      JLabel jlabel = new JLabel((ImageIcon)action.getValue(Action.SMALL_ICON));
+
+      jlabel.setHorizontalTextPosition(textPos);
+      jlabel.setHorizontalAlignment(hPos);
+
+      jlabel.addMouseListener(new NavLabelMouseListener(action));
+
+      String tooltip = (String)action.getValue(Action.SHORT_DESCRIPTION);
+
+      if (tooltip != null)
+      {
+         jlabel.setToolTipText(tooltip);
+      }
+
+      return jlabel;
+   }
+
+   protected void updateNavWidgets()
+   {
+      NavigationNode currentNode = helpPage.getCurrentNode();
+
+      NavigationNode previousNode = currentNode.getPreviousNode();
+      NavigationNode nextNode = currentNode.getNextNode();
+      NavigationNode upNode = currentNode.getParentNode();
+
+      if (previousNode == null)
+      {
+         previousAction.setEnabled(false);
+         previousLabel.setEnabled(false);
+         previousLabel.setText("");
+      }
+      else
+      {
+         previousAction.setEnabled(true);
+         previousLabel.setEnabled(true);
+         previousLabel.setText(previousNode.getTitle());
+      }
+
+      if (nextNode == null)
+      {
+         nextAction.setEnabled(false);
+         nextLabel.setEnabled(false);
+         nextLabel.setText("");
+      }
+      else
+      {
+         nextAction.setEnabled(true);
+         nextLabel.setEnabled(true);
+         nextLabel.setText(nextNode.getTitle());
+      }
+
+      if (upNode == null)
+      {
+         upAction.setEnabled(false);
+         upLabel.setEnabled(false);
+         upLabel.setText("");
+      }
+      else
+      {
+         upAction.setEnabled(true);
+         upLabel.setEnabled(true);
+         upLabel.setText(upNode.getTitle());
+      }
+
+      TreePath treePath = navTree.getSelectionPath();
+
+      if (treePath == null
+        || !currentNode.equals((NavigationNode)treePath.getLastPathComponent()))
+      {
+         navTree.setSelectionPath(currentNode.getTreePath());
+      }
    }
 
    protected TeXJavaHelpLib helpLib;
    protected HelpPage helpPage;
    protected JSplitPane splitPane;
-   protected JToolBar toolBar;
+   protected JTree navTree;
+
+   protected TJHAbstractAction previousAction, upAction, nextAction;
+   protected JLabel previousLabel, upLabel, nextLabel;
+}
+
+class NavLabelMouseListener implements MouseListener
+{
+   public NavLabelMouseListener(TJHAbstractAction action)
+   {
+      this.action = action;
+   }
+
+   @Override
+   public void mouseClicked(MouseEvent e)
+   {
+      action.doAction();
+   }
+
+   @Override
+   public void mouseEntered(MouseEvent e)
+   {
+   }
+
+   @Override
+   public void mouseExited(MouseEvent e)
+   {
+   }
+
+   @Override
+   public void mousePressed(MouseEvent e)
+   {
+   }
+
+   @Override
+   public void mouseReleased(MouseEvent e)
+   {
+   }
+
+   TJHAbstractAction action;
 }

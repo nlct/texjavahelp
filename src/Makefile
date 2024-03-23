@@ -69,5 +69,9 @@ clean	:
 	\rm -f doc/*.glstex
 	\rm -f doc/*.aux
 	\rm -f doc/*.toc
+	\rm -f doc/*.log
+	\rm -f doc/*.glg
+	\rm -f doc/*.out
+	\rm -f doc/*.pdf
 	\rm -f lib/texjavahelplib.jar
 	\rm -f lib/texjavahelpmk.jar

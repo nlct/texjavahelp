@@ -29,6 +29,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 
 import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.Attributes;
@@ -356,6 +357,33 @@ public class NavigationNode implements TreeNode
       }
 
       return node;
+   }
+
+   public TreePath getTreePath()
+   {
+      if (parent == null)
+      {
+         return new TreePath(this);
+      }
+      else
+      {
+         Vector<NavigationNode> objects = new Vector<NavigationNode>();
+
+         objects.add(this);
+
+         pushAncestors(objects);
+
+         return new TreePath(objects.toArray());
+      }
+   }
+
+   protected void pushAncestors(Vector<NavigationNode> objects)
+   {
+      if (parent != null)
+      {
+         objects.add(0, parent);
+         parent.pushAncestors(objects);
+      }
    }
 
    protected final String key, ref;

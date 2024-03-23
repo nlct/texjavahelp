@@ -50,6 +50,9 @@ public class TJHListener extends L2HConverter
 
       setUseEntities(app.isUseHtmlEntitiesOn());
 
+      enableLinkBox(false);
+      enableToTopLink(false);
+
       String extraHead = app.getExtraHeadCode();
 
       if (extraHead != null)
@@ -66,6 +69,11 @@ public class TJHListener extends L2HConverter
    public void setNavigationXmlFile(File file)
    {
       navigationXmlFile = file;
+   }
+
+   @Override
+   protected void footerNav() throws IOException
+   {
    }
 
    @Override
