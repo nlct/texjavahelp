@@ -475,7 +475,7 @@
         [ entrytype->original = "file"], 
 % packages
       name = "\cs{styfmt}{" + \MGP{1} + "}"
-        [ entrytype->original = "package" & entrylabel->original=/sty\.(.+)/], 
+        [ entrytype->original = "package" & entrylabel->original=/pkg\.(.+)/], 
       name = "\cs{styfmt}{" + entrylabel->original + "}"
         [ entrytype->original = "package"], 
 % classes
@@ -653,10 +653,10 @@
   {\space\glscurrentfieldvalue}{}%
 }
 
-\NewDocumentCommand\clidef{O{}m}{%
+\NewDocumentCommand\appdef{O{}m}{%
  \begin{pinnedbox}[#1]%
  \let\glsxtrpostnameapplication\postclihook
- \glsxtrglossentry{#2}%
+ \glsxtrglossentry{app.#2}%
  \end{pinnedbox}% 
 }
 
@@ -670,15 +670,15 @@
 \NewDocumentCommand\switchdef{O{}m}{%
  \begin{pinnedbox}[#1]%
  \let\glsxtrpostnameswitch\postswitchhook
- \glsxtrglossentry{#2}%
+ \glsxtrglossentry{switch.#2}%
  \end{pinnedbox}% 
 }
 
-\NewDocumentCommand\stydef{O{}m}{%
+\NewDocumentCommand\pkgdef{O{}m}{%
  \begin{codebox}[#1]%
  \cmd{usepackage}%
  \glsxtrifhasfield{syntax}{#2}{\oarg{\glscurrentfieldvalue}}{}%
- \marg{\glsxtrglossentry{#2}}%
+ \marg{\glsxtrglossentry{pkg.#2}}%
  \end{codebox}% 
 }
 
@@ -686,7 +686,7 @@
  \begin{codebox}[#1]%
  \cmd{documentclass}%
  \glsxtrifhasfield{syntax}{#2}{\oarg{\glscurrentfieldvalue}}{}%
- \marg{\glsxtrglossentry{#2}}%
+ \marg{\glsxtrglossentry{cls.#2}}%
  \end{codebox}% 
 }
 
@@ -697,9 +697,32 @@
 \NewDocumentCommand\optiondef{O{}m}{%
  \begin{plaincodebox}[#1]%
  \let\glsxtrpostnameoption\postoptionhook
- \glsxtrglossentry{#2}%
+ \glsxtrglossentry{opt.#2}%
  \end{plaincodebox}% 
 }
+
+\newcommand*{\filetext}[1]{\glsfmttext{file.#1}}
+\newcommand*{\stytext}[1]{\glsfmttext{pkg.#1}}
+\newcommand*{\clstext}[1]{\glsfmttext{cls.#1}}
+\newcommand*{\opttext}[1]{\glsfmttext{opt.#1}}
+\newcommand*{\envtext}[1]{\glsfmttext{env.#1}}
+\newcommand*{\ctrtext}[1]{\glsfmttext{ctr.#1}}
+\newcommand*{\actext}[1]{\glsfmttext{dual.#1}}
+\newcommand*{\exttext}[1]{\glsfmttext{ext.#1}}
+\newcommand*{\apptext}[1]{\glsfmttext{app.#1}}
+\newcommand*{\switchtext}[1]{\glsfmttext{switch.#1}}
+
+\glsxtrnewgls{file.}{\file}
+\glsxtrnewgls{pkg.}{\sty}
+\glsxtrnewgls{cls.}{\cls}
+\glsxtrnewgls{opt.}{\opt}
+\glsxtrnewgls{env.}{\env}
+\glsxtrnewgls{ctr.}{\ctr}
+\glsxtrnewgls{dual.}{\ac}
+\glsxtrnewgls[format=glsignore]{ext.}{\ext}
+\glsxtrnewgls{app.}{\app}
+\glsxtrnewgls{switch.}{\switch}
+\newcommand{\sswitch}[1]{\shortswitchref{switch.#1}}
 
 \newignoredglossary{minilist}
 
@@ -795,19 +818,27 @@
   { \printunsrtglossaryskipentry }
 }
 
-\newcommand{\printtermsinit}{
+\newcommand\printabbrs[1]{\printunsrtglossary[type=abbreviations,#1]}
+
+\newcommand{\printmaininit}{
   \dim_zero:N \glsxtrtreetopindent
   \renewcommand{\glsxtralttreeInit}{\glsxtrAltTreeIndent=\parindent}
   \let\printunsrtglossaryentryprocesshook\filtermeasureterms
 }
 
 % This command prints a list of terms but is set up for childless entries
-\NewDocumentCommand \printterms { O{} }
+\NewDocumentCommand \printmain { O{} }
 {
   \group_begin:
-    \printtermsinit
+    \printmaininit
     \printunsrtglossary[nogroupskip,nonumberlist,style=alttree,#1]%
   \group_end:
+}
+
+\NewDocumentCommand \printterms { O{} }
+{
+  \ifglossaryexists{abbreviations}{\printabbrs}{}%
+  \printmain[#1]
 }
 
 \ExplSyntaxOff
@@ -933,46 +964,8 @@ engine (\XeLaTeX\ or \LuaLaTeX)}
 \newcommand*{\transcripttext}{Transcript}
 \newcommand*{\transcriptdesc}{Text in a transcript or log file or written to STDOUT or STDERR}
 
-\newignoredglossary{icons}
-
-\ExplSyntaxOn
-\cs_new:Nn \__texjavahelp_new_icon:n
-{
- \exp_args:Nne
- \newglossaryentry
-   {sym.#1}
-   {
-    type=icons,
-    name={\expandafter\expandonce\csname #1text\endcsname},
-    symbol={\expandafter\noexpand\csname #1sym\endcsname},
-    description={\expandafter\expandonce\csname #1desc\endcsname}
-  }
-}
-
-\__texjavahelp_new_icon:n { definition }
-\__texjavahelp_new_icon:n { important }
-\__texjavahelp_new_icon:n { information }
-\__texjavahelp_new_icon:n { warning }
-\__texjavahelp_new_icon:n { valuesetting }
-\__texjavahelp_new_icon:n { novaluesetting }
-\__texjavahelp_new_icon:n { toggleonsetting }
-\__texjavahelp_new_icon:n { toggleoffsetting }
-\__texjavahelp_new_icon:n { optionvalue }
-\__texjavahelp_new_icon:n { counter }
-\__texjavahelp_new_icon:n { deprecated }
-\__texjavahelp_new_icon:n { banned }
-\__texjavahelp_new_icon:n { terminal }
-\__texjavahelp_new_icon:n { code }
-\__texjavahelp_new_icon:n { badcode }
-\__texjavahelp_new_icon:n { unicode }
-\__texjavahelp_new_icon:n { result }
-\__texjavahelp_new_icon:n { transcript }
-
-\ExplSyntaxOff
-
-\newcounter{icon}
-\newcommand*{\icon}[1]{\stepcounter{icon}\glssymbol[counter=icon]{sym.#1}}
-\newcommand*{\icontext}[1]{\stepcounter{icon}\glstext[counter=icon]{sym.#1}}
+\newcommand*{\icon}[1]{\csuse{#1sym}}
+\newcommand*{\icontext}[1]{\csuse{#1text}}
 
 \newtcolorbox{warning}[1][]{breakable,
  before upper={\parindent12pt\noindent},

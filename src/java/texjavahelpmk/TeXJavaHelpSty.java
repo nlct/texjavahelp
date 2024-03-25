@@ -25,6 +25,8 @@ import java.awt.Color;
 import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texparserlib.latex.*;
 import com.dickimawbooks.texparserlib.latex.glossaries.GlossariesSty;
+import com.dickimawbooks.texparserlib.latex.glossaries.GlsFieldLink;
+import com.dickimawbooks.texparserlib.latex.glossaries.AbstractGlsCommand;
 import com.dickimawbooks.texparserlib.latex.color.ColorSty;
 import com.dickimawbooks.texparserlib.html.L2HConverter;
 import com.dickimawbooks.texparserlib.html.Widget;
@@ -48,13 +50,16 @@ public class TeXJavaHelpSty extends UserGuideSty
       addCrossRefCommands();
       addFootnoteCommands();
       addSymbolCommands();
-      addGlsIconCommands();
       addTextCommands();
       addListCommands();
       addBoxCommands();
       addInlineDefCommands();
       addLocationCommands();
+      addBib2GlsCommands();
+      addGlsCommands();
 
+      registerControlSequence(new PrintTerms());
+      registerControlSequence(new PrintMain(glossariesSty));
       registerControlSequence(new PrintIndex("printindex", glossariesSty));
       registerControlSequence(new IndexInitPostNameHooks());
       registerControlSequence(new AbbrPostNameHook(glossariesSty));
@@ -65,10 +70,38 @@ public class TeXJavaHelpSty extends UserGuideSty
       glossariesSty.setModifier(listener.getOther('!'), "format",
         listener.createString("glsignore"));
 
+      registerControlSequence(new GlsFieldLink("shortswitchref",
+        "shortswitch", glossariesSty));
+
+      AbstractGlsCommand gcs = new GlsFieldLink("sswitch", "shortswitch", glossariesSty);
+      gcs.setEntryLabelPrefix("switch.");
+      registerControlSequence(gcs);
 
       registerControlSequence(new Widget("menufmt", "menu"));
       registerControlSequence(new Widget("widgetfmt", "widget"));
       registerControlSequence(new Widget("dialogfmt", "dialog"));
+
+      TeXObjectList def = getListener().createStack();
+      Group grp = getListener().createGroup();
+
+      def.add(new TeXCsRef("csuse"));
+      def.add(grp);
+      grp.add(getListener().getParam(1));
+      grp.addAll(getListener().createString("sym"));
+
+      registerControlSequence(new LaTeXGenericCommand(true, "icon",
+       "m", def));
+
+      def = getListener().createStack();
+      grp = getListener().createGroup();
+
+      def.add(new TeXCsRef("csuse"));
+      def.add(grp);
+      grp.add(getListener().getParam(1));
+      grp.addAll(getListener().createString("text"));
+
+      registerControlSequence(new LaTeXGenericCommand(true, "icontext",
+       "m", def));
    }
 
    @Override

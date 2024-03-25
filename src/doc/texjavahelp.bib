@@ -1,26 +1,26 @@
 % Encoding: UTF-8
 
-@application{texjavahelpdemo}
+@application{app.texjavahelpdemo}
 
-@application{texjavahelpmk,
+@application{app.texjavahelpmk,
  syntax={\oargm{options} \meta{tex-file} \meta{out-dir}}
 }
 
-@switch{help,
-  parent={texjavahelpmk},
+@switch{switch.help,
+  parent={app.texjavahelpmk},
   shortswitch={h},
   description={Prints help and exits}
 }
 
-@switch{version,
-  parent={texjavahelpmk},
+@switch{switch.version,
+  parent={app.texjavahelpmk},
   shortswitch={v},
   description={Prints version information and exits}
 }
 
-@file{texjavahelp.lib}
+@file{file.texjavahelp.lib}
 
-@package{texjavahelp}
+@package{pkg.texjavahelp}
 
 @abbreviation{cli,
   short = {CLI},

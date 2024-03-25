@@ -27,30 +27,32 @@ Under construction.
 \end{warning}
 
 \begin{itemize}
-\item \gls{texjavahelp}: a \LaTeX\ package to help create the \gls{pdf} version of
+\item \sty{texjavahelp}: a \LaTeX\ package to help create the \gls{pdf} version of
 the documentation from the \LaTeX\ source.
 
-\item \gls{texjavahelpmk}: a \gls{cli} application that uses the \TeX\ Parser
+\item \app{texjavahelpmk}: a \gls{cli} application that uses the \TeX\ Parser
 Library to create the \gls{html} files from the \LaTeX\ source.
 
-\item \gls{texjavahelp.lib}: a Java library that provides a \gls{gui} 
-component to display the \gls{html} files created by \gls{texjavahelpmk}.
+\item \file{texjavahelp.lib}: a Java library that provides a \gls{gui} 
+component to display the \gls{html} files created by \app{texjavahelpmk}.
 
-\item \gls{texjavahelpdemo}: a \gls{gui} demo application.
+\item \app{texjavahelpdemo}: a \gls{gui} demo application.
 \end{itemize}
 
-\chapter{The \glsfmttext{texjavahelp} \LaTeX\ Package}
+\chapter{The \stytext{texjavahelp} \LaTeX\ Package}
 \label{sec:texjavahelpsty}
 
-\stydef{texjavahelp}
+\pkgdef{texjavahelp}
 
-\chapter{The \glsfmttext{texjavahelpmk} Command Line Application}
+\chapter{The \apptext{texjavahelpmk} Command Line Application}
 \label{sec:texjavahelpmk}
 
-\clidef{texjavahelpmk}
+\appdef{texjavahelpmk}
 
-Use the \gls{help} switch (or \shortswitch{help}) for help and the
-\gls{version} switch (or \shortswitch{version}) for the version information.
+Use the \switch{help} switch 
+(or \sswitch{help}) for help and the
+\switch{version} switch
+(or \sswitch{version}) for the version information.
 
 \switchdef{help}
 Display help message and exit.
@@ -58,13 +60,13 @@ Display help message and exit.
 \switchdef{version}
 Display version information and exit.
 
-\chapter{The \TeX\ Java Help Library (\glsfmttext{texjavahelp.lib})}
+\chapter{The \TeX\ Java Help Library (\filetext{texjavahelp.lib})}
 
 % Summary of texjavahelpmk switches
 % Either:
 %\listentry{texjavahelpmk}
 % Or:
-\listentrydescendents[title={Summary of \glsfmttext{texjavahelpmk} Switches}]{texjavahelpmk}
+\listentrydescendents[title={Summary of \apptext{texjavahelpmk} Switches}]{app.texjavahelpmk}
 
 \printterms
 
