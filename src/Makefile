@@ -38,7 +38,7 @@ lib/texjavahelpmk.jar	: java/texjavahelpmk/Manifest.txt \
 	com/dickimawbooks/texjavahelpmk/*.class
 
 classes/com/dickimawbooks/texjavahelpmk/TeXJavaHelpMk.class	: classes/com/dickimawbooks/texjavahelpmk \
-	java/texjavahelpmk/*.java lib/texjavahelplib.jar
+	java/texjavahelpmk/*.java lib/texjavahelplib.jar lib/texparserlib.jar
 	cd java/texjavahelpmk; \
 	javac $(target_version) -d ../../classes \
 	 -Xlint:unchecked -Xlint:deprecation \

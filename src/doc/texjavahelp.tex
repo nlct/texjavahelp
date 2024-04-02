@@ -27,11 +27,11 @@ Under construction.
 \end{warning}
 
 \begin{itemize}
-\item \sty{texjavahelp}: a \LaTeX\ package to help create the \gls{pdf} version of
+\item \sty{texjavahelp}: a \LaTeX\ package to help create the \gls+{pdf} version of
 the documentation from the \LaTeX\ source.
 
 \item \app{texjavahelpmk}: a \gls{cli} application that uses the \TeX\ Parser
-Library to create the \gls{html} files from the \LaTeX\ source.
+Library to create the \gls+{html} files from the \LaTeX\ source.
 
 \item \file{texjavahelp.lib}: a Java library that provides a \gls{gui} 
 component to display the \gls{html} files created by \app{texjavahelpmk}.
@@ -61,14 +61,19 @@ Display help message and exit.
 Display version information and exit.
 
 \chapter{The \TeX\ Java Help Library (\filetext{texjavahelp.lib})}
+\label{sec:texjavahelplib}
+
+/\glsfmttext{app.texjavahelpmk}/
 
 % Summary of texjavahelpmk switches
 % Either:
 %\listentry{texjavahelpmk}
 % Or:
-\listentrydescendents[title={Summary of \apptext{texjavahelpmk} Switches}]{app.texjavahelpmk}
+\listentrydescendents
+ [title={Summary of \apptext{texjavahelpmk} Switches}]
+ {app.texjavahelpmk}
 
-\printterms
+\printmain
 
 \printindex
 

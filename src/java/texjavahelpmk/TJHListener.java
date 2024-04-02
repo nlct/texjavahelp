@@ -19,6 +19,8 @@
 
 package com.dickimawbooks.texjavahelpmk;
 
+import java.util.Vector;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -32,11 +34,15 @@ import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texparserlib.latex.KeyValList;
 import com.dickimawbooks.texparserlib.latex.LaTeXSty;
 import com.dickimawbooks.texparserlib.latex.color.ColorSty;
+import com.dickimawbooks.texparserlib.latex.glossaries.GlossariesSty;
+import com.dickimawbooks.texparserlib.latex.glossaries.GlossaryEntry;
+
 import com.dickimawbooks.texparserlib.html.L2HConverter;
 import com.dickimawbooks.texparserlib.html.L2HImage;
 import com.dickimawbooks.texparserlib.html.DivisionNode;
 import com.dickimawbooks.texparserlib.auxfile.DivisionInfo;
 
+import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 import com.dickimawbooks.texjavahelplib.NavigationNode;
 
 public class TJHListener extends L2HConverter
@@ -45,6 +51,8 @@ public class TJHListener extends L2HConverter
    {
       super(app, app.isUseMathJaxOn(), app.getOutDirectory(),
         outCharset, app.isParsePackagesOn(), app.getSplitLevel());
+
+      setSeparateCss(true);
 
       setSplitUseBaseNamePrefix(app.isSplitBaseNamePrefixOn());
 
@@ -105,6 +113,116 @@ public class TJHListener extends L2HConverter
       }
    }
 
+   protected void writeIndexFile(TeXObjectList stack) throws IOException
+   {
+      File file = new File(((TeXJavaHelpMk)getTeXApp()).getOutDirectory(), "index.xml");
+
+      PrintWriter out = null;
+
+      try
+      {
+         Charset charset = getHtmlCharset();
+
+         out = new PrintWriter(
+           Files.newBufferedWriter(file.toPath(), charset));
+
+         out.print("<?xml version=\"1.0\" encoding=\"");
+         out.print(charset.name());
+         out.println("\" standalone=\"no\"?>");
+
+         GlossariesSty glossariesSty = tjhSty.getGlossariesSty();
+
+         out.println("<index>");
+
+         for (String label : glossariesSty.entryLabelSet())
+         {
+            out.format("<entry key=\"%s\"", TeXJavaHelpLib.encodeHTML(label, true));
+
+            Vector<String> targets = glossariesSty.getTargets(label);
+
+            if (targets != null && !targets.isEmpty())
+            {
+               out.format(" target=\"%s\"",
+                 TeXJavaHelpLib.encodeHTML(targets.firstElement(), true));
+            }
+
+            out.println(">");
+
+            GlossaryEntry entry = glossariesSty.getEntry(label);
+
+            TeXObject name = entry.get("name");
+            String nameStr = "";
+
+            if (name != null)
+            {
+               nameStr = processToString(name, stack);
+            }
+
+            if (!nameStr.isEmpty())
+            {
+               out.format("<name>%s</name>%n", nameStr);
+            }
+
+            TeXObject desc = entry.get("description");
+            String descStr = "";
+
+            if (desc != null)
+            {
+               descStr = processToString(desc, stack);
+            }
+
+            if (!descStr.isEmpty())
+            {
+               out.format("<description>%s</description>%n", descStr);
+            }
+
+            TeXObject shortValue = entry.get("short");
+
+            if (shortValue != null)
+            {
+               String str = processToString(shortValue, stack);
+
+               if (!str.isEmpty() && !str.equals(nameStr))
+               {
+                  out.format("<short>%s</short>%n", str);
+               }
+            }
+
+            TeXObject longValue = entry.get("long");
+
+            if (longValue != null)
+            {
+               String str = processToString(longValue, stack);
+
+               if (!str.isEmpty() && !str.equals(descStr))
+               {
+                  out.format("<long>%s</long>%n", str);
+               }
+            }
+
+            out.println("</entry>");
+         }
+
+         out.println("</index>");
+      }
+      finally
+      {
+         if (out != null)
+         {
+            out.close();
+         }
+      }
+   }
+
+   @Override
+   public void endDocument(TeXObjectList stack)
+   throws IOException
+   {
+      writeIndexFile(stack);
+
+      super.endDocument(stack);
+   }
+
    @Override
    protected LaTeXSty getLaTeXSty(KeyValList options, String styName,
       boolean loadParentOptions, TeXObjectList stack)
@@ -117,7 +235,9 @@ public class TJHListener extends L2HConverter
             colorSty = new ColorSty(options, styName, this, loadParentOptions);
          } 
 
-         return new TeXJavaHelpSty(options, this, loadParentOptions, colorSty);
+         tjhSty = new TeXJavaHelpSty(options, this, loadParentOptions, colorSty);
+
+         return tjhSty;
       }
       else
       {
@@ -169,4 +289,5 @@ public class TJHListener extends L2HConverter
    }
 
    protected File navigationXmlFile;
+   protected TeXJavaHelpSty tjhSty;
 }

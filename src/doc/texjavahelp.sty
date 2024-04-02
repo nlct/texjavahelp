@@ -748,25 +748,30 @@
  \group_end:
 }
 
+\newcommand{\listentrydescendentsinit}{
+  \cs_set_eq:NN \glsxtrpostnameapplication \postclihook
+  \cs_set_eq:NN \glsxtrpostnameswitch \postswitchhook
+  \cs_set_eq:NN \glsxtrpostnameoption \postoptionhook
+  \cs_set_eq:NN \glstopicSubItemBox \use_ii:nn
+}
+
 \NewDocumentCommand \listentrydescendents { O{} m }
 {
  \group_begin:
   \glsxtrifhasfield* { childlist } { #2 }
-  {
+   {
     \cs_set:Npn \do ##1
      {
        \__texjavahelp_hier_copy:nn { minilist } { ##1 }
      }
     \glsxtrfielddolistloop { #2 } { childlist }
-  } 
-  { }
-   \cs_set_eq:NN \glsxtrpostnameapplication \postclihook
-   \cs_set_eq:NN \glsxtrpostnameswitch \postswitchhook
-   \cs_set_eq:NN \glsxtrpostnameoption \postoptionhook
-   \cs_set_eq:NN \glstopicSubItemBox \use_ii:nn
-   \printunsrtglossary 
+   } 
+   { }
+  \listentrydescendentsinit
+  \printunsrtglossary 
    [
       type=minilist,
+      label={#2-summary},
       style=topic,
       title = { \glsfmttext{#2} ~ Summary},
       nonumberlist,
@@ -818,8 +823,6 @@
   { \printunsrtglossaryskipentry }
 }
 
-\newcommand\printabbrs[1]{\printunsrtglossary[type=abbreviations,#1]}
-
 \newcommand{\printmaininit}{
   \dim_zero:N \glsxtrtreetopindent
   \renewcommand{\glsxtralttreeInit}{\glsxtrAltTreeIndent=\parindent}
@@ -831,14 +834,8 @@
 {
   \group_begin:
     \printmaininit
-    \printunsrtglossary[nogroupskip,nonumberlist,style=alttree,#1]%
+    \printunsrtglossary[label=glossary,nogroupskip,nonumberlist,style=alttree,#1]%
   \group_end:
-}
-
-\NewDocumentCommand \printterms { O{} }
-{
-  \ifglossaryexists{abbreviations}{\printabbrs}{}%
-  \printmain[#1]
 }
 
 \ExplSyntaxOff
@@ -854,7 +851,7 @@
 \NewDocumentCommand\printindex{O{}}{%
   {%
     \nlctguideindexinitpostnamehooks
-    \printunsrtglossary[style=bookindex,title=\indexname]%
+    \printunsrtglossary[label=docindex,style=bookindex,title=\indexname]%
   }%
 }
 
