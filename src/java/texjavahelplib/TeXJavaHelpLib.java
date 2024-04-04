@@ -170,6 +170,19 @@ public class TeXJavaHelpLib
       }
    }
 
+   public void warning(String message, Throwable t)
+   {
+      if (application == null)
+      {
+         System.err.println(message);
+         t.printStackTrace();
+      }
+      else
+      {
+         application.warning(message, t);
+      }
+   }
+
    public void error(String message)
    {
       if (application == null)

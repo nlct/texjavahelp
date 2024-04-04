@@ -399,7 +399,8 @@ public class TeXJavaHelpDemo extends JFrame
         JOptionPane.ERROR_MESSAGE);
    }
 
-   public void error(Exception e)
+   @Override
+   public void error(Throwable e)
    {
       String msg = e.getMessage();
 

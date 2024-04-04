@@ -18,20 +18,35 @@
 */
 package com.dickimawbooks.texjavahelplib;
 
-/**
- * Interface for main application using Java Help Library.
- */
-public interface TeXJavaHelpLibApp
+public class HistoryItem
 {
-   public String getApplicationName();
+   public HistoryItem(NavigationNode node)
+   {
+      this(node, null);
+   }
 
-   public void warning(String warning);
+   public HistoryItem(NavigationNode node, String ref)
+   {
+      this.node = node;
+      this.ref = ref;
+   }
 
-   public void warning(String warning, Throwable e);
+   public NavigationNode getNode()
+   {
+      return node;
+   }
 
-   public void error(String message);
+   public String getReference()
+   {
+      return ref;
+   }
 
-   public void error(Throwable e);
+   @Override
+   public String toString()
+   {
+      return node.getTitle();
+   }
 
-   public void error(String message, Throwable e);
+   protected NavigationNode node;
+   protected String ref;
 }

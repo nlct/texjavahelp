@@ -47,5 +47,8 @@
 <entry key="error.resource_not_found_for_node">Resource file ''{0}'' not found for node ''{1}''</entry>
 <entry key="error.no_helpset">Helpset has not been initialised</entry>
 <entry key="error.node_id_not_found">Node with ID ''{0}'' not found</entry>
+<entry key="error.no_desktop">Desktop not supported on the current platform.
+Unable to open URL {0}</entry>
+<entry key="error.browse_failed">Unable to open browser to view {0}</entry>
 
 </properties>

@@ -143,6 +143,12 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
    @Override
    public void error(Exception e)
    {
+      error((Throwable)e);
+   }
+
+   @Override
+   public void error(Throwable e)
+   {
       if (e instanceof TeXSyntaxException)
       {
          error(((TeXSyntaxException)e).getMessage(this));
