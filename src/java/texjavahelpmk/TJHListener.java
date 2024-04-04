@@ -41,6 +41,8 @@ import com.dickimawbooks.texparserlib.html.L2HConverter;
 import com.dickimawbooks.texparserlib.html.L2HImage;
 import com.dickimawbooks.texparserlib.html.DivisionNode;
 import com.dickimawbooks.texparserlib.auxfile.DivisionInfo;
+import com.dickimawbooks.texparserlib.auxfile.LabelInfo;
+import com.dickimawbooks.texparserlib.auxfile.CiteInfo;
 
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 import com.dickimawbooks.texjavahelplib.NavigationNode;
@@ -138,12 +140,48 @@ public class TJHListener extends L2HConverter
          {
             out.format("<entry key=\"%s\"", TeXJavaHelpLib.encodeHTML(label, true));
 
+            LabelInfo labelInfo = null;
+
             Vector<String> targets = glossariesSty.getTargets(label);
+            String target = null;
 
             if (targets != null && !targets.isEmpty())
             {
+               target = targets.firstElement();
+
                out.format(" target=\"%s\"",
-                 TeXJavaHelpLib.encodeHTML(targets.firstElement(), true));
+                 TeXJavaHelpLib.encodeHTML(target, true));
+
+               labelInfo = labelData.get(target);
+
+               if (labelInfo == null)
+               {
+                  String id = linkLabelMap.get(target);
+
+                  if (id != null)
+                  {
+                     labelInfo = labelData.get(id);
+                  }
+               }
+            }
+
+            if (labelInfo != null)
+            {
+               DivisionInfo divInfo = labelInfo.getDivisionInfo();
+               DivisionNode node = null;
+
+               if (divInfo != null)
+               {
+                  node = (DivisionNode)divInfo.getSpecial();
+               }
+
+               File f = (node == null ? null : node.getFile());
+
+               if (f != null)
+               {
+                  out.format(" file=\"%s\"", 
+                    TeXJavaHelpLib.encodeHTML(f.getName(), true));
+               }
             }
 
             out.println(">");
@@ -201,6 +239,64 @@ public class TJHListener extends L2HConverter
             }
 
             out.println("</entry>");
+         }
+
+         if (labelData != null)
+         {
+            for (String key : labelData.keySet())
+            {
+               LabelInfo labelInfo = labelData.get(key);
+               String target = labelInfo.getTarget();
+
+               if (target != null)
+               {
+                  DivisionNode node = null;
+
+                  DivisionInfo divInfo = labelInfo.getDivisionInfo();
+
+                  if (divInfo != null)
+                  {
+                     node = (DivisionNode)divInfo.getSpecial();
+                  }
+
+                  if (node == null)
+                  {
+                     node = getDivisionNode(key);
+
+                     if (node == null)
+                     {
+                        node = getDivisionNode(target);
+                     }
+                  }
+
+                  out.format("<entry key=\"%s\" target=\"%s\"",
+                     TeXJavaHelpLib.encodeHTML(key, true),
+                     TeXJavaHelpLib.encodeHTML(target, true));
+
+                  File f = (node == null ? null : node.getFile());
+
+                  if (f != null)
+                  {
+                     out.format(" file=\"%s\"", 
+                       TeXJavaHelpLib.encodeHTML(f.getName(), true));
+                  }
+
+                  out.println(">");
+
+                  TeXObject title = labelInfo.getTitle();
+
+                  if (title != null && !title.isEmpty())
+                  {
+                     out.print("<name>");
+
+                     out.print(processToString((TeXObject)title.clone(), stack));
+
+                     out.println("</name>");
+                  }
+
+                  out.println("</entry>");
+               }
+            }
          }
 
          out.println("</index>");

@@ -26,7 +26,7 @@ classes/com/dickimawbooks/texjavahelpdemo	:
 	mkdir -p classes/com/dickimawbooks/texjavahelpdemo
 
 lib/resources/helpset/index.xml	: lib/texjavahelpmk.jar doc/texjavahelp.pdf
-	bin/texjavahelpmk doc/texjavahelp.tex lib/resources/helpset
+	bin/texjavahelpmk --debug doc/texjavahelp.tex lib/resources/helpset
 
 doc/texjavahelp.pdf	: doc/texjavahelp.tex doc/texjavahelp.sty doc/texjavahelp.bib
 	arara -d doc texjavahelp

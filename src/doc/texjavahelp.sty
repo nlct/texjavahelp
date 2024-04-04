@@ -310,6 +310,9 @@
 \newcommand*{\pref}[2][]{on page~\pageref{#2}}
 \newcommand*{\phyperref}[2]{\hyperref[#2]{#1} on page~\pageref{#2}}
 
+% requires glossaries.sty v4.54+
+\renewcommand{\glsdohypertargethook}[2]{\glslabelhypertarget{#1}{#2}}
+
 % Symbols and punctuation
 
 \newcommand*{\dash}{\,---\,}
