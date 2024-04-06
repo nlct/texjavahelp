@@ -232,6 +232,32 @@ public class TeXJavaHelpLib
       }
    }
 
+   public void debug(Throwable e)
+   {
+      if (application == null)
+      {
+         e.printStackTrace();
+      }
+      else
+      {
+         application.debug(e);
+      }
+   }
+
+   public void debug(String message, Throwable e)
+   {
+      if (application == null)
+      {
+         System.err.println(message);
+
+         e.printStackTrace();
+      }
+      else
+      {
+         application.debug(message, e);
+      }
+   }
+
    public String getApplicationName()
    {
       return applicationName;

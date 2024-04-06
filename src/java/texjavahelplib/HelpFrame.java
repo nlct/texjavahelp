@@ -56,12 +56,17 @@ import javax.swing.tree.TreePath;
 public class HelpFrame extends JFrame
 {
    public HelpFrame(TeXJavaHelpLib helpLib, String title)
-     throws IOException
+    throws IOException
    {
       super(title);
 
       this.helpLib = helpLib;
 
+      init();
+   }
+
+   private void init() throws IOException
+   {
       JMenuBar mBar = new JMenuBar();
       setJMenuBar(mBar);
 
@@ -175,6 +180,57 @@ public class HelpFrame extends JFrame
       toolBar.add(nextAction);
       navMenu.add(nextAction);
 
+      toolBar.addSeparator();
+
+      // history
+
+      helpHistoryFrame = new HelpHistoryFrame(this);
+
+      historyAction = new TJHAbstractAction(helpLib,
+        "navigation", "history",
+        KeyStroke.getKeyStroke(KeyEvent.VK_H,
+          ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK))
+       {
+         @Override
+         public void doAction()
+         {
+            showHistoryFrame();
+         }
+       };
+
+      toolBar.add(historyAction);
+      navMenu.add(historyAction);
+
+      historyBackAction = new TJHAbstractAction(helpLib,
+        "navigation", "historyback",
+        KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,
+          ActionEvent.ALT_MASK | ActionEvent.SHIFT_MASK))
+       {
+         @Override
+         public void doAction()
+         {
+            historyBack();
+         }
+       };
+
+      toolBar.add(historyBackAction);
+      navMenu.add(historyBackAction);
+
+      historyForwardAction = new TJHAbstractAction(helpLib,
+        "navigation", "historyforward",
+        KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT,
+          ActionEvent.ALT_MASK | ActionEvent.SHIFT_MASK))
+       {
+         @Override
+         public void doAction()
+         {
+            historyForward();
+         }
+       };
+
+      toolBar.add(historyForwardAction);
+      navMenu.add(historyForwardAction);
+
       nextLabel = createNavLabel(nextAction,
          SwingConstants.LEFT, SwingConstants.RIGHT);
       navPanel.add(nextLabel, "East");
@@ -187,10 +243,14 @@ public class HelpFrame extends JFrame
 
    }
 
+   public TeXJavaHelpLib getHelpLib()
+   {
+      return helpLib;
+   }
+
    public void setPage(NavigationNode node) throws IOException
    {
       helpPage.setPage(node);
-      updateNavWidgets();
    }
 
    public void prevPage()
@@ -201,9 +261,8 @@ public class HelpFrame extends JFrame
       }
       catch (IOException e)
       {
+         helpLib.debug(e);
       }
-
-      updateNavWidgets();
    }
 
    public void nextPage()
@@ -214,9 +273,8 @@ public class HelpFrame extends JFrame
       }
       catch (IOException e)
       {
+         helpLib.debug(e);
       }
-
-      updateNavWidgets();
    }
 
    public void upPage()
@@ -227,9 +285,8 @@ public class HelpFrame extends JFrame
       }
       catch (IOException e)
       {
+         helpLib.debug(e);
       }
-
-      updateNavWidgets();
    }
 
    public void homePage()
@@ -240,9 +297,60 @@ public class HelpFrame extends JFrame
       }
       catch (IOException e)
       {
+         helpLib.debug(e);
       }
+   }
 
-      updateNavWidgets();
+   public void historyForward()
+   {
+      try
+      {
+         helpPage.historyForward();
+      }
+      catch (IOException e)
+      {
+         helpLib.debug(e);
+      }
+   }
+
+   public void showHistoryFrame()
+   {
+      if (helpHistoryFrame.isVisible())
+      {
+         helpHistoryFrame.toFront();
+      }
+      else
+      {
+         helpHistoryFrame.setVisible(true);
+         helpHistoryFrame.revalidateTable();
+      }
+   }
+
+   public void historyBack()
+   {
+      try
+      {
+         helpPage.historyBack();
+      }
+      catch (IOException e)
+      {
+         helpLib.debug(e);
+      }
+   }
+
+   public int getHistoryCount()
+   {
+      return helpPage.getHistoryCount();
+   }
+
+   public HistoryItem getHistoryItem(int idx)
+   {
+      return helpPage.getHistoryItem(idx);
+   }
+
+   public int getHistoryIndex()
+   {
+      return helpPage.getHistoryIndex();
    }
 
    protected JLabel createNavLabel(TJHAbstractAction action, int textPos, int hPos)
@@ -267,6 +375,14 @@ public class HelpFrame extends JFrame
    public void updateNavWidgets()
    {
       NavigationNode currentNode = helpPage.getCurrentNode();
+
+      historyBackAction.setEnabled(helpPage.hasBackHistory());
+      historyForwardAction.setEnabled(helpPage.hasForwardHistory());
+
+      if (helpHistoryFrame.isVisible())
+      {
+         helpHistoryFrame.revalidateTable();
+      }
 
       NavigationNode previousNode = currentNode.getPreviousNode();
       NavigationNode nextNode = currentNode.getNextNode();
@@ -324,8 +440,10 @@ public class HelpFrame extends JFrame
    protected HelpPage helpPage;
    protected JSplitPane splitPane;
    protected JTree navTree;
+   protected HelpHistoryFrame helpHistoryFrame;
 
-   protected TJHAbstractAction previousAction, upAction, nextAction;
+   protected TJHAbstractAction previousAction, upAction, nextAction,
+    historyAction, historyForwardAction, historyBackAction;
    protected JLabel previousLabel, upLabel, nextLabel;
 }
 

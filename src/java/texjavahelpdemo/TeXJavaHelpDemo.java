@@ -433,6 +433,19 @@ public class TeXJavaHelpDemo extends JFrame
    }
 
    @Override
+   public void debug(String message, Throwable e)
+   {
+      System.err.println(message);
+      e.printStackTrace();
+   }
+
+   @Override
+   public void debug(Throwable e)
+   {
+      e.printStackTrace();
+   }
+
+   @Override
    public String getApplicationName()
    {
       return APP_NAME;

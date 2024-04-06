@@ -34,6 +34,23 @@
 <entry key="navigation.next.tooltip">Next Page</entry>
 <entry key="navigation.next.description">Go to the next page</entry>
 
+<entry key="navigation.history">History...</entry>
+<entry key="navigation.history.mnemonic">H</entry>
+<entry key="navigation.history.tooltip">View History</entry>
+<entry key="navigation.history.description">View recent page list</entry>
+<entry key="navigation.history.title">Page History</entry>
+<entry key="navigation.history.pointer">&#x261E;</entry>
+<entry key="navigation.history.header.page">Page</entry>
+
+<entry key="navigation.historyback">Back</entry>
+<entry key="navigation.historyback.mnemonic">B</entry>
+<entry key="navigation.historyback.tooltip">History Back</entry>
+<entry key="navigation.historyback.description">Go back</entry>
+<entry key="navigation.historyforward">Forward</entry>
+<entry key="navigation.historyforward.mnemonic">F</entry>
+<entry key="navigation.historyforward.tooltip">History Forward</entry>
+<entry key="navigation.historyforward.description">Go forward</entry>
+
 <!-- Index Map -->
 <entry key="indexmap.name_description">{0}: {1}</entry>
 <entry key="indexmap.short_description">{0}: {1}</entry>

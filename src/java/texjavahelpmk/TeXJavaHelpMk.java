@@ -237,11 +237,21 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
       }
    }
 
-   public void debug(Exception e)
+   @Override
+   public void debug(Throwable e)
    {
       if (debugMode > 0)
       {
          logAndStdErrMessage(e, String.format("%s:", getApplicationName()));
+      }
+   }
+
+   @Override
+   public void debug(String message, Throwable e)
+   {
+      if (debugMode > 0)
+      {
+         logAndStdErrMessage(e, String.format("%s: %s", getApplicationName(), message));
       }
    }
 
