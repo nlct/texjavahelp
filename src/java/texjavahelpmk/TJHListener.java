@@ -20,6 +20,7 @@
 package com.dickimawbooks.texjavahelpmk;
 
 import java.util.Vector;
+import java.util.HashMap;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,9 +44,11 @@ import com.dickimawbooks.texparserlib.html.DivisionNode;
 import com.dickimawbooks.texparserlib.auxfile.DivisionInfo;
 import com.dickimawbooks.texparserlib.auxfile.LabelInfo;
 import com.dickimawbooks.texparserlib.auxfile.CiteInfo;
+import com.dickimawbooks.texparserlib.auxfile.CrossRefInfo;
 
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 import com.dickimawbooks.texjavahelplib.NavigationNode;
+import com.dickimawbooks.texjavahelplib.IndexItem;
 
 public class TJHListener extends L2HConverter
 {
@@ -74,11 +77,19 @@ public class TJHListener extends L2HConverter
 
       setNavigationFile(new File(outDir, "navigation."+suffix));
       setNavigationXmlFile(new File(outDir, "navigation.xml"));
+      setIndexXmlFile(new File(outDir, "index.xml"));
+
+      indexData = new HashMap<String,IndexItem>();
    }
 
    public void setNavigationXmlFile(File file)
    {
       navigationXmlFile = file;
+   }
+
+   public void setIndexXmlFile(File file)
+   {
+      indexXmlFile = file;
    }
 
    @Override
@@ -115,9 +126,96 @@ public class TJHListener extends L2HConverter
       }
    }
 
+   protected void updateGlossaryEntryIndexItems(String label, TeXObjectList stack)
+    throws IOException
+   {
+      GlossariesSty glossariesSty = tjhSty.getGlossariesSty();
+
+      GlossaryEntry entry = glossariesSty.getEntry(label);
+
+      TeXObject name = entry.get("name");
+      String nameStr = "";
+
+      if (name != null)
+      {
+         nameStr = processToString(name, stack);
+      }
+
+      TeXObject desc = entry.get("description");
+      String descStr = "";
+
+      if (desc != null)
+      {
+         descStr = processToString(desc, stack);
+      }
+
+      TeXObject shortValue = entry.get("short");
+      String shortStr = null;
+
+      if (shortValue != null)
+      {
+         shortStr = processToString(shortValue, stack);
+
+         if (shortStr.isEmpty() || shortStr.equals(nameStr))
+         {
+            shortStr = null;
+         }
+      }
+
+      TeXObject longValue = entry.get("long");
+      String longStr = null;
+
+      if (longValue != null)
+      {
+         longStr = processToString(longValue, stack);
+
+         if (longStr.isEmpty() || longStr.equals(descStr))
+         {
+            longStr = null;
+         }
+      }
+
+      Vector<String> targets = glossariesSty.getTargets(label);
+
+      if (targets != null && !targets.isEmpty())
+      {
+         for (String target : targets)
+         {
+            IndexItem indexItem = indexData.get(target);
+
+            indexItem.setName(nameStr);
+            indexItem.setDescription(descStr);
+            indexItem.setShortValue(shortStr);
+            indexItem.setLongValue(longStr);
+         }
+      }
+      else
+      {
+         String target = parser.expandToString(getControlSequence("glslinkprefix"), stack)
+             + label;
+
+         IndexItem indexItem = indexData.get(target);
+
+         if (indexItem == null)
+         {
+            indexItem = createIndexItem(target, target, null);
+
+            indexData.put(target, indexItem);
+         }
+
+         indexItem.setName(nameStr);
+         indexItem.setDescription(descStr);
+         indexItem.setShortValue(shortStr);
+         indexItem.setLongValue(longStr);
+      }
+   }
+
    protected void writeIndexFile(TeXObjectList stack) throws IOException
    {
-      File file = new File(((TeXJavaHelpMk)getTeXApp()).getOutDirectory(), "index.xml");
+      for (String label : glossariesSty.entryLabelSet())
+      {
+         updateGlossaryEntryIndexItems(label, stack);
+      }
 
       PrintWriter out = null;
 
@@ -126,180 +224,9 @@ public class TJHListener extends L2HConverter
          Charset charset = getHtmlCharset();
 
          out = new PrintWriter(
-           Files.newBufferedWriter(file.toPath(), charset));
+           Files.newBufferedWriter(indexXmlFile.toPath(), charset));
 
-         out.print("<?xml version=\"1.0\" encoding=\"");
-         out.print(charset.name());
-         out.println("\" standalone=\"no\"?>");
-
-         GlossariesSty glossariesSty = tjhSty.getGlossariesSty();
-
-         out.println("<index>");
-
-         for (String label : glossariesSty.entryLabelSet())
-         {
-            out.format("<entry key=\"%s\"", TeXJavaHelpLib.encodeHTML(label, true));
-
-            LabelInfo labelInfo = null;
-
-            Vector<String> targets = glossariesSty.getTargets(label);
-            String target = null;
-
-            if (targets != null && !targets.isEmpty())
-            {
-               target = targets.firstElement();
-
-               out.format(" target=\"%s\"",
-                 TeXJavaHelpLib.encodeHTML(target, true));
-
-               labelInfo = labelData.get(target);
-
-               if (labelInfo == null)
-               {
-                  String id = linkLabelMap.get(target);
-
-                  if (id != null)
-                  {
-                     labelInfo = labelData.get(id);
-                  }
-               }
-            }
-
-            if (labelInfo != null)
-            {
-               DivisionInfo divInfo = labelInfo.getDivisionInfo();
-               DivisionNode node = null;
-
-               if (divInfo != null)
-               {
-                  node = (DivisionNode)divInfo.getSpecial();
-               }
-
-               File f = (node == null ? null : node.getFile());
-
-               if (f != null)
-               {
-                  out.format(" file=\"%s\"", 
-                    TeXJavaHelpLib.encodeHTML(f.getName(), true));
-               }
-            }
-
-            out.println(">");
-
-            GlossaryEntry entry = glossariesSty.getEntry(label);
-
-            TeXObject name = entry.get("name");
-            String nameStr = "";
-
-            if (name != null)
-            {
-               nameStr = processToString(name, stack);
-            }
-
-            if (!nameStr.isEmpty())
-            {
-               out.format("<name>%s</name>%n", nameStr);
-            }
-
-            TeXObject desc = entry.get("description");
-            String descStr = "";
-
-            if (desc != null)
-            {
-               descStr = processToString(desc, stack);
-            }
-
-            if (!descStr.isEmpty())
-            {
-               out.format("<description>%s</description>%n", descStr);
-            }
-
-            TeXObject shortValue = entry.get("short");
-
-            if (shortValue != null)
-            {
-               String str = processToString(shortValue, stack);
-
-               if (!str.isEmpty() && !str.equals(nameStr))
-               {
-                  out.format("<short>%s</short>%n", str);
-               }
-            }
-
-            TeXObject longValue = entry.get("long");
-
-            if (longValue != null)
-            {
-               String str = processToString(longValue, stack);
-
-               if (!str.isEmpty() && !str.equals(descStr))
-               {
-                  out.format("<long>%s</long>%n", str);
-               }
-            }
-
-            out.println("</entry>");
-         }
-
-         if (labelData != null)
-         {
-            for (String key : labelData.keySet())
-            {
-               LabelInfo labelInfo = labelData.get(key);
-               String target = labelInfo.getTarget();
-
-               if (target != null)
-               {
-                  DivisionNode node = null;
-
-                  DivisionInfo divInfo = labelInfo.getDivisionInfo();
-
-                  if (divInfo != null)
-                  {
-                     node = (DivisionNode)divInfo.getSpecial();
-                  }
-
-                  if (node == null)
-                  {
-                     node = getDivisionNode(key);
-
-                     if (node == null)
-                     {
-                        node = getDivisionNode(target);
-                     }
-                  }
-
-                  out.format("<entry key=\"%s\" target=\"%s\"",
-                     TeXJavaHelpLib.encodeHTML(key, true),
-                     TeXJavaHelpLib.encodeHTML(target, true));
-
-                  File f = (node == null ? null : node.getFile());
-
-                  if (f != null)
-                  {
-                     out.format(" file=\"%s\"", 
-                       TeXJavaHelpLib.encodeHTML(f.getName(), true));
-                  }
-
-                  out.println(">");
-
-                  TeXObject title = labelInfo.getTitle();
-
-                  if (title != null && !title.isEmpty())
-                  {
-                     out.print("<name>");
-
-                     out.print(processToString((TeXObject)title.clone(), stack));
-
-                     out.println("</name>");
-                  }
-
-                  out.println("</entry>");
-               }
-            }
-         }
-
-         out.println("</index>");
+         IndexItem.saveIndex(indexData, out, charset);
       }
       finally
       {
@@ -307,6 +234,89 @@ public class TJHListener extends L2HConverter
          {
             out.close();
          }
+      }
+   }
+
+   @Override
+   public TeXObject createAnchor(String anchorName, TeXObject text)
+    throws IOException
+   {
+      TeXObject obj = super.createAnchor(anchorName, text);
+
+      IndexItem item = indexData.get(anchorName);
+
+      if (item == null)
+      {
+         item = createIndexItem(anchorName, anchorName, currentNode.getFile().getName());
+
+         indexData.put(anchorName, item);
+      }
+      else
+      {
+         if (item.getTarget() == null)
+         {
+            item.setTarget(anchorName);
+         }
+
+         item.setFileName(currentNode.getFile().getName());
+      }
+
+      if (!text.isEmpty())
+      {
+         item.setName(processToPlainString((TeXObject)text.clone(), null));
+      }
+
+      return obj;
+   }
+
+   @Override
+   protected void createLinkHook(String anchorName, TeXObject text, String ref)
+    throws IOException
+   {
+      IndexItem item = indexData.get(anchorName);
+
+      String filename = null;
+
+      int idx = ref.indexOf('#');
+
+      if (idx > 0)
+      {
+         filename = ref.substring(0, idx);
+      }
+
+      if (item == null)
+      {
+         item = createIndexItem(anchorName, anchorName, filename);
+
+         indexData.put(anchorName, item);
+      }
+      else
+      {
+         if (item.getFileName() == null && filename != null)
+         {
+            item.setFileName(filename);
+         }
+
+         if (item.getName() == null)
+         {
+            item.setName(processToPlainString(((TeXObject)text.clone()), null));
+         }
+      }
+   }
+
+   protected String processToPlainString(TeXObject obj, TeXObjectList stack)
+   {
+      try
+      {
+         String result = processToString(obj, stack);
+
+         result = result.replaceAll("<[^>]+>", "");
+
+         return result;
+      }
+      catch (IOException e)
+      {
+         return "";
       }
    }
 
@@ -384,6 +394,19 @@ public class TJHListener extends L2HConverter
       return (TeXJavaHelpMk)getTeXApp();
    }
 
+   protected IndexItem createIndexItem(String key)
+   {
+      return createIndexItem(key, null, null);
+   }
+
+   protected IndexItem createIndexItem(String key, String target, String filename)
+   {
+      return new IndexItem(getTeXJavaHelpMk().getHelpLib().getMessageSystem(),
+        key, target, filename);
+   }
+
    protected File navigationXmlFile;
+   protected File indexXmlFile;
    protected TeXJavaHelpSty tjhSty;
+   protected HashMap<String,IndexItem> indexData;
 }

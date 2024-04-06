@@ -19,6 +19,8 @@
 package com.dickimawbooks.texjavahelplib;
 
 import java.util.Locale;
+import java.util.HashMap;
+import java.util.Vector;
 
 import java.io.InputStream;
 import java.io.IOException;
@@ -437,6 +439,91 @@ public class TeXJavaHelpLib
       return stream;
    }
 
+   public InputStream getIndexXMLInputStream()
+     throws FileNotFoundException
+   {
+      String path;
+      InputStream stream = null;
+
+      if (helpsetLocale == null || helpsetsubdir != null)
+      {
+         path = getHelpSetResourcePath() + "/" + indexXmlFilename;
+         stream = getClass().getResourceAsStream(path);
+      }
+      else
+      {
+         String base = resourcebase + "/" + helpsetdir;
+
+         helpsetsubdir = helpsetLocale.toLanguageTag();
+
+         path = base + "/" + helpsetsubdir + "/" + indexXmlFilename;
+
+         stream = getClass().getResourceAsStream(path);
+
+         if (stream == null)
+         {
+            String lang = helpsetLocale.getLanguage();
+            String country = helpsetLocale.getCountry();
+            String tag = lang + "-" + country;
+
+            if (country == null || country.isEmpty() || helpsetsubdir.equals(tag))
+            {
+               helpsetsubdir = lang;
+
+               path = base + "/" + helpsetsubdir + "/" + indexXmlFilename;
+            }
+            else
+            {
+               helpsetsubdir = tag;
+
+               path = base + "/" + helpsetsubdir + "/" + indexXmlFilename;
+
+               stream = getClass().getResourceAsStream(path);
+
+               if (stream == null)
+               {
+                  helpsetsubdir = lang;
+
+                  path = base + "/" + helpsetsubdir + "/" + indexXmlFilename;
+               }
+            }
+
+            stream = getClass().getResourceAsStream(path);
+
+            if (stream == null)
+            {
+               String script = helpsetLocale.getScript();
+
+               if (script != null && !script.isEmpty())
+               {
+                  helpsetsubdir = lang + "-" + script;
+
+                  path = base + "/" + helpsetsubdir
+                     + "/" + indexXmlFilename;
+
+                  stream = getClass().getResourceAsStream(path);
+               }
+
+               if (stream == null)
+               {
+                  path = base + "/" + indexXmlFilename;
+                  helpsetsubdir = "";
+
+                  stream = getClass().getResourceAsStream(path);
+               }
+            }
+         }
+      }
+
+      if (stream == null)
+      {
+         throw new FileNotFoundException(
+           getMessage("error.resource_not_found", path));
+      }
+
+      return stream;
+   }
+
    public void initHelpSet()
     throws IOException,SAXException
    {
@@ -459,6 +546,50 @@ public class TeXJavaHelpLib
       navigationTree = NavigationTree.load(this);
 
       helpFrame = new HelpFrame(this, title);
+
+      indexData = IndexItem.load(this);
+      targetMap = new HashMap<String,TargetRef>();
+
+      for (IndexItem item : indexData)
+      {
+         NavigationNode node = null;
+
+         String filename = item.getFileName();
+
+         if (filename != null)
+         {
+            URL url = getHelpSetResource(filename);
+
+            node = navigationTree.getNodeByURL(url);
+
+            if (node != null)
+            {
+               String ref = item.getTarget();
+
+               if (ref.matches("wrglossary\\.\\d+"))
+               {
+                  item.setName(node.getTitle());
+               }
+               else
+               {
+                  String text = item.brief();
+
+                  if (text.isEmpty() || text.matches("\\d+(\\.\\d+)*"))
+                  {
+                     item.setName(text+" "+node.getTitle());
+                  }
+               }
+
+               TargetRef targetRef = new TargetRef(item, ref, node);
+               targetMap.put(ref, targetRef);
+            }
+         }
+      }
+   }
+
+   public TargetRef getTargetRef(String ref)
+   {
+      return targetMap.get(ref);
    }
 
    public NavigationTree getNavigationTree()
@@ -748,6 +879,10 @@ public class TeXJavaHelpLib
    protected NavigationTree navigationTree;
    protected String navhtmlfilename, navxmlfilename;
    protected String htmlsuffix = "html";
+
+   protected String indexXmlFilename = "index.xml";
+   protected Vector<IndexItem> indexData;
+   protected HashMap<String,TargetRef> targetMap;
 
    protected HelpFrame helpFrame;
 

@@ -473,7 +473,7 @@ class NavigationTreeReader extends XMLReaderAdapter
          {
             throw new SAXException(messageSystem.getMessageWithFallback(
              "error.xml.missing_attr_in_tag", 
-             "Missing ''{0}'' attribute in <{0}>", "key", "node"));
+             "Missing ''{0}'' attribute in <{1}>", "key", qName));
          }
 
          String ref = attrs.getValue("ref");
@@ -482,7 +482,7 @@ class NavigationTreeReader extends XMLReaderAdapter
          {
             throw new SAXException(messageSystem.getMessageWithFallback(
              "error.xml.missing_attr_in_tag", 
-             "Missing ''{0}'' attribute in <{0}>", "ref", "node"));
+             "Missing ''{0}'' attribute in <{1}>", "ref", qName));
          }
 
          currentParent = currentNode;

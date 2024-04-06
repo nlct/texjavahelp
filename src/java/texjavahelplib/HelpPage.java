@@ -275,13 +275,25 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
          {
             NavigationNode node = helpLib.getNavigationTree().getNodeByURL(url);
 
+            String ref = url.getRef();
+
+            if (node == null && ref != null && !ref.isEmpty())
+            {
+               TargetRef targetRef = helpLib.getTargetRef(ref);
+
+               if (targetRef != null)
+               {
+                  node = targetRef.getNode();
+               }
+            }
+
             try
             {
                setPage(url);
 
                if (node != null)
                {
-                  updateCurrentNode(node, url.getRef());
+                  updateCurrentNode(node, ref);
                }
             }
             catch (Throwable t)
@@ -311,16 +323,41 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
       else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED)
       {
          URL url = evt.getURL();
-         NavigationNode node = helpLib.getNavigationTree().getNodeByURL(url);
+         String text = null;
+         String ref = url.getRef();
 
-         if (node != null)
+         if (ref != null)
          {
-            setToolTipText(node.getTitle());
+            TargetRef targetRef = helpLib.getTargetRef(ref);
+
+            if (targetRef != null)
+            {
+               IndexItem item = targetRef.getIndexItem();
+
+               text = item.brief();
+            }
+         }
+
+         if (text == null || text.isEmpty())
+         {
+            NavigationNode node = helpLib.getNavigationTree().getNodeByURL(url);
+
+            if (node != null)
+            {
+               text = node.getTitle();
+            }
+         }
+
+         if (text == null || text.isEmpty())
+         {
+            text = url.toString();
          }
          else
          {
-            setToolTipText(url.toString());
+            text = "<html>"+text+"</html>";
          }
+
+         setToolTipText(text);
       }
       else if (evt.getEventType() == HyperlinkEvent.EventType.EXITED)
       {
