@@ -4,6 +4,7 @@
 
 \ProvidesPackage{texjavahelp}[2024/03/16 v0.1a (NLCT)]
 
+\RequirePackage{pifont}
 \RequirePackage{fontawesome}
 \RequirePackage{twemojis}
 \RequirePackage{upquote}
@@ -430,6 +431,8 @@
 
 \setabbreviationstyle[commonabbreviation]{short-nolong}
 
+\newignoredglossary{messages}
+
 \newcommand{\TeXJavaHelpGlsFieldAdjustments}{
  description-case-change=firstuc,
  post-description-dot=check
@@ -437,21 +440,29 @@
 
 \newcommand{\TeXJavaHelpGlsResourceOptions}{
   \TeXJavaHelpGlsFieldAdjustments,
+  selection=recorded and deps and see,
   entry-type-aliases=
    {
      application=index,
      file=index,
+     fileext=index,
      package=index,
      class=index,
      option=index,
+     command=index,
      switch=index,
      environment=index,
      counter=index,
      menu=index,
      menuitem=index,
      dialog=index,
+     widget=index,
      term=entry,
-     commonabbreviation=abbreviation
+     commonabbreviation=abbreviation,
+     commonfileext=index,
+     message=index,
+     error=index,
+     warning=index
    },
   category = same as original entry,
   assign-fields=
@@ -466,6 +477,11 @@
         [ entrytype->original = "menu" & entrylabel->original=/menu\.(.+)/], 
       name = "\cs{menufmt}{" + entrylabel->original + "}"
         [ entrytype->original = "menu"], 
+% widgets
+      name = "\cs{widgetfmt}{" + \MGP{1} + "}"
+        [ entrytype->original = "widget" & entrylabel->original=/(action|widget|button|navigation)\.(.+)/], 
+      name = "\cs{widgetfmt}{" + entrylabel->original + "}"
+        [ entrytype->original = "widget"], 
 % dialogue boxes
       name = "\cs{dialogfmt}{" + \MGP{1} + "}"
         [ entrytype->original = "dialog" & entrylabel->original=/dialog\.(.+)/], 
@@ -476,6 +492,11 @@
         [ entrytype->original = "file" & entrylabel->original=/file\.(.+)/], 
       name = "\cs{filefmt}{" + entrylabel->original + "}"
         [ entrytype->original = "file"], 
+% file extensions
+      name = "\cs{filefmt}{" + \MGP{1} + "}"
+        [ entrytype->original = /(common)?fileext/ & entrylabel->original=/ext\.(.+)/], 
+      name = "\cs{filefmt}{" + entrylabel->original + "}"
+        [ entrytype->original = /(common)?fileext/], 
 % packages
       name = "\cs{styfmt}{" + \MGP{1} + "}"
         [ entrytype->original = "package" & entrylabel->original=/pkg\.(.+)/], 
@@ -491,6 +512,11 @@
         [ entrytype->original = "option" & entrylabel->original=/opt\.(.+)/], 
       name = "\cs{optfmt}{" + entrylabel->original + "}"
         [ entrytype->original = "option"], 
+% (La)TeX commands
+      name = "\cs{csfmt}{" + \MGP{1} + "}"
+        [ entrytype->original = "command" & entrylabel->original=/cs\.(.+)/], 
+      name = "\cs{csfmt}{" + entrylabel->original + "}"
+        [ entrytype->original = "command"], 
 % switches
       name = "\cs{longargfmt}{" + \MGP{1} + "}"
         [ entrytype->original = "switch" & entrylabel->original=/switch\.(.+)/], 
@@ -503,6 +529,11 @@
         [ entrytype->original = "counter" & entrylabel->original=/ctr\.(.+)/], 
       name = "\cs{ctrfmt}{" + entrylabel->original + "}"
         [ entrytype->original = "counter"], 
+% messages, errors and warnings
+      name = \MGP{1}
+        [ entrytype->original = /message|error|warning/ & entrylabel->original=/(message|error|warning)\.(.+)/], 
+      type = "messages"
+        [ entrytype->original = /message|error|warning/ ], 
 % common
       defaultkeys = "format=glsignore"
         [ entrytype->original = /common.*/ ]
@@ -514,11 +545,63 @@
 
 \newcommand*{\widgetfmt}[1]{\textsf{\bfseries #1}}
 
-\newcommand*{\dialogfmt}[1]{\textsf{#1}}
+\glsxtraddlabelprefix{action.}
+\glsxtraddlabelprefix{button.}
+\glsxtraddlabelprefix{menu.}
+\glsxtraddlabelprefix{widget.}
+\glsxtraddlabelprefix{navigation.}
 
-\newcommand*{\menufmt}[1]{\textsf{#1}}
+\newcommand{\widget}{\dgls}
+
+\newcommand{\msgparam}[1]{%
+ \ifcsdef{msgparam@\romannumeral #1}%
+  {\csuse{msgparam@\romannumeral #1}}%
+  {\meta{param-#1}}%
+}
+
+\newcommand{\defmsgparam}[2]{\csdef{msgparam@\romannumeral #1}{#2}}
+
+\ExplSyntaxOn
+\NewDocumentCommand \msg { O{} m }
+  { \__texjavahelp_msg:nn { #1 } { message.#2 } }
+\NewDocumentCommand \warnmsg { O{} m }
+  { \__texjavahelp_msg:nn { #1 } { warning.#2 } }
+\NewDocumentCommand \errmsg { O{} m }
+  { \__texjavahelp_msg:nn { #1 } { error.#2 } }
+
+\seq_new:N \l__texjavahelp_msg_seq
+
+\cs_new:Nn \__texjavahelp_msg:nn
+{
+  \group_begin:
+   \seq_set_from_clist:Nn \l__texjavahelp_msg_seq { #1 }
+   \seq_map_indexed_inline:Nn \l__texjavahelp_msg_seq
+    {
+      \defmsgparam { ##1 } { ##2 }
+    }
+   \gls{#2}%
+  \group_end:
+}
+\ExplSyntaxOff
+
+\newcommand*{\dialogfmt}[1]{\widgetfmt{#1}}
+
+\newcommand*{\menufmt}[1]{\widgetfmt{#1}}
+
 \newcommand*{\menusep}{\,\ding{220}\,}
-\newrobustcmd*{\menu}[1]{%
+
+\NewDocumentCommand\menu{sO{}m}{%
+ {%
+  \let\glsxtrhiernamesep\menusep
+  \glsxtrhiername{menu.#3}%
+  \IfBooleanTF{#1}%
+  {\glsadd[format=glsignore,#2]{menu.#3}}%
+  {\glsadd[#2]{menu.#3}}%
+ }%
+}
+
+% \menutrailfmt{Parent Text,Child Text}
+\newrobustcmd*{\menutrailfmt}[1]{%
   \def\nlct@menusep{}%
   \menufmt
   {%
@@ -549,6 +632,12 @@
 
 \newcommand*{\ctrfmt}[1]{\texorpdfstring{\textsf{#1}}{#1}}
 \MFUblocker{\ctrfmt}
+
+\newcommand*{\varfmt}[1]{\texorpdfstring{\textsf{#1}}{#1}}
+\MFUblocker{\varfmt}
+
+\newcommand*{\xmltagfmt}[1]{\texorpdfstring{\texttt{<#1>}}{\string<#1\string>}}
+\MFUblocker{\xmltagfmt}
 
 \newcommand{\longswitch}{-\/-}
 \newcommand\pdflongswitch{\string-\string-}
@@ -656,8 +745,11 @@
   {\space\glscurrentfieldvalue}{}%
 }
 
+\newcommand{\main}[1]{\textbf{#1}}
+
 \NewDocumentCommand\appdef{O{}m}{%
  \begin{pinnedbox}[#1]%
+ \glsadd[format=main]{app.#2}%
  \let\glsxtrpostnameapplication\postclihook
  \glsxtrglossentry{app.#2}%
  \end{pinnedbox}% 
@@ -672,6 +764,7 @@
 
 \NewDocumentCommand\switchdef{O{}m}{%
  \begin{pinnedbox}[#1]%
+ \glsadd[format=main]{switch.#2}%
  \let\glsxtrpostnameswitch\postswitchhook
  \glsxtrglossentry{switch.#2}%
  \end{pinnedbox}% 
@@ -679,6 +772,7 @@
 
 \NewDocumentCommand\pkgdef{O{}m}{%
  \begin{codebox}[#1]%
+ \glsadd[format=main]{pkg.#2}%
  \cmd{usepackage}%
  \glsxtrifhasfield{syntax}{#2}{\oarg{\glscurrentfieldvalue}}{}%
  \marg{\glsxtrglossentry{pkg.#2}}%
@@ -688,8 +782,17 @@
 \NewDocumentCommand\clsdef{O{}m}{%
  \begin{codebox}[#1]%
  \cmd{documentclass}%
+ \glsadd[format=main]{cls.#2}%
  \glsxtrifhasfield{syntax}{#2}{\oarg{\glscurrentfieldvalue}}{}%
  \marg{\glsxtrglossentry{cls.#2}}%
+ \end{codebox}% 
+}
+
+\NewDocumentCommand\cmddef{O{}m}{%
+ \begin{codebox}[#1]%
+ \glsadd[format=main]{#2}%
+ \glsxtrglossentry{#2}%
+ \glsxtrifhasfield{syntax}{#2}{\glscurrentfieldvalue}{}%
  \end{codebox}% 
 }
 
@@ -698,10 +801,11 @@
 }
 
 \NewDocumentCommand\optiondef{O{}m}{%
- \begin{plaincodebox}[#1]%
+ \begin{compactcodebox}[#1]%
+ \glsadd[format=opt]{#2}%
  \let\glsxtrpostnameoption\postoptionhook
  \glsxtrglossentry{opt.#2}%
- \end{plaincodebox}% 
+ \end{compactcodebox}% 
 }
 
 \newcommand*{\filetext}[1]{\glsfmttext{file.#1}}
@@ -726,6 +830,80 @@
 \glsxtrnewgls{app.}{\app}
 \glsxtrnewgls{switch.}{\switch}
 \newcommand{\sswitch}[1]{\shortswitchref{switch.#1}}
+
+\newcommand{\optval}[2]{%
+ \texorpdfstring
+  {\gls{opt.#1}\optfmt{\dequals#2}}%
+  {\glsentrytext{opt.#1}=#2}%
+}
+
+\newcommand{\optvalm}[2]{%
+ \texorpdfstring
+  {\gls{opt.#1}\optfmt{\dequals\marg{#2}}}%
+  {\glsentrytext{opt.#1}=\marg{#2}}%
+}
+
+% discretionary commands (allow a line break)
+
+% put break before dash to avoid confusion with a hyphen
+\newcommand{\dhyphen}{%
+ \texorpdfstring
+ {\discretionary{}{}{}\texttt{-}}%
+ {-}%
+} 
+  
+% Redefine \- (used in entry names) so that hyphenation in command names, 
+% switches, options etc., uses a serif hyphen to reduce confusion with an 
+% actual hyphen in the code.
+
+\renewrobustcmd{\-}{%
+ \discretionary
+ {{\rmfamily\char\ifnum\hyphenchar\font<0
+  \defaulthyphenchar\else\hyphenchar\font\fi
+ }}%
+ {}{}%
+}
+
+\newcommand{\dequals}{%
+ \texorpdfstring
+ {\discretionary{}{}{}\texttt{=}\discretionary{}{}{}}%
+ {=}%
+} 
+
+\newcommand{\dcomma}{%
+ \texorpdfstring
+ {\texttt{,}\discretionary{}{}{}}%
+ {,}%
+}
+
+\newcommand{\dcolon}{%
+ \texorpdfstring
+ {\texttt{:}\discretionary{}{}{}}%
+ {:}%
+}
+
+\newcommand{\dfullstop}{%
+ \texorpdfstring
+ {\texttt{.}\discretionary{}{}{}}%
+ {.}%
+}
+
+\newcommand{\dunderscore}{%
+ \texorpdfstring
+ {\discretionary{}{}{}\texttt{\_}\discretionary{}{}{}}%
+ {\_}%
+}
+
+\pdfstringdefDisableCommands{%
+  \def\dhyphen{-}%
+  \def\dcolon{:}%
+  \def\dcomma{,}%
+  \def\dequals{=}%
+  \def\dfullstop{.}%
+  \def\dunderscore{\_}%
+  \let\-\empty
+  \let\csfmtfont\@firstofone
+}
 
 \newignoredglossary{minilist}
 
@@ -1051,6 +1229,9 @@ engine (\XeLaTeX\ or \LuaLaTeX)}
 {}{\par}\dbspace}\global\let\code@comment@dbsp\code@comment@dbsp}
 \newcommand{\araraline}[1]{\glspercentchar\ arara: #1}
 \newcommand{\araracont}{\araraline{-\/-> }}
+
+\definecolor{cs}{rgb}{.328,.436,.1} % dark green
+\definecolor{comment}{rgb}{0.37,0.37,0.37}% grey
 
 \newcommand*{\setupcodeenvfmts}{%
  \let\cbeg\code@cbeg

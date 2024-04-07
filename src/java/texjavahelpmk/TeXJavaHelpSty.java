@@ -27,6 +27,7 @@ import com.dickimawbooks.texparserlib.latex.*;
 import com.dickimawbooks.texparserlib.latex.glossaries.GlossariesSty;
 import com.dickimawbooks.texparserlib.latex.glossaries.GlsFieldLink;
 import com.dickimawbooks.texparserlib.latex.glossaries.AbstractGlsCommand;
+import com.dickimawbooks.texparserlib.latex.glossaries.Dgls;
 import com.dickimawbooks.texparserlib.latex.color.ColorSty;
 import com.dickimawbooks.texparserlib.html.L2HConverter;
 import com.dickimawbooks.texparserlib.html.Widget;
@@ -61,6 +62,13 @@ public class TeXJavaHelpSty extends UserGuideSty
    {
       addCssStyles();
       addSemanticCommands();
+
+      addSemanticCommand("xmltagfmt", TeXFontFamily.TT,
+        null, listener.getOther('<'), listener.getOther('>'));
+
+      addSemanticCommand("varfmt", TeXFontFamily.VERB);
+
+      addDiscretionaryCommands();
       addCrossRefCommands();
       addFootnoteCommands();
       addSymbolCommands();
@@ -102,6 +110,9 @@ public class TeXJavaHelpSty extends UserGuideSty
       AbstractGlsCommand gcs = new GlsFieldLink("sswitch", "shortswitch", glossariesSty);
       gcs.setEntryLabelPrefix("switch.");
       registerControlSequence(gcs);
+
+
+      registerControlSequence(new Dgls("widget", CaseChange.NO_CHANGE, glossariesSty));
 
       registerControlSequence(new Widget("menufmt", "menu"));
       registerControlSequence(new Widget("widgetfmt", "widget"));
@@ -148,6 +159,12 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new LaTeXGenericCommand(true, "icontext",
        "m", def));
+
+      // dual prefix list
+      def = listener.createString("action.,button.,menu.,widget.,navigation.,");
+        def.add(listener.getControlSequence("empty"));
+      registerControlSequence(new GenericCommand(true, "@glsxtr@labelprefixes",
+       null, def));
 
    }
 
@@ -207,6 +224,9 @@ public class TeXJavaHelpSty extends UserGuideSty
       {
          list.process(getParser(), stack);
       }
+
+      glossariesSty.createGlossary("messages", null, null, null, null, null,
+       true, true, Overwrite.FORBID);
    }
 
    @Override
