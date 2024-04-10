@@ -28,6 +28,9 @@ import java.io.FileNotFoundException;
 
 import java.net.URL;
 
+import java.awt.Font;
+import java.awt.Insets;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -38,6 +41,7 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.Action;
 
 import java.awt.event.KeyEvent;
 
@@ -665,10 +669,84 @@ public class TeXJavaHelpLib
       openHelp();
    }
 
+   public void setKeyStrokeProperty(String propertyName, KeyStroke keyStroke)
+   {
+      if (resourceProperties == null)
+      {
+         resourceProperties = new HashMap<String,Object>();
+      }
+
+      resourceProperties.put(propertyName, keyStroke);
+   }
+
+   public KeyStroke getKeyStroke(String property)
+   {
+      KeyStroke keyStroke = null;
+
+      if (resourceProperties != null)
+      {
+         Object value = resourceProperties.get(property);
+
+         if (value instanceof KeyStroke)
+         {
+            keyStroke = (KeyStroke)value;
+         }
+      }
+
+      if (keyStroke == null)
+      {
+         String text = getMessageIfExists(property+".keystroke");
+
+         if (text != null && !text.isEmpty())
+         {
+            keyStroke = KeyStroke.getKeyStroke(text);
+         }
+      }
+
+      return keyStroke;
+   }
+
+   public void setFontProperty(String propertyName, Font font)
+   {
+      if (resourceProperties == null)
+      {
+         resourceProperties = new HashMap<String,Object>();
+      }
+
+      resourceProperties.put(propertyName, font);
+   }
+
+   public Font getFontStyle(String property)
+   {
+      Font font = null;
+
+      if (resourceProperties != null)
+      {
+         Object value = resourceProperties.get(property);
+
+         if (value instanceof Font)
+         {
+            font = (Font)value;
+         }
+      }
+
+      if (font == null)
+      {
+         String text = getMessageIfExists(property+".fontstyle");
+
+         if (text != null && !text.isEmpty())
+         {
+            font = Font.decode(text);
+         }
+      }
+
+      return font;
+   }
+
    public TJHAbstractAction createHelpAction()
    {
       return new TJHAbstractAction(this,
-        "menu.help", "manual", KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0))
+        "menu.help", "manual", getKeyStroke("menu.help.manual"))
         {
            @Override
            public void doAction()
@@ -687,7 +765,7 @@ public class TeXJavaHelpLib
    public TJHAbstractAction createHelpAction(String helpID, JComponent comp)
    {
       return createHelpAction(helpID, "action", "help", "help", "help", 
-       KeyStroke.getKeyStroke(KeyEvent.VK_F1, ActionEvent.SHIFT_MASK), comp);
+       getKeyStroke("action.help"), comp);
    }
 
    public TJHAbstractAction createHelpAction(String helpID,
@@ -765,13 +843,14 @@ public class TeXJavaHelpLib
 
    public JMenuItem createJMenuItem(String tag)
    {
-      return createJMenuItem(tag, null, null);
+      return createJMenuItem(tag, null, null, null);
    }
 
    public JMenuItem createJMenuItem(String parentTag, String action,
      ActionListener actionListener)
    {
-      return createJMenuItem(parentTag, action, actionListener, null);
+      return createJMenuItem(parentTag, action, actionListener, 
+        getKeyStroke(action == null ? parentTag : parentTag+"."+action));
    }
 
    public JMenuItem createJMenuItem(String parentTag, String action,
@@ -848,6 +927,14 @@ public class TeXJavaHelpLib
       return jlabel;
    }
 
+   public JButton createToolBarButton(Action action)
+   {
+      JButton btn = new JButton(action);
+      btn.setText(null);
+      btn.setMargin(new Insets(0, 0, 0, 0));
+      return btn;
+   }
+
    public JButton createJButton(String tag)
    {
       return createJButton(tag, null, null);
@@ -915,4 +1002,6 @@ public class TeXJavaHelpLib
    protected MessageSystem messages;
    protected String applicationName;
    protected TeXJavaHelpLibApp application;
+
+   protected HashMap<String,Object> resourceProperties;
 }

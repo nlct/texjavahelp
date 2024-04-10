@@ -22,6 +22,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Font;
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Color;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -35,6 +37,11 @@ import javax.swing.JTable;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
+import javax.swing.JEditorPane;
+import javax.swing.UIManager;
+
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
@@ -42,6 +49,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableCellRenderer;
 
 /**
  * Frame for showing history page list.
@@ -50,12 +58,12 @@ public class HelpHistoryFrame extends JFrame
 {
    public HelpHistoryFrame(final HelpFrame helpFrame)
    {
-      super(helpFrame.getHelpLib().getMessage("navigation.history.title"));
+      super(helpFrame.getHelpLib().getMessage("help.navigation.history.title"));
 
       this.helpFrame = helpFrame;
 
-      pointer = helpFrame.getHelpLib().getMessage("navigation.history.pointer");
-      header = helpFrame.getHelpLib().getMessage("navigation.history.header");
+      pointer = helpFrame.getHelpLib().getMessage("help.navigation.history.pointer");
+      header = helpFrame.getHelpLib().getMessage("help.navigation.history.header");
 
       init();
    }
@@ -77,24 +85,27 @@ public class HelpHistoryFrame extends JFrame
           }
 
           @Override
+          public Class<?> getColumnClass(int columnIndex)
+          {
+             return HistoryItem.class;
+          }
+
+          @Override
           public Object getValueAt(int row, int col)
           {
              int idx = getRowCount() - 1 - row;
 
-             String title = helpFrame.getHistoryItem(idx).toString();
-
-             if (idx == helpFrame.getHistoryIndex())
-             {
-                return pointer + " " + title;
-             }
-             else
-             {
-                return title;
-             }
+             return helpFrame.getHistoryItem(idx);
           }
        };
 
       table = new JTable(tableModel);
+
+      historyItemRenderer = new HistoryItemRenderer(helpFrame, pointer);
+
+      table.setDefaultRenderer(HistoryItem.class, 
+         historyItemRenderer);
+
       table.addMouseListener(new MouseAdapter()
        {
           @Override
@@ -120,7 +131,7 @@ public class HelpHistoryFrame extends JFrame
       bottomPanel.add(btnPanel, "East");
 
       goButton = helpFrame.getHelpLib().createJButton(
-        "navigation.history", "go", new ActionListener()
+        "help.navigation.history", "go", new ActionListener()
         {
            @Override
            public void actionPerformed(ActionEvent evt)
@@ -157,13 +168,9 @@ public class HelpHistoryFrame extends JFrame
       if (idx != -1)
       {
          helpFrame.history(table.getRowCount() - 1 - idx);
+         helpFrame.setVisible(true);
+         helpFrame.toFront();
       }
-   }
-
-   public void setTableFont(Font font)
-   {
-      table.setFont(font);
-      table.setRowHeight(font.getSize());
    }
 
    public int getRowCount()
@@ -171,10 +178,10 @@ public class HelpHistoryFrame extends JFrame
       return table.getRowCount();
    }
 
-   public void revalidateTable()
+   public void update()
    {
-      table.revalidate();
-      table.repaint();
+      tableModel.fireTableDataChanged();
+      table.setRowHeight((int)historyItemRenderer.getPreferredSize().getHeight()+2);
    }
 
    protected HelpFrame helpFrame;
@@ -182,4 +189,141 @@ public class HelpHistoryFrame extends JFrame
    protected AbstractTableModel tableModel;
    protected String pointer, header;
    protected JButton goButton;
+   protected HistoryItemRenderer historyItemRenderer;
+}
+
+// adapted from DefaultTableCellRenderer
+class HistoryItemRenderer extends JEditorPane
+ implements TableCellRenderer
+{
+   public HistoryItemRenderer(HelpFrame helpFrame, String pointer)
+   {
+      super();
+      this.helpFrame = helpFrame;
+      this.pointer = pointer;
+
+      setContentType("text/html");
+   }
+
+   public Component getTableCellRendererComponent(JTable table,
+     Object value, boolean isSelected, boolean hasFocus, int row, int column)
+   {
+      if (isSelected)
+      {
+         super.setBackground(table.getSelectionBackground());
+         super.setForeground(table.getSelectionForeground());
+      }
+      else
+      {
+         if (background == null)
+         {
+            super.setBackground(table.getBackground());
+         }
+         else
+         {
+            super.setBackground(background);
+         }
+
+         if (foreground == null)
+         {
+            super.setForeground(table.getForeground());
+         }
+         else
+         {
+            super.setForeground(foreground);
+         }
+      }
+
+      Border b = null;
+
+      if (hasFocus)
+      {
+         if (isSelected)
+         {
+            b = UIManager.getBorder("Table.focusSelectedCellHighlightBorder");
+         }
+
+         if (b == null)
+         {
+            b = UIManager.getBorder("Table.focusCellHighlightBorder");
+         }
+      }
+      else
+      {
+         b = noFocusBorder;
+      }
+
+      setBorder(b);
+
+      Color back = getBackground();
+      setOpaque(back != null && back.equals(table.getBackground()));
+
+      HistoryItem item = (HistoryItem)value;
+      String title = (item == null ? "" : item.toString());
+
+      int idx = table.getRowCount() - 1 - row;
+
+      String cssFontFamily = helpFrame.getHelpFontCssName();
+
+      String text = "<html><style>"
+           + helpFrame.getHelpFontRule()
+           + "span.icon { font-family: serif ; }"
+           + "<style><body>";
+
+      if (idx == helpFrame.getHistoryIndex())
+      {
+         text += "<b><span class=\"icon\">"+pointer + "</span> " + title+"</b>";
+      }
+      else
+      {
+         text += title;
+      }
+
+      text += "</body></html>";
+
+      setText(text);
+
+      if (item != null)
+      {
+         NavigationNode node = item.getNode();
+
+         String tooltip = node.getFileName();
+
+         String ref = item.getReference();
+
+         if (ref != null)
+         {
+            tooltip += "#"+ref;
+         }
+
+         setToolTipText(tooltip);
+      }
+
+      return this;
+   }
+
+   public void setForeground(Color c)
+   {
+      super.setForeground(c);
+      foreground = c;
+   }
+
+   public void setBackground(Color c)
+   {
+      super.setBackground(c);
+      background = c;
+   }
+
+   public void updateUI()
+   {
+      super.updateUI();
+      background = null;
+      foreground = null;
+   }
+
+   protected HelpFrame helpFrame;
+   protected String pointer;
+   protected Color foreground, background;
+
+   protected static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
 }

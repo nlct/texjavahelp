@@ -280,7 +280,7 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
       this.fontSize = fontSize;
       this.fontName = fontName;
 
-      fontNameNeedsQuotes = fontName.matches("[^\\p{isAlphabetic}\\-]");
+      fontNameNeedsQuotes = fontName.matches("[^\\p{IsAlphabetic}\\-]");
 
       addBodyFontRuleToStyleSheet();
    }
@@ -297,21 +297,28 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
       return fontSize;
    }
 
-   public String getBodyFontName()
+   public String getBodyFontCssName()
    {
       return fontName;
    }
 
    public Font getBodyFont()
    {
-      return new Font(fontName, Font.PLAIN, fontSize);
+      if (fontName.equals(FALLBACK_FONT_KEYWORD))
+      {
+         return new Font(FALLBACK_FONT_NAME, Font.PLAIN, fontSize);
+      }
+      else
+      {
+         return new Font(fontName, Font.PLAIN, fontSize);
+      }
    }
 
    public String getBodyFontRule()
    {
       String rule;
 
-      if (fontName.equals(FALLBACK_FONT))
+      if (fontName.equals(FALLBACK_FONT_KEYWORD))
       {
          rule = String.format("body { font-family: %s; font-size: %d; }",
            fontName, fontSize);
@@ -319,12 +326,12 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
       else if (fontNameNeedsQuotes)
       {
          rule = String.format("body { font-family: \"%s\", %s; font-size: %d; }",
-           fontName, FALLBACK_FONT, fontSize);
+           fontName, FALLBACK_FONT_KEYWORD, fontSize);
       }
       else
       {
          rule = String.format("body { font-family: %s, %s; font-size: %d; }",
-           fontName, FALLBACK_FONT, fontSize);
+           fontName, FALLBACK_FONT_KEYWORD, fontSize);
       }
 
       return rule;
@@ -437,8 +444,9 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
    protected Vector<HistoryItem> history;
    protected int historyIdx = 0;
 
-   public static final String FALLBACK_FONT = "sans-serif";
+   public static final String FALLBACK_FONT_KEYWORD = "sans-serif";
+   public static final String FALLBACK_FONT_NAME = "SansSerif";
    protected int fontSize = 12;
-   protected String fontName = FALLBACK_FONT;
+   protected String fontName = FALLBACK_FONT_KEYWORD;
    protected boolean fontNameNeedsQuotes = false;
 }

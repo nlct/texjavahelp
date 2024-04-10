@@ -22,11 +22,13 @@ import java.io.IOException;
 
 import java.net.URL;
 
+import java.util.List;
+
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.BorderLayout;
-import java.awt.Insets;
 import java.awt.Font;
+import java.awt.Image;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.ActionEvent;
@@ -46,13 +48,9 @@ import javax.swing.JButton;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
 
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
 
 import javax.swing.tree.TreePath;
 
@@ -76,8 +74,11 @@ public class HelpFrame extends JFrame
       JMenuBar mBar = new JMenuBar();
       setJMenuBar(mBar);
 
-      JMenu navMenu = helpLib.createJMenu("menu.navigation");
+      JMenu navMenu = helpLib.createJMenu("menu.help.navigation");
       mBar.add(navMenu);
+
+      JMenu settingsMenu = helpLib.createJMenu("menu.help.settings");
+      mBar.add(settingsMenu);
 
       helpPage = new HelpPage(helpLib);
 
@@ -112,6 +113,8 @@ public class HelpFrame extends JFrame
       JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
         new JScrollPane(navTree), new JScrollPane(helpPage));
 
+      splitPane.setResizeWeight(0.25);
+
       getContentPane().add(splitPane, "Center");
 
       JPanel buttonBar = new JPanel(new BorderLayout());
@@ -130,8 +133,7 @@ public class HelpFrame extends JFrame
       getContentPane().add(navPanel, "South");
 
       TJHAbstractAction homeAction = new TJHAbstractAction(helpLib,
-        "navigation", "home",
-        KeyStroke.getKeyStroke(KeyEvent.VK_HOME, ActionEvent.ALT_MASK))
+        "help.navigation", "home")
       {
          @Override
          public void doAction()
@@ -144,8 +146,7 @@ public class HelpFrame extends JFrame
       navMenu.add(homeAction);
 
       previousAction = new TJHAbstractAction(helpLib,
-        "navigation", "previous",
-        KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, ActionEvent.ALT_MASK))
+        "help.navigation", "previous")
       {
          @Override
          public void doAction()
@@ -162,9 +163,7 @@ public class HelpFrame extends JFrame
 
       navPanel.add(previousLabel, "West");
 
-      upAction = new TJHAbstractAction(helpLib,
-        "navigation", "up",
-        KeyStroke.getKeyStroke(KeyEvent.VK_UP, ActionEvent.ALT_MASK))
+      upAction = new TJHAbstractAction(helpLib, "help.navigation", "up")
       {
          @Override
          public void doAction()
@@ -181,8 +180,7 @@ public class HelpFrame extends JFrame
       navPanel.add(upLabel, "Center");
 
       nextAction = new TJHAbstractAction(helpLib,
-        "navigation", "next",
-        KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, ActionEvent.ALT_MASK))
+        "help.navigation", "next")
       {
          @Override
          public void doAction()
@@ -194,28 +192,12 @@ public class HelpFrame extends JFrame
       docNavPanel.add(createActionComponent(nextAction));
       navMenu.add(nextAction);
 
-      // font
-
-      fontSizeSpinnerModel = new SpinnerNumberModel(12, 2, 100, 1);
-      fontSizeSpinner = new JSpinner(fontSizeSpinnerModel);
-      fontSizeSpinner.addChangeListener(new ChangeListener()
-       {
-          public void stateChanged(ChangeEvent e)
-          {
-             setHelpFont(fontSizeSpinnerModel.getNumber().intValue());
-          }
-       });
-
-      settingsPanel.add(fontSizeSpinner);
-
       // history
 
       helpHistoryFrame = new HelpHistoryFrame(this);
 
       historyAction = new TJHAbstractAction(helpLib,
-        "navigation", "history",
-        KeyStroke.getKeyStroke(KeyEvent.VK_H,
-          ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK))
+        "help.navigation", "history")
        {
          @Override
          public void doAction()
@@ -228,9 +210,7 @@ public class HelpFrame extends JFrame
       navMenu.add(historyAction);
 
       historyBackAction = new TJHAbstractAction(helpLib,
-        "navigation", "historyback",
-        KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,
-          ActionEvent.ALT_MASK | ActionEvent.SHIFT_MASK))
+        "help.navigation", "historyback")
        {
          @Override
          public void doAction()
@@ -243,9 +223,7 @@ public class HelpFrame extends JFrame
       navMenu.add(historyBackAction);
 
       historyForwardAction = new TJHAbstractAction(helpLib,
-        "navigation", "historyforward",
-        KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT,
-          ActionEvent.ALT_MASK | ActionEvent.SHIFT_MASK))
+        "help.navigation", "historyforward")
        {
          @Override
          public void doAction()
@@ -263,51 +241,118 @@ public class HelpFrame extends JFrame
 
       updateNavWidgets();
 
+      // font
+
+      TJHAbstractAction fontDecreaseAction = new TJHAbstractAction(helpLib,
+        "help.settings.font", "decrease")
+      {
+         @Override
+         public void doAction()
+         {
+            int size = helpPage.getBodyFontSize();
+
+            if (size > 3)
+            {
+               setHelpFont(size-1);
+            }
+         }
+      };
+
+      settingsPanel.add(createActionComponent(fontDecreaseAction));
+      settingsMenu.add(fontDecreaseAction);
+
+      helpFontSettings = new HelpFontSettingsFrame(this);
+
+      TJHAbstractAction fontSelectAction = new TJHAbstractAction(helpLib,
+        "help.settings", "font")
+      {
+         @Override
+         public void doAction()
+         {
+            helpFontSettings.open(helpPage.getBodyFont());
+         }
+      };
+
+      settingsPanel.add(createActionComponent(fontSelectAction));
+      settingsMenu.add(fontSelectAction);
+
+      TJHAbstractAction fontIncreaseAction = new TJHAbstractAction(helpLib,
+        "help.settings.font", "increase")
+      {
+         @Override
+         public void doAction()
+         {
+            setHelpFont(helpPage.getBodyFontSize()+1);
+         }
+      };
+
+      settingsPanel.add(createActionComponent(fontIncreaseAction));
+      settingsMenu.add(fontIncreaseAction);
+
       Toolkit tk = Toolkit.getDefaultToolkit();
       Dimension dim = tk.getScreenSize();
       setSize(dim.width/2, dim.height/2);
 
    }
 
+   public Font getHelpFont()
+   {
+      return helpPage.getBodyFont();
+   }
+
+   public String getHelpFontRule()
+   {
+      return helpPage.getBodyFontRule();
+   }
+
+   public String getHelpFontCssName()
+   {
+      return helpPage.getBodyFontCssName();
+   }
+
    public void setHelpFont(String fontName, int fontSize)
    {
-      if (fontSize != fontSizeSpinnerModel.getNumber().intValue())
-      {
-         fontSizeSpinnerModel.setValue(Integer.valueOf(fontSize));
-      }
-
       helpPage.setFontStyle(fontName, fontSize);
 
       Font f = helpPage.getBodyFont();
       navTree.setFont(f);
-      helpHistoryFrame.setTableFont(f);
+      helpHistoryFrame.update();
    }
 
    public void setHelpFont(int fontSize)
    {
-      if (fontSize != fontSizeSpinnerModel.getNumber().intValue())
-      {
-         fontSizeSpinnerModel.setValue(Integer.valueOf(fontSize));
-      }
-
       helpPage.setFontStyle(fontSize);
+
+      if (helpFontSettings.isVisible())
+      {
+         helpFontSettings.setFontSize(fontSize);
+      }
 
       Font f = helpPage.getBodyFont();
       navTree.setFont(f);
-      helpHistoryFrame.setTableFont(f);
+      helpHistoryFrame.update();
    }
 
    protected JButton createActionComponent(Action action)
    {
-      JButton btn = new JButton(action);
-      btn.setText(null);
-      btn.setMargin(new Insets(0, 0, 0, 0));
-      return btn;
+      return helpLib.createToolBarButton(action);
    }
 
    public TeXJavaHelpLib getHelpLib()
    {
       return helpLib;
+   }
+
+   public void setIconImage(Image image)
+   {
+      super.setIconImage(image);
+      helpHistoryFrame.setIconImage(image);
+   }
+
+   public void setIconImages(List<? extends Image> icons)
+   {
+      super.setIconImages(icons);
+      helpHistoryFrame.setIconImages(icons);
    }
 
    public void setPage(NavigationNode node) throws IOException
@@ -384,7 +429,6 @@ public class HelpFrame extends JFrame
       else
       {
          helpHistoryFrame.setVisible(true);
-         helpHistoryFrame.revalidateTable();
       }
    }
 
@@ -455,7 +499,7 @@ public class HelpFrame extends JFrame
 
       if (helpHistoryFrame.isVisible())
       {
-         helpHistoryFrame.revalidateTable();
+         helpHistoryFrame.update();
       }
 
       NavigationNode previousNode = currentNode.getPreviousNode();
@@ -514,12 +558,12 @@ public class HelpFrame extends JFrame
    protected HelpPage helpPage;
    protected JSplitPane splitPane;
    protected JTree navTree;
-   protected SpinnerNumberModel fontSizeSpinnerModel;
-   protected JSpinner fontSizeSpinner;
    protected HelpHistoryFrame helpHistoryFrame;
+   protected HelpFontSettingsFrame helpFontSettings;
 
    protected TJHAbstractAction previousAction, upAction, nextAction,
-    historyAction, historyForwardAction, historyBackAction;
+    historyAction, historyForwardAction, historyBackAction,
+    fontIncreaseAction, fontDecreaseAction, fontSelectAction;
    protected JLabel previousLabel, upLabel, nextLabel;
 }
 

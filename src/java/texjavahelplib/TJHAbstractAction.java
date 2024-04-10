@@ -34,7 +34,24 @@ public abstract class TJHAbstractAction extends AbstractAction
 
    public TJHAbstractAction(TeXJavaHelpLib helpLib, String parentTag, String action)
    {
-      this(helpLib, parentTag, action, null);
+      this(helpLib, parentTag, action, (Boolean)null, (JComponent)null);
+   }
+
+   public TJHAbstractAction(TeXJavaHelpLib helpLib, String parentTag, String action, JComponent comp)
+   {
+      this(helpLib, parentTag, action, (Boolean)null, comp);
+   }
+
+   public TJHAbstractAction(TeXJavaHelpLib helpLib, String parentTag, String action, Boolean selectedState)
+   {
+      this(helpLib, parentTag, action, selectedState, (JComponent)null);
+   }
+
+   public TJHAbstractAction(TeXJavaHelpLib helpLib, String parentTag, String action, Boolean selectedState, JComponent comp)
+   {
+      this(helpLib, parentTag, action, 
+       helpLib.getKeyStroke(action == null ? parentTag : parentTag+"."+action),
+       selectedState, comp);
    }
 
    public TJHAbstractAction(TeXJavaHelpLib helpLib, String parentTag, String action,
