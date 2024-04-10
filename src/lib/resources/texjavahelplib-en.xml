@@ -40,7 +40,10 @@
 <entry key="navigation.history.description">View recent page list</entry>
 <entry key="navigation.history.title">Page History</entry>
 <entry key="navigation.history.pointer">&#x261E;</entry>
-<entry key="navigation.history.header.page">Page</entry>
+<entry key="navigation.history.header">Recent List</entry>
+<entry key="navigation.history.go">Go</entry>
+<entry key="navigation.history.go.mnemonic">G</entry>
+<entry key="navigation.history.go.tooltip">Go to selected page</entry>
 
 <entry key="navigation.historyback">Back</entry>
 <entry key="navigation.historyback.mnemonic">B</entry>

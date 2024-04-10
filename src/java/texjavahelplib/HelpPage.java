@@ -26,6 +26,7 @@ import java.net.URL;
 
 import java.awt.Rectangle;
 import java.awt.Desktop;
+import java.awt.Font;
 
 import javax.swing.JEditorPane;
 import javax.swing.event.HyperlinkListener;
@@ -33,6 +34,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.Element;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.StyleSheet;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
@@ -262,6 +264,70 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
          helpLib.getHelpFrame().updateNavWidgets();
       }
 
+      addBodyFontRuleToStyleSheet();
+   }
+
+   protected void addBodyFontRuleToStyleSheet()
+   {
+      HTMLDocument doc = (HTMLDocument)getDocument();
+      StyleSheet styles = doc.getStyleSheet();
+
+      styles.addRule(getBodyFontRule());
+   }
+
+   public void setFontStyle(String fontName, int fontSize)
+   {
+      this.fontSize = fontSize;
+      this.fontName = fontName;
+
+      fontNameNeedsQuotes = fontName.matches("[^\\p{isAlphabetic}\\-]");
+
+      addBodyFontRuleToStyleSheet();
+   }
+
+   public void setFontStyle(int fontSize)
+   {
+      this.fontSize = fontSize;
+
+      addBodyFontRuleToStyleSheet();
+   }
+
+   public int getBodyFontSize()
+   {
+      return fontSize;
+   }
+
+   public String getBodyFontName()
+   {
+      return fontName;
+   }
+
+   public Font getBodyFont()
+   {
+      return new Font(fontName, Font.PLAIN, fontSize);
+   }
+
+   public String getBodyFontRule()
+   {
+      String rule;
+
+      if (fontName.equals(FALLBACK_FONT))
+      {
+         rule = String.format("body { font-family: %s; font-size: %d; }",
+           fontName, fontSize);
+      }
+      else if (fontNameNeedsQuotes)
+      {
+         rule = String.format("body { font-family: \"%s\", %s; font-size: %d; }",
+           fontName, FALLBACK_FONT, fontSize);
+      }
+      else
+      {
+         rule = String.format("body { font-family: %s, %s; font-size: %d; }",
+           fontName, FALLBACK_FONT, fontSize);
+      }
+
+      return rule;
    }
 
    @Override
@@ -370,4 +436,9 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
 
    protected Vector<HistoryItem> history;
    protected int historyIdx = 0;
+
+   public static final String FALLBACK_FONT = "sans-serif";
+   protected int fontSize = 12;
+   protected String fontName = FALLBACK_FONT;
+   protected boolean fontNameNeedsQuotes = false;
 }

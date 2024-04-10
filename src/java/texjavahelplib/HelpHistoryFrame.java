@@ -20,12 +20,24 @@ package com.dickimawbooks.texjavahelplib;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.Font;
+import java.awt.BorderLayout;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
+
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
 
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumnModel;
@@ -43,7 +55,7 @@ public class HelpHistoryFrame extends JFrame
       this.helpFrame = helpFrame;
 
       pointer = helpFrame.getHelpLib().getMessage("navigation.history.pointer");
-      header = helpFrame.getHelpLib().getMessage("navigation.history.header.page");
+      header = helpFrame.getHelpLib().getMessage("navigation.history.header");
 
       init();
    }
@@ -83,6 +95,17 @@ public class HelpHistoryFrame extends JFrame
        };
 
       table = new JTable(tableModel);
+      table.addMouseListener(new MouseAdapter()
+       {
+          @Override
+          public void mousePressed(MouseEvent evt)
+          {
+             if (evt.getClickCount() == 2)
+             {
+                goToSelectedPage();
+             }
+          }
+       });
 
       TableColumnModel colModel = table.getColumnModel();
       TableColumn col = colModel.getColumn(0);
@@ -90,10 +113,57 @@ public class HelpHistoryFrame extends JFrame
 
       getContentPane().add(new JScrollPane(table), "Center");
 
+      JPanel bottomPanel = new JPanel(new BorderLayout());
+      getContentPane().add(bottomPanel, "South");
+
+      JPanel btnPanel = new JPanel();
+      bottomPanel.add(btnPanel, "East");
+
+      goButton = helpFrame.getHelpLib().createJButton(
+        "navigation.history", "go", new ActionListener()
+        {
+           @Override
+           public void actionPerformed(ActionEvent evt)
+           {
+              goToSelectedPage();
+           }
+        });
+
+      goButton.setEnabled(false);
+
+      btnPanel.add(goButton);
+
+      ListSelectionModel listSelModel = table.getSelectionModel();
+      listSelModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+      listSelModel.addListSelectionListener(new ListSelectionListener()
+       {
+          @Override
+          public void valueChanged(ListSelectionEvent e)
+          {
+             goButton.setEnabled(table.getSelectedRow() != -1);
+          }
+       });
+
       Toolkit tk = Toolkit.getDefaultToolkit();
       Dimension dim = tk.getScreenSize();
       setSize(dim.width/3, dim.height/2);
 
+   }
+
+   protected void goToSelectedPage()
+   {
+      int idx = table.getSelectedRow();
+
+      if (idx != -1)
+      {
+         helpFrame.history(table.getRowCount() - 1 - idx);
+      }
+   }
+
+   public void setTableFont(Font font)
+   {
+      table.setFont(font);
+      table.setRowHeight(font.getSize());
    }
 
    public int getRowCount()
@@ -111,4 +181,5 @@ public class HelpHistoryFrame extends JFrame
    protected JTable table;
    protected AbstractTableModel tableModel;
    protected String pointer, header;
+   protected JButton goButton;
 }

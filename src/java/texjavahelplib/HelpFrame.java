@@ -25,6 +25,8 @@ import java.net.URL;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.BorderLayout;
+import java.awt.Insets;
+import java.awt.Font;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.ActionEvent;
@@ -34,19 +36,23 @@ import java.awt.event.MouseListener;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JToolBar;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JButton;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 import javax.swing.tree.TreePath;
 
@@ -108,9 +114,17 @@ public class HelpFrame extends JFrame
 
       getContentPane().add(splitPane, "Center");
 
-      JToolBar toolBar = new JToolBar();
+      JPanel buttonBar = new JPanel(new BorderLayout());
+      JPanel docNavPanel = new JPanel();
+      buttonBar.add(docNavPanel, "West");
 
-      getContentPane().add(toolBar, "North");
+      JPanel settingsPanel = new JPanel();
+      buttonBar.add(settingsPanel, "Center");
+
+      JPanel historyPanel = new JPanel();
+      buttonBar.add(historyPanel, "East");
+
+      getContentPane().add(buttonBar, "North");
 
       JPanel navPanel = new JPanel(new BorderLayout());
       getContentPane().add(navPanel, "South");
@@ -126,7 +140,7 @@ public class HelpFrame extends JFrame
          }
       };
 
-      toolBar.add(homeAction);
+      docNavPanel.add(createActionComponent(homeAction));
       navMenu.add(homeAction);
 
       previousAction = new TJHAbstractAction(helpLib,
@@ -140,7 +154,7 @@ public class HelpFrame extends JFrame
          }
       };
 
-      toolBar.add(previousAction);
+      docNavPanel.add(createActionComponent(previousAction));
       navMenu.add(previousAction);
 
       previousLabel = createNavLabel(previousAction, 
@@ -159,7 +173,7 @@ public class HelpFrame extends JFrame
          }
       };
 
-      toolBar.add(upAction);
+      docNavPanel.add(createActionComponent(upAction));
       navMenu.add(upAction);
 
       upLabel = createNavLabel(upAction,
@@ -177,10 +191,22 @@ public class HelpFrame extends JFrame
          }
       };
 
-      toolBar.add(nextAction);
+      docNavPanel.add(createActionComponent(nextAction));
       navMenu.add(nextAction);
 
-      toolBar.addSeparator();
+      // font
+
+      fontSizeSpinnerModel = new SpinnerNumberModel(12, 2, 100, 1);
+      fontSizeSpinner = new JSpinner(fontSizeSpinnerModel);
+      fontSizeSpinner.addChangeListener(new ChangeListener()
+       {
+          public void stateChanged(ChangeEvent e)
+          {
+             setHelpFont(fontSizeSpinnerModel.getNumber().intValue());
+          }
+       });
+
+      settingsPanel.add(fontSizeSpinner);
 
       // history
 
@@ -198,7 +224,7 @@ public class HelpFrame extends JFrame
          }
        };
 
-      toolBar.add(historyAction);
+      historyPanel.add(createActionComponent(historyAction));
       navMenu.add(historyAction);
 
       historyBackAction = new TJHAbstractAction(helpLib,
@@ -213,7 +239,7 @@ public class HelpFrame extends JFrame
          }
        };
 
-      toolBar.add(historyBackAction);
+      historyPanel.add(createActionComponent(historyBackAction));
       navMenu.add(historyBackAction);
 
       historyForwardAction = new TJHAbstractAction(helpLib,
@@ -228,7 +254,7 @@ public class HelpFrame extends JFrame
          }
        };
 
-      toolBar.add(historyForwardAction);
+      historyPanel.add(createActionComponent(historyForwardAction));
       navMenu.add(historyForwardAction);
 
       nextLabel = createNavLabel(nextAction,
@@ -241,6 +267,42 @@ public class HelpFrame extends JFrame
       Dimension dim = tk.getScreenSize();
       setSize(dim.width/2, dim.height/2);
 
+   }
+
+   public void setHelpFont(String fontName, int fontSize)
+   {
+      if (fontSize != fontSizeSpinnerModel.getNumber().intValue())
+      {
+         fontSizeSpinnerModel.setValue(Integer.valueOf(fontSize));
+      }
+
+      helpPage.setFontStyle(fontName, fontSize);
+
+      Font f = helpPage.getBodyFont();
+      navTree.setFont(f);
+      helpHistoryFrame.setTableFont(f);
+   }
+
+   public void setHelpFont(int fontSize)
+   {
+      if (fontSize != fontSizeSpinnerModel.getNumber().intValue())
+      {
+         fontSizeSpinnerModel.setValue(Integer.valueOf(fontSize));
+      }
+
+      helpPage.setFontStyle(fontSize);
+
+      Font f = helpPage.getBodyFont();
+      navTree.setFont(f);
+      helpHistoryFrame.setTableFont(f);
+   }
+
+   protected JButton createActionComponent(Action action)
+   {
+      JButton btn = new JButton(action);
+      btn.setText(null);
+      btn.setMargin(new Insets(0, 0, 0, 0));
+      return btn;
    }
 
    public TeXJavaHelpLib getHelpLib()
@@ -331,6 +393,18 @@ public class HelpFrame extends JFrame
       try
       {
          helpPage.historyBack();
+      }
+      catch (IOException e)
+      {
+         helpLib.debug(e);
+      }
+   }
+
+   public void history(int idx)
+   {
+      try
+      {
+         helpPage.history(idx);
       }
       catch (IOException e)
       {
@@ -440,6 +514,8 @@ public class HelpFrame extends JFrame
    protected HelpPage helpPage;
    protected JSplitPane splitPane;
    protected JTree navTree;
+   protected SpinnerNumberModel fontSizeSpinnerModel;
+   protected JSpinner fontSizeSpinner;
    protected HelpHistoryFrame helpHistoryFrame;
 
    protected TJHAbstractAction previousAction, upAction, nextAction,
