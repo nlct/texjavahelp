@@ -269,7 +269,7 @@ public class HelpFrame extends JFrame
          @Override
          public void doAction()
          {
-            helpFontSettings.open(helpPage.getBodyFont());
+            openFontSettings();
          }
       };
 
@@ -293,6 +293,16 @@ public class HelpFrame extends JFrame
       Dimension dim = tk.getScreenSize();
       setSize(dim.width/2, dim.height/2);
 
+   }
+
+   public void openFontSettings()
+   {
+      if (!helpFontSettings.isVisible())
+      {
+         helpFontSettings.setLocationRelativeTo(this);
+      }
+
+      helpFontSettings.open(helpPage.getBodyFont());
    }
 
    public Font getHelpFont()

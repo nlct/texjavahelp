@@ -20,7 +20,9 @@ package com.dickimawbooks.texjavahelplib;
 
 import java.awt.Font;
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
+import java.awt.Insets;
 
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
@@ -59,17 +61,24 @@ public class HelpFontSettingsFrame extends JFrame
       sampleComp = new JTextArea(helpLib.getMessage("help.settings.font_sample"), 3, 0);
       sampleComp.setLineWrap(true);
       sampleComp.setWrapStyleWord(true);
+      sampleComp.setEditable(false);
+
+      sampleComp.setMargin(new Insets(4, 4, 4, 4));
 
       getContentPane().add(sampleComp, "North");
 
       Box box = Box.createVerticalBox();
+      box.setAlignmentX(0.0f);
+
       getContentPane().add(box, "Center");
 
-      JPanel panel = new JPanel();
+      JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
+      panel.setAlignmentX(0.0f);
+
       box.add(panel);
-      box.add(Box.createVerticalStrut(40));
 
       JLabel familyLabel = helpLib.createJLabel("help.settings.font.family");
+      familyLabel.setAlignmentX(0.0f);
 
       GraphicsEnvironment grp = GraphicsEnvironment.getLocalGraphicsEnvironment();
       fontFamily = new JComboBox<String>(grp.getAvailableFontFamilyNames());
@@ -81,13 +90,19 @@ public class HelpFontSettingsFrame extends JFrame
              updateSample();
           }
        });
+      fontFamily.setAlignmentX(0.0f);
 
       familyLabel.setLabelFor(fontFamily);
 
       panel.add(familyLabel);
       panel.add(fontFamily);
 
+      panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
+      panel.setAlignmentX(0.0f);
+      box.add(panel);
+
       JLabel sizeLabel = helpLib.createJLabel("help.settings.font.size");
+      sizeLabel.setAlignmentX(0.0f);
 
       fontSizeSpinnerModel = new SpinnerNumberModel(12, 2, 100, 1);
       fontSizeSpinner = new JSpinner(fontSizeSpinnerModel);
@@ -99,8 +114,14 @@ public class HelpFontSettingsFrame extends JFrame
              updateSample();
           }
        });
+      fontSizeSpinner.setAlignmentX(0.0f);
 
+      sizeLabel.setLabelFor(fontSizeSpinner);
+
+      panel.add(sizeLabel);
       panel.add(fontSizeSpinner);
+
+      box.add(Box.createVerticalStrut(40));
 
       JPanel btnPanel = new JPanel(new BorderLayout());
       getContentPane().add(btnPanel, "South");
