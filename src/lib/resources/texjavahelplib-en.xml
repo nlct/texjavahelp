@@ -119,12 +119,15 @@
 <!--  Errors -->
 <entry key="error.xml.more_than_one_tag">More than 1 &lt;{0}&gt; found</entry>
 <entry key="error.xml.missing_attr_in_tag">Missing ''{0}'' attribute in &lt;{1}&gt;</entry>
+<entry key="error.xml.int_attr_required_in_tag">Integer ''{0}'' attribute required in &lt;{1}&gt; (found ''{2}'')</entry>
 <entry key="error.xml.tag_found_outside">&lt;{0}&gt; found outside &lt;{1}&gt;</entry>
 <entry key="error.xml.tag_found_inside">&lt;{0}&gt; found inside &lt;{1}&gt;</entry>
 <entry key="error.xml.unknown_tag">Unknown tag &lt;{0}&gt;</entry>
+<entry key="error.xml.missing_tag">Missing tag &lt;{0}&gt;</entry>
 <entry key="error.xml.missing_tag_for_node">Missing &lt;{0}&gt; for node ''{1}''</entry>
 <entry key="error.xml.unknown_end_tag">Unknown end tag &lt;/{0}&gt; found</entry>
 <entry key="error.xml.unexpected_chars">Unexpected content ''{0}'' found</entry>
+<entry key="error.xml.unknown_context">No context found for ID {0} referenced by entry ''{1}''</entry>
 <entry key="error.resource_not_found">Resource file ''{0}'' not found</entry>
 <entry key="error.resource_not_found_for_node">Resource file ''{0}'' not found for node ''{1}''</entry>
 <entry key="error.no_helpset">Helpset has not been initialised</entry>

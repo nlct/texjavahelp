@@ -782,7 +782,7 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
          }
 
          image = new L2HImage(outDir.toPath().relativize(destPath),
-          mimetype, width, height, name, alt);
+          mimetype, width, height, name, alt, true);
       }
       finally
       {
@@ -1484,7 +1484,7 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
    private File texmf;
    private boolean shownVersion = false;
 
-   private boolean useHtmlEntities = true;
+   private boolean useHtmlEntities = false;
    private boolean mathJax = false;
 
    private File inFile, outDir;

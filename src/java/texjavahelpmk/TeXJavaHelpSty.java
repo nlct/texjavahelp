@@ -35,7 +35,6 @@ import com.dickimawbooks.texparserlib.html.Widget;
 import com.dickimawbooks.texparserlib.latex.nlctdoc.UserGuideSty;
 import com.dickimawbooks.texparserlib.latex.nlctdoc.TaggedColourBox;
 import com.dickimawbooks.texparserlib.latex.nlctdoc.ColourBox;
-import com.dickimawbooks.texparserlib.latex.nlctdoc.PrintIndex;
 import com.dickimawbooks.texparserlib.latex.nlctdoc.IndexInitPostNameHooks;
 import com.dickimawbooks.texparserlib.latex.nlctdoc.AbbrPostNameHook;
 
@@ -90,7 +89,7 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new PrintMain(glossariesSty));
       registerControlSequence(new ListEntryDescendents(glossariesSty));
       registerControlSequence(new ListEntryDescendentsInit());
-      registerControlSequence(new PrintIndex("printindex", "main", "docindex", glossariesSty));
+      registerControlSequence(new PrintHelpIndex(glossariesSty));
       registerControlSequence(new IndexInitPostNameHooks());
       registerControlSequence(new AbbrPostNameHook(glossariesSty));
       registerControlSequence(new PostSwitchHook(glossariesSty));
@@ -166,6 +165,8 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new GenericCommand(true, "@glsxtr@labelprefixes",
        null, def));
 
+      // wrglossary location formats
+      registerControlSequence(new AtSecondOfTwo("glsxtrwrglossarylocfmt"));
    }
 
    @Override

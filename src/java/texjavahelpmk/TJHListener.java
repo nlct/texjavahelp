@@ -22,12 +22,16 @@ package com.dickimawbooks.texjavahelpmk;
 import java.util.Vector;
 import java.util.HashMap;
 
+import java.util.regex.Pattern;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import java.awt.Dimension;
 
@@ -49,6 +53,8 @@ import com.dickimawbooks.texparserlib.auxfile.CrossRefInfo;
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 import com.dickimawbooks.texjavahelplib.NavigationNode;
 import com.dickimawbooks.texjavahelplib.IndexItem;
+import com.dickimawbooks.texjavahelplib.SearchItem;
+import com.dickimawbooks.texjavahelplib.SearchData;
 
 public class TJHListener extends L2HConverter
 {
@@ -61,6 +67,7 @@ public class TJHListener extends L2HConverter
 
       setSplitUseBaseNamePrefix(app.isSplitBaseNamePrefixOn());
 
+      // NB this will need to be off for search to work properly
       setUseEntities(app.isUseHtmlEntitiesOn());
 
       enableLinkBox(false);
@@ -78,8 +85,14 @@ public class TJHListener extends L2HConverter
       setNavigationFile(new File(outDir, "navigation."+suffix));
       setNavigationXmlFile(new File(outDir, "navigation.xml"));
       setIndexXmlFile(new File(outDir, "index.xml"));
+      setSearchXmlFile(new File(outDir, "search.xml"));
 
       indexData = new HashMap<String,IndexItem>();
+
+      String omissions = app.getMessageWithFallback("manual.no-search",
+        "and the");
+
+      noSearchWords = omissions.trim().split("\\s+");
    }
 
    public void setNavigationXmlFile(File file)
@@ -90,6 +103,11 @@ public class TJHListener extends L2HConverter
    public void setIndexXmlFile(File file)
    {
       indexXmlFile = file;
+   }
+
+   public void setSearchXmlFile(File file)
+   {
+      searchXmlFile = file;
    }
 
    @Override
@@ -112,8 +130,7 @@ public class TJHListener extends L2HConverter
 
       try
       {
-         writer = new PrintWriter(
-           Files.newBufferedWriter(navigationXmlFile.toPath(), getHtmlCharset()));
+         writer = newNavWriter(navigationXmlFile.toPath());
 
          rootNode.saveTree(writer, getHtmlCharset());
       }
@@ -330,6 +347,12 @@ public class TJHListener extends L2HConverter
    }
 
    @Override
+   protected void endDocumentHook() throws IOException
+   {
+      writeSearchFile();
+   }
+
+   @Override
    protected LaTeXSty getLaTeXSty(KeyValList options, String styName,
       boolean loadParentOptions, TeXObjectList stack)
    throws IOException
@@ -394,6 +417,11 @@ public class TJHListener extends L2HConverter
       return (TeXJavaHelpMk)getTeXApp();
    }
 
+   public TeXJavaHelpLib getHelpLib()
+   {
+      return getTeXJavaHelpMk().getHelpLib();
+   }
+
    protected IndexItem createIndexItem(String key)
    {
       return createIndexItem(key, null, null);
@@ -405,8 +433,77 @@ public class TJHListener extends L2HConverter
         key, target, filename);
    }
 
+   @Override
+   protected Writer newHtmlWriter(Path path)
+   throws IOException
+   {
+      Writer out = super.newHtmlWriter(path);
+
+      if (documentBlockWriter == null)
+      {
+         documentBlockWriter = new DocumentBlockWriter(out, this);
+         addDocumentBlockTypeListener(documentBlockWriter);
+      }
+      else
+      {
+         documentBlockWriter.setWriter(out);
+      }
+
+      return documentBlockWriter;
+   }
+
+   public boolean isValidSearchWord(String word)
+   {
+      if (word.length() < MIN_SEARCH_LENGTH || TeXParserUtils.isBlank(word)
+          || PATTERN_NO_SEARCH.matcher(word).matches())
+      {
+         return false;
+      }
+
+      String lc = word.toLowerCase();
+
+      for (String w : noSearchWords)
+      {
+         if (w.toLowerCase().equals(lc))
+         {
+            return false;
+         }
+      }
+
+      return true;
+   }
+
+   public void addSearchItem(SearchItem item, StringBuilder context)
+   {
+      if (searchData == null)
+      {
+         searchData = new SearchData();
+      }
+
+      searchData.add(item, context);
+   }
+
+   protected void writeSearchFile() throws IOException
+   {
+      if (searchData != null)
+      {
+         searchData.write(searchXmlFile.toPath(), getHtmlCharset());
+      }
+   }
+
    protected File navigationXmlFile;
    protected File indexXmlFile;
+   protected File searchXmlFile;
    protected TeXJavaHelpSty tjhSty;
    protected HashMap<String,IndexItem> indexData;
+   protected String[] noSearchWords;
+
+   protected SearchData searchData;
+
+   protected DocumentBlockWriter documentBlockWriter;
+
+   public static final int MIN_SEARCH_LENGTH = 3;
+
+   public static final Pattern PATTERN_NO_SEARCH
+     = Pattern.compile("x[0-9a-fA-F]{2,4}|[\\d\\.\\-]+");
 }

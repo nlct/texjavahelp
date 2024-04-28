@@ -92,6 +92,14 @@ public class TeXJavaHelpLib
       }
    }
 
+   /**
+    * Encodes HTML special characters. See also
+    * HtmlTag.encodeAttributeValue(String,boolean)
+    * @param str HTML string
+    * @param encodeQuotes true if quotes should be converted to
+    * entities
+    *  @return encoded string
+    */ 
    public static String encodeHTML(String str, boolean encodeQuotes)
    {
       if (str.isEmpty()) return str;
@@ -554,6 +562,91 @@ public class TeXJavaHelpLib
       return stream;
    }
 
+   public InputStream getSearchXMLInputStream()
+     throws FileNotFoundException
+   {
+      String path;
+      InputStream stream = null;
+
+      if (helpsetLocale == null || helpsetsubdir != null)
+      {
+         path = getHelpSetResourcePath() + "/" + searchXmlFilename;
+         stream = getClass().getResourceAsStream(path);
+      }
+      else
+      {
+         String base = resourcebase + "/" + helpsetdir;
+
+         helpsetsubdir = helpsetLocale.toLanguageTag();
+
+         path = base + "/" + helpsetsubdir + "/" + searchXmlFilename;
+
+         stream = getClass().getResourceAsStream(path);
+
+         if (stream == null)
+         {
+            String lang = helpsetLocale.getLanguage();
+            String country = helpsetLocale.getCountry();
+            String tag = lang + "-" + country;
+
+            if (country == null || country.isEmpty() || helpsetsubdir.equals(tag))
+            {
+               helpsetsubdir = lang;
+
+               path = base + "/" + helpsetsubdir + "/" + searchXmlFilename;
+            }
+            else
+            {
+               helpsetsubdir = tag;
+
+               path = base + "/" + helpsetsubdir + "/" + searchXmlFilename;
+
+               stream = getClass().getResourceAsStream(path);
+
+               if (stream == null)
+               {
+                  helpsetsubdir = lang;
+
+                  path = base + "/" + helpsetsubdir + "/" + searchXmlFilename;
+               }
+            }
+
+            stream = getClass().getResourceAsStream(path);
+
+            if (stream == null)
+            {
+               String script = helpsetLocale.getScript();
+
+               if (script != null && !script.isEmpty())
+               {
+                  helpsetsubdir = lang + "-" + script;
+
+                  path = base + "/" + helpsetsubdir
+                     + "/" + searchXmlFilename;
+
+                  stream = getClass().getResourceAsStream(path);
+               }
+
+               if (stream == null)
+               {
+                  path = base + "/" + searchXmlFilename;
+                  helpsetsubdir = "";
+
+                  stream = getClass().getResourceAsStream(path);
+               }
+            }
+         }
+      }
+
+      if (stream == null)
+      {
+         throw new FileNotFoundException(
+           getMessage("error.resource_not_found", path));
+      }
+
+      return stream;
+   }
+
    public void initHelpSet()
     throws IOException,SAXException
    {
@@ -625,6 +718,11 @@ public class TeXJavaHelpLib
    public NavigationTree getNavigationTree()
    {
       return navigationTree;
+   }
+
+   public String preProcessSearchWordList(String str)
+   {
+      return str.replaceAll("\u2019", "'");
    }
 
    // GUI components
@@ -996,6 +1094,8 @@ public class TeXJavaHelpLib
    protected String indexXmlFilename = "index.xml";
    protected Vector<IndexItem> indexData;
    protected HashMap<String,TargetRef> targetMap;
+
+   protected String searchXmlFilename = "search.xml";
 
    protected HelpFrame helpFrame;
 

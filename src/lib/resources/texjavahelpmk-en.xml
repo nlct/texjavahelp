@@ -37,6 +37,22 @@
 <entry key="manual.result">Result</entry>
 <entry key="manual.transcript">Transcript</entry>
 
+<entry key="manual.no-search">
+I we you he she it they
+my our your his her its their
+mine ours yours his hers its theirs 
+me us him her them
+a an the
+and but or nor as because since so
+there here where when which why how now such
+whoever however wherever
+in of with for by from at on
+to not no 
+be am are is was were
+this that may should would ought must can
+use used using
+has have</entry>
+
 <!--  Syntax -->
 <entry key="syntax.title">Syntax:</entry>
 <entry key="syntax.opt_in">{0} [&lt;option&gt;]+ &lt;TeX file&gt; &lt;out-dir&gt;</entry>
