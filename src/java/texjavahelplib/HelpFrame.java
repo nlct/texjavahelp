@@ -48,6 +48,7 @@ import javax.swing.JButton;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
+import javax.swing.Box;
 
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -192,6 +193,27 @@ public class HelpFrame extends JFrame
       docNavPanel.add(createActionComponent(nextAction));
       navMenu.add(nextAction);
 
+      // search
+      docNavPanel.add(Box.createHorizontalStrut(20));
+      navMenu.addSeparator();
+
+      helpSearchFrame = new HelpSearchFrame(this);
+
+      TJHAbstractAction searchAction = new TJHAbstractAction(helpLib,
+        "help.navigation", "search")
+      {
+         @Override
+         public void doAction()
+         {
+            helpSearchFrame.open();
+         }
+      };
+
+      docNavPanel.add(createActionComponent(searchAction));
+      navMenu.add(searchAction);
+
+      navMenu.addSeparator();
+
       // history
 
       helpHistoryFrame = new HelpHistoryFrame(this);
@@ -327,6 +349,7 @@ public class HelpFrame extends JFrame
       Font f = helpPage.getBodyFont();
       navTree.setFont(f);
       helpHistoryFrame.update();
+      helpSearchFrame.update();
    }
 
    public void setHelpFont(int fontSize)
@@ -341,6 +364,7 @@ public class HelpFrame extends JFrame
       Font f = helpPage.getBodyFont();
       navTree.setFont(f);
       helpHistoryFrame.update();
+      helpSearchFrame.update();
    }
 
    protected JButton createActionComponent(Action action)
@@ -357,6 +381,7 @@ public class HelpFrame extends JFrame
    {
       super.setIconImage(image);
       helpHistoryFrame.setIconImage(image);
+      helpSearchFrame.setIconImage(image);
    }
 
    public void setIconImages(List<? extends Image> icons)
@@ -368,6 +393,11 @@ public class HelpFrame extends JFrame
    public void setPage(NavigationNode node) throws IOException
    {
       helpPage.setPage(node);
+   }
+
+   public void setPage(String nodeId, int position) throws IOException
+   {
+      helpPage.setPage(nodeId, position);
    }
 
    public void prevPage()
@@ -570,6 +600,7 @@ public class HelpFrame extends JFrame
    protected JTree navTree;
    protected HelpHistoryFrame helpHistoryFrame;
    protected HelpFontSettingsFrame helpFontSettings;
+   protected HelpSearchFrame helpSearchFrame;
 
    protected TJHAbstractAction previousAction, upAction, nextAction,
     historyAction, historyForwardAction, historyBackAction,

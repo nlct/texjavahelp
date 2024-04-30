@@ -93,6 +93,8 @@ public class TJHListener extends L2HConverter
         "and the");
 
       noSearchWords = omissions.trim().split("\\s+");
+
+      bodyIndexMap = new HashMap<Integer,Integer>();
    }
 
    public void setNavigationXmlFile(File file)
@@ -115,16 +117,13 @@ public class TJHListener extends L2HConverter
    {
    }
 
-   @Override
-   protected void writeNavigationFile(TeXObjectList stack)
+   protected void writeNavigationXmlFile()
      throws IOException
    {
-      super.writeNavigationFile(stack);
-
       DivisionInfo divInfo = divisionData.firstElement();
       DivisionNode divNode = (DivisionNode)divInfo.getSpecial();
 
-      NavigationNode rootNode = NavigationNode.createTree(divNode);
+      NavigationNode rootNode = NavigationNode.createTree(divNode, bodyIndexMap);
 
       PrintWriter writer = null;
 
@@ -338,6 +337,27 @@ public class TJHListener extends L2HConverter
    }
 
    @Override
+   protected void startBody() throws IOException
+   {
+      documentBlockWriter.flush();
+      currentBodyStartIndex = documentBlockWriter.getIndex();
+
+      writeliteralln("<body>");
+   }
+
+   @Override
+   protected void endBody() throws IOException
+   {
+      writeliteralln("</body>");
+
+      if (currentBodyStartIndex != 0)
+      {
+         bodyIndexMap.put(Integer.valueOf(currentNode.getIndex()),
+           Integer.valueOf(currentBodyStartIndex));
+      }
+   }
+
+   @Override
    public void endDocument(TeXObjectList stack)
    throws IOException
    {
@@ -349,6 +369,7 @@ public class TJHListener extends L2HConverter
    @Override
    protected void endDocumentHook() throws IOException
    {
+      writeNavigationXmlFile();
       writeSearchFile();
    }
 
@@ -497,6 +518,9 @@ public class TJHListener extends L2HConverter
    protected TeXJavaHelpSty tjhSty;
    protected HashMap<String,IndexItem> indexData;
    protected String[] noSearchWords;
+
+   protected HashMap<Integer,Integer> bodyIndexMap;
+   protected int currentBodyStartIndex = 0;
 
    protected SearchData searchData;
 

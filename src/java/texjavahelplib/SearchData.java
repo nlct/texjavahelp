@@ -22,6 +22,7 @@ package com.dickimawbooks.texjavahelplib;
 import java.util.Vector;
 import java.util.HashMap;
 import java.util.TreeSet;
+import java.util.Comparator;
 
 import java.text.BreakIterator;
 
@@ -81,9 +82,21 @@ public class SearchData
          {
             throw new UnknownContextException(contextId, item.toString());
          }
+
+         searchContext.addItem(item);
       }
 
       items.addAll(itemList);
+   }
+
+   public HashMap<Integer,SearchContext> getContexts()
+   {
+      return contexts;
+   }
+
+   public SearchContext getContext(int id)
+   {
+      return contexts.get(Integer.valueOf(id));
    }
 
    public TreeSet<SearchResult> search(TeXJavaHelpLib helpLib, String wordList,
@@ -117,6 +130,31 @@ public class SearchData
       if (words == null || words.isEmpty())
       {
          return null;
+      }
+
+      if (!exact && words.size() > 1)
+      {
+         words.sort(new Comparator<String>()
+          {
+             public int compare(String str1, String str2)
+             {
+                int n1 = str1.length();
+                int n2 = str2.length();
+
+                if (n1 > n2)
+                {
+                   return -1;
+                }
+                else if (n1 < n2)
+                {
+                   return 1;
+                }
+                else
+                {
+                   return 0;
+                }
+             }
+          });
       }
 
       TreeSet<SearchResult> results = null;
@@ -188,7 +226,7 @@ public class SearchData
             out.format("<context id=\"%d\">", key);
 
             out.print(TeXJavaHelpLib.encodeHTML(
-               contexts.get(key).getContext().toString(), false));
+               contexts.get(key).getText().toString(), false));
 
             out.println("</context>");
          }
@@ -235,111 +273,6 @@ public class SearchData
 
    protected Vector<SearchItem> items; 
    protected HashMap<Integer,SearchContext> contexts;
-}
-
-class SearchContext
-{
-   protected SearchContext(int contextId, CharSequence context)
-   {
-      this.contextId = contextId;
-      this.context = context;
-   }
-
-   public void addItem(SearchItem item)
-   {
-      if (items == null)
-      {
-         items = new Vector<SearchItem>();
-      }
-
-      items.add(item);
-   }
-
-   public CharSequence getContext()
-   {
-      return context;
-   }
-
-   public int getId()
-   {
-      return contextId;
-   }
-
-   public SearchResult find(TeXJavaHelpLib helpLib,
-     Vector<String> words, boolean caseSensitive, boolean exact)
-   {
-      SearchResult result = null;
-
-      for (SearchItem item : items)
-      {
-         String word = item.getWord();
-
-         if (!caseSensitive)
-         {
-            word = word.toLowerCase();
-         }
-
-         boolean found = false;
-
-         if (exact)
-         {
-            found = words.contains(word);
-         }
-         else
-         {
-            for (String w : words)
-            {
-               int idx = word.indexOf(w);
-
-               if (idx > -1)
-               {
-/*
-                  int endIdx = idx + w.length();
-
-                  if (idx > 0 || endIdx < word.length())
-                  {
-                     SearchItem newItem = new SearchItem(word,
-                       idx, endIdx,
-                       item.getNodeStart(), item.getNodeEnd(),
-                       item.getNode(), item.getContextId());
-
-                     item = newItem;
-                  }
-*/
-
-                  found = true;
-                  break;
-               }
-            }
-         }
-
-         if (found)
-         {
-            if (result == null)
-            {
-               try
-               {
-                  result = new SearchResult(item.getNode(helpLib), contextId);
-               }
-               catch (UnknownNodeException e)
-               {
-                  helpLib.debug(e);
-               }
-            }
-
-            if (result == null)
-            {
-               result.addItem(item);
-            }
-         }
-      }
-
-      return result;
-   }
-
-   protected CharSequence context;
-   protected int contextId;
-   protected Vector<SearchItem> items;
 }
 
 class SearchDataReader extends XMLReaderAdapter
@@ -439,8 +372,10 @@ class SearchDataReader extends XMLReaderAdapter
          currentContextStart = getIntAttributeValue(qName, attrs, "context-start");
          currentContextEnd = getIntAttributeValue(qName, attrs, "context-end");
          currentNodeStart = getIntAttributeValue(qName, attrs, "node-start");
-         currentNodeStart = getIntAttributeValue(qName, attrs, "node-end");
+         currentNodeEnd = getIntAttributeValue(qName, attrs, "node-end");
          currentContextId = getIntAttributeValue(qName, attrs, "context-id");
+
+         currentBuilder = new StringBuilder();
 
          previousQname = qName;
       }
@@ -455,6 +390,8 @@ class SearchDataReader extends XMLReaderAdapter
          }
 
          currentContextId = getIntAttributeValue(qName, attrs, "id");
+
+         currentBuilder = new StringBuilder();
 
          previousQname = qName;
       }
@@ -495,6 +432,8 @@ class SearchDataReader extends XMLReaderAdapter
            currentContextStart, currentContextEnd,
            currentNodeStart, currentNodeEnd,
            currentNodeId, currentContextId);
+
+         itemList.add(item);
       }
       else if ("context".equals(qName))
       {
@@ -505,6 +444,31 @@ class SearchDataReader extends XMLReaderAdapter
       }
 
       currentBuilder = null;
+   }
+
+   @Override       
+   public void characters(char[] ch, int start, int length)
+    throws SAXException
+   {
+      super.characters(ch, start, length);
+
+      if (currentBuilder == null)
+      {
+         for (int i = 0; i < length; i++)
+         {
+            if (!Character.isWhitespace(ch[start+i]))
+            {
+               throw new SAXException(
+                 messageSystem.getMessageWithFallback("error.xml.unexpected_chars",
+                   "Unexpected content ''{0}'' found",
+                   new String(ch, start+i, length-i)));
+            }
+         }
+      }
+      else
+      {
+         currentBuilder.append(ch, start, length);
+      }
    }
 
    protected SearchData data;

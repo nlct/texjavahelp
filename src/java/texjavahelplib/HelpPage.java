@@ -23,6 +23,8 @@ import java.util.Vector;
 import java.io.IOException;
 
 import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import java.awt.Rectangle;
 import java.awt.Desktop;
@@ -210,6 +212,42 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
       setPage(helpLib.getNavigationTree().getRoot());
    }
 
+   public void setPage(String nodeId, int pos) throws IOException
+   {
+      NavigationNode node = helpLib.getNavigationTree().getNodeById(nodeId);
+
+      if (node != null)
+      {
+         updateCurrentNode(node, null);
+
+         // adjust the relative position
+
+         pos -= node.getBodyStartIndex();
+
+         URL url = node.getURL();
+
+         if (pos > 0)
+         {
+            try
+            {
+               URI uri = url.toURI();
+
+               uri = new URI(uri.getScheme(), uri.getUserInfo(),
+                uri.getHost(), uri.getPort(),
+                uri.getPath(), "pos="+pos, uri.getFragment());
+
+               url = uri.toURL();
+            }
+            catch (URISyntaxException e)
+            {
+               helpLib.debug(e);
+            }
+         }
+
+         setPage(url);
+      }
+   }
+
    @Override
    public void scrollToReference(String ref)
    {
@@ -243,6 +281,25 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
       }
    }
 
+   public void scrollToPosition(int pos)
+   {
+      try
+      {
+         Rectangle r = modelToView(pos);
+
+         if (r != null)
+         {
+            Rectangle vis = getVisibleRect();
+            r.height = vis.height;
+            scrollRectToVisible(r);
+            setCaretPosition(pos);
+         }
+      }
+      catch (BadLocationException e)
+      {
+      }
+   }
+
    protected void pageChanged(PropertyChangeEvent evt)
    {
       Object oldValue = evt.getOldValue();
@@ -259,6 +316,32 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
          if (ref != null)
          {
             scrollToReference(ref);
+         }
+         else
+         {
+            String query = newUrl.getQuery();
+
+            if (query != null)
+            {
+               int pos = 0;
+               int idx = query.indexOf("pos=");
+
+               if (idx > -1)
+               {
+                  try
+                  {
+                     pos = Integer.parseInt(query.substring(idx+5));
+                  }
+                  catch (NumberFormatException e)
+                  {// do nothing (shouldn't happen)
+                  }
+               }
+
+               if (pos > 0)
+               {
+                  scrollToPosition(pos);
+               }
+            }
          }
 
          helpLib.getHelpFrame().updateNavWidgets();

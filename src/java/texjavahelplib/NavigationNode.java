@@ -29,6 +29,7 @@ import java.nio.charset.Charset;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.HashMap;
 
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -185,7 +186,7 @@ public class NavigationNode implements TreeNode
       return key.equals(((NavigationNode)obj).getKey());
    }
 
-   protected void addChildren(DivisionNode divNode)
+   protected void addChildren(DivisionNode divNode, HashMap<Integer,Integer> bodyIndexMap)
    {
       int n = divNode.getChildCount();
 
@@ -200,25 +201,52 @@ public class NavigationNode implements TreeNode
             NavigationNode childNavNode = new NavigationNode(
               childDivNode.getId(), childDivNode.getRef(), this);
 
+            if (bodyIndexMap != null)
+            {
+               Integer num = bodyIndexMap.get(
+                  Integer.valueOf(childDivNode.getIndex()));
+
+               if (num != null)
+               {
+                  childNavNode.setBodyStartIndex(num.intValue());
+               }
+            }
+
             childNavNode.prefix = childDivNode.getPrefix();
             childNavNode.title = childDivNode.getTitle();
             childNavNode.filename = childDivNode.getFile().getName();
 
-            childNavNode.addChildren(childDivNode);
+            childNavNode.addChildren(childDivNode, bodyIndexMap);
          }
       }
    }
 
    public static NavigationNode createTree(DivisionNode divNode)
    {
+      return createTree(divNode, null);
+   }
+
+   public static NavigationNode createTree(DivisionNode divNode,
+      HashMap<Integer,Integer> bodyIndexMap)
+   {
       NavigationNode navNode = new NavigationNode(
         divNode.getId(), divNode.getRef());
+
+      if (bodyIndexMap != null)
+      {
+         Integer num = bodyIndexMap.get(Integer.valueOf(divNode.getIndex()));
+
+         if (num != null)
+         {
+            navNode.setBodyStartIndex(num.intValue());
+         }
+      }
 
       navNode.prefix = divNode.getPrefix();
       navNode.title = divNode.getTitle();
       navNode.filename = divNode.getFile().getName();
 
-      navNode.addChildren(divNode);
+      navNode.addChildren(divNode, bodyIndexMap);
 
       return navNode;
    }
@@ -246,10 +274,17 @@ public class NavigationNode implements TreeNode
    {
       // The key shouldn't have any awkward characters, but just in case
 
-      out.printf("<node key=\"%s\" ref=\"%s\">%n",
+      out.printf("<node key=\"%s\" ref=\"%s\"",
         TeXJavaHelpLib.encodeHTML(key, true),
         TeXJavaHelpLib.encodeHTML(ref, true)
        );
+
+      if (bodyStartIndex > 0)
+      {
+         out.printf(" body-start-index=\"%d\"", bodyStartIndex);
+      }
+
+      out.println(">");
 
       if (prefix != null)
       {
@@ -404,6 +439,16 @@ public class NavigationNode implements TreeNode
       return url;
    }
 
+   public int getBodyStartIndex()
+   {
+      return bodyStartIndex;
+   }
+
+   public void setBodyStartIndex(int index)
+   {
+      bodyStartIndex = index;
+   }
+
    protected final String key, ref;
    protected String prefix;
    protected String title;
@@ -416,6 +461,9 @@ public class NavigationNode implements TreeNode
 
    protected Vector<NavigationNode> children;
    protected NavigationNode parent;
+
+   // index of <body>
+   protected int bodyStartIndex = 0;
 }
 
 class NavigationTreeReader extends XMLReaderAdapter
@@ -487,6 +535,23 @@ class NavigationTreeReader extends XMLReaderAdapter
 
          currentParent = currentNode;
          currentNode = new NavigationNode(key, ref, currentParent);
+
+         String val = attrs.getValue("body-start-index");
+
+         if (val != null)
+         {
+            try
+            {
+               currentNode.setBodyStartIndex(Integer.parseInt(val));
+            }
+            catch (NumberFormatException e)
+            {
+               throw new SAXException(messageSystem.getMessageWithFallback(
+                "error.xml.int_attr_required_in_tag", 
+                "Integer ''{0}'' attribute required in <{1}> (found ''{2}'')",
+                  "body-start-index", qName, val), e);
+            }
+         }
 
          if (rootNode == null)
          {

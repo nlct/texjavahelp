@@ -38,6 +38,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JCheckBox;
 import javax.swing.KeyStroke;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -708,6 +709,13 @@ public class TeXJavaHelpLib
             }
          }
       }
+
+      searchData = SearchData.load(this);
+   }
+
+   public SearchData getSearchData()
+   {
+      return searchData;
    }
 
    public TargetRef getTargetRef(String ref)
@@ -1025,6 +1033,11 @@ public class TeXJavaHelpLib
       return jlabel;
    }
 
+   /**
+    * Creates a JButton from an action without showing text or
+    * border. Note that this overrides any text specified by the
+    * action.
+    */
    public JButton createToolBarButton(Action action)
    {
       JButton btn = new JButton(action);
@@ -1079,6 +1092,42 @@ public class TeXJavaHelpLib
       return button;
    }
 
+   public JCheckBox createJCheckBox(String tag)
+   {
+      return createJCheckBox(tag, null, false);
+   }
+
+   public JCheckBox createJCheckBox(String parentTag, String action,
+     boolean selected)
+   {
+      String tag = action == null ? parentTag : parentTag+"."+action;
+
+      JCheckBox button = new JCheckBox(getMessage(tag), selected);
+
+      int mnemonic = getMnemonic(tag+".mnemonic");
+
+      if (mnemonic > 0)
+      {
+         button.setMnemonic(mnemonic);
+      }
+
+      String tooltip = getMessageIfExists(tag+".tooltip");
+
+      if (tooltip != null)
+      {
+         button.setToolTipText(tooltip);
+      }
+
+      String desc = getMessageIfExists(tag+".description");
+
+      if (desc != null)
+      {
+         button.getAccessibleContext().setAccessibleDescription(desc);
+      }
+
+      return button;
+   }
+
    protected String resourcebase = "/resources";
    protected String resourceIconBase = "/resources/icons";
    protected String smallIconSuffix = "-16x16";
@@ -1096,6 +1145,7 @@ public class TeXJavaHelpLib
    protected HashMap<String,TargetRef> targetMap;
 
    protected String searchXmlFilename = "search.xml";
+   protected SearchData searchData;
 
    protected HelpFrame helpFrame;
 

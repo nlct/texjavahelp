@@ -208,6 +208,15 @@ public class DocumentBlockWriter extends Writer
       index = 0;
    }
 
+   /**
+    * Returns the index of the end of the processed content.
+    * NB there may be pending content after this index.
+    */
+   public int getIndex()
+   {
+      return index;
+   }
+
    protected Writer writer;
    protected int index = 0;
    protected StringBuilder buffer;

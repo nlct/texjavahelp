@@ -43,6 +43,28 @@
 <entry key="help.navigation.next.description">Go to the next page</entry>
 <entry key="help.navigation.next.keystroke">alt RIGHT</entry>
 
+<entry key="help.navigation.search">Search...</entry>
+<entry key="help.navigation.search.mnemonic">S</entry>
+<entry key="help.navigation.search.tooltip">Search document</entry>
+<entry key="help.navigation.search.description">Open search dialogue</entry>
+
+<entry key="help.navigation.search.title">Search</entry>
+<entry key="help.navigation.search.keywords">Keywords:</entry>
+<entry key="help.navigation.search.keywords.mnemonic">K</entry>
+<entry key="help.navigation.search.keywords.description">Search terms</entry>
+<entry key="help.navigation.search.find">Find</entry>
+<entry key="help.navigation.search.find.mnemonic">F</entry>
+<entry key="help.navigation.search.case">Case-sensitive</entry>
+<entry key="help.navigation.search.case.mnemonic">V</entry>
+<entry key="help.navigation.search.exact">Match whole word</entry>
+<entry key="help.navigation.search.exact.mnemonic">W</entry>
+
+<entry key="help.navigation.searching">Searching...</entry>
+<entry key="help.navigation.search.stop">Stop</entry>
+<entry key="help.navigation.search.stop.keystroke">shift ESC</entry>
+<entry key="help.navigation.search.found">Found {0} {0,choice,1#match|1&lt;matches}</entry>
+<entry key="help.navigation.search.not_found">Not found</entry>
+
 <entry key="help.navigation.history">History...</entry>
 <entry key="help.navigation.history.mnemonic">H</entry>
 <entry key="help.navigation.history.keystroke">ctrl shift H</entry>
@@ -128,6 +150,7 @@
 <entry key="error.xml.unknown_end_tag">Unknown end tag &lt;/{0}&gt; found</entry>
 <entry key="error.xml.unexpected_chars">Unexpected content ''{0}'' found</entry>
 <entry key="error.xml.unknown_context">No context found for ID {0} referenced by entry ''{1}''</entry>
+
 <entry key="error.resource_not_found">Resource file ''{0}'' not found</entry>
 <entry key="error.resource_not_found_for_node">Resource file ''{0}'' not found for node ''{1}''</entry>
 <entry key="error.no_helpset">Helpset has not been initialised</entry>
@@ -135,5 +158,6 @@
 <entry key="error.no_desktop">Desktop not supported on the current platform.
 Unable to open URL {0}</entry>
 <entry key="error.browse_failed">Unable to open browser to view {0}</entry>
+<entry key="error.missing_search_term">Missing search term</entry>
 
 </properties>

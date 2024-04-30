@@ -103,6 +103,87 @@ public class SearchResult implements Comparable<SearchResult>
       }
    }
 
+   public CharSequence getHighlightedContext(SearchData searchData)
+   {
+      StringBuilder builder = new StringBuilder();
+
+      SearchContext context = searchData.getContext(contextId);
+
+      if (context != null)
+      {
+         CharSequence text = context.getText();
+         int idx1 = 0;
+
+         String nodeId = node.getKey();
+
+         builder.append("<h2><a href=\"");
+         builder.append(nodeId);
+         builder.append("\">");
+         builder.append(node.toString());
+         builder.append("</a></h2>");
+
+         builder.append("<p>");
+
+         if (items != null)
+         {
+            for (SearchItem item : items)
+            {
+               int idx2 = item.getContextStart();
+
+               if (idx1 != idx2)
+               {
+                  builder.append(text.subSequence(idx1, idx2));
+                  idx1 = idx2;
+               }
+
+               idx2 = item.getContextEnd();
+
+               builder.append("<span class=\"highlight\"><a href=\"");
+               builder.append(nodeId);
+               builder.append("?pos=");
+               builder.append(item.getNodeStart());
+               builder.append("\">");
+               builder.append(text.subSequence(idx1, idx2));
+               builder.append("</a></span>");
+
+               idx1 = idx2;
+            }
+
+         }
+
+         if (idx1 < text.length())
+         {
+            builder.append(text.subSequence(idx1, text.length()));
+         }
+
+         builder.append("</p>");
+      }
+
+      return builder;
+   }
+
+   @Override
+   public String toString()
+   {
+      StringBuilder builder = new StringBuilder();
+
+      builder.append(String.format("%s[contextId=%d,node=%s,numItems=%d,items=",
+       getClass().getSimpleName(),
+       contextId, node, getItemCount()));
+
+      if (items != null)
+      {
+         for (SearchItem item : items)
+         {
+            builder.append(String.format("%n%s", item));
+         }
+      }
+
+      builder.append("]");
+
+      return builder.toString();
+   }
+
    protected int contextId;
    protected NavigationNode node;
    protected TreeSet<SearchItem> items;
