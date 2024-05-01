@@ -64,6 +64,8 @@
 <entry key="help.navigation.search.stop.keystroke">shift ESC</entry>
 <entry key="help.navigation.search.found">Found {0} {0,choice,1#match|1&lt;matches}</entry>
 <entry key="help.navigation.search.not_found">Not found</entry>
+<entry key="help.navigation.search_link_title">Go to start of section</entry>
+<entry key="help.navigation.search_link_para">Go to paragraph</entry>
 
 <entry key="help.navigation.history">History...</entry>
 <entry key="help.navigation.history.mnemonic">H</entry>

@@ -64,6 +64,9 @@ public class HelpSearchFrame extends JFrame
    {
       TeXJavaHelpLib helpLib = helpFrame.getHelpLib();
 
+      titleTooltipText = helpLib.getMessage("help.navigation.search_link_title");
+      paraTooltipText = helpLib.getMessage("help.navigation.search_link_para");
+
       JComponent searchPanel = Box.createVerticalBox();
 
       JPanel inputPanel = new JPanel();
@@ -112,6 +115,15 @@ public class HelpSearchFrame extends JFrame
           public void mouseReleased(MouseEvent evt)
           {
              jumpToContext(evt.getPoint());
+          }
+       });
+
+      resultComp.addMouseMotionListener(new MouseMotionAdapter()
+       {
+          @Override
+          public void mouseMoved(MouseEvent e)
+          {
+             updateToolTipText(e.getPoint());
           }
        });
 
@@ -344,6 +356,46 @@ public class HelpSearchFrame extends JFrame
          }
       }
    }
+
+   protected void updateToolTipText(Point p)
+   {
+      String text = null;
+
+      HTMLDocument doc = (HTMLDocument)resultComp.getDocument();
+
+      if (doc.getLength() > 0)
+      {
+         int pos = resultComp.viewToModel(p);
+
+         if (pos > -1)
+         {
+            Element elem = doc.getParagraphElement(pos);
+
+            if (elem != null)
+            {
+               AttributeSet attrSet = elem.getAttributes();
+               String id = (String)attrSet.getAttribute(HTML.Attribute.ID);
+
+               if (id == null)
+               {
+                  text = titleTooltipText;
+               }
+               else
+               {
+                  int idx = id.lastIndexOf('#');
+
+                  if (idx > 0)
+                  {
+                     text = paraTooltipText;
+                  }
+               }
+            }
+         }
+      }
+
+      resultComp.setToolTipText(text);
+   }
+
    public void update()
    {
       HTMLDocument doc = (HTMLDocument)resultComp.getDocument();
@@ -361,6 +413,8 @@ public class HelpSearchFrame extends JFrame
    protected JEditorPane resultComp;
    protected JProgressBar progressBar;
    protected SearchWorker worker;
+
+   protected String titleTooltipText, paraTooltipText;
 }
 
 class SearchWorker extends SwingWorker<TreeSet<SearchResult>,Void>
