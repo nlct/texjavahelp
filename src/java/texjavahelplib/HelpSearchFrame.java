@@ -257,27 +257,25 @@ public class HelpSearchFrame extends JFrame
    {
       if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
       {
+         /* 
+            href is in the non-standard form node-label#ref so can't
+            use evt.getUrl()
+          */
+
          String desc = evt.getDescription();
 
-         int pos = 0;
-
-         int idx = desc.lastIndexOf("?pos=");
+         int idx = desc.lastIndexOf('#');
+         String ref = null;
 
          if (idx > -1)
          {
-            try
-            {
-               pos = Integer.parseInt(desc.substring(idx+5));
-               desc = desc.substring(0, idx);
-            }
-            catch (NumberFormatException e)
-            {// do nothing (shouldn't happen)
-            }
+            ref = desc.substring(idx+1);
+            desc = desc.substring(0, idx);
          }
 
          try
          {
-            helpFrame.setPage(desc, pos);
+            helpFrame.setPage(desc, ref);
          }
          catch (IOException e)
          {

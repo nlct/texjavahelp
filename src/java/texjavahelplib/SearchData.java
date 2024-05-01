@@ -207,10 +207,6 @@ public class SearchData
 
             out.format("context-end=\"%d\" ", item.getContextEnd());
 
-            out.format("node-start=\"%d\" ", item.getNodeStart());
-
-            out.format("node-end=\"%d\" ", item.getNodeEnd());
-
             out.format("context-id=\"%d\" ", item.getContextId());
 
             out.print(">");
@@ -371,8 +367,6 @@ class SearchDataReader extends XMLReaderAdapter
 
          currentContextStart = getIntAttributeValue(qName, attrs, "context-start");
          currentContextEnd = getIntAttributeValue(qName, attrs, "context-end");
-         currentNodeStart = getIntAttributeValue(qName, attrs, "node-start");
-         currentNodeEnd = getIntAttributeValue(qName, attrs, "node-end");
          currentContextId = getIntAttributeValue(qName, attrs, "context-id");
 
          currentBuilder = new StringBuilder();
@@ -430,7 +424,6 @@ class SearchDataReader extends XMLReaderAdapter
       {
          SearchItem item = new SearchItem(currentBuilder.toString(),
            currentContextStart, currentContextEnd,
-           currentNodeStart, currentNodeEnd,
            currentNodeId, currentContextId);
 
          itemList.add(item);
@@ -480,7 +473,6 @@ class SearchDataReader extends XMLReaderAdapter
 
    protected String currentNodeId;
    protected int currentContextStart, currentContextEnd;
-   protected int currentNodeStart, currentNodeEnd;
    protected int currentContextId;
 
    protected Vector<SearchContext> contextList;

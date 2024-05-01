@@ -25,7 +25,6 @@ public class SearchItem implements Comparable<SearchItem>
 {
    public SearchItem(String word, 
      int contextStartIdx, int contextEndIdx,
-     int startIdx, int endIdx,
      String nodeLabel, int contextId)
    {
       if (word == null || nodeLabel == null)
@@ -40,18 +39,9 @@ public class SearchItem implements Comparable<SearchItem>
            contextEndIdx, contextStartIdx));
       }
 
-      if (endIdx < startIdx)
-      {
-         throw new IllegalArgumentException(String.format(
-          "node end index %d is less than start index %d",
-           endIdx, startIdx));
-      }
-
       this.word = word;
       this.contextStartIdx = contextStartIdx;
       this.contextEndIdx = contextEndIdx;
-      this.startIdx = startIdx;
-      this.endIdx = endIdx;
       this.nodeLabel = nodeLabel;
       this.contextId = contextId;
    }
@@ -69,16 +59,6 @@ public class SearchItem implements Comparable<SearchItem>
    public int getContextEnd()
    {
       return contextEndIdx;
-   }
-
-   public int getNodeStart()
-   {
-      return startIdx;
-   }
-
-   public int getNodeEnd()
-   {
-      return endIdx;
    }
 
    public String getNodeLabel()
@@ -132,7 +112,9 @@ public class SearchItem implements Comparable<SearchItem>
    @Override
    public String toString()
    {
-      return String.format("%s %s(%d,%d)", word, nodeLabel, startIdx, endIdx);
+      return String.format("%s[word=%s,node=%s,contextId=%d,start=%d,end=%d)]",
+         getClass().getSimpleName(), word, nodeLabel,
+         contextId, contextStartIdx, contextEndIdx);
    }
 
    public NavigationNode getNode(TeXJavaHelpLib helpLib)
@@ -155,7 +137,6 @@ public class SearchItem implements Comparable<SearchItem>
 
    protected String word;
    protected int contextStartIdx, contextEndIdx;
-   protected int startIdx, endIdx;
    protected int contextId;
    protected String nodeLabel;
    protected NavigationNode node;

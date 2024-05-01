@@ -59,7 +59,7 @@ public class DocumentBlockWriter extends Writer
 
          if (TeXParserUtils.isBlank(buffer))
          {
-            flush();
+            writeAndClear();
          }
          else if (oldType == DocumentBlockType.PARAGRAPH)
          {
@@ -79,7 +79,7 @@ public class DocumentBlockWriter extends Writer
             }
             else
             {
-               flush();
+               writeAndClear();
             }
          }
       }
@@ -87,7 +87,27 @@ public class DocumentBlockWriter extends Writer
 
    protected void processBuffer() throws IOException
    {
+      Matcher m = REDUNDANT_P.matcher(buffer);
+
+      if (m.find())
+      {
+         buffer.delete(0, m.start(1)-1);
+      }
+
       contextId++;
+
+      m = START_NO_ID.matcher(buffer);
+
+      String idAttr = String.format(" id=\"context%d\"", contextId);
+
+      if (m.find())
+      {
+         buffer.insert(m.end()-1, idAttr);
+      }
+      else
+      {
+         buffer.insert(0, String.format("<a%s></a>", idAttr));
+      }
 
       int start = 0;
       boolean inTag = false;
@@ -117,7 +137,7 @@ public class DocumentBlockWriter extends Writer
          processBuffer(start, buffer.length(), context);
       }
 
-      flush();
+      writeAndClear();
    }
 
    protected void processBuffer(int start, int end, StringBuilder context)
@@ -127,7 +147,6 @@ public class DocumentBlockWriter extends Writer
         buffer.substring(start, end));
 
       int contextOffset = context.length();
-      int offset = index + start;
 
       context.append(source);
 
@@ -146,7 +165,6 @@ public class DocumentBlockWriter extends Writer
          {
             SearchItem item = new SearchItem(word, 
              contextOffset+idx1, contextOffset+idx2,
-             offset+idx1, offset+idx2,
              listener.getCurrentNode().getId(),
              contextId);
 
@@ -188,10 +206,15 @@ public class DocumentBlockWriter extends Writer
    @Override
    public void flush() throws IOException
    {
+      writeAndClear();
+      writer.flush();
+   }
+
+   protected void writeAndClear() throws IOException
+   {
       index += buffer.length();
 
       writer.write(buffer.toString());
-      writer.flush();
       buffer.setLength(0);
    }
 
@@ -211,6 +234,10 @@ public class DocumentBlockWriter extends Writer
    /**
     * Returns the index of the end of the processed content.
     * NB there may be pending content after this index.
+    * Note also that HTMLDocument converts the HTML code parsed into
+    * its own structure so the index of the caret position doesn't
+    * relate to the corresponding character position in the HTML
+    * source code.
     */
    public int getIndex()
    {
@@ -224,5 +251,12 @@ public class DocumentBlockWriter extends Writer
 
    protected int contextId = 0;
 
-   public static final Pattern EMPTY_P = Pattern.compile("\\s*<p>\\s*(</p>)?\\s*");
+   public static final Pattern EMPTY_P
+     = Pattern.compile("\\s*<p>\\s*(</p>)?\\s*");
+
+   public static final Pattern REDUNDANT_P
+     = Pattern.compile("^\\s*<p>\\s*<(ul|ol|dl|li|dt|dd|pre|table|caption)\\s*");
+
+   public static final Pattern START_NO_ID
+     = Pattern.compile("^\\s*<(?:p|div|ul|ol|dl|pre|li|dt|dd|table)(?:\\s+class=\"[^\"]*\")?\\s*>");
 }

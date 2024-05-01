@@ -395,9 +395,9 @@ public class HelpFrame extends JFrame
       helpPage.setPage(node);
    }
 
-   public void setPage(String nodeId, int position) throws IOException
+   public void setPage(String nodeId, String ref) throws IOException
    {
-      helpPage.setPage(nodeId, position);
+      helpPage.setPage(nodeId, ref);
    }
 
    public void prevPage()

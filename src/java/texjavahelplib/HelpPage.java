@@ -33,8 +33,7 @@ import java.awt.Font;
 import javax.swing.JEditorPane;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.text.Element;
-import javax.swing.text.BadLocationException;
+import javax.swing.text.*;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.StyleSheet;
 
@@ -212,21 +211,17 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
       setPage(helpLib.getNavigationTree().getRoot());
    }
 
-   public void setPage(String nodeId, int pos) throws IOException
+   public void setPage(String nodeId, String ref) throws IOException
    {
       NavigationNode node = helpLib.getNavigationTree().getNodeById(nodeId);
 
       if (node != null)
       {
-         updateCurrentNode(node, null);
-
-         // adjust the relative position
-
-         pos -= node.getBodyStartIndex();
+         updateCurrentNode(node, ref);
 
          URL url = node.getURL();
 
-         if (pos > 0)
+         if (ref != null && !ref.isEmpty())
          {
             try
             {
@@ -234,7 +229,7 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
 
                uri = new URI(uri.getScheme(), uri.getUserInfo(),
                 uri.getHost(), uri.getPort(),
-                uri.getPath(), "pos="+pos, uri.getFragment());
+                uri.getPath(), uri.getQuery(), ref);
 
                url = uri.toURL();
             }
@@ -281,25 +276,6 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
       }
    }
 
-   public void scrollToPosition(int pos)
-   {
-      try
-      {
-         Rectangle r = modelToView(pos);
-
-         if (r != null)
-         {
-            Rectangle vis = getVisibleRect();
-            r.height = vis.height;
-            scrollRectToVisible(r);
-            setCaretPosition(pos);
-         }
-      }
-      catch (BadLocationException e)
-      {
-      }
-   }
-
    protected void pageChanged(PropertyChangeEvent evt)
    {
       Object oldValue = evt.getOldValue();
@@ -316,32 +292,6 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
          if (ref != null)
          {
             scrollToReference(ref);
-         }
-         else
-         {
-            String query = newUrl.getQuery();
-
-            if (query != null)
-            {
-               int pos = 0;
-               int idx = query.indexOf("pos=");
-
-               if (idx > -1)
-               {
-                  try
-                  {
-                     pos = Integer.parseInt(query.substring(idx+5));
-                  }
-                  catch (NumberFormatException e)
-                  {// do nothing (shouldn't happen)
-                  }
-               }
-
-               if (pos > 0)
-               {
-                  scrollToPosition(pos);
-               }
-            }
          }
 
          helpLib.getHelpFrame().updateNavWidgets();

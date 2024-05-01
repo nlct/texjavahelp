@@ -85,7 +85,6 @@ public class SearchContext
                   {
                      SearchItem newItem = new SearchItem(word,
                        idx, endIdx,
-                       item.getNodeStart(), item.getNodeEnd(),
                        item.getNodeLabel(), item.getContextId());
 
                      item = newItem;

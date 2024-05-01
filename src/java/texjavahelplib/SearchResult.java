@@ -140,8 +140,8 @@ public class SearchResult implements Comparable<SearchResult>
 
                builder.append("<span class=\"highlight\"><a href=\"");
                builder.append(nodeId);
-               builder.append("?pos=");
-               builder.append(item.getNodeStart());
+               builder.append("#context");
+               builder.append(item.getContextId());
                builder.append("\">");
                builder.append(text.subSequence(idx1, idx2));
                builder.append("</a></span>");

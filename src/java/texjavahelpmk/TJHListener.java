@@ -93,8 +93,6 @@ public class TJHListener extends L2HConverter
         "and the");
 
       noSearchWords = omissions.trim().split("\\s+");
-
-      bodyIndexMap = new HashMap<Integer,Integer>();
    }
 
    public void setNavigationXmlFile(File file)
@@ -123,7 +121,7 @@ public class TJHListener extends L2HConverter
       DivisionInfo divInfo = divisionData.firstElement();
       DivisionNode divNode = (DivisionNode)divInfo.getSpecial();
 
-      NavigationNode rootNode = NavigationNode.createTree(divNode, bodyIndexMap);
+      NavigationNode rootNode = NavigationNode.createTree(divNode);
 
       PrintWriter writer = null;
 
@@ -333,27 +331,6 @@ public class TJHListener extends L2HConverter
       catch (IOException e)
       {
          return "";
-      }
-   }
-
-   @Override
-   protected void startBody() throws IOException
-   {
-      documentBlockWriter.flush();
-      currentBodyStartIndex = documentBlockWriter.getIndex();
-
-      writeliteralln("<body>");
-   }
-
-   @Override
-   protected void endBody() throws IOException
-   {
-      writeliteralln("</body>");
-
-      if (currentBodyStartIndex != 0)
-      {
-         bodyIndexMap.put(Integer.valueOf(currentNode.getIndex()),
-           Integer.valueOf(currentBodyStartIndex));
       }
    }
 
