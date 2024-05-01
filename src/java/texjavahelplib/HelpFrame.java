@@ -398,6 +398,11 @@ public class HelpFrame extends JFrame
    public void setPage(String nodeId, String ref) throws IOException
    {
       helpPage.setPage(nodeId, ref);
+
+      if (!isVisible())
+      {
+         setVisible(true);
+      }
    }
 
    public void prevPage()
@@ -493,6 +498,11 @@ public class HelpFrame extends JFrame
       catch (IOException e)
       {
          helpLib.debug(e);
+      }
+
+      if (!isVisible())
+      {
+         setVisible(true);
       }
    }
 

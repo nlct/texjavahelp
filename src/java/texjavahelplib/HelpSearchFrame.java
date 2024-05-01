@@ -31,8 +31,11 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+import javax.swing.text.Element;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.html.StyleSheet;
 import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTML;
 
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.HyperlinkEvent;
@@ -62,7 +65,6 @@ public class HelpSearchFrame extends JFrame
       TeXJavaHelpLib helpLib = helpFrame.getHelpLib();
 
       JComponent searchPanel = Box.createVerticalBox();
-      getContentPane().add(searchPanel, "North");
 
       JPanel inputPanel = new JPanel();
       searchPanel.add(inputPanel);
@@ -99,14 +101,29 @@ public class HelpSearchFrame extends JFrame
       togglePanel.add(exactBox);
 
       foundLabel = new JLabel();
-      searchPanel.add(foundLabel);
 
       resultComp = new JEditorPane("text/html", "");
       resultComp.setEditable(false);
 
       resultComp.addHyperlinkListener(this);
+      resultComp.addMouseListener(new MouseAdapter()
+       {
+          @Override
+          public void mouseReleased(MouseEvent evt)
+          {
+             jumpToContext(evt.getPoint());
+          }
+       });
 
-      getContentPane().add(new JScrollPane(resultComp), "Center");
+      JComponent bottomPanel = new JPanel(new BorderLayout());
+
+      bottomPanel.add(foundLabel, "North");
+      bottomPanel.add(new JScrollPane(resultComp), "Center");
+
+      JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+        new JScrollPane(searchPanel), bottomPanel);
+
+      getContentPane().add(splitPane, "Center");
 
       processComp = new JPanel(new BorderLayout());
       getContentPane().add(processComp, "South");
@@ -137,6 +154,7 @@ public class HelpSearchFrame extends JFrame
       setLocationRelativeTo(null);
    }
 
+
    public void open()
    {
       if (isVisible())
@@ -147,6 +165,8 @@ public class HelpSearchFrame extends JFrame
       {
          setVisible(true);
       }
+
+      searchBox.requestFocusInWindow();
    }
 
    public void stopSearch()
@@ -284,6 +304,46 @@ public class HelpSearchFrame extends JFrame
       }
    }
 
+   protected void jumpToContext(Point p)
+   {
+      HTMLDocument doc = (HTMLDocument)resultComp.getDocument();
+
+      if (doc.getLength() > 0)
+      {
+         int pos = resultComp.viewToModel(p);
+
+         if (pos > -1)
+         {
+            Element elem = doc.getParagraphElement(pos);
+
+            if (elem != null)
+            {
+               AttributeSet attrSet = elem.getAttributes();
+               String id = (String)attrSet.getAttribute(HTML.Attribute.ID);
+
+               if (id != null)
+               {
+                  int idx = id.lastIndexOf('#');
+
+                  if (idx > 0)
+                  {
+                     String nodeId = id.substring(0, idx);
+                     String ref = id.substring(idx+1);
+
+                     try
+                     {
+                        helpFrame.setPage(nodeId, ref);
+                     }
+                     catch (IOException e)
+                     {
+                        getHelpLib().error(e);
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
    public void update()
    {
       HTMLDocument doc = (HTMLDocument)resultComp.getDocument();

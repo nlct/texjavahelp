@@ -122,7 +122,8 @@ public class SearchResult implements Comparable<SearchResult>
          builder.append(node.toString());
          builder.append("</a></h2>");
 
-         builder.append("<p>");
+         builder.append(String.format("<p id=\"%s#context%d\">",
+            nodeId, context.getId()));
 
          if (items != null)
          {
@@ -138,13 +139,9 @@ public class SearchResult implements Comparable<SearchResult>
 
                idx2 = item.getContextEnd();
 
-               builder.append("<span class=\"highlight\"><a href=\"");
-               builder.append(nodeId);
-               builder.append("#context");
-               builder.append(item.getContextId());
-               builder.append("\">");
+               builder.append("<span class=\"highlight\">");
                builder.append(text.subSequence(idx1, idx2));
-               builder.append("</a></span>");
+               builder.append("</span>");
 
                idx1 = idx2;
             }
