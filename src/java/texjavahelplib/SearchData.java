@@ -46,6 +46,9 @@ public class SearchData
    {
       items = new Vector<SearchItem>();
       contexts = new HashMap<Integer,SearchContext>();
+
+      wordToContextMap = new HashMap<String,Vector<Integer>>();
+      lcWordToContextMap = new HashMap<String,Vector<Integer>>();
    }
 
    public void add(SearchItem item, CharSequence context)
@@ -62,6 +65,39 @@ public class SearchData
       }
 
       searchContext.addItem(item);
+
+      addWordToContextMap(item.getWord(), contextId);
+   }
+
+   protected void addWordToContextMap(String word, Integer contextId)
+   {
+      Vector<Integer> list = wordToContextMap.get(word);
+
+      if (list == null)
+      {
+         list = new Vector<Integer>();
+         wordToContextMap.put(word, list);
+         list.add(contextId);
+      }
+      else if (!list.contains(contextId))
+      {
+         list.add(contextId);
+      }
+
+      word = word.toLowerCase();
+
+      list = lcWordToContextMap.get(word);
+
+      if (list == null)
+      {
+         list = new Vector<Integer>();
+         lcWordToContextMap.put(word, list);
+         list.add(contextId);
+      }
+      else if (!list.contains(contextId))
+      {
+         list.add(contextId);
+      }
    }
 
    protected void add(Vector<SearchItem> itemList, Vector<SearchContext> contextList)
@@ -84,9 +120,16 @@ public class SearchData
          }
 
          searchContext.addItem(item);
+
+         addWordToContextMap(item.getWord(), contextId);
       }
 
       items.addAll(itemList);
+   }
+
+   public HashMap<String,Vector<Integer>> getWordToContextMap(boolean caseSensitive)
+   {
+      return caseSensitive ? wordToContextMap : lcWordToContextMap;
    }
 
    public HashMap<Integer,SearchContext> getContexts()
@@ -97,87 +140,6 @@ public class SearchData
    public SearchContext getContext(int id)
    {
       return contexts.get(Integer.valueOf(id));
-   }
-
-   public TreeSet<SearchResult> search(TeXJavaHelpLib helpLib, String wordList,
-      boolean caseSensitive, boolean exact)
-   {
-      wordList = helpLib.preProcessSearchWordList(wordList);
-
-      Vector<String> words = null;
-
-      BreakIterator boundary = BreakIterator.getWordInstance();
-      boundary.setText(wordList);
-
-      int idx1 = boundary.first();
-
-      for (int idx2 = boundary.next(); idx2 != BreakIterator.DONE;
-           idx1 = idx2, idx2 = boundary.next())
-      {
-         String word = wordList.substring(idx1, idx2).trim();
-
-         if (words == null)
-         {
-            words = new Vector<String>();
-         }
-
-         if (!word.isEmpty() && !words.contains(word))
-         {
-            words.add(word);
-         }
-      }
-
-      if (words == null || words.isEmpty())
-      {
-         return null;
-      }
-
-      if (!exact && words.size() > 1)
-      {
-         words.sort(new Comparator<String>()
-          {
-             public int compare(String str1, String str2)
-             {
-                int n1 = str1.length();
-                int n2 = str2.length();
-
-                if (n1 > n2)
-                {
-                   return -1;
-                }
-                else if (n1 < n2)
-                {
-                   return 1;
-                }
-                else
-                {
-                   return 0;
-                }
-             }
-          });
-      }
-
-      TreeSet<SearchResult> results = null;
-
-      for (Integer key : contexts.keySet())
-      {
-         SearchContext searchContext = contexts.get(key);
-
-         SearchResult result = searchContext.find(helpLib,
-           words, caseSensitive, exact);
-
-         if (result != null)
-         {
-            if (results == null)
-            {
-               results = new TreeSet<SearchResult>();
-            }
-
-            results.add(result);
-         }
-      }
-
-      return results;
    }
 
    public void write(Path path, Charset charset)
@@ -269,6 +231,9 @@ public class SearchData
 
    protected Vector<SearchItem> items; 
    protected HashMap<Integer,SearchContext> contexts;
+
+   protected HashMap<String,Vector<Integer>> wordToContextMap;
+   protected HashMap<String,Vector<Integer>> lcWordToContextMap;
 }
 
 class SearchDataReader extends XMLReaderAdapter

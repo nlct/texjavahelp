@@ -51,6 +51,7 @@ public class SearchContext
 
    public SearchResult find(TeXJavaHelpLib helpLib,
      Vector<String> words, boolean caseSensitive, boolean exact)
+   throws UnknownNodeException
    {
       if (items == null) return null;
 
@@ -73,6 +74,10 @@ public class SearchContext
          }
          else
          {
+            String nodeLabel = item.getNodeLabel();
+            int contextId = item.getContextId();
+            int itemStartIdx = item.getContextStart();
+
             for (String w : words)
             {
                int idx = word.indexOf(w);
@@ -83,13 +88,14 @@ public class SearchContext
 
                   if (idx > 0 || endIdx < word.length())
                   {
-                     SearchItem newItem = new SearchItem(word,
-                       idx, endIdx,
-                       item.getNodeLabel(), item.getContextId());
+                     SearchItem newItem = new SearchItem(w,
+                       itemStartIdx+idx, itemStartIdx+endIdx,
+                       nodeLabel, contextId);
 
                      item = newItem;
                   }
 
+                  // break to avoid overlap
                   found = true;
                   break;
                }
@@ -100,14 +106,7 @@ public class SearchContext
          {
             if (result == null)
             {
-               try
-               {
-                  result = new SearchResult(item.getNode(helpLib), contextId);
-               }
-               catch (UnknownNodeException e)
-               {
-                  helpLib.debug(e);
-               }
+               result = new SearchResult(item.getNode(helpLib), contextId);
             }
 
             if (result != null)

@@ -313,6 +313,7 @@ class SearchWorker extends SwingWorker<TreeSet<SearchResult>,Void>
 
    @Override
    public TreeSet<SearchResult> doInBackground()
+    throws UnknownNodeException
    {
       requestStop = false;
       TeXJavaHelpLib helpLib = helpSearchFrame.getHelpLib();
@@ -335,6 +336,11 @@ class SearchWorker extends SwingWorker<TreeSet<SearchResult>,Void>
            idx1 = idx2, idx2 = boundary.next())
       {
          String word = wordList.substring(idx1, idx2).trim();
+
+         if (!caseSensitive)
+         {
+            word = word.toLowerCase();
+         }
 
          if (words == null)
          {
@@ -381,7 +387,35 @@ class SearchWorker extends SwingWorker<TreeSet<SearchResult>,Void>
 
       SearchData searchData = helpLib.getSearchData();
 
-      HashMap<Integer,SearchContext> contexts = searchData.getContexts();
+      HashMap<Integer,SearchContext> contexts;
+
+      HashMap<String,Vector<Integer>> wordToContextMap = searchData.getWordToContextMap(caseSensitive);
+
+      if (exact)
+      {
+         contexts = new HashMap<Integer,SearchContext>();
+
+         for (String word : words)
+         {
+            Vector<Integer> list = wordToContextMap.get(word);
+
+            if (list != null)
+            {
+               for (Integer contextId : list)
+               {
+                  if (contexts.get(contextId) == null)
+                  {
+                     contexts.put(contextId,
+                        searchData.getContext(contextId.intValue()));
+                  }
+               }
+            }
+         }
+      }
+      else
+      {
+         contexts = searchData.getContexts();
+      }
 
       int n = contexts.size();
       int i = 0;
@@ -405,7 +439,6 @@ class SearchWorker extends SwingWorker<TreeSet<SearchResult>,Void>
 
          if (result != null)
          {
-
             if (results == null)
             {
                results = new TreeSet<SearchResult>();
