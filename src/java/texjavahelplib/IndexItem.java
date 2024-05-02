@@ -40,7 +40,7 @@ import org.xml.sax.helpers.XMLReaderAdapter;
 /**
  * An object representing an entry from the index.xml file. 
  */
-public class IndexItem
+public class IndexItem implements Comparable<IndexItem>
 {
    public IndexItem(MessageSystem messageSystem, String key)
    {
@@ -329,7 +329,20 @@ public class IndexItem
          shortValue, longValue);
    }
 
-   
+   @Override
+   public boolean equals(Object other)
+   {
+      if (other == null || !(other instanceof IndexItem)) return false;
+
+      return key.equals(((IndexItem)other).getKey());
+   }
+
+   @Override
+   public int compareTo(IndexItem other)
+   {
+      return key.compareTo(other.key);
+   } 
+
    protected final String key;
    protected String target, filename;
    protected String name, description, shortValue, longValue;

@@ -212,6 +212,30 @@ public class HelpFrame extends JFrame
       docNavPanel.add(createActionComponent(searchAction));
       navMenu.add(searchAction);
 
+      // index
+
+      NavigationNode indexNode = helpLib.getIndexNode();
+      URL indexNodeURL = (indexNode == null ? null : indexNode.getURL());
+
+      if (indexNodeURL != null)
+      {
+         helpIndexFrame = new HelpIndexFrame(this, 
+          helpLib.getIndexGroupData(), indexNodeURL);
+
+         TJHAbstractAction indexAction = new TJHAbstractAction(helpLib,
+           "help.navigation", "index")
+         {
+            @Override
+            public void doAction()
+            {
+               helpIndexFrame.open();
+            }
+         };
+
+         docNavPanel.add(createActionComponent(indexAction));
+         navMenu.add(indexAction);
+      }
+
       navMenu.addSeparator();
 
       // history
@@ -413,6 +437,16 @@ public class HelpFrame extends JFrame
    public void setPage(String nodeId, String ref) throws IOException
    {
       helpPage.setPage(nodeId, ref);
+
+      if (!isVisible())
+      {
+         setVisible(true);
+      }
+   }
+
+   public void open(URL url) throws IOException
+   {
+      helpPage.open(url);
 
       if (!isVisible())
       {
@@ -629,9 +663,12 @@ public class HelpFrame extends JFrame
    protected HelpPage helpPage;
    protected JSplitPane splitPane;
    protected JTree navTree;
+
    protected HelpHistoryFrame helpHistoryFrame;
    protected HelpFontSettingsFrame helpFontSettings;
    protected HelpSearchFrame helpSearchFrame;
+   protected HelpIndexFrame helpIndexFrame;
+
    protected int lowerNavLabelLimit = 20;
    protected boolean lowerNavLabelText = true;
 

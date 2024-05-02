@@ -71,6 +71,10 @@
 <entry key="help.navigation.search.clear_results.mnemnonic">C</entry>
 <entry key="help.navigation.search.clear_results.tooltip">Clear results and keywords</entry>
 
+<entry key="help.navigation.index">Index...</entry>
+<entry key="help.navigation.index.mnemonic">I</entry>
+<entry key="help.navigation.index.title">Index</entry>
+
 <entry key="help.navigation.history">History...</entry>
 <entry key="help.navigation.history.mnemonic">H</entry>
 <entry key="help.navigation.history.keystroke">ctrl shift H</entry>

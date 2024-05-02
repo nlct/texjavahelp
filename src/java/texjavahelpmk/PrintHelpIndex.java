@@ -52,8 +52,9 @@ public class PrintHelpIndex extends PrintIndex
    @Override
    protected void addLocationList(GlsLabel glslabel, TeXObjectList content,
      TeXParserListener listener)
+   throws IOException
    {
-      L2HConverter l2h = (L2HConverter)listener;
+      TJHListener l2h = (TJHListener)listener;
 
       TeXObject loc = glslabel.getField("loclist");
 
@@ -83,11 +84,38 @@ public class PrintHelpIndex extends PrintIndex
                content.add(l2h.createVoidElement("br", true));
             }
 
+            TeXObject locationPrefix = l2h.getLocationPrefix();
+
+            if (locationPrefix != null)
+            {
+               content.add(locationPrefix);
+            }
+
             content.add(list.get(i));
          }
 
          content.add(new EndElement("div"));
       }
    }
+ 
+   @Override
+   protected void addGroupHeading(ControlSequence subSectionCs,
+     String grpLabel, ControlSequence groupTitleCs, TeXObjectList content,
+     TeXParser parser, TeXObjectList stack)
+   throws IOException
+   {
+      super.addGroupHeading(subSectionCs, grpLabel, groupTitleCs,
+         content, parser, stack);
 
+      TJHListener listener = (TJHListener)parser.getListener();
+
+      String title = grpLabel;
+
+      if (groupTitleCs != null)
+      {
+         title = listener.processToString(groupTitleCs, stack);
+      }
+
+      listener.addIndexGroupMap(glosLabel, grpLabel, title);
+   }
 }

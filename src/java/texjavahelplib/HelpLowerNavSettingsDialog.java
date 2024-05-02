@@ -30,7 +30,7 @@ public class HelpLowerNavSettingsDialog extends JDialog
    public HelpLowerNavSettingsDialog(final HelpFrame helpFrame)
    {
       super(helpFrame,
-        helpFrame.getHelpLib().getMessage("help.settings.nav.title"));
+        helpFrame.getHelpLib().getMessage("help.settings.nav.title"), true);
 
       this.helpFrame = helpFrame;
 

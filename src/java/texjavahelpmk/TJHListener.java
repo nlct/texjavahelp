@@ -45,6 +45,7 @@ import com.dickimawbooks.texparserlib.latex.glossaries.GlossaryEntry;
 import com.dickimawbooks.texparserlib.html.L2HConverter;
 import com.dickimawbooks.texparserlib.html.L2HImage;
 import com.dickimawbooks.texparserlib.html.DivisionNode;
+import com.dickimawbooks.texparserlib.html.HtmlTag;
 import com.dickimawbooks.texparserlib.auxfile.DivisionInfo;
 import com.dickimawbooks.texparserlib.auxfile.LabelInfo;
 import com.dickimawbooks.texparserlib.auxfile.CiteInfo;
@@ -93,6 +94,17 @@ public class TJHListener extends L2HConverter
         "and the");
 
       noSearchWords = omissions.trim().split("\\s+");
+
+      addCssStyle(".locationlist { padding-left: 20pt; }");
+      addCssStyle("span.locationprefix { font-family: \"Linux Libertine Display O\", \"URW Bookman\", serif; }");
+
+      String locPrefString = app.getMessageIfExists("manual.location_prefix");
+
+      if (locPrefString != null)
+      {
+         locationPrefix = new HtmlTag(
+           String.format("<span class=\"locationprefix\">%s</span>", locPrefString));
+      }
    }
 
    public void setNavigationXmlFile(File file)
@@ -249,6 +261,17 @@ public class TJHListener extends L2HConverter
             out.close();
          }
       }
+   }
+
+   public void addIndexGroupMap(String glosLabel, String grpLabel, String title)
+   {
+      IndexItem item = createIndexItem(
+        String.format("%s.%08d", glosLabel, ++indexGroupIdx),
+        grpLabel, glosLabel+"."+suffix);
+
+      item.setName(title);
+
+      indexData.put(item.getKey(), item);
    }
 
    @Override
@@ -489,6 +512,11 @@ public class TJHListener extends L2HConverter
       }
    }
 
+   public TeXObject getLocationPrefix()
+   {
+      return locationPrefix;
+   }
+
    protected File navigationXmlFile;
    protected File indexXmlFile;
    protected File searchXmlFile;
@@ -496,8 +524,9 @@ public class TJHListener extends L2HConverter
    protected HashMap<String,IndexItem> indexData;
    protected String[] noSearchWords;
 
-   protected HashMap<Integer,Integer> bodyIndexMap;
-   protected int currentBodyStartIndex = 0;
+   protected int indexGroupIdx; 
+
+   protected TeXObject locationPrefix;
 
    protected SearchData searchData;
 

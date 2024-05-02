@@ -370,60 +370,63 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
       return rule;
    }
 
+   public void open(URL url) throws IOException
+   {
+      if ("file".equals(url.getProtocol()))
+      {
+         NavigationNode node = helpLib.getNavigationTree().getNodeByURL(url);
+
+         String ref = url.getRef();
+
+         if (node == null && ref != null && !ref.isEmpty())
+         {
+            TargetRef targetRef = helpLib.getTargetRef(ref);
+
+            if (targetRef != null)
+            {
+               node = targetRef.getNode();
+            }
+         }
+
+         setPage(url);
+
+         if (node != null)
+         {
+            updateCurrentNode(node, ref);
+         }
+      }
+      else
+      {
+         if (Desktop.isDesktopSupported())
+         {
+            try
+            {
+               Desktop.getDesktop().browse(url.toURI());
+            }
+            catch (Exception e)
+            {
+               throw new IOException(helpLib.getMessage("error.browse_failed", url), e);
+            }
+         }
+         else
+         {
+            throw new IOException(helpLib.getMessage("error.no_desktop", url));
+         }
+      }
+   }
+
    @Override
    public void hyperlinkUpdate(HyperlinkEvent evt)
    {
       if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
       {
-         URL url = evt.getURL();
-
-         if ("file".equals(url.getProtocol()))
+         try
          {
-            NavigationNode node = helpLib.getNavigationTree().getNodeByURL(url);
-
-            String ref = url.getRef();
-
-            if (node == null && ref != null && !ref.isEmpty())
-            {
-               TargetRef targetRef = helpLib.getTargetRef(ref);
-
-               if (targetRef != null)
-               {
-                  node = targetRef.getNode();
-               }
-            }
-
-            try
-            {
-               setPage(url);
-
-               if (node != null)
-               {
-                  updateCurrentNode(node, ref);
-               }
-            }
-            catch (Throwable t)
-            {
-               t.printStackTrace();
-            }
+            open(evt.getURL());
          }
-         else
+         catch (IOException e)
          {
-            if (Desktop.isDesktopSupported())
-            {
-               try
-               {
-                  Desktop.getDesktop().browse(url.toURI());
-               }
-               catch (Exception e)
-               {
-                  helpLib.error(helpLib.getMessage("error.browse_failed", url), e);
-               }
-            }
-            else
-            {
-               helpLib.error(helpLib.getMessage("error.no_desktop", url));
-            }
+            helpLib.error(e);
          }
       }
       else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED)

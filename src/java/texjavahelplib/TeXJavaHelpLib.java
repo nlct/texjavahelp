@@ -21,6 +21,7 @@ package com.dickimawbooks.texjavahelplib;
 import java.util.Locale;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.TreeSet;
 
 import java.io.InputStream;
 import java.io.IOException;
@@ -669,10 +670,10 @@ public class TeXJavaHelpLib
 
       navigationTree = NavigationTree.load(this);
 
-      helpFrame = new HelpFrame(this, title);
-
       indexData = IndexItem.load(this);
       targetMap = new HashMap<String,TargetRef>();
+
+      indexGroupList = new TreeSet<IndexItem>();
 
       for (IndexItem item : indexData)
       {
@@ -682,6 +683,11 @@ public class TeXJavaHelpLib
 
          if (filename != null)
          {
+            if (item.getKey().startsWith("docindex."))
+            {
+               indexGroupList.add(item);
+            }
+
             URL url = getHelpSetResource(filename);
 
             node = navigationTree.getNodeByURL(url);
@@ -711,6 +717,18 @@ public class TeXJavaHelpLib
       }
 
       searchData = SearchData.load(this);
+
+      helpFrame = new HelpFrame(this, title);
+   }
+
+   public TreeSet<IndexItem> getIndexGroupData()
+   {
+      return indexGroupList;
+   }
+
+   public NavigationNode getIndexNode()
+   {
+      return navigationTree.getNodeById("docindex");
    }
 
    public SearchData getSearchData()
@@ -1142,6 +1160,7 @@ public class TeXJavaHelpLib
 
    protected String indexXmlFilename = "index.xml";
    protected Vector<IndexItem> indexData;
+   protected TreeSet<IndexItem> indexGroupList;
    protected HashMap<String,TargetRef> targetMap;
 
    protected String searchXmlFilename = "search.xml";
