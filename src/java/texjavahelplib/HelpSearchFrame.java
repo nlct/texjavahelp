@@ -103,8 +103,6 @@ public class HelpSearchFrame extends JFrame
       exactBox = helpLib.createJCheckBox("help.navigation.search", "exact", true);
       togglePanel.add(exactBox);
 
-      foundLabel = new JLabel();
-
       resultComp = new JEditorPane("text/html", "");
       resultComp.setEditable(false);
 
@@ -129,7 +127,25 @@ public class HelpSearchFrame extends JFrame
 
       JComponent bottomPanel = new JPanel(new BorderLayout());
 
-      bottomPanel.add(foundLabel, "North");
+      foundComp = new JPanel(new BorderLayout());
+      foundComp.setVisible(false);
+
+      foundLabel = new JLabel();
+      foundComp.add(foundLabel, "Center");
+
+      TJHAbstractAction clearAction = new TJHAbstractAction(helpLib,
+        "help.navigation.search", "clear_results")
+       {
+          @Override
+          public void doAction()
+          {
+             clear();
+          }
+       };
+
+      foundComp.add(new JButton(clearAction), "East");
+
+      bottomPanel.add(foundComp, "North");
       bottomPanel.add(new JScrollPane(resultComp), "Center");
 
       JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
@@ -184,6 +200,20 @@ public class HelpSearchFrame extends JFrame
    public void stopSearch()
    {
       worker.stopSearch();
+   }
+
+   public void setFound(String text)
+   {
+      foundComp.setVisible(true);
+      foundLabel.setText(text);
+   }
+
+   public void clear()
+   {
+      searchBox.setText("");
+      foundLabel.setText("");
+      resultComp.setText("");
+      foundComp.setVisible(false);
    }
 
    public void find()
@@ -244,12 +274,12 @@ public class HelpSearchFrame extends JFrame
 
       if (matches == 0)
       {
-         foundLabel.setText(
+         setFound(
            getHelpLib().getMessage("help.navigation.search.not_found"));
       }
       else
       {
-         foundLabel.setText(
+         setFound(
            getHelpLib().getMessage("help.navigation.search.found", matches));
 
          StringBuilder builder = new StringBuilder();
@@ -276,7 +306,7 @@ public class HelpSearchFrame extends JFrame
 
    public void findFailed(Exception e)
    {
-      foundLabel.setText(e.getMessage());
+      setFound(e.getMessage());
 
       worker = null;
       processComp.setVisible(false);
@@ -409,7 +439,7 @@ public class HelpSearchFrame extends JFrame
    protected JLabel searchLabel, foundLabel;
    protected JButton searchButton, stopButton;
    protected JCheckBox exactBox, caseBox;
-   protected JComponent processComp;
+   protected JComponent processComp, foundComp;
    protected JEditorPane resultComp;
    protected JProgressBar progressBar;
    protected SearchWorker worker;
