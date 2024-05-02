@@ -311,6 +311,20 @@ public class HelpFrame extends JFrame
       settingsPanel.add(createActionComponent(fontIncreaseAction));
       settingsMenu.add(fontIncreaseAction);
 
+      lowerNavSettingsDialog = new HelpLowerNavSettingsDialog(this);
+
+      TJHAbstractAction lowerNavSettingsAction = new TJHAbstractAction(helpLib,
+        "help.settings", "nav")
+      {
+         @Override
+         public void doAction()
+         {
+            lowerNavSettingsDialog.open();
+         }
+      };
+
+      settingsMenu.add(lowerNavSettingsAction);
+
       Toolkit tk = Toolkit.getDefaultToolkit();
       Dimension dim = tk.getScreenSize();
       setSize(dim.width/2, dim.height/2);
@@ -388,6 +402,7 @@ public class HelpFrame extends JFrame
    {
       super.setIconImages(icons);
       helpHistoryFrame.setIconImages(icons);
+      helpSearchFrame.setIconImages(icons);
    }
 
    public void setPage(NavigationNode node) throws IOException
@@ -521,23 +536,9 @@ public class HelpFrame extends JFrame
       return helpPage.getHistoryIndex();
    }
 
-   protected JLabel createNavLabel(TJHAbstractAction action, int textPos, int hPos)
+   protected LowerNavLabel createNavLabel(TJHAbstractAction action, int textPos, int hPos)
    {
-      JLabel jlabel = new JLabel((ImageIcon)action.getValue(Action.SMALL_ICON));
-
-      jlabel.setHorizontalTextPosition(textPos);
-      jlabel.setHorizontalAlignment(hPos);
-
-      jlabel.addMouseListener(new NavLabelMouseListener(action));
-
-      String tooltip = (String)action.getValue(Action.SHORT_DESCRIPTION);
-
-      if (tooltip != null)
-      {
-         jlabel.setToolTipText(tooltip);
-      }
-
-      return jlabel;
+      return new LowerNavLabel(this, action, textPos, hPos);
    }
 
    public void updateNavWidgets()
@@ -604,6 +605,26 @@ public class HelpFrame extends JFrame
       }
    }
 
+   public void setLowerNavSettings(boolean showText, int limit)
+   {
+      this.lowerNavLabelText = showText;
+      this.lowerNavLabelLimit = limit;
+
+      previousLabel.update();
+      upLabel.update();
+      nextLabel.update();
+   }
+
+   public boolean isLowerNavLabelTextOn()
+   {
+      return lowerNavLabelText;
+   }
+
+   public int getLowerNavLabelLimit()
+   {
+      return lowerNavLabelLimit;
+   }
+
    protected TeXJavaHelpLib helpLib;
    protected HelpPage helpPage;
    protected JSplitPane splitPane;
@@ -611,11 +632,87 @@ public class HelpFrame extends JFrame
    protected HelpHistoryFrame helpHistoryFrame;
    protected HelpFontSettingsFrame helpFontSettings;
    protected HelpSearchFrame helpSearchFrame;
+   protected int lowerNavLabelLimit = 20;
+   protected boolean lowerNavLabelText = true;
 
    protected TJHAbstractAction previousAction, upAction, nextAction,
     historyAction, historyForwardAction, historyBackAction,
     fontIncreaseAction, fontDecreaseAction, fontSelectAction;
-   protected JLabel previousLabel, upLabel, nextLabel;
+
+   protected LowerNavLabel previousLabel, upLabel, nextLabel;
+   protected HelpLowerNavSettingsDialog lowerNavSettingsDialog;
+}
+
+class LowerNavLabel extends JLabel
+{
+   public LowerNavLabel(HelpFrame helpFrame, TJHAbstractAction action, int textPos, int hPos)
+   {
+      super((ImageIcon)action.getValue(Action.SMALL_ICON));
+
+      this.helpFrame = helpFrame;
+
+      setHorizontalTextPosition(textPos);
+      setHorizontalAlignment(hPos);
+
+      addMouseListener(new NavLabelMouseListener(action));
+
+      shortDesc = (String)action.getValue(Action.SHORT_DESCRIPTION);
+
+      if (shortDesc != null)
+      {
+         setToolTipText(shortDesc);
+      }
+   }
+
+   public void update()
+   {
+      setText(originalText);
+   }
+
+   @Override
+   public void setText(String text)
+   {
+      originalText = text;
+      String label = text;
+
+      if (helpFrame == null)
+      {
+      }
+      else if (helpFrame.isLowerNavLabelTextOn())
+      {
+         int limit = helpFrame.getLowerNavLabelLimit();
+
+         if (text.length() > limit)
+         {
+            int idx = text.lastIndexOf(' ', limit);
+
+            if (idx < 1)
+            {
+               idx = limit;
+            }
+
+            label = text.substring(0, idx)+"...";
+         }
+      }
+      else
+      {
+         label = "";
+      }
+
+      super.setText(label);
+
+      String desc = shortDesc;
+
+      if (text != null && !text.isEmpty())
+      {
+         desc += ": " + text;
+      }
+
+      setToolTipText(desc);
+   }
+
+   protected String originalText, shortDesc;
+   protected HelpFrame helpFrame;
 }
 
 class NavLabelMouseListener implements MouseListener

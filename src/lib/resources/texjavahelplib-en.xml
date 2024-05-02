@@ -123,6 +123,15 @@
 <entry key="help.settings.font.size">Font Size:</entry>
 <entry key="help.settings.font.size.mnemonic">Z</entry>
 
+<entry key="help.settings.nav">Lower Navigation...</entry>
+<entry key="help.settings.nav.mnemonic">L</entry>
+
+<entry key="help.settings.nav.title">Lower Navigation Settings</entry>
+<entry key="help.settings.nav.label_limit">Maximum number of characters:</entry>
+<entry key="help.settings.nav.label_limit.mnemonic">M</entry>
+<entry key="help.settings.nav.show_label">Include text</entry>
+<entry key="help.settings.nav.show_label.mnemonic">T</entry>
+
 <!-- Common Actions -->
 <entry key="action.okay">Okay</entry>
 <entry key="action.okay.mnemonic">O</entry>
