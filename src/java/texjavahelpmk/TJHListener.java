@@ -209,10 +209,13 @@ public class TJHListener extends L2HConverter
          {
             IndexItem indexItem = indexData.get(target);
 
-            indexItem.setName(nameStr);
-            indexItem.setDescription(descStr);
-            indexItem.setShortValue(shortStr);
-            indexItem.setLongValue(longStr);
+            if (indexItem != null)
+            {
+               indexItem.setName(nameStr);
+               indexItem.setDescription(descStr);
+               indexItem.setShortValue(shortStr);
+               indexItem.setLongValue(longStr);
+            }
          }
       }
       else

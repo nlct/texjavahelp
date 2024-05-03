@@ -27,6 +27,7 @@ classes/com/dickimawbooks/texjavahelpdemo	:
 
 lib/resources/helpset/index.xml	: lib/texjavahelpmk.jar doc/texjavahelp.pdf
 	bin/texjavahelpmk --debug doc/texjavahelp.tex lib/resources/helpset
+	@grep -E 'Package glossaries(-extra)? Warning' doc/texjavahelp.log || true
 
 doc/texjavahelp.pdf	: doc/texjavahelp.tex doc/texjavahelp.sty doc/texjavahelp.bib
 	arara -d doc texjavahelp

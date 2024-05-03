@@ -591,14 +591,20 @@
 \newcommand*{\menusep}{\,\ding{220}\,}
 
 \NewDocumentCommand\menu{sO{}m}{%
- {%
-  \let\glsxtrhiernamesep\menusep
-  \glsxtrhiername{menu.#3}%
+  \glsxtrifhasfield{parent}{menu.#3}%
+  {%
+    \let\glsxtrhiernamesep\menusep
+    \expandafter\glsxtrhiername\expandafter{\glscurrentfieldvalue}%
+    \menusep
+    \glshyperlink{menu.#3}%
+  }%
+  {\glshyperlink{menu.#3}}%
   \IfBooleanTF{#1}%
   {\glsadd[format=glsignore,#2]{menu.#3}}%
   {\glsadd[#2]{menu.#3}}%
- }%
 }
+
+\newcommand{\menuitem}{\dgls}
 
 % \menutrailfmt{Parent Text,Child Text}
 \newrobustcmd*{\menutrailfmt}[1]{%
@@ -802,7 +808,7 @@
 
 \NewDocumentCommand\optiondef{O{}m}{%
  \begin{compactcodebox}[#1]%
- \glsadd[format=opt]{#2}%
+ \glsadd[format=main]{opt.#2}%
  \let\glsxtrpostnameoption\postoptionhook
  \glsxtrglossentry{opt.#2}%
  \end{compactcodebox}% 
@@ -1027,6 +1033,7 @@
   \glsdefpostname{class}{ class}%
   \glsdefpostname{environment}{ environment}%
   \glsdefpostname{counter}{ counter}%
+  \glsdefpostname{menu}{ menu}%
 }
 
 \NewDocumentCommand\printindex{O{}}{%

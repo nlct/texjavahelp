@@ -111,7 +111,10 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(gcs);
 
 
+      registerControlSequence(new Dgls("menuitem", CaseChange.NO_CHANGE, glossariesSty));
       registerControlSequence(new Dgls("widget", CaseChange.NO_CHANGE, glossariesSty));
+
+      registerControlSequence(new Menu(glossariesSty));
 
       registerControlSequence(new Widget("menufmt", "menu"));
       registerControlSequence(new Widget("widgetfmt", "widget"));
