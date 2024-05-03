@@ -122,8 +122,8 @@ public class HelpFrame extends JFrame
       JPanel docNavPanel = new JPanel();
       buttonBar.add(docNavPanel, "West");
 
-      JPanel settingsPanel = new JPanel();
-      buttonBar.add(settingsPanel, "Center");
+      JPanel middlePanel = new JPanel();
+      buttonBar.add(middlePanel, "Center");
 
       JPanel historyPanel = new JPanel();
       buttonBar.add(historyPanel, "East");
@@ -194,7 +194,6 @@ public class HelpFrame extends JFrame
       navMenu.add(nextAction);
 
       // search
-      docNavPanel.add(Box.createHorizontalStrut(20));
       navMenu.addSeparator();
 
       helpSearchFrame = new HelpSearchFrame(this);
@@ -209,7 +208,7 @@ public class HelpFrame extends JFrame
          }
       };
 
-      docNavPanel.add(createActionComponent(searchAction));
+      middlePanel.add(createActionComponent(searchAction));
       navMenu.add(searchAction);
 
       // index
@@ -232,11 +231,12 @@ public class HelpFrame extends JFrame
             }
          };
 
-         docNavPanel.add(createActionComponent(indexAction));
+         middlePanel.add(createActionComponent(indexAction));
          navMenu.add(indexAction);
       }
 
       navMenu.addSeparator();
+      middlePanel.add(Box.createHorizontalStrut(20));
 
       // history
 
@@ -304,7 +304,7 @@ public class HelpFrame extends JFrame
          }
       };
 
-      settingsPanel.add(createActionComponent(fontDecreaseAction));
+      middlePanel.add(createActionComponent(fontDecreaseAction));
       settingsMenu.add(fontDecreaseAction);
 
       helpFontSettings = new HelpFontSettingsFrame(this);
@@ -319,7 +319,7 @@ public class HelpFrame extends JFrame
          }
       };
 
-      settingsPanel.add(createActionComponent(fontSelectAction));
+      middlePanel.add(createActionComponent(fontSelectAction));
       settingsMenu.add(fontSelectAction);
 
       TJHAbstractAction fontIncreaseAction = new TJHAbstractAction(helpLib,
@@ -332,7 +332,7 @@ public class HelpFrame extends JFrame
          }
       };
 
-      settingsPanel.add(createActionComponent(fontIncreaseAction));
+      middlePanel.add(createActionComponent(fontIncreaseAction));
       settingsMenu.add(fontIncreaseAction);
 
       lowerNavSettingsDialog = new HelpLowerNavSettingsDialog(this);
