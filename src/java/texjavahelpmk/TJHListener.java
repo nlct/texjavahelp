@@ -95,6 +95,7 @@ public class TJHListener extends L2HConverter
 
       noSearchWords = omissions.trim().split("\\s+");
 
+      addCssStyle("div.figure { margin-top: 10pt; }");
       addCssStyle(".locationlist { padding-left: 20pt; }");
       addCssStyle("span.locationprefix { font-family: \"Linux Libertine Display O\", \"URW Bookman\", serif; }");
 

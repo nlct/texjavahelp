@@ -212,6 +212,9 @@ public class TeXJavaHelpSty extends UserGuideSty
    {
       super.postOptions(stack);
 
+      registerControlSequence(new AssignedControlSequence(
+        "includeimg", getParser().getControlSequence("includegraphics")));
+
       TeXParserListener listener = getListener();
 
       TeXObjectList list = listener.createStack();

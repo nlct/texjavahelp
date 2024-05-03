@@ -1387,6 +1387,89 @@ halign upper=flush left,halign lower=justify,
 {\begin{coderesult*}[title={\icon{unicode} \icon{result}}]}
 {\end{coderesult*}\noindent\ignorespacesafterend}
 
+\ExplSyntaxOn
+\box_new:N \l__texjavahelp_img_box
+\tl_new:N \l__texjavahelp_img_width_tl
+\tl_new:N \l__texjavahelp_img_height_tl
 
+\cs_new:Nn \__texjavahelp_img_apply_resize:
+{
+  \tl_if_empty:NTF \l__texjavahelp_img_width_tl 
+  {
+    \tl_if_empty:NF \l__texjavahelp_img_height_tl 
+     {
+       \box_resize_to_ht:Nn
+        \l__texjavahelp_img_box { \l__texjavahelp_img_height_tl }
+     }
+    \tl_clear:N \l__texjavahelp_img_height_tl
+  }
+  {
+    \tl_if_empty:NTF \l__texjavahelp_img_height_tl 
+     {
+       \box_resize_to_wd:Nn
+        \l__texjavahelp_img_box { \l__texjavahelp_img_width_tl }
+     }
+     {
+       \box_resize_to_wd_and_ht:Nnn
+        \l__texjavahelp_img_box
+         { \l__texjavahelp_img_width_tl }
+         { \l__texjavahelp_img_height_tl }
+       \tl_clear:N \l__texjavahelp_img_height_tl
+     }
+    \tl_clear:N \l__texjavahelp_img_width_tl
+  }
+}
+
+\keys_define:nn { texjavahelp / img }
+ {
+    scale .code:n = 
+     {
+       \__texjavahelp_img_apply_resize:
+       \box_scale:Nnn  \l__texjavahelp_img_box { #1 } { #1 }
+     },
+    angle .code:n = 
+     {
+       \__texjavahelp_img_apply_resize:
+       \box_rotate:Nnn  \l__texjavahelp_img_box { #1 } 
+     },
+    width .tl_set:N = \l__texjavahelp_img_width_tl ,
+    height .tl_set:N = \l__texjavahelp_img_height_tl ,
+    alt .code:n = { }
+ }
+
+\tl_new:N \l__texjavahelp_img_dir_tl
+\tl_new:N \l__texjavahelp_img_name_tl
+\tl_new:N \l__texjavahelp_img_ext_tl
+
+\NewDocumentCommand \includeimg { o m }
+{
+  \group_begin:
+   \file_parse_full_name:nNNN { #2 } 
+     \l__texjavahelp_img_dir_tl
+     \l__texjavahelp_img_name_tl
+     \l__texjavahelp_img_ext_tl
+   \file_if_exist:nTF { #2 .tex }
+    {
+      \seq_put_right:NV \l_file_search_path_seq \l__texjavahelp_img_dir_tl
+      \IfValueTF { #1 }
+       {
+         \hbox_set:Nn \l__texjavahelp_img_box
+          { \file_input:n { #2 } }
+         \keys_set:nn { texjavahelp / img } { #1 }
+         \__texjavahelp_img_apply_resize:
+         \mbox { \box_use:N \l__texjavahelp_img_box }
+       }
+       {
+         \file_input:n { #2 }
+       }
+    }
+    {
+      \IfValueTF { #1 }
+       { \includegraphics [ #1 ] { #2 } }
+       { \includegraphics { #2 } }
+    }
+  \group_end:
+}
+\ExplSyntaxOff
 
 \endinput
