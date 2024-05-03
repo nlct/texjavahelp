@@ -33,6 +33,7 @@ import java.text.MessageFormat;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.FlowLayout;
+import java.awt.Image;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -66,7 +67,19 @@ public class TeXJavaHelpDemo extends JFrame
 
       initGui();
 
-      helpLib.getHelpFrame().setLocationRelativeTo(this);
+      HelpFrame helpFrame = helpLib.getHelpFrame();
+
+      ImageIcon ic = helpLib.getHelpIcon("manual", true);
+
+      if (ic != null)
+      {
+         Image img = ic.getImage();
+
+         setIconImage(img);
+         helpFrame.setIconImage(img);
+      }
+
+      helpFrame.setLocationRelativeTo(this);
 
       setVisible(true);
    }

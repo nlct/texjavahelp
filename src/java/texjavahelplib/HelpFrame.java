@@ -418,6 +418,7 @@ public class HelpFrame extends JFrame
       helpHistoryFrame.setIconImage(image);
       helpSearchFrame.setIconImage(image);
       helpIndexFrame.setIconImage(image);
+      helpFontSettings.setIconImage(image);
    }
 
    public void setIconImages(List<? extends Image> icons)
@@ -426,6 +427,7 @@ public class HelpFrame extends JFrame
       helpHistoryFrame.setIconImages(icons);
       helpSearchFrame.setIconImages(icons);
       helpIndexFrame.setIconImages(icons);
+      helpFontSettings.setIconImages(icons);
    }
 
    public void setPage(NavigationNode node) throws IOException
