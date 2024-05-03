@@ -35,6 +35,8 @@ import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+import javax.imageio.ImageIO;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -310,6 +312,49 @@ public class TeXJavaHelpLib
    public void setSmallIconSuffix(String suffix)
    {
       smallIconSuffix = suffix;
+   }
+
+   public ImageIcon getHelpIcon(String base, boolean small)
+   {
+      return getHelpIcon(base, small, "png", "jpg", "jpeg", "gif");
+   }
+
+   public ImageIcon getHelpIcon(String base, boolean small, String... extensions)
+   {
+      /* Try the icon path first to allow application icons to take
+         precedence.
+       */
+
+      ImageIcon ic = small ? getSmallIcon(base) : getLargeIcon(base);
+
+      if (ic == null)
+      {
+         // Use icon provided in texjavahelplib.jar
+
+         InputStream in = null;
+
+         String suffix = small ? smallIconSuffix : largeIconSuffix;
+
+         for (String ext : extensions)
+         {
+            in = getClass().getResourceAsStream(
+              "/com/dickimawbooks/texjavahelplib/icons/"+base+suffix+"."+ext);
+
+            if (in != null)
+            {
+               try
+               {
+                  ic = new ImageIcon(ImageIO.read(in));
+                  break;
+               }
+               catch (IOException e)
+               {
+               }
+            }
+         }
+      }
+
+      return ic;
    }
 
    public ImageIcon getSmallIcon(String base)

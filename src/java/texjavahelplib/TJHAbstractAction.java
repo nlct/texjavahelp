@@ -131,14 +131,14 @@ public abstract class TJHAbstractAction extends AbstractAction
          putValue(LONG_DESCRIPTION, tooltip);
       }
 
-      ImageIcon ic = helpLib.getLargeIcon(iconPrefix);
+      ImageIcon ic = helpLib.getHelpIcon(iconPrefix, false);
 
       if (ic != null)
       {
          putValue(LARGE_ICON_KEY, ic);
       }
 
-      ic = helpLib.getSmallIcon(iconPrefix);
+      ic = helpLib.getHelpIcon(iconPrefix, true);
 
       if (ic != null)
       {
