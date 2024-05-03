@@ -710,7 +710,7 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
          }
 
          File pdfFile = new File(tmpDir, name+".pdf");
-         Path destPath;
+         File destFile;
 
          if (crop)
          {
@@ -738,9 +738,8 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
 
          if (mimetype.equals(L2HConverter.MIME_TYPE_PDF))
          {
-            destPath = (new File(outDir, name+".pdf")).toPath();
-
-            Files.copy(pdfFile.toPath(), destPath);
+            destFile = (new File(outDir, name+".pdf"));
+            copyFile(pdfFile, destFile);
          }
          else if (mimetype.equals(L2HConverter.MIME_TYPE_PNG))
          {
@@ -748,9 +747,8 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
 
             imageDim = getImageFileDimensions(parser, pngFile, mimetype);
 
-            destPath = (new File(outDir, pngFile.getName())).toPath();
-
-            Files.copy(pngFile.toPath(), destPath);
+            destFile = new File(outDir, pngFile.getName());
+            copyFile(pngFile, destFile);
          }
          else if (mimetype.equals(L2HConverter.MIME_TYPE_JPEG))
          {
@@ -758,9 +756,8 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
 
             imageDim = getImageFileDimensions(parser, jpegFile, mimetype);
 
-            destPath = (new File(outDir, jpegFile.getName())).toPath();
-
-            Files.copy(jpegFile.toPath(), destPath);
+            destFile = new File(outDir, jpegFile.getName());
+            copyFile(jpegFile, destFile);
          }
          else
          {
@@ -768,8 +765,9 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
              mimetype));
 
             mimetype=L2HConverter.MIME_TYPE_PDF;
-            destPath = (new File(outDir, name+".pdf")).toPath();
-            Files.copy(pdfFile.toPath(), destPath);
+
+            destFile = new File(outDir, name+".pdf");
+            copyFile(pdfFile, destFile);
          }
 
          int width=0;
@@ -781,7 +779,7 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
             height = imageDim.height;
          }
 
-         image = new L2HImage(outDir.toPath().relativize(destPath),
+         image = new L2HImage(outDir.toPath().relativize(destFile.toPath()),
           mimetype, width, height, name, alt, true);
       }
       finally
@@ -1325,7 +1323,9 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
       }
 
       debug(String.format("%s -> %s", src, dest));
-      Files.copy(src.toPath(), dest.toPath());
+
+      Files.copy(src.toPath(), dest.toPath(),
+         StandardCopyOption.REPLACE_EXISTING);
    }
 
    public void copyFile(File src, String destDir, String destName)
@@ -1338,7 +1338,8 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
           Files.createDirectories(destDirFile.toPath());
       }
 
-      Files.copy(src.toPath(), (new File(destDirFile, destName)).toPath());
+      Files.copy(src.toPath(), (new File(destDirFile, destName)).toPath(),
+         StandardCopyOption.REPLACE_EXISTING);
    }
 
    public void copyFile(String srcDir, String srcName,
@@ -1357,7 +1358,8 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
       Path target = FileSystems.getDefault().getPath(
          destDir, destName);
 
-      Files.copy(source, target);
+      Files.copy(source, target,
+         StandardCopyOption.REPLACE_EXISTING);
    }
 
 

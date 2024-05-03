@@ -94,11 +94,11 @@ Library (with a custom implementation of the \sty{texjavahelp} package)
 to create the \gls+{html} and \gls+{xml} files (required by the 
 \TeXJavaHelp\ library) from the \LaTeX\ source.
 
-\item \file{texjavahelp.lib}: a Java library that provides a \gls{gui} 
+\item \file{texjavahelplib.jar}: a Java library that provides a \gls{gui} 
 component to display the \gls{html} files created by \app{texjavahelpmk}.
 
 \item \app{texjavahelpdemo}: a \gls{gui} demo application to test 
-\app{texjavahelpmk} and \file{texjavahelp.lib}.
+\app{texjavahelpmk} and \file{texjavahelplib.jar}.
 \end{itemize}
 
 \begin{information}
@@ -216,10 +216,31 @@ Display help message and exit.
 \switchdef{version}
 Display version information and exit.
 
-\chapter{The \TeX\ Java Help Library (\filetext{texjavahelp.lib})}
+\chapter{The \TeX\ Java Help Library (\filetext{texjavahelplib.jar})}
 \label{sec:texjavahelplib}
 
-/\glsfmttext{app.texjavahelpmk}/
+The \inlineglsdef{file.texjavahelplib.jar} file contains the 
+\TeX\ Java Help Library classes that may be used to load the
+files created by \app{texjavahelpmk} and display the information in
+a frame with navigation buttons. Some of these classes are also used
+by \app{texjavahelpmk}, so both \app{texjavahelpmk} and the
+application requiring the \TeX\ Java Help Library's \gls{gui}
+elements need to have \file{texjavahelplib.jar} on the class path.
+
+The library also comes with images that are used as icons in the
+help frame buttons. \Figureref{fig:navbuttons} shows the four navigation
+buttons: home (go to the start of the manual), previous page (go to
+the previous section), up (go to parent section), and next page (go
+to the next section). Note that \qt{page} in this context refers to
+the file displayed in the help window, which typically contains a
+section, and doesn't relate to the page numbers in the \gls{pdf}.
+
+\begin{figure}
+\centering
+\includegraphics{images/navbuttons}
+\caption{Navigation Buttons}
+\label{fig:navbuttons}
+\end{figure}
 
 % Summary of texjavahelpmk switches
 % Either:

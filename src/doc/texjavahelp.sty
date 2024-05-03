@@ -9,7 +9,9 @@
 \RequirePackage{twemojis}
 \RequirePackage{upquote}
 \RequirePackage{hologo}
+\RequirePackage{varioref}
 \RequirePackage{xcolor}
+\RequirePackage{graphicx}
 
 \PassOptionsToPackage{breakable,skins,listings}{tcolorbox}
 \RequirePackage{tcolorbox}
@@ -22,6 +24,14 @@
  stylemods={tree,bookindex,topic},
  style=alttree
 }{glossaries-extra}
+
+\newcommand{\nlct@ns@ref@cs}{\vref}
+  
+\newcommand{\nlctnovref}{\renewcommand{\nlct@ns@ref@cs}{\ref}}
+\newcommand{\nlctusevref}{\renewcommand{\nlct@ns@ref@cs}{\vref}}
+    
+\DeclareOption{vref}{\nlctusevref}
+\DeclareOption{novref}{\nlctnovref}
 
 \newcommand{\nlct@definesymbols}{%
   \nlct@definefontsymbols
@@ -168,7 +178,6 @@
   #1\DTLformatlist{#4}%
  \egroup
 }
-
 
 \newcommand{\sectionrefprefix}{\S}
 \newrobustcmd{\sectionref}{\@ifstar\s@sectionref\@sectionref}
@@ -812,6 +821,11 @@
  \let\glsxtrpostnameoption\postoptionhook
  \glsxtrglossentry{opt.#2}%
  \end{compactcodebox}% 
+}
+
+\newrobustcmd*{\inlineglsdef}[1]{%
+ \glsadd[format=main]{#1}%
+ \glsxtrglossentry{#1}%
 }
 
 \newcommand*{\filetext}[1]{\glsfmttext{file.#1}}

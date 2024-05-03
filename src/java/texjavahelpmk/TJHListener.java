@@ -123,6 +123,18 @@ public class TJHListener extends L2HConverter
    }
 
    @Override
+   public boolean isHtml5()
+   {
+      return false;
+   }
+
+   @Override
+   protected String getImageTag(String mimeType)
+   {
+      return "img";
+   }
+
+   @Override
    protected void footerNav() throws IOException
    {
    }
