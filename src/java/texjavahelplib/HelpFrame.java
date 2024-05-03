@@ -357,11 +357,6 @@ public class HelpFrame extends JFrame
 
    public void openFontSettings()
    {
-      if (!helpFontSettings.isVisible())
-      {
-         helpFontSettings.setLocationRelativeTo(this);
-      }
-
       helpFontSettings.open(helpPage.getBodyFont());
    }
 
@@ -388,6 +383,7 @@ public class HelpFrame extends JFrame
       navTree.setFont(f);
       helpHistoryFrame.update();
       helpSearchFrame.update();
+      helpIndexFrame.update();
    }
 
    public void setHelpFont(int fontSize)
@@ -403,6 +399,7 @@ public class HelpFrame extends JFrame
       navTree.setFont(f);
       helpHistoryFrame.update();
       helpSearchFrame.update();
+      helpIndexFrame.update();
    }
 
    protected JButton createActionComponent(Action action)
@@ -420,6 +417,7 @@ public class HelpFrame extends JFrame
       super.setIconImage(image);
       helpHistoryFrame.setIconImage(image);
       helpSearchFrame.setIconImage(image);
+      helpIndexFrame.setIconImage(image);
    }
 
    public void setIconImages(List<? extends Image> icons)
@@ -427,6 +425,7 @@ public class HelpFrame extends JFrame
       super.setIconImages(icons);
       helpHistoryFrame.setIconImages(icons);
       helpSearchFrame.setIconImages(icons);
+      helpIndexFrame.setIconImages(icons);
    }
 
    public void setPage(NavigationNode node) throws IOException
@@ -522,6 +521,7 @@ public class HelpFrame extends JFrame
       }
       else
       {
+         helpHistoryFrame.setLocationRelativeTo(this);
          helpHistoryFrame.setVisible(true);
       }
    }

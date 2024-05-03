@@ -208,6 +208,7 @@ public class HelpFontSettingsFrame extends JFrame
       }
       else
       {
+         setLocationRelativeTo(helpFrame);
          setVisible(true);
       }
 

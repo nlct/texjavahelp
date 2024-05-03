@@ -31,6 +31,7 @@ import javax.swing.*;
 
 import javax.swing.text.*;
 import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.StyleSheet;
 
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.HyperlinkEvent;
@@ -60,7 +61,7 @@ public class HelpIndexFrame extends JFrame
 
       StringBuilder builder = new StringBuilder();
 
-      builder.append("<html><body>");
+      builder.append("<html><style>h2 { margin-left: 5pt; margin-top: 2.5pt; margin-bottom: 2.5pt; }</style><body>");
 
       for (IndexItem item : indexGroupData)
       {
@@ -85,11 +86,14 @@ public class HelpIndexFrame extends JFrame
       editorPane.setEditable(false);
       editorPane.addHyperlinkListener(this);
 
+      update();
+
       JSplitPane splitPane = new JSplitPane(
         JSplitPane.HORIZONTAL_SPLIT,
         new JScrollPane(groupPane), new JScrollPane(editorPane));
 
-      splitPane.setResizeWeight(1);
+      splitPane.setOneTouchExpandable(true);
+      splitPane.setResizeWeight(0.25);
 
       getContentPane().add(splitPane, "Center");
 
@@ -181,6 +185,21 @@ public class HelpIndexFrame extends JFrame
             editorPane.setToolTipText(null);
          }  
       }
+   }
+
+   public void update()
+   {
+      String rule = helpFrame.getHelpFontRule();
+
+      HTMLDocument doc = (HTMLDocument)editorPane.getDocument();
+      StyleSheet styles = doc.getStyleSheet();
+
+      styles.addRule(rule);
+
+      doc = (HTMLDocument)groupPane.getDocument();
+      styles = doc.getStyleSheet();
+
+      styles.addRule(rule);
    }
 
 

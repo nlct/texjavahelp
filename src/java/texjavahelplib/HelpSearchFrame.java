@@ -178,8 +178,6 @@ public class HelpSearchFrame extends JFrame
       Dimension dim = getPreferredSize();
       dim.height = (int)tk.getScreenSize().getHeight()/2;
       setSize(dim.width, dim.height);
-
-      setLocationRelativeTo(null);
    }
 
 
@@ -191,6 +189,7 @@ public class HelpSearchFrame extends JFrame
       }
       else
       {
+         setLocationRelativeTo(helpFrame);
          setVisible(true);
       }
 
