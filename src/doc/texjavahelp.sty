@@ -425,6 +425,10 @@
 \glsaddstoragekey{defaultvalue}{}{\optdefval}
 \glsaddstoragekey{initvalue}{}{\optinitval}
 \glsaddstoragekey{note}{}{\note}
+
+\glsaddstoragekey{mnemonic}{}{\entrymnemonic}
+\glsaddstoragekey{tooltip}{}{\entrytooltip}
+\glsaddstoragekey{keystroke}{}{\entrykeystroke}
   
 \renewcommand{\glslinkpresetkeys}{%
  \glsxtrifhasfield*{defaultkeys}{\glslabel}
@@ -558,7 +562,7 @@
 \glsxtraddlabelprefix{button.}
 \glsxtraddlabelprefix{menu.}
 \glsxtraddlabelprefix{widget.}
-\glsxtraddlabelprefix{navigation.}
+\glsxtraddlabelprefix{help.navigation.}
 
 \newcommand{\widget}{\dgls}
 
@@ -569,6 +573,15 @@
 }
 
 \newcommand{\defmsgparam}[2]{\csdef{msgparam@\romannumeral #1}{#2}}
+
+\newcommand{\msgchoiceparam}[2]{%
+ [\ldots]% TODO
+}
+
+\newcommand{\msgchoiceparamitem}[3]{#3}
+
+\newcommand{\msgellipsis}[1]{\ldots}
+\newcommand{\msgendcolon}[1]{}
 
 \ExplSyntaxOn
 \NewDocumentCommand \msg { O{} m }

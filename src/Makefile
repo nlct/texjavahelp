@@ -29,8 +29,11 @@ lib/resources/helpset/index.xml	: lib/texjavahelpmk.jar doc/texjavahelp.pdf
 	bin/texjavahelpmk --debug doc/texjavahelp.tex lib/resources/helpset
 	@grep -E 'Package glossaries(-extra)? Warning' doc/texjavahelp.log || true
 
-doc/texjavahelp.pdf	: doc/texjavahelp.tex doc/texjavahelp.sty doc/texjavahelp.bib
+doc/texjavahelp.pdf	: doc/texjavahelplib.bib doc/texjavahelp.tex doc/texjavahelp.sty doc/texjavahelp.bib
 	arara -d doc texjavahelp
+
+doc/texjavahelplib.bib	: lib/xml2bib.jar lib/resources/texjavahelplib-en.xml
+	bin/xml2bib --debug lib/resources/texjavahelplib-en.xml doc/texjavahelplib.bib
 
 lib/texjavahelpmk.jar	: java/texjavahelpmk/Manifest.txt \
 	classes/com/dickimawbooks/texjavahelpmk/TeXJavaHelpMk.class
@@ -66,6 +69,23 @@ classes/com/dickimawbooks/texjavahelplib/TeXJavaHelpLib.class	: classes/com/dick
 
 classes/com/dickimawbooks/texjavahelplib	:
 	mkdir -p classes/com/dickimawbooks/texjavahelplib
+
+lib/xml2bib.jar	: java/xml2bib/Manifest.txt \
+	classes/com/dickimawbooks/xml2bib/Xml2Bib.class
+	cd classes; \
+	jar cmf ../java/xml2bib/Manifest.txt ../lib/xml2bib.jar \
+	com/dickimawbooks/xml2bib/*.class
+
+classes/com/dickimawbooks/xml2bib/Xml2Bib.class	: classes/com/dickimawbooks/xml2bib \
+	java/xml2bib/*.java lib/texjavahelplib.jar
+	cd java/xml2bib; \
+	javac $(target_version) -d ../../classes \
+	 -Xlint:unchecked -Xlint:deprecation \
+	-cp ../../lib/texjavahelplib.jar \
+	*.java
+
+classes/com/dickimawbooks/xml2bib	:
+	mkdir -p classes/com/dickimawbooks/xml2bib
 
 clean	:
 	\rm -rf classes

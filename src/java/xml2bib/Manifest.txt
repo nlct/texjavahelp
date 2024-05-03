@@ -1,0 +1,2 @@
+Main-Class: com/dickimawbooks/xml2bib/Xml2Bib
+Class-Path: . texjavahelplib.jar
