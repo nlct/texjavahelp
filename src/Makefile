@@ -3,6 +3,7 @@ ifeq ($(shell javac -version 2>&1 | grep 1.8),)
 else
   target_version =
 endif
+arara = arara --verbose
 
 lib/texjavahelpdemo.jar	: java/texjavahelpdemo/Manifest.txt \
 	classes/com/dickimawbooks/texjavahelpdemo/TeXJavaHelpDemo.class
@@ -30,7 +31,7 @@ lib/resources/helpset/index.xml	: lib/texjavahelpmk.jar doc/texjavahelp.pdf
 	@grep -E 'Package glossaries(-extra)? Warning' doc/texjavahelp.log || true
 
 doc/texjavahelp.pdf	: doc/texjavahelplib.bib doc/texjavahelp.tex doc/texjavahelp.sty doc/texjavahelp.bib
-	arara -d doc texjavahelp
+	$(arara) -d doc texjavahelp
 
 doc/texjavahelplib.bib	: lib/xml2bib.jar lib/resources/texjavahelplib-en.xml
 	bin/xml2bib --debug lib/resources/texjavahelplib-en.xml doc/texjavahelplib.bib

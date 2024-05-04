@@ -28,6 +28,8 @@ import com.dickimawbooks.texparserlib.latex.glossaries.GlossariesSty;
 import com.dickimawbooks.texparserlib.latex.glossaries.GlsFieldLink;
 import com.dickimawbooks.texparserlib.latex.glossaries.AbstractGlsCommand;
 import com.dickimawbooks.texparserlib.latex.glossaries.Dgls;
+import com.dickimawbooks.texparserlib.latex.glossaries.Dglsfield;
+import com.dickimawbooks.texparserlib.latex.glossaries.GlsEntryField;
 import com.dickimawbooks.texparserlib.latex.color.ColorSty;
 import com.dickimawbooks.texparserlib.html.L2HConverter;
 import com.dickimawbooks.texparserlib.html.Widget;
@@ -115,6 +117,19 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new Dgls("widget", CaseChange.NO_CHANGE, glossariesSty));
 
       registerControlSequence(new Menu(glossariesSty));
+      registerControlSequence(new DialogCs());
+
+      registerControlSequence(
+        new GlsEntryField("entrymnemonic", "mnemonic", glossariesSty));
+
+      registerControlSequence(
+        new GlsEntryField("entrytooltip", "tooltip", glossariesSty));
+
+      registerControlSequence(
+        new GlsEntryField("entrykeystroke", "keystroke", glossariesSty));
+
+      registerControlSequence(new Dglsfield("btn", glossariesSty,
+         CaseChange.NO_CHANGE, "tooltip"));
 
       registerControlSequence(new Widget("menufmt", "menu"));
       registerControlSequence(new Widget("widgetfmt", "widget"));
@@ -162,8 +177,13 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new LaTeXGenericCommand(true, "icontext",
        "m", def));
 
+      registerControlSequence(new AtFirstOfOne("msgellipsis"));
+      registerControlSequence(new AtGobble("msgendcolon"));
+
+      // TODO: \defmsgparam, \msgparam, \msgchoiceparam etc
+
       // dual prefix list
-      def = listener.createString("action.,button.,menu.,widget.,navigation.,");
+      def = listener.createString("action.,button.,menu.,widget.,");
         def.add(listener.getControlSequence("empty"));
       registerControlSequence(new GenericCommand(true, "@glsxtr@labelprefixes",
        null, def));
@@ -197,6 +217,9 @@ public class TeXJavaHelpSty extends UserGuideSty
       glossariesSty.addField("defaultvalue");
       glossariesSty.addField("initvalue");
       glossariesSty.addField("note");
+      glossariesSty.addField("mnemonic");
+      glossariesSty.addField("tooltip");
+      glossariesSty.addField("keystroke");
 
    }
 

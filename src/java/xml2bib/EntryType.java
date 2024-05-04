@@ -20,7 +20,8 @@ package com.dickimawbooks.xml2bib;
 
 public enum EntryType
 {
-   MENU("menu", "menufmt"), WIDGET("widget", "widgetfmt"),
+   MENU("menu", "menufmt"),
+   WIDGET("widget", "widgetfmt"),
    WINDOW("dialog", "dialogfmt"),
    MESSAGE("message", null),
    ERROR("error", null),
@@ -42,12 +43,12 @@ public enum EntryType
       {
          String prefix = key.substring(0, idx);
 
-         if (prefix.equals("menu"))
+         if (prefix.endsWith("menu"))
          {
             return MENU;
          }
 
-         if (prefix.equals("widget"))
+         if (prefix.equals("widget") || prefix.equals("action"))
          {
             return WIDGET;
          }
@@ -75,6 +76,11 @@ public enum EntryType
          if (key.endsWith("title"))
          {
             return WINDOW;
+         }
+
+         if (prefix.equals("manual"))
+         {
+            return INDEX;
          }
 
          return WIDGET;

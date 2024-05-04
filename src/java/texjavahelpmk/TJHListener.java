@@ -106,6 +106,9 @@ public class TJHListener extends L2HConverter
          locationPrefix = new HtmlTag(
            String.format("<span class=\"locationprefix\">%s</span>", locPrefString));
       }
+
+      setImageExtensions("png", "PNG", "jpg", "JPG", "jpeg", "JPEG",
+        "gif", "GIF");
    }
 
    public void setNavigationXmlFile(File file)

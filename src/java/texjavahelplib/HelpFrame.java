@@ -75,10 +75,10 @@ public class HelpFrame extends JFrame
       JMenuBar mBar = new JMenuBar();
       setJMenuBar(mBar);
 
-      JMenu navMenu = helpLib.createJMenu("menu.help.navigation");
+      JMenu navMenu = helpLib.createJMenu("menu.helpframe.navigation");
       mBar.add(navMenu);
 
-      JMenu settingsMenu = helpLib.createJMenu("menu.help.settings");
+      JMenu settingsMenu = helpLib.createJMenu("menu.helpframe.settings");
       mBar.add(settingsMenu);
 
       helpPage = new HelpPage(helpLib);
@@ -134,7 +134,7 @@ public class HelpFrame extends JFrame
       getContentPane().add(navPanel, "South");
 
       TJHAbstractAction homeAction = new TJHAbstractAction(helpLib,
-        "help.navigation", "home")
+        "menu.helpframe.navigation", "home")
       {
          @Override
          public void doAction()
@@ -147,7 +147,7 @@ public class HelpFrame extends JFrame
       navMenu.add(homeAction);
 
       previousAction = new TJHAbstractAction(helpLib,
-        "help.navigation", "previous")
+        "menu.helpframe.navigation", "previous")
       {
          @Override
          public void doAction()
@@ -164,7 +164,7 @@ public class HelpFrame extends JFrame
 
       navPanel.add(previousLabel, "West");
 
-      upAction = new TJHAbstractAction(helpLib, "help.navigation", "up")
+      upAction = new TJHAbstractAction(helpLib, "menu.helpframe.navigation", "up")
       {
          @Override
          public void doAction()
@@ -181,7 +181,7 @@ public class HelpFrame extends JFrame
       navPanel.add(upLabel, "Center");
 
       nextAction = new TJHAbstractAction(helpLib,
-        "help.navigation", "next")
+        "menu.helpframe.navigation", "next")
       {
          @Override
          public void doAction()
@@ -199,7 +199,7 @@ public class HelpFrame extends JFrame
       helpSearchFrame = new HelpSearchFrame(this);
 
       TJHAbstractAction searchAction = new TJHAbstractAction(helpLib,
-        "help.navigation", "search")
+        "menu.helpframe.navigation", "search")
       {
          @Override
          public void doAction()
@@ -222,7 +222,7 @@ public class HelpFrame extends JFrame
           helpLib.getIndexGroupData(), indexNodeURL);
 
          TJHAbstractAction indexAction = new TJHAbstractAction(helpLib,
-           "help.navigation", "index")
+           "menu.helpframe.navigation", "index")
          {
             @Override
             public void doAction()
@@ -243,7 +243,7 @@ public class HelpFrame extends JFrame
       helpHistoryFrame = new HelpHistoryFrame(this);
 
       historyAction = new TJHAbstractAction(helpLib,
-        "help.navigation", "history")
+        "menu.helpframe.navigation", "history")
        {
          @Override
          public void doAction()
@@ -256,7 +256,7 @@ public class HelpFrame extends JFrame
       navMenu.add(historyAction);
 
       historyBackAction = new TJHAbstractAction(helpLib,
-        "help.navigation", "historyback")
+        "menu.helpframe.navigation", "historyback")
        {
          @Override
          public void doAction()
@@ -269,7 +269,7 @@ public class HelpFrame extends JFrame
       navMenu.add(historyBackAction);
 
       historyForwardAction = new TJHAbstractAction(helpLib,
-        "help.navigation", "historyforward")
+        "menu.helpframe.navigation", "historyforward")
        {
          @Override
          public void doAction()
@@ -290,7 +290,7 @@ public class HelpFrame extends JFrame
       // font
 
       TJHAbstractAction fontDecreaseAction = new TJHAbstractAction(helpLib,
-        "help.settings.font", "decrease")
+        "menu.helpframe.settings.font", "decrease")
       {
          @Override
          public void doAction()
@@ -310,7 +310,7 @@ public class HelpFrame extends JFrame
       helpFontSettings = new HelpFontSettingsFrame(this);
 
       TJHAbstractAction fontSelectAction = new TJHAbstractAction(helpLib,
-        "help.settings", "font")
+        "menu.helpframe.settings", "font")
       {
          @Override
          public void doAction()
@@ -323,7 +323,7 @@ public class HelpFrame extends JFrame
       settingsMenu.add(fontSelectAction);
 
       TJHAbstractAction fontIncreaseAction = new TJHAbstractAction(helpLib,
-        "help.settings.font", "increase")
+        "menu.helpframe.settings.font", "increase")
       {
          @Override
          public void doAction()
@@ -338,7 +338,7 @@ public class HelpFrame extends JFrame
       lowerNavSettingsDialog = new HelpLowerNavSettingsDialog(this);
 
       TJHAbstractAction lowerNavSettingsAction = new TJHAbstractAction(helpLib,
-        "help.settings", "nav")
+        "menu.helpframe.settings", "nav")
       {
          @Override
          public void doAction()

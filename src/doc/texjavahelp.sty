@@ -429,6 +429,9 @@
 \glsaddstoragekey{mnemonic}{}{\entrymnemonic}
 \glsaddstoragekey{tooltip}{}{\entrytooltip}
 \glsaddstoragekey{keystroke}{}{\entrykeystroke}
+
+% For icon-only buttons use the tooltip
+\newdglsfield{tooltip}{\btn}
   
 \renewcommand{\glslinkpresetkeys}{%
  \glsxtrifhasfield*{defaultkeys}{\glslabel}
@@ -546,7 +549,6 @@
 \glsxtraddlabelprefix{button.}
 \glsxtraddlabelprefix{menu.}
 \glsxtraddlabelprefix{widget.}
-\glsxtraddlabelprefix{help.navigation.}
 
 \newcommand{\widget}{\dgls}
 
@@ -595,7 +597,7 @@
 \newcommand*{\dialogfmt}[1]{\widgetfmt{#1}}
 
 \NewDocumentCommand\dialog{om}{%
-  \IFValue{#1}{\dgls[#1]{#2.title}}{\dgls{#2.title}}%
+  \IfValueTF{#1}{\gls[#1]{#2.title}}{\gls{#2.title}}%
 }
 
 \newcommand*{\menufmt}[1]{\widgetfmt{#1}}
@@ -603,14 +605,11 @@
 \newcommand*{\menusep}{\,\ding{220}\,}
 
 \NewDocumentCommand\menu{sO{}m}{%
-  \glsxtrifhasfield{parent}{menu.#3}%
   {%
     \let\glsxtrhiernamesep\menusep
-    \expandafter\glsxtrhiername\expandafter{\glscurrentfieldvalue}%
-    \menusep
-    \glshyperlink{menu.#3}%
+    \def\glsxtrtitleopts{noindex}%
+    \glsxtrhiername{menu.#3}%
   }%
-  {\glshyperlink{menu.#3}}%
   \IfBooleanTF{#1}%
   {\glsadd[format=glsignore,#2]{menu.#3}}%
   {\glsadd[#2]{menu.#3}}%
@@ -1447,6 +1446,7 @@ halign upper=flush left,halign lower=justify,
 \NewDocumentCommand \includeimg { o m }
 {
   \group_begin:
+   \GlsXtrAppToDefaultGlsOpts { noindex }
    \file_parse_full_name:nNNN { #2 } 
      \l__texjavahelp_img_dir_tl
      \l__texjavahelp_img_name_tl

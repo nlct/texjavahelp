@@ -75,26 +75,19 @@ public class Menu extends AbstractGlsCommand
 
       TeXObjectList expanded = parser.getListener().createStack();
 
-      if (parentEntry == null)
-      {
-         expanded.add(listener.getControlSequence("glshyperlink"));
-         expanded.add(glslabel);
-      }
-      else
-      {
-         Group grp = listener.createGroup();
-         expanded.add(grp);
+      Group grp = listener.createGroup();
+      expanded.add(grp);
 
-         grp.add(listener.getControlSequence("let"));
-         grp.add(new TeXCsRef("glsxtrhiernamesep"));
-         grp.add(listener.getControlSequence("menusep"));
-         grp.add(listener.getControlSequence("glsxtrhiername"));
-         grp.add(new GlsLabel("glscurrentfieldvalue",
-           parentEntry.getLabel(), parentEntry));
-         grp.add(listener.getControlSequence("menusep"));
-         grp.add(listener.getControlSequence("glshyperlink"));
-         grp.add(glslabel);
-      }
+      grp.add(listener.getControlSequence("let"));
+      grp.add(new TeXCsRef("glsxtrhiernamesep"));
+      grp.add(listener.getControlSequence("menusep"));
+
+      grp.add(listener.getControlSequence("def"));
+      grp.add(new TeXCsRef("glsxtrtitleopts"));
+      grp.add(listener.createGroup("noindex"));
+
+      grp.add(listener.getControlSequence("glsxtrhiername"));
+      grp.add(TeXParserUtils.createGroup(listener, glslabel));
 
       expanded.add(listener.getControlSequence("glsadd"));
       expanded.add(listener.getOther('['));
@@ -102,7 +95,7 @@ public class Menu extends AbstractGlsCommand
       expanded.add(options);
 
       expanded.add(listener.getOther(']'));
-      expanded.add(listener.createGroup("menu."+glslabel.getLabel()));
+      expanded.add(TeXParserUtils.createGroup(listener, glslabel));
 
       return expanded;
    }
