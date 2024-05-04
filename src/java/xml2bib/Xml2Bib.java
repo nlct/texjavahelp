@@ -268,12 +268,12 @@ public class Xml2Bib implements TeXJavaHelpLibApp
 
          int idx = key.lastIndexOf('.');
 
-         if (idx > -1 && key.endsWith(".title"))
+         if (idx > -1)
          {
             String prefix = key.substring(0, idx);
-            String suffix = key.substring(idx);
+            String suffix = key.substring(idx+1);
 
-            Entry entry = entries.get(prefix);
+            Entry entry = null;
             String parent = prefix;
 
             if (suffix.equals("mnemonic")
@@ -282,55 +282,30 @@ public class Xml2Bib implements TeXJavaHelpLibApp
               || suffix.equals("keystroke")
                )
             {
-               Widget widget;
+               String fieldValue = (String)props.getProperty(key);
+               key = prefix;
 
-               if (entry == null)
-               {
-                  String value = props.getProperty(prefix);
-
-                  widget = new Widget(prefix, value);
-
-                  entries.put(key, widget);
-               }
-               else if (!(entry instanceof Widget))
-               {
-                  widget = new Widget(prefix, entry.getValue());
-                  entries.put(key, widget);
-               }
-               else
-               {
-                  widget = (Widget)entry;
-               }
-
-               if (suffix.equals("mnemonic"))
-               {
-                  widget.setMnemonic(props.getProperty(key));
-               }
-               else if (suffix.equals("tooltip"))
-               {
-                  widget.setToolTip(props.getProperty(key));
-               }
-               else if (suffix.equals("keystroke"))
-               {
-                  widget.setKeyStroke(props.getProperty(key));
-               }
-               else
-               {
-                  widget.setDescription(props.getProperty(key));
-               }
-
-               entry = widget;
-
-               idx = prefix.lastIndexOf('.');
+               idx = key.lastIndexOf('.');
 
                if (idx > 0)
                {
-                  parent = prefix.substring(0, idx);
+                  parent = key.substring(0, idx);
                }
                else
                {
                   parent = null;
                }
+
+               entry = entries.get(key);
+
+               if (entry == null)
+               {
+                  String value = (String)props.getProperty(key);
+                  entry = new Entry(key, value);
+                  entries.put(key, entry);
+               }
+
+               entry.put(suffix, fieldValue);
             }
 
             if (entry == null)
@@ -339,8 +314,10 @@ public class Xml2Bib implements TeXJavaHelpLibApp
                entries.put(key, entry);
             }
 
-            if (parent != null && !parent.equals(entry.getKey())
-                  && entry.getParent() == null)
+            if (parent != null
+                 && entry.getParent() == null
+                 && !suffix.equals("title")
+                 && !parent.equals(entry.getKey()))
             {
                Entry parentEntry = entries.get(parent);
 

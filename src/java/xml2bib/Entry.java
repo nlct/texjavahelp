@@ -21,6 +21,7 @@ package com.dickimawbooks.xml2bib;
 import java.io.PrintWriter;
 import java.io.IOException;
 
+import java.util.HashMap;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -74,14 +75,56 @@ public class Entry
       return type;
    }
 
-   public void setParent(Entry parent)
+   public void setParent(Entry parentEntry)
+   {
+      setParent(parentEntry.getKey());
+   }
+
+   public void setParent(String parent)
    {
       this.parent = parent;
    }
 
-   public Entry getParent()
+   public String getParent()
    {
       return parent;
+   }
+
+   public void put(String field, String value)
+   {
+      if (field.equals("name"))
+      {
+         setValue(value);
+      }
+      else if (field.equals("parent"))
+      {
+         setParent(value);
+      }
+      else
+      {
+         if (extraFields == null)
+         {
+            extraFields = new HashMap<String,String>();
+         }
+
+         extraFields.put(field, value);
+      }
+   }
+
+   public String get(String field)
+   {
+      if (field.equals("name"))
+      {
+         return getValue();
+      }
+      else if (field.equals("parent"))
+      {
+         return getParent();
+      }
+      else
+      {
+         return extraFields == null ? null : extraFields.get(field);
+      }
    }
 
    public void write(PrintWriter out) throws IOException
@@ -119,7 +162,7 @@ public class Entry
       {
          out.println(",");
          out.print("  parent={");
-         out.print(parent.getKey());
+         out.print(parent);
          out.print("}");
       }
 
@@ -130,6 +173,17 @@ public class Entry
 
    public void writeExtraFields(PrintWriter out) throws IOException
    {
+      if (extraFields != null)
+      {
+         for (String field : extraFields.keySet())
+         {
+            String val = extraFields.get(field);
+
+            out.println(",");
+            out.format("  %s={%s}", field, encode(val));
+         }
+      }
+
       out.println();
    }
 
@@ -256,9 +310,14 @@ public class Entry
 
    public static void encodeTeXChars(StringBuilder builder, int cp)
    {
-      if (cp == '#' || cp == '%' || cp == '_' || cp == '^'
-       || cp == '\\' || cp == '$' || cp == '&'
+      if (cp == '#' || cp == '%' || cp == '_'
+       || cp == '$' || cp == '&'
        || cp == '{' || cp == '}')
+      {
+         builder.appendCodePoint('\\');
+         builder.appendCodePoint(cp);
+      }
+      else if (cp == '^' || cp == '\\' || cp == '~')
       {
          builder.append("\\char`\\");
          builder.appendCodePoint(cp);
@@ -270,9 +329,10 @@ public class Entry
       }
    }
 
-   protected String key, value;
+   protected String key, value, parent;
    protected EntryType type;
-   protected Entry parent;
+
+   protected HashMap<String,String> extraFields;
 
    public static final Pattern PARAM_CHOICE
     = Pattern.compile("(\\d+),choice,(.+)");

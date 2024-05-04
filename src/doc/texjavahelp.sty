@@ -475,7 +475,8 @@
      commonfileext=index,
      message=index,
      error=index,
-     warning=index
+     warning=index,
+     syntax=index
    },
   category = same as original entry,
   assign-fields=
@@ -485,21 +486,6 @@
         [ entrytype->original = "application" & entrylabel->original=/app\.(.+)/], 
       name = "\cs{appfmt}{" + entrylabel->original + "}"
         [ entrytype->original = "application"], 
-% menus
-      name = "\cs{menufmt}{" + \MGP{1} + "}"
-        [ entrytype->original = "menu" & entrylabel->original=/menu\.(.+)/], 
-      name = "\cs{menufmt}{" + entrylabel->original + "}"
-        [ entrytype->original = "menu"], 
-% widgets
-      name = "\cs{widgetfmt}{" + \MGP{1} + "}"
-        [ entrytype->original = "widget" & entrylabel->original=/(action|widget|button|navigation)\.(.+)/], 
-      name = "\cs{widgetfmt}{" + entrylabel->original + "}"
-        [ entrytype->original = "widget"], 
-% dialogue boxes
-      name = "\cs{dialogfmt}{" + \MGP{1} + "}"
-        [ entrytype->original = "dialog" & entrylabel->original=/dialog\.(.+)/], 
-      name = "\cs{dialogfmt}{" + entrylabel->original + "}"
-        [ entrytype->original = "dialog"], 
 % files
       name = "\cs{filefmt}{" + \MGP{1} + "}"
         [ entrytype->original = "file" & entrylabel->original=/file\.(.+)/], 
@@ -543,10 +529,8 @@
       name = "\cs{ctrfmt}{" + entrylabel->original + "}"
         [ entrytype->original = "counter"], 
 % messages, errors and warnings
-      name = \MGP{1}
-        [ entrytype->original = /message|error|warning/ & entrylabel->original=/(message|error|warning)\.(.+)/], 
       type = "messages"
-        [ entrytype->original = /message|error|warning/ ], 
+        [ entrytype->original = /message|error|warning|syntax/ ], 
 % common
       defaultkeys = "format=glsignore"
         [ entrytype->original = /common.*/ ]
@@ -590,6 +574,8 @@
   { \__texjavahelp_msg:nn { #1 } { warning.#2 } }
 \NewDocumentCommand \errmsg { O{} m }
   { \__texjavahelp_msg:nn { #1 } { error.#2 } }
+\NewDocumentCommand \syntaxmsg { O{} m }
+  { \__texjavahelp_msg:nn { #1 } { syntax.#2 } }
 
 \seq_new:N \l__texjavahelp_msg_seq
 
@@ -607,6 +593,10 @@
 \ExplSyntaxOff
 
 \newcommand*{\dialogfmt}[1]{\widgetfmt{#1}}
+
+\NewDocumentCommand\dialog{om}{%
+  \IFValue{#1}{\dgls[#1]{#2.title}}{\dgls{#2.title}}%
+}
 
 \newcommand*{\menufmt}[1]{\widgetfmt{#1}}
 

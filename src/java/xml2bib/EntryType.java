@@ -20,7 +20,13 @@ package com.dickimawbooks.xml2bib;
 
 public enum EntryType
 {
-   MENU("menu", "menufmt"), WIDGET("widget", "widgetfmt"), INDEX("index", null);
+   MENU("menu", "menufmt"), WIDGET("widget", "widgetfmt"),
+   WINDOW("dialog", "dialogfmt"),
+   MESSAGE("message", null),
+   ERROR("error", null),
+   WARNING("warning", null),
+   SYNTAX("syntax", null),
+   INDEX("index", null);
 
    EntryType(String type, String cmd)
    {
@@ -46,10 +52,29 @@ public enum EntryType
             return WIDGET;
          }
 
-         if (prefix.equals("message") || prefix.equals("error")
-            || prefix.equals("warning") || prefix.equals("syntax"))
+         if (prefix.equals("message"))
          {
-            return INDEX;
+            return MESSAGE;
+         }
+
+         if (prefix.equals("error"))
+         {
+            return ERROR;
+         }
+
+         if (prefix.equals("warning"))
+         {
+            return WARNING;
+         }
+
+         if (prefix.equals("syntax"))
+         {
+            return SYNTAX;
+         }
+
+         if (key.endsWith("title"))
+         {
+            return WINDOW;
          }
 
          return WIDGET;
