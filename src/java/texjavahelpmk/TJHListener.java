@@ -108,7 +108,7 @@ public class TJHListener extends L2HConverter
       }
 
       setImageExtensions("png", "PNG", "jpg", "JPG", "jpeg", "JPEG",
-        "gif", "GIF");
+        "gif", "GIF", "pdf", "PDF", "tex");
    }
 
    public void setNavigationXmlFile(File file)
@@ -130,12 +130,6 @@ public class TJHListener extends L2HConverter
    public boolean isHtml5()
    {
       return false;
-   }
-
-   @Override
-   protected String getImageTag(String mimeType)
-   {
-      return "img";
    }
 
    @Override
@@ -450,6 +444,100 @@ public class TJHListener extends L2HConverter
       {
          return null;
       }
+   }
+
+   @Override
+   protected String getImageTag(String mimeType)
+   {
+      return "img";
+   }
+
+   @Override
+   protected L2HImage createImage(Path imagePath, String filename,
+     StringBuilder optionsBuilder,
+     String type, double scale, int zoom,
+     TeXObject alt, String cssClass, String cssStyle)
+    throws IOException
+   {
+      L2HImage image = null;
+
+      if (MIME_TYPE_PDF.equals(type))
+      {
+         File pdfFile = imagePath.toFile();
+         String name = pdfFile.getName();
+
+         int idx = name.lastIndexOf('.');
+
+         if (idx > 0)
+         {
+            name = name.substring(0, idx);
+         }
+
+         File pngFile;
+
+         try
+         {
+            pngFile = getTeXJavaHelpMk().pdfToImage(pdfFile, name, "png");
+         }
+         catch (InterruptedException e)
+         {
+            throw new IOException(
+              getTeXJavaHelpMk().getMessage("error.interrupted"),
+              e);
+         }
+
+         Path pngPath = pngFile.toPath();
+         
+         Dimension imageDim = getImageSize(pngFile, MIME_TYPE_PNG);
+
+         File outDir = getTeXJavaHelpMk().getOutDirectory();
+            
+         Path destPath = (new File(outDir, name)).toPath();
+         
+         Files.copy(pngPath, destPath);
+
+         int width=0;
+         int height=0;
+
+         if (imageDim != null)
+         {
+            width = imageDim.width;
+            height = imageDim.height;
+         }
+
+         image = new L2HImage(outDir.toPath().relativize(destPath),
+          MIME_TYPE_PNG, width, height, name, alt);
+      }
+      else if (MIME_TYPE_TEX.equals(type))
+      {
+         StringBuilder content = new StringBuilder("\\includeimg");
+
+         if (optionsBuilder.length() > 0)
+         {
+            content.append('[');
+            content.append(optionsBuilder);
+            content.append(']');
+         }
+
+         content.append('{');
+         content.append(filename);
+         content.append('}');
+
+         if (getParser().isDebugMode(TeXParser.DEBUG_IO))
+         {
+            getParser().logMessage("Creating image "+content.toString());
+         }
+   
+         image = toImage(getImagePreamble(),
+          content.toString(), type, alt, null, true);
+      }
+      else
+      {
+         image = super.createImage(imagePath, filename, optionsBuilder,
+          type, scale, zoom, alt, cssClass, cssStyle);
+      }
+
+      return image;
    }
 
    public TeXJavaHelpMk getTeXJavaHelpMk()
