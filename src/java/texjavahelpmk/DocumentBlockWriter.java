@@ -127,6 +127,21 @@ public class DocumentBlockWriter extends Writer
          {
             inTag = true;
             processBuffer(start, i, context);
+
+            m = IMG.matcher(buffer);
+
+            int nextCp = (i < buffer.length()-1 ? buffer.codePointAt(i+1) : -1);
+
+            if (nextCp == 'i' && m.find(i) && m.start() == i)
+            {
+               processBuffer(m.start(1), m.end(1), context);
+
+               i = m.end()-1;
+               cp = buffer.codePointAt(i);
+
+               inTag = false;
+               start = i+1;
+            }
          }
 
          i += Character.charCount(cp);
@@ -259,4 +274,7 @@ public class DocumentBlockWriter extends Writer
 
    public static final Pattern START_NO_ID
      = Pattern.compile("^\\s*<(?:p|div|ul|ol|dl|pre|li|dt|dd|table)(?:\\s+class=\"[^\"]*\")?\\s*>");
+
+   public static final Pattern IMG
+     = Pattern.compile("<img\\s+[^>]*alt\\s*=\\s*\"([^\"]+)\"[^>]*/?>");
 }
