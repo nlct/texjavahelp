@@ -39,6 +39,7 @@ import com.dickimawbooks.texparserlib.latex.LaTeXSty;
 import com.dickimawbooks.texparserlib.latex.KeyValList;
 import com.dickimawbooks.texparserlib.latex.color.ColorSty;
 import com.dickimawbooks.texparserlib.html.*;
+import com.dickimawbooks.texparserlib.latex2latex.LaTeXPreambleListener;
 
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLibApp;
@@ -213,7 +214,15 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
 
    public void logAndPrintMessage(String message)
    {
-      System.out.println(message);
+      logAndPrintMessage(message, 1);
+   }
+
+   public void logAndPrintMessage(String message, int level)
+   {
+      if (debugMode > 0 || verboseLevel >= level)
+      {
+         System.out.println(message);
+      }
 
       if (logWriter != null)
       {
@@ -493,6 +502,19 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
          {
             convertImages = true;
          }
+         else if (args[i].equals("image-preamble"))
+         {
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                 getMessage("error.syntax.missing_input",
+                   args[i-1]));
+            }
+
+            imagePreambleFile = new File(args[i]);
+         }
          else if (args[i].charAt(0) == '-')
          {
             throw new InvalidSyntaxException(
@@ -588,6 +610,18 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
 
       try
       {
+         if (convertImages)
+         {
+            if (imagePreambleFile != null)
+            {
+               imagePreamble = getFileContents(imagePreambleFile);
+            }
+            else
+            {
+               imagePreamble = parsePreamble(inFile);
+            }
+         }
+
          parser.parse(inFile);
       }
       finally
@@ -619,6 +653,11 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
       tmpDir.delete();
    }
 
+   public String getImagePreamble()
+   {
+      return imagePreamble;
+   }
+
    public L2HImage createImage(TeXParser parser, String preamble,
     String content, String mimetype, TeXObject alt, String name,
     boolean crop)
@@ -640,7 +679,7 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
       {
          if (tmpDir == null)
          {
-            tmpDir = Files.createTempDirectory("texparserlib").toFile();
+            tmpDir = Files.createTempDirectory(NAME).toFile();
          }
 
          File file = new File(tmpDir, name+".tex");
@@ -955,6 +994,13 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
       return execCommandAndWaitFor(null, result, maxLines, cmd);
    }
 
+   protected int execCommandAndWaitFor(boolean warnOnNonZeroExit,
+      StringBuilder result, int maxLines, String... cmd)
+     throws IOException,InterruptedException
+   {
+      return execCommandAndWaitFor(null, warnOnNonZeroExit, result, maxLines, cmd);
+   }
+
    protected int execCommandAndWaitFor(StringBuilder result, String... cmd)
      throws IOException,InterruptedException
    {
@@ -968,6 +1014,14 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
    }
 
    protected int execCommandAndWaitFor(File processDir,
+      StringBuilder result, int maxLines, String... cmd)
+     throws IOException,InterruptedException
+   {
+      return execCommandAndWaitFor(processDir, true, result, maxLines, cmd);
+   }
+
+   protected int execCommandAndWaitFor(File processDir,
+      boolean warnOnNonZeroExit,
       StringBuilder result, int maxLines, String... cmd)
      throws IOException,InterruptedException
    {
@@ -999,7 +1053,7 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
          return exitCode;
       }
 
-      if (exitCode != 0)
+      if (exitCode != 0 && warnOnNonZeroExit)
       {
          warning(getMessageWithFallback("error.app_failed",
            "{0} failed with exit code {1}",
@@ -1086,7 +1140,7 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
       String line = null;
       StringBuilder result = new StringBuilder();
 
-      int exitCode = execCommandAndWaitFor(result, 1, "kpsewhich", arg);
+      execCommandAndWaitFor(false, result, 1, "kpsewhich", arg);
 
       if (result.length() > 0)
       {
@@ -1292,7 +1346,59 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
    @Override
    public Charset getDefaultCharset()
    {
-      return Charset.defaultCharset();
+      return defaultCharset;
+   }
+
+   public String getFileContents(File file)
+   throws IOException
+   {
+      BufferedReader in = null;
+      StringWriter writer = new StringWriter();
+
+      try
+      {
+         in = Files.newBufferedReader(file.toPath(), getDefaultCharset());
+
+         int c = -1;
+
+         while ((c = in.read()) != -1)
+         {
+            writer.write(c);
+         }
+      }
+      finally
+      {
+         if (in != null)
+         {
+            in.close();
+         }
+      }
+
+      return writer.toString();
+   }
+
+   protected String parsePreamble(File file)
+   throws IOException
+   {
+      StringWriter strWriter = new StringWriter();
+
+      LaTeXPreambleListener preambleListener
+         = new LaTeXPreambleListener(this, strWriter);
+
+      preambleListener.enableReplaceJobname(true);
+
+      TeXParser p = new TeXParser(preambleListener);
+
+      preambleListener.putControlSequence(new L2LLoadResources());
+
+      p.parse(file);
+
+      TeXPath inPath = new TeXPath(p, file.getAbsoluteFile());
+
+      strWriter.write(String.format("\\texparserimgfile{%s}",
+         inPath.getTeXPath(true)));
+
+      return strWriter.toString();
    }
 
    @Override
@@ -1492,6 +1598,7 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
    private File inFile, outDir;
    private int splitLevel=8;
    private Charset outCharset;
+   private Charset defaultCharset = Charset.defaultCharset();
 
    private File tmpDir = null;
    private File logFile = null;
@@ -1499,6 +1606,7 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
    private TeXJavaHelpLib helpLib;
 
    private int debugMode = 0;
+   private int verboseLevel = 0;
 
    private boolean deleteTempDirOnExit = true;
    private boolean convertImages = true;
@@ -1509,6 +1617,9 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
    private int nameIdx=0;
    
    private String extraHead=null;
+
+   private File imagePreambleFile = null;
+   private String imagePreamble = null;
 
    public static final Pattern PNG_INFO =
     Pattern.compile(".*: PNG image data, (\\d+) x (\\d+),.*");

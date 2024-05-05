@@ -62,7 +62,8 @@ public class HelpHistoryFrame extends JFrame
 
       this.helpFrame = helpFrame;
 
-      pointer = helpFrame.getHelpLib().getMessage("help.navigation.history.pointer");
+      pointer = helpFrame.getHelpLib().getMessage(
+        "symbol.help.navigation.history.pointer");
       header = helpFrame.getHelpLib().getMessage("help.navigation.history.header");
 
       init();

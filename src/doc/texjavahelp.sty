@@ -473,6 +473,7 @@
      menuitem=index,
      dialog=index,
      widget=index,
+     commonwidget=index,
      term=entry,
      commonabbreviation=abbreviation,
      commonfileext=index,
@@ -539,6 +540,7 @@
         [ entrytype->original = /common.*/ ]
    },
    save-child-count,
+   symbol-sort-fallback=name,
 }
 
 % Semantic commands
@@ -551,6 +553,8 @@
 \glsxtraddlabelprefix{widget.}
 
 \newcommand{\widget}{\dgls}
+
+\newcommand{\symbolfmt}[1]{\textrm{#1}}
 
 \newcommand{\msgparam}[1]{%
  \ifcsdef{msgparam@\romannumeral #1}%
@@ -1474,5 +1478,22 @@ halign upper=flush left,halign lower=justify,
   \group_end:
 }
 \ExplSyntaxOff
+
+\newcommand{\texparserimgloadresources}[2][]{%
+  \ifnum\glsxtrresourcecount=0\relax
+    \glsxtrresourcefile[#1]{#2}%
+  \else
+    \glsxtrresourcefile[#1]{#2-\the\glsxtrresourcecount}%
+  \fi
+  \advance\glsxtrresourcecount by 1\relax
+}
+\newcommand{\texparserimgfile}[1]{%
+  \hypersetup{hidelinks}%
+  \pagestyle{empty}%
+  {\makeatletter
+    \InputIfFileExists{#1.aux}{}{}%
+  }%
+  \nofiles
+}
 
 \endinput

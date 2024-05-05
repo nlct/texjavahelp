@@ -1,9 +1,11 @@
-% arara: pdflatex
+% arara: lualatex
 % arara: bib2gls: { group: on }
-% arara: pdflatex
-% arara: pdflatex
+% arara: lualatex
+% arara: lualatex
 \documentclass[toc=listof]{scrreport}
 
+\usepackage{fontspec}
+\setmainfont{Linux Libertine O}
 \usepackage
  [
    debug=showwrgloss
@@ -20,6 +22,12 @@
 
 \begin{document}
 \maketitle
+
+\begin{warning}
+This manual is incomplete and the library is still a work in
+progress.
+\end{warning}
+
 \tableofcontents
 
 \chapter{Introduction}
@@ -144,14 +152,14 @@ that the document preamble should contain:
 \cmddef{GlsXtrLoadResources}
 This command is provided by the \sty{glossaries-extra} package and is used 
 in conjunction with \app{bib2gls}. It writes information
-to the \ext{aux} file to be read by \app{bib2gls} and inputs
-(if it exists) the \ext{glstex} file created by \app{bib2gls}.
+to the \ext+{aux} file to be read by \app{bib2gls} and inputs
+(if it exists) the \ext+{glstex} file created by \app{bib2gls}.
 
 For convenience, the \sty{texjavahelp} package provides:
 \cmddef{TeXJavaHelpGlsResourceOptions}
 This expands to the resource options customized for use with the
 \sty{texjavahelp} package. This sets the \opt{entry-type-aliases}
-and \opt{assign-fields} options to work with the \ext{bib} format described in
+and \opt{assign-fields} options to work with the \ext+{bib} format described in
 in \sectionref{sec:bibformat}.
 
 Other resource options included in the definition of
@@ -227,24 +235,47 @@ by \app{texjavahelpmk}, so both \app{texjavahelpmk} and the
 application requiring the \TeX\ Java Help Library's \gls{gui}
 elements need to have \file{texjavahelplib.jar} on the class path.
 
+The help frame has a panel that shows a page of the manual.  Links
+in the page and the \gls{gui} navigation elements provide a way to
+switch to a different page.  Note that \qt{page} in this context
+refers to the file displayed in the help window, which typically
+contains a section, and doesn't relate to the page numbers in the
+\gls{pdf}.
+
 The library also comes with images that are used as icons in the
-help frame buttons. \Figureref{fig:navbuttons} shows the four navigation
-buttons: home (go to the start of the manual), previous page (go to
-the previous section), up (go to parent section), and next page (go
-to the next section). Note that \qt{page} in this context refers to
-the file displayed in the help window, which typically contains a
-section, and doesn't relate to the page numbers in the \gls{pdf}.
+help frame buttons. Text and icons for common buttons 
+\widget+{okay}, \widget+{apply}, \widget+{close} and
+\widget+{cancel} are provided, but may be overridden by
+providing alternative values in the application language file
+or in the application's icon directory.
+
+\Figureref{fig:navbuttons} shows the four navigation
+buttons: \btn{helpframe.navigation.home} (go to the start of the manual), 
+\btn{helpframe.navigation.previous} (go to the previous section), 
+\btn{helpframe.navigation.up} (go to parent section), and 
+\btn{helpframe.navigation.next} (go
+to the next section).
 
 \begin{figure}
 \centering
-\includegraphics{images/navbuttons}
+\includeimg
+ [alt=
+   {
+     [\entrytooltip{menu.helpframe.navigation.home} Button]
+     [\entrytooltip{menu.helpframe.navigation.previous} Button]
+     [\entrytooltip{menu.helpframe.navigation.up} Button]
+     [\entrytooltip{menu.helpframe.navigation.next} Button]
+   }
+ ]{images/navbuttons}
 \caption{Navigation Buttons}
 \label{fig:navbuttons}
 \end{figure}
 
 There are also history buttons, which allow the user to go back to
-previously viewed pages or, if they have previously gone back, to go
-forward. \Figureref{fig:historybuttons} shows the history buttons.
+previously viewed pages (the \btn{helpframe.navigation.historyback}
+button) or, if they have previously gone back, to go
+forward (the \btn{helpframe.navigation.historyforward} button).
+\Figureref{fig:historybuttons} shows the history buttons.
 Note that the forward button is greyed (disabled) because the
 currently viewed page is at the end of the history list, so it's not
 possible to go forward.
@@ -252,7 +283,12 @@ possible to go forward.
 \begin{figure}
 \centering
 \includeimg
- [alt={[History] [Back] [Forward]}]
+ [alt=
+  {[\entrytooltip{menu.helpframe.navigation.history} Button]
+   [\entrytooltip{menu.helpframe.navigation.historyback} Button]
+   [\entrytooltip{menu.helpframe.navigation.historyforward} Button]
+  }
+ ]
  {images/historybuttons-annote}
 
 \caption{History Buttons}
@@ -264,6 +300,8 @@ which provides a shortcut for the
 \menu{helpframe.navigation.history} menu item, opens the
 \dialog{help.navigation.history} window,
 shown in \figureref{fig:historywindow}.
+The current page has the title shown in bold and is preceded by
+the symbol \gls{symbol.help.navigation.history.pointer}.
 
 \begin{figure}
 \centering

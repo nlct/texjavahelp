@@ -453,6 +453,19 @@ public class TJHListener extends L2HConverter
    }
 
    @Override
+   public String getImagePreamble() throws IOException
+   {
+      String preamble = getTeXJavaHelpMk().getImagePreamble();
+
+      if (preamble == null || preamble.isEmpty())
+      {
+         preamble = super.getImagePreamble();
+      }
+
+      return preamble;
+   }
+
+   @Override
    protected L2HImage createImage(Path imagePath, String filename,
      StringBuilder optionsBuilder,
      String type, double scale, int zoom,
@@ -527,9 +540,25 @@ public class TJHListener extends L2HConverter
          {
             getParser().logMessage("Creating image "+content.toString());
          }
+
+         int idx = filename.lastIndexOf('.');
+
+         String name = filename;
+
+         if (idx > 0)
+         {
+            name = name.substring(0, idx);
+         }
+
+         idx = name.lastIndexOf('/');
+
+         if (idx > -1)
+         {
+            name = name.substring(idx+1);
+         }
    
          image = toImage(getImagePreamble(),
-          content.toString(), type, alt, null, true);
+          content.toString(), MIME_TYPE_PNG, alt, name, true);
       }
       else
       {

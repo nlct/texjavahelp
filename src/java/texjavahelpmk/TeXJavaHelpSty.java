@@ -31,8 +31,11 @@ import com.dickimawbooks.texparserlib.latex.glossaries.Dgls;
 import com.dickimawbooks.texparserlib.latex.glossaries.Dglsfield;
 import com.dickimawbooks.texparserlib.latex.glossaries.GlsEntryField;
 import com.dickimawbooks.texparserlib.latex.color.ColorSty;
+
 import com.dickimawbooks.texparserlib.html.L2HConverter;
 import com.dickimawbooks.texparserlib.html.Widget;
+import com.dickimawbooks.texparserlib.html.StartElement;
+import com.dickimawbooks.texparserlib.html.EndElement;
 
 import com.dickimawbooks.texparserlib.latex.nlctdoc.UserGuideSty;
 import com.dickimawbooks.texparserlib.latex.nlctdoc.TaggedColourBox;
@@ -61,6 +64,8 @@ public class TeXJavaHelpSty extends UserGuideSty
    @Override
    public void addDefinitions()
    {
+      TJHListener listener = (TJHListener)getListener();
+
       addCssStyles();
       addSemanticCommands();
 
@@ -166,15 +171,26 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new Icon());
 
-      TeXObjectList def = getListener().createStack();
-      Group grp = getListener().createGroup();
+      TeXObjectList def = listener.createStack();
+      Group grp = listener.createGroup();
 
       def.add(new TeXCsRef("csuse"));
       def.add(grp);
-      grp.add(getListener().getParam(1));
-      grp.addAll(getListener().createString("text"));
+      grp.add(listener.getParam(1));
+      grp.addAll(listener.createString("text"));
 
       registerControlSequence(new LaTeXGenericCommand(true, "icontext",
+       "m", def));
+
+      def = listener.createStack();
+      StartElement startElem = new StartElement("span");
+      startElem.putAttribute("class", "symbol");
+      listener.addCssStyle("span.symbol { font-family: serif; }");
+      def.add(startElem);
+      def.add(listener.getParam(1));
+      def.add(new EndElement("span"));
+
+      registerControlSequence(new LaTeXGenericCommand(true, "symbolfmt",
        "m", def));
 
       registerControlSequence(new AtFirstOfOne("msgellipsis"));

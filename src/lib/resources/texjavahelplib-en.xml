@@ -101,7 +101,7 @@
 <entry key="menu.helpframe.navigation.history.description">View recent page list</entry>
 
 <entry key="help.navigation.history.title">Page History</entry>
-<entry key="help.navigation.history.pointer">&#x261E;</entry>
+<entry key="symbol.help.navigation.history.pointer">&#x261E;</entry>
 <entry key="help.navigation.history.header">Recent List</entry>
 <entry key="help.navigation.history.go">Go</entry>
 <entry key="help.navigation.history.go.mnemonic">G</entry>
@@ -138,7 +138,7 @@
 <entry key="menu.helpframe.settings.font.mnemonic">F</entry>
 <entry key="menu.helpframe.settings.font.keystroke">ctrl F</entry>
 
-<entry key="help.settings.font_sample">“Waltz, bad nymph! For quick jigs vex sylph’s fiddle. D’ye ken?”</entry>
+<entry key="text.help.settings.font_sample">“Waltz, bad nymph! For quick jigs vex sylph’s fiddle. D’ye ken?”</entry>
 
 <entry key="help.settings.font.title">Font</entry>
 <entry key="help.settings.font.family">Font Family:</entry>

@@ -58,7 +58,8 @@ public class HelpFontSettingsFrame extends JFrame
    {
       TeXJavaHelpLib helpLib = helpFrame.getHelpLib();
 
-      sampleComp = new JTextArea(helpLib.getMessage("help.settings.font_sample"), 3, 0);
+      sampleComp = new JTextArea(helpLib.getMessage(
+       "text.help.settings.font_sample"), 3, 0);
       sampleComp.setLineWrap(true);
       sampleComp.setWrapStyleWord(true);
       sampleComp.setEditable(false);

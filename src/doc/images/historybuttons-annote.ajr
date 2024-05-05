@@ -7,19 +7,22 @@ AJR 2.0
 9 \mdseries
 8 \upshape
 6 \large
-0 2 0 R 0.0 0.0 0.0 1.0 18 open history frame
+0 2 34 \btn{helpframe.navigation.history}
+R 0.0 0.0 0.0 1.0 12 View History
 0 0 P 0 R 0.0 0.0 0.0 1.0 T 1.0 3 0 2 0 10.0 0 0 0 7 5.0 3 1 0 1 T 0 0 0 0 O 1 140.0
 220.0 L 160.0 200.0 -1 0 0 T 0 5 Serif
 0 0 12.0 0 1.0 0.0 0.0 1.0 110.0 230.0 1 9 \rmfamily
 9 \mdseries
 8 \upshape
 6 \large
-2 0 0 R 0.0 0.0 0.0 1.0 4 back
+2 0 38 \btn{helpframe.navigation.historyback}
+R 0.0 0.0 0.0 1.0 12 History Back
 0 0 P 0 R 0.0 0.0 0.0 1.0 T 1.0 3 0 2 0 10.0 0 0 0 7 5.0 3 1 0 1 T 0 0 0 0 O 1 210.0
 240.0 L 210.0 200.0 -1 0 0 T 0 5 Serif
 0 0 12.0 0 1.0 0.0 0.0 1.0 164.0 253.0 1 9 \rmfamily
 9 \mdseries
 8 \upshape
 6 \large
-2 0 0 R 0.0 0.0 0.0 1.0 8 forwards
+2 0 41 \btn{helpframe.navigation.historyforward}
+R 0.0 0.0 0.0 1.0 16 History Forwards
 0 0 0 0 

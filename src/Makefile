@@ -30,11 +30,11 @@ lib/resources/helpset/index.xml	: lib/texjavahelpmk.jar doc/texjavahelp.pdf
 	bin/texjavahelpmk --debug doc/texjavahelp.tex lib/resources/helpset
 	@grep -E 'Package glossaries(-extra)? Warning' doc/texjavahelp.log || true
 
-doc/texjavahelp.pdf	: doc/texjavahelplib.bib doc/texjavahelp.tex doc/texjavahelp.sty doc/texjavahelp.bib
+doc/texjavahelp.pdf	: doc/texjavahelplib.bib doc/texjavahelp.tex doc/texjavahelp.sty doc/texjavahelp.bib doc/images/*.tex doc/images/*.png
 	$(arara) -d doc texjavahelp
 
 doc/texjavahelplib.bib	: lib/xml2bib.jar lib/resources/texjavahelplib-en.xml
-	bin/xml2bib --debug lib/resources/texjavahelplib-en.xml doc/texjavahelplib.bib
+	bin/xml2bib lib/resources/texjavahelplib-en.xml doc/texjavahelplib.bib
 
 lib/texjavahelpmk.jar	: java/texjavahelpmk/Manifest.txt \
 	classes/com/dickimawbooks/texjavahelpmk/TeXJavaHelpMk.class
