@@ -130,7 +130,8 @@ and (optionally) \sty{tikz}. These are loaded automatically.
 The \sty{glossaries-extra} package is loaded with the options:
 \optval{record}{nameref} (which means that \app{bib2gls} should be used),
 \opt{indexcounter}, \opt{floats}, \opt{nostyles}, 
-\optvalm{stylemods}{tree,bookindex,topic} and \optval{style}{alttree}.
+\optvalm{stylemods}{tree\dcomma bookindex\dcomma topic} 
+and \optval{style}{alttree}.
 
 The following \sty{texjavahelp} package options are provided:
 \optiondef{fontsymbols}
@@ -223,6 +224,18 @@ Display help message and exit.
 
 \switchdef{version}
 Display version information and exit.
+
+\switchdef{in}
+Specifies the input file. The switch may be omitted (that is,
+\meta{tex-file} may just be provided) provided that
+\switch{output} is also used or the input file is specified before
+the output directory.
+
+\switchdef{output}
+Specifies the output directory. The switch may be omitted
+(that is, \meta{out-dir} may just be provided) provided that
+\switch{in} is also used or the output directory is specified after
+the input file.
 
 \chapter{The \TeX\ Java Help Library (\filetext{texjavahelplib.jar})}
 \label{sec:texjavahelplib}
@@ -319,6 +332,8 @@ the symbol \gls{symbol.help.navigation.history.pointer}.
 \listentrydescendents
  [title={Summary of \apptext{texjavahelpmk} Switches}]
  {app.texjavahelpmk}
+
+\listentry[title={Help Frame Menus}]{menu.helpframe}
 
 \printmain
 

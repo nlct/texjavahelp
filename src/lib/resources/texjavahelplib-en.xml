@@ -33,7 +33,10 @@
 
 <!-- Menus and Buttons for the Help System -->
 
+<entry key="menu.helpframe">Help Frame Menus</entry>
+
 <!-- Navigation -->
+
 <entry key="menu.helpframe.navigation">Navigation</entry>
 <entry key="menu.helpframe.navigation.mnemonic">N</entry>
 

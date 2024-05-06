@@ -1,11 +1,19 @@
 % Encoding: UTF-8
 
-@application{app.texjavahelpdemo}
+@application{app.texjavahelpdemo,
+ name={\appfmt{tex\-java\-help\-demo}}
+}
 
-@application{app.bib2gls}
-@application{app.datatooltk}
+@application{app.bib2gls,
+ name={\appfmt{bib\-2\-gls}}
+}
+
+@application{app.datatooltk,
+  name={data\-tool\-tk}
+}
 
 @application{app.texjavahelpmk,
+ name={\appfmt{tex\-java\-help\-mk}},
  syntax={\oargm{options} \meta{tex-file} \meta{out-dir}}
 }
 
@@ -21,9 +29,25 @@
   description={Prints version information and exits}
 }
 
+@switch{switch.in,
+  parent={app.texjavahelpmk},
+  shortswitch={i},
+  syntax={\meta{tex-file}},
+  description={Specifies the input file}
+}
+
+@switch{switch.output,
+  parent={app.texjavahelpmk},
+  shortswitch={o},
+  syntax={\meta{out-dir}},
+  description={Specifies the output directory}
+}
+
 @file{file.texjavahelplib.jar}
 
-@package{pkg.texjavahelp}
+@package{pkg.texjavahelp,
+  name={\styfmt{tex\-java\-help}}
+}
 
 @abbreviation{cli,
   short = {CLI},
@@ -51,8 +75,8 @@
 }
 
 @term{JavaHelp,
-  name={JavaHelp\texttrademark\ System},
-  text={JavaHelp},
+  name={Java\-Help\texttrademark\ System},
+  text={Java\-Help},
   description={a Java library provided by Sun that could be used by Java
 applications to a help system using Swing components. Its home page
 was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer available}
@@ -64,28 +88,63 @@ was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer availabl
    (\href{https://github.com/nlct/texparser}{\nolinkurl{github.com/nlct/texparser}})}
 }
 
-@package{pkg.nlctuserguide}
-@package{pkg.glossaries-extra}
-@package{pkg.fontawesome}
+@package{pkg.nlctuserguide,
+  name={\styfmt{nlct\-user\-guide}}
+}
+
+@package{pkg.glossaries-extra,
+ name={\styfmt{glos\-saries-extra}}
+}
+
+@package{pkg.fontawesome,
+  name={\styfmt{font\-awe\-some}}
+}
+
 @package{pkg.twemojis}
-@package{pkg.upquote}
+
+@package{pkg.upquote,
+  name={\styfmt{up\-quote}}
+}
+
 @package{pkg.hologo}
 @package{pkg.xcolor}
-@package{pkg.tcolorbox}
+
+@package{pkg.tcolorbox,
+  name={\styfmt{tcolor\-box}}
+}
+
 @package{pkg.tikz}
-@package{pkg.hyperref}
+
+@package{pkg.hyperref,
+  name={\styfmt{hyper\-ref}}
+}
 @package{pkg.stix}
 @package{pkg.boisk}
 
 @option{opt.record,parent={pkg.glossaries-extra}}
-@option{opt.indexcounter,parent={pkg.glossaries-extra}}
+
+@option{opt.indexcounter,
+ name={\optfmt{index\-counter}},
+ parent={pkg.glossaries-extra}
+}
+
 @option{opt.floats,parent={pkg.glossaries-extra}}
-@option{opt.nostyles,parent={pkg.glossaries-extra}}
-@option{opt.stylemods,parent={pkg.glossaries-extra}}
+
+@option{opt.nostyles,
+ name={\optfmt{no\-styles}},
+ parent={pkg.glossaries-extra}
+}
+
+@option{opt.stylemods,
+ name={\optfmt{style\-mods}},
+ parent={pkg.glossaries-extra}
+}
+
 @option{opt.style,parent={pkg.glossaries-extra}}
 
 @option{opt.fontsymbols,
   parent={pkg.texjavahelp},
+  name={\optfmt{font\-sym\-bols}},
   description={defines \gls{tabsym} and \gls{upsym} in terms of
    the font symbol commands \gls{barleftarrowrightarrowbar}
    and \gls{baruparrow}. This option will required a package that defines
@@ -94,6 +153,7 @@ was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer availabl
 
 @option{opt.tikzsymbols,
   parent={pkg.texjavahelp},
+  name={\optfmt{tikz\-sym\-bols}},
   description={defines \gls{tabsym} and \gls{upsym} as \sty{tikz} images}
 }
 
@@ -106,10 +166,12 @@ was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer availabl
 }
 
 @command{tabsym,
+  name={\csfmt{tab\-sym}},
   description={symbol to visually indicate a tab character}
 }
 
 @command{upsym,
+  name={\csfmt{up\-sym}},
   description={an upward-pointing arrow with an under bar}
 }
 

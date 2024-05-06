@@ -94,6 +94,7 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new FilterTerms(glossariesSty));
       registerControlSequence(new PrintMainInit());
       registerControlSequence(new PrintMain(glossariesSty));
+      registerControlSequence(new ListEntry(glossariesSty));
       registerControlSequence(new ListEntryDescendents(glossariesSty));
       registerControlSequence(new ListEntryDescendentsInit());
       registerControlSequence(new PrintHelpIndex(glossariesSty));
@@ -206,6 +207,13 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       // wrglossary location formats
       registerControlSequence(new AtSecondOfTwo("glsxtrwrglossarylocfmt"));
+
+      def = listener.createStack();
+      def.add(new TeXCsRef("glsadd"));
+      def.add(TeXParserUtils.createGroup(listener, listener.getParam(1)));
+
+      registerControlSequence(new LaTeXGenericCommand(true, "glssummaryadd",
+        "m", def));
    }
 
    @Override

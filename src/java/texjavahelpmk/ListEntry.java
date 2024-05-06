@@ -31,14 +31,14 @@ import com.dickimawbooks.texparserlib.latex.glossaries.PrintUnsrtGlossary;
 import com.dickimawbooks.texparserlib.latex.glossaries.Glossary;
 import com.dickimawbooks.texparserlib.latex.glossaries.GlossaryEntry;
 
-public class ListEntryDescendents extends PrintUnsrtGlossary
+public class ListEntry extends PrintUnsrtGlossary
 {
-   public ListEntryDescendents(GlossariesSty sty)
+   public ListEntry(GlossariesSty sty)
    {
-      this("listentrydescendents", sty);
+      this("listentry", sty);
    }
 
-   public ListEntryDescendents(String name, GlossariesSty sty)
+   public ListEntry(String name, GlossariesSty sty)
    {
       super(name, sty);
    }
@@ -46,7 +46,7 @@ public class ListEntryDescendents extends PrintUnsrtGlossary
    @Override
    public Object clone()
    {
-      return new ListEntryDescendents(getName(), sty);
+      return new ListEntry(getName(), sty);
    }
 
    @Override
@@ -91,7 +91,7 @@ public class ListEntryDescendents extends PrintUnsrtGlossary
             options = new KeyValList();
          }
 
-         options.put("leveloffset", new UserNumber(- level - 1));
+         options.put("leveloffset", new UserNumber( - level ));
       }
 
       Glossary minilist;
@@ -105,6 +105,8 @@ public class ListEntryDescendents extends PrintUnsrtGlossary
       {
          minilist = sty.createGlossary("minilist", null, true, true);
       }
+
+      minilist.add(label);
 
       TeXObject childlist = entry.get("childlist");
 
@@ -149,16 +151,10 @@ public class ListEntryDescendents extends PrintUnsrtGlossary
         new AssignedControlSequence("glsextrapostnamehook",
         parser.getControlSequence("glssummaryadd")));
 
-      parser.putControlSequence(true, new GenericCommand(true,
-       "glossarypreamble", null, TeXParserUtils.createStack(listener,
-         listener.getControlSequence("glssummaryadd"),
-         listener.createGroup(label))));
-
       doGlossary(options, parser, stack);
 
       parser.endGroup();
    }
-
 
    protected void addChildren(Glossary minilist, String label,
      TeXParser parser, TeXObjectList stack)

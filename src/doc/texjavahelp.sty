@@ -606,7 +606,7 @@
 
 \newcommand*{\menufmt}[1]{\widgetfmt{#1}}
 
-\newcommand*{\menusep}{\,\ding{220}\,}
+\newcommand*{\menusep}{\,\discretionary{}{}{}\ding{220}\,\discretionary{}{}{}}
 
 \NewDocumentCommand\menu{sO{}m}{%
   {%
@@ -769,11 +769,11 @@
 \newcommand{\main}[1]{\textbf{#1}}
 
 \NewDocumentCommand\appdef{O{}m}{%
- \begin{pinnedbox}[#1]%
+ \begin{terminal}[#1]%
  \glsadd[format=main]{app.#2}%
  \let\glsxtrpostnameapplication\postclihook
  \glsxtrglossentry{app.#2}%
- \end{pinnedbox}% 
+ \end{terminal}% 
 }
 
 \newcommand{\postswitchhook}{%
@@ -933,25 +933,30 @@
 
 \newignoredglossary{minilist}
 
+\newcommand{\glssummaryadd}[1]{\glsadd{#1}}
+
 \ExplSyntaxOn
 
 \NewDocumentCommand \listentry { O{} m }
 {
  \group_begin:
-   \__texjavahelp_hier_copy:ne { minilist } { #2 }
-   \cs_set_eq:NN \glsxtrpostnameapplication \postclihook
-   \cs_set_eq:NN \glsxtrpostnameswitch \postswitchhook
-   \cs_set_eq:NN \glsxtrpostnameoption \postoptionhook
-   \cs_set_eq:NN \glstopicSubItemBox \use_ii:nn
-   \printunsrtglossary 
-   [
-      type=minilist,
-      style=topic,
-      title = { \glsfmttext{#2} ~ Summary},
-      nonumberlist,
-      leveloffset = { - \glsxtrusefield { #2 } { level } } ,
-      #1
-   ]
+   \ifglsentryexists { #2 }
+    {
+     \__texjavahelp_hier_copy:ne { minilist } { #2 }
+     \listentrydescendentsinit
+     \let \glsextrapostnamehook \glssummaryadd
+     \printunsrtglossary 
+     [
+        type=minilist,
+        style=topic,
+        title = { \glsfmttext{#2} ~ Summary},
+        nonumberlist,
+        leveloffset = { - \glsxtrusefield { #2 } { level } } ,
+        label={#2-summary},
+        #1
+     ]
+    }
+    { \glsadd { #2 } }
  \group_end:
 }
 
@@ -965,26 +970,32 @@
 \NewDocumentCommand \listentrydescendents { O{} m }
 {
  \group_begin:
-  \glsxtrifhasfield* { childlist } { #2 }
+  \ifglsentryexists { #2 }
    {
-    \cs_set:Npn \do ##1
+    \glsxtrifhasfield* { childlist } { #2 }
      {
-       \__texjavahelp_hier_copy:nn { minilist } { ##1 }
-     }
-    \glsxtrfielddolistloop { #2 } { childlist }
-   } 
-   { }
-  \listentrydescendentsinit
-  \printunsrtglossary 
-   [
-      type=minilist,
-      label={#2-summary},
-      style=topic,
-      title = { \glsfmttext{#2} ~ Summary},
-      nonumberlist,
-      leveloffset = { \int_eval:n { - \glsxtrusefield { #2 } { level } - 1 } } ,
-      #1
-   ]
+      \cs_set:Npn \do ##1
+       {
+         \__texjavahelp_hier_copy:nn { minilist } { ##1 }
+       }
+      \glsxtrfielddolistloop { #2 } { childlist }
+     } 
+     { }
+    \listentrydescendentsinit
+    \let \glsextrapostnamehook \glssummaryadd
+    \printunsrtglossary 
+     [
+        preamble={ \glssummaryadd { #2 } },
+        type=minilist,
+        label={#2-summary},
+        style=topic,
+        title = { \glsfmttext{#2} ~ Summary},
+        nonumberlist,
+        leveloffset = { \int_eval:n { - \glsxtrusefield { #2 } { level } - 1 } } ,
+        #1
+     ]
+   }
+   { \glsadd { #2 } }
  \group_end:
 }
 
@@ -1230,7 +1241,7 @@ engine (\XeLaTeX\ or \LuaLaTeX)}
  #1
 }
 
-\newtcolorbox{terminal}[1]{unbreakable,title={\icon{terminal}},
+\newtcolorbox{terminal}[1][]{unbreakable,title={\icon{terminal}},
  colframe=black,
  enhanced,attach boxed title to top right={yshift=\boxtitleshift},
  after={\nlctdefaultafter},
