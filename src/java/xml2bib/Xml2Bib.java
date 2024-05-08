@@ -30,6 +30,8 @@ import java.util.Enumeration;
 
 import java.text.MessageFormat;
 
+import java.awt.event.KeyEvent;
+
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLibApp;
 import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
@@ -141,6 +143,12 @@ public class Xml2Bib implements TeXJavaHelpLibApp
    public void debug(Throwable e)
    {
       debug(e.getMessage(), e);
+   }
+
+   @Override
+   public void debug(String msg)
+   {
+      debug(msg, null);
    }
 
    @Override
@@ -280,6 +288,7 @@ public class Xml2Bib implements TeXJavaHelpLibApp
               || suffix.equals("tooltip")
               || suffix.equals("description")
               || suffix.equals("keystroke")
+              || suffix.equals("defaultkeys")
                )
             {
                String fieldValue = (String)props.getProperty(key);
@@ -305,7 +314,75 @@ public class Xml2Bib implements TeXJavaHelpLibApp
                   entries.put(key, entry);
                }
 
-               entry.put(suffix, fieldValue);
+               boolean encode = true;
+
+               if (suffix.equals("keystroke"))
+               {
+                  String[] split = fieldValue.split("\\s+");
+
+                  StringBuilder builder = new StringBuilder();
+
+                  for (String s : split)
+                  {
+                     String keyref = "manual.keystroke." + s.toLowerCase();
+                     String propVal = props.getProperty(keyref);
+
+                     if (propVal == null && !s.equals("_") && s.contains("_"))
+                     {
+                        keyref = "manual.keystroke."
+                            + s.replaceAll("_", "").toLowerCase();
+                        propVal = props.getProperty(keyref);
+                     }
+
+                     if (builder.length() > 0)
+                     {
+                        builder.append('+');
+                     }
+
+                     if (propVal != null)
+                     {
+                        builder.append("\\keyref{");
+                        builder.append(keyref);
+                        builder.append("}");
+                     }
+                     else if (!(s.equals("typed")
+                             || s.equals("released")
+                             || s.equals("pressed")))
+                     {
+                        int keyCode = 0;
+
+                        try
+                        {
+                           keyCode = KeyEvent.class.getField(s).getInt(KeyEvent.class);
+                        }
+                        catch (NoSuchFieldException | IllegalAccessException e)
+                        {
+                        }
+
+                        if (keyCode >= 0x20 && keyCode < 0x7F)
+                        {
+                           builder.append("\\actualkey{");
+                           Entry.encodeTeXChars(builder, keyCode);
+                           builder.append("}");
+                        }
+                        else
+                        {
+                           builder.append("\\actualkey{");
+                           Entry.encodeTeXChars(builder, s);
+                           builder.append("}");
+                        }
+                     }
+                  }
+
+                  if (builder.length() > 0)
+                  {
+                     fieldValue = "\\keys{" + builder.toString() + "}";
+                  }
+
+                  encode = false;
+               }
+
+               entry.put(suffix, fieldValue, encode);
             }
 
             if (entry == null)
@@ -316,23 +393,52 @@ public class Xml2Bib implements TeXJavaHelpLibApp
 
             if (parent != null
                  && entry.getParent() == null
-                 && !suffix.equals("title")
-                 && !parent.equals(entry.getKey()))
+                 && !suffix.equals("title"))
             {
                Entry parentEntry = entries.get(parent);
 
                if (parentEntry == null)
                {
-                  String val = (String)props.get(parent);
+                  parentEntry = entries.get(parent+".title");
+               }
 
-                  if (val != null)
+               if (parentEntry == null)
+               {
+                  parentEntry = entries.get("index."+parent);
+
+                  if (parentEntry == null)
                   {
-                     parentEntry = new Entry(parent, val);
-                     entries.put(parent, parentEntry);
+                     String val = (String)props.get(parent);
+
+                     if (val == null)
+                     {
+                        val = (String)props.get(parent+".title");
+
+                        if (val != null)
+                        {
+                           parent += ".title";
+                        }
+                     }
+
+                     if (val == null)
+                     {
+                        val = (String)props.get("index."+parent);
+
+                        if (val != null)
+                        {
+                           parent = "index."+parent;
+                        }
+                     }
+
+                     if (val != null)
+                     {
+                        parentEntry = new Entry(parent, val);
+                        entries.put(parent, parentEntry);
+                     }
                   }
                }
 
-               if (parentEntry != null)
+               if (parentEntry != null && !parentEntry.equals(entry))
                {
                   entry.setParent(parentEntry);
                }

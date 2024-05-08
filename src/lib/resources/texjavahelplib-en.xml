@@ -6,6 +6,7 @@
 <!-- Help Menu (for the main application) -->
 <entry key="menu.help">Help</entry>
 <entry key="menu.help.mnemonic">H</entry>
+
 <entry key="menu.help.manual">Manual</entry>
 <entry key="menu.help.manual.mnemonic">M</entry>
 <entry key="menu.help.manual.keystroke">F1</entry>
@@ -14,31 +15,37 @@
 <entry key="action.help.mnemonic">H</entry>
 <entry key="action.help.description">Open manual</entry>
 <entry key="action.help.keystroke">shift F1</entry>
+<entry key="action.help.defaultkeys">format=glsignore</entry>
 
 <!-- Common Actions -->
 <entry key="action.okay">Okay</entry>
 <entry key="action.okay.mnemonic">O</entry>
 <entry key="action.okay.keystroke">shift ENTER</entry>
+<entry key="action.okay.defaultkeys">format=glsignore</entry>
 
 <entry key="action.cancel">Cancel</entry>
 <entry key="action.cancel.mnemonic">C</entry>
 <entry key="action.cancel.keystroke">ESCAPE</entry>
+<entry key="action.cancel.defaultkeys">format=glsignore</entry>
 
 <entry key="action.apply">Apply</entry>
 <entry key="action.apply.mnemonic">A</entry>
+<entry key="action.apply.defaultkeys">format=glsignore</entry>
 
 <entry key="action.close">Close</entry>
 <entry key="action.close.mnemonic">C</entry>
 <entry key="action.close.keystroke">ESCAPE</entry>
+<entry key="action.close.defaultkeys">format=glsignore</entry>
 
 <!-- Menus and Buttons for the Help System -->
 
-<entry key="menu.helpframe">Help Frame Menus</entry>
+<entry key="index.menu.helpframe">Help Frame Menus</entry>
 
 <!-- Navigation -->
 
 <entry key="menu.helpframe.navigation">Navigation</entry>
 <entry key="menu.helpframe.navigation.mnemonic">N</entry>
+<entry key="menu.helpframe.navigation.description">Switching from one page to another</entry>
 
 <entry key="menu.helpframe.navigation.home">Home</entry>
 <entry key="menu.helpframe.navigation.home.tooltip">Home Page</entry>
@@ -94,6 +101,8 @@
 
 <entry key="menu.helpframe.navigation.index">Index...</entry>
 <entry key="menu.helpframe.navigation.index.mnemonic">I</entry>
+<entry key="menu.helpframe.navigation.index.tooltip">Open index page</entry>
+<entry key="menu.helpframe.navigation.index.description">Open index page in separate window</entry>
 
 <entry key="help.navigation.index.title">Index</entry>
 
@@ -125,6 +134,7 @@
 <!-- Navigation -->
 <entry key="menu.helpframe.settings">Settings</entry>
 <entry key="menu.helpframe.settings.mnemonic">S</entry>
+<entry key="menu.helpframe.settings.mnemonic">Change the graphical interface</entry>
 
 <entry key="menu.helpframe.settings.font.decrease">Font Decrease</entry>
 <entry key="menu.helpframe.settings.font.decrease.tooltip">Decrease Font Size</entry>
@@ -162,6 +172,56 @@
 <entry key="indexmap.name_description">{0}: {1}</entry>
 <entry key="indexmap.short_description">{0}: {1}</entry>
 <entry key="indexmap.long_short_description">{0} ({1}): {2}</entry>
+
+<!-- Language sensitive common text for the manual -->
+
+<entry key="manual.keystroke.shift">\shiftsym</entry>
+<entry key="manual.keystroke.shift.description">Shift</entry>
+
+<entry key="manual.keystroke.space">\spacekeysym</entry>
+<entry key="manual.keystroke.space.description">Space</entry>
+
+<entry key="manual.keystroke.control">Control</entry>
+<entry key="manual.keystroke.ctrl">Ctrl</entry>
+<entry key="manual.keystroke.meta">Meta</entry>
+<entry key="manual.keystroke.alt">Alt</entry>
+<entry key="manual.keystroke.altgraph">Alt Gr</entry>
+<entry key="manual.keystroke.altgraph.description">Alt Graph</entry>
+
+<entry key="manual.keystroke.home">Home</entry>
+<entry key="manual.keystroke.end">End</entry>
+
+<entry key="manual.keystroke.up">\upkeysym</entry>
+<entry key="manual.keystroke.up.description">Up</entry>
+<entry key="manual.keystroke.down">\downkeysym</entry>
+<entry key="manual.keystroke.down.description">Down</entry>
+<entry key="manual.keystroke.left">\leftkeysym</entry>
+<entry key="manual.keystroke.left.description">Left</entry>
+<entry key="manual.keystroke.right">\rightkeysym</entry>
+<entry key="manual.keystroke.right.description">Right</entry>
+
+<entry key="manual.keystroke.pageup">Page Up</entry>
+<entry key="manual.keystroke.pagedown">Page Down</entry>
+
+<entry key="manual.keystroke.tab">\tabsym</entry>
+<entry key="manual.keystroke.tab.description">Tab</entry>
+
+<entry key="manual.keystroke.return">\returnsym</entry>
+<entry key="manual.keystroke.return.description">Return</entry>
+
+<entry key="manual.keystroke.enter">Enter</entry>
+
+<entry key="manual.keystroke.esc">Esc</entry>
+<entry key="manual.keystroke.esc.description">Escape</entry>
+
+<entry key="manual.keystroke.menu">Menu</entry>
+<entry key="manual.keystroke.insert">Insert</entry>
+<entry key="manual.keystroke.delete">Delete</entry>
+<entry key="manual.keystroke.backspace">Backspace</entry>
+<entry key="manual.keystroke.capslock">Caps Lock</entry>
+<entry key="manual.keystroke.clear">Clear</entry>
+<entry key="manual.keystroke.prtscn">PrtScn</entry>
+<entry key="manual.keystroke.prtscn.description">Print Screen</entry>
 
 <!--  Errors -->
 <entry key="error.xml.more_than_one_tag">More than 1 &lt;{0}&gt; found</entry>

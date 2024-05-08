@@ -45,7 +45,6 @@ public class Entry
       }
 
       this.key = key;
-      this.value = value;
 
       if (type == null)
       {
@@ -53,21 +52,24 @@ public class Entry
       }
 
       this.type = type;
+
+      put("name", value,
+        !(key.startsWith("index") || key.startsWith("manual")));
+   }
+
+   @Override
+   public boolean equals(Object other)
+   {
+      if (this == other) return true;
+
+      if (other == null || !(other instanceof Entry)) return false;
+
+      return key.equals(((Entry)other).key);
    }
 
    public String getKey()
    {
       return key;
-   }
-
-   public String getValue()
-   {
-      return value;
-   }
-
-   public void setValue(String value)
-   {
-      this.value = value;
    }
 
    public EntryType getEntryType()
@@ -92,38 +94,41 @@ public class Entry
 
    public void put(String field, String value)
    {
-      if (field.equals("name"))
-      {
-         setValue(value);
-      }
-      else if (field.equals("parent"))
+      put(field, value, true);
+   }
+
+   public void put(String field, String value, boolean encode)
+   {
+      if (field.equals("parent"))
       {
          setParent(value);
       }
       else
       {
-         if (extraFields == null)
+         if (fields == null)
          {
-            extraFields = new HashMap<String,String>();
+            fields = new HashMap<String,FieldValue>();
          }
 
-         extraFields.put(field, value);
+         fields.put(field, new FieldValue(value, encode));
       }
    }
 
    public String get(String field)
    {
-      if (field.equals("name"))
-      {
-         return getValue();
-      }
-      else if (field.equals("parent"))
+      if (field.equals("parent"))
       {
          return getParent();
       }
+      else if (fields == null)
+      {
+         return null;
+      }
       else
       {
-         return extraFields == null ? null : extraFields.get(field);
+         FieldValue value =  fields.get(field);
+
+         return value == null ? null : value.getValue();
       }
    }
 
@@ -134,30 +139,6 @@ public class Entry
       out.print("{");
       out.print(key);
 
-      if (value != null)
-      {
-         out.println(",");
-
-         out.print("  name={");
-
-         String cmd = type.getEncap();
-
-         if (cmd == null)
-         {
-            out.print(encode(value));
-         }
-         else
-         {
-            out.print('\\');
-            out.print(cmd);
-            out.print('{');
-            out.print(encode(value));
-            out.print('}');
-         }
-
-         out.print("}");
-      }
-
       if (parent != null)
       {
          out.println(",");
@@ -166,21 +147,29 @@ public class Entry
          out.print("}");
       }
 
-      writeExtraFields(out);
+      writeFields(out);
 
       out.println("}");
    }
 
-   public void writeExtraFields(PrintWriter out) throws IOException
+   public void writeFields(PrintWriter out) throws IOException
    {
-      if (extraFields != null)
+      if (fields != null)
       {
-         for (String field : extraFields.keySet())
+         for (String field : fields.keySet())
          {
-            String val = extraFields.get(field);
+            FieldValue fieldVal = fields.get(field);
+
+            String val = fieldVal.getValue();
 
             out.println(",");
-            out.format("  %s={%s}", field, encode(val));
+
+            if (fieldVal.encode)
+            {
+               val = encode(val);
+            }
+
+            out.format("  %s={%s}", field, val);
          }
       }
 
@@ -329,10 +318,17 @@ public class Entry
       }
    }
 
-   protected String key, value, parent;
+   @Override
+   public String toString()
+   {
+      return String.format("%s[key=%s,parent=%s,type=%s,fields=%s]",
+        getClass().getSimpleName(), key, parent, type, fields);
+   }
+
+   protected String key, parent;
    protected EntryType type;
 
-   protected HashMap<String,String> extraFields;
+   protected HashMap<String,FieldValue> fields;
 
    public static final Pattern PARAM_CHOICE
     = Pattern.compile("(\\d+),choice,(.+)");
@@ -342,4 +338,37 @@ public class Entry
 
    public static final Pattern PARAM
     = Pattern.compile("(\\d+)(,.*)?");
+}
+
+class FieldValue
+{
+   public FieldValue(String value)
+   {
+      this(value, true);
+   }
+
+   public FieldValue(String value, boolean encode)
+   {
+      this.value = value;
+      this.encode = encode;
+   }
+
+   public String getValue()
+   {
+      return value;
+   }
+
+   public boolean requiresEncoding()
+   {
+      return encode;
+   }
+
+   @Override
+   public String toString()
+   {
+      return value;
+   }
+
+   protected String value;
+   protected boolean encode;
 }

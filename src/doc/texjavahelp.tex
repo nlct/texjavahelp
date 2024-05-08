@@ -18,7 +18,10 @@
 \title{\TeXJavaHelp}
 \author{Nicola L.C. Talbot\\\href{https://www.dickimaw-books.com/}{\nolinkurl{dickimaw-books.com}}}
 
-\GlsXtrLoadResources[src={\jobname,texjavahelplib},\TeXJavaHelpGlsResourceOptions]
+\GlsXtrLoadResources[src={\jobname,texjavahelplib},
+ \TeXJavaHelpGlsResourceOptions,
+% match-action=add,match={category=menu}
+]
 
 \begin{document}
 \maketitle
@@ -256,7 +259,7 @@ contains a section, and doesn't relate to the page numbers in the
 \gls{pdf}.
 
 The library also comes with images that are used as icons in the
-help frame buttons. Text and icons for common buttons 
+help frame buttons and \glspl{menu}. Text and icons for common buttons 
 \widget+{okay}, \widget+{apply}, \widget+{close} and
 \widget+{cancel} are provided, but may be overridden by
 providing alternative values in the application language file
@@ -315,6 +318,8 @@ which provides a shortcut for the
 shown in \figureref{fig:historywindow}.
 The current page has the title shown in bold and is preceded by
 the symbol \gls{symbol.help.navigation.history.pointer}.
+Select the required page and click on the
+\gls{help.navigation.history.go} button.
 
 \begin{figure}
 \centering
@@ -323,6 +328,18 @@ the symbol \gls{symbol.help.navigation.history.pointer}.
 \caption{The Page History Window}
 \label{fig:historywindow}
 \end{figure}
+
+The \menu{helpframe.navigation.search} menu item opens the search
+window where the user can enter keywords. This will only work if
+\app{texjavahelpmk} has created the search \gls{xml} file, which
+catalogues the search terms with a reference to the file and block
+or paragraph where the terms were found.
+
+The \menu{helpframe.navigation.index} menu item opens the index page
+in a separate frame, which makes it easier to go through the
+possible locations for a particular item without having to jump back
+and forth between the index and the referenced page in the help
+frame.
 
 
 % Summary of texjavahelpmk switches
@@ -333,7 +350,9 @@ the symbol \gls{symbol.help.navigation.history.pointer}.
  [title={Summary of \apptext{texjavahelpmk} Switches}]
  {app.texjavahelpmk}
 
-\listentry[title={Help Frame Menus}]{menu.helpframe}
+\listmenuitems
+ [title={Help Frame Menus}]
+ {index.menu.helpframe}
 
 \printmain
 

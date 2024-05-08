@@ -234,6 +234,10 @@ public class HelpFrame extends JFrame
          middlePanel.add(createActionComponent(indexAction));
          navMenu.add(indexAction);
       }
+      else
+      {
+         helpLib.debug("No navigation: indexNode="+indexNode);
+      }
 
       navMenu.addSeparator();
       middlePanel.add(Box.createHorizontalStrut(20));
@@ -417,8 +421,12 @@ public class HelpFrame extends JFrame
       super.setIconImage(image);
       helpHistoryFrame.setIconImage(image);
       helpSearchFrame.setIconImage(image);
-      helpIndexFrame.setIconImage(image);
       helpFontSettings.setIconImage(image);
+
+      if (helpIndexFrame != null)
+      {
+         helpIndexFrame.setIconImage(image);
+      }
    }
 
    public void setIconImages(List<? extends Image> icons)
@@ -426,8 +434,12 @@ public class HelpFrame extends JFrame
       super.setIconImages(icons);
       helpHistoryFrame.setIconImages(icons);
       helpSearchFrame.setIconImages(icons);
-      helpIndexFrame.setIconImages(icons);
       helpFontSettings.setIconImages(icons);
+
+      if (helpIndexFrame != null)
+      {
+         helpIndexFrame.setIconImages(icons);
+      }
    }
 
    public void setPage(NavigationNode node) throws IOException

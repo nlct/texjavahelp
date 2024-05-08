@@ -12,6 +12,8 @@
 \RequirePackage{varioref}
 \RequirePackage{xcolor}
 \RequirePackage{graphicx}
+\RequirePackage{accsupp}
+\RequirePackage{tikz}
 
 \PassOptionsToPackage{breakable,skins,listings}{tcolorbox}
 \RequirePackage{tcolorbox}
@@ -34,7 +36,43 @@
 \DeclareOption{novref}{\nlctnovref}
 
 \newcommand{\nlct@definesymbols}{%
-  \nlct@definefontsymbols
+  \nlct@definetikzsymbols
+}
+
+\newrobustcmd{\leftkeysym}{%
+ \BeginAccSupp{method=hex,unicode,ActualText=2190}%
+ \faArrowLeft
+ \EndAccSupp{}%
+}
+
+\newrobustcmd{\upkeysym}{%
+ \BeginAccSupp{method=hex,unicode,ActualText=2191}%
+ \faArrowUp
+ \EndAccSupp{}%
+}
+
+\newrobustcmd{\rightkeysym}{%
+ \BeginAccSupp{method=hex,unicode,ActualText=2192}%
+ \faArrowRight
+ \EndAccSupp{}%
+}
+
+\newrobustcmd{\downkeysym}{%
+ \BeginAccSupp{method=hex,unicode,ActualText=2193}%
+ \faArrowDown
+ \EndAccSupp{}%
+}
+
+\newrobustcmd{\backspacekeysym}{%
+ \BeginAccSupp{method=hex,unicode,ActualText=232B}%
+ \faBackspace
+ \EndAccSupp{}%
+}
+
+\newrobustcmd{\spacekeysym}{%
+ \BeginAccSupp{method=hex,unicode,ActualText=0020}%
+ \qquad
+ \EndAccSupp{}%
 }
 
 \newcommand{\nlct@definefontsymbols}{%
@@ -42,7 +80,7 @@
  \newrobustcmd{\tabsym}{%
   \BeginAccSupp{method=hex,unicode,ActualText=21B9}%
   \ensuremath{\barleftarrowrightarrowbar}%
-  \EndAccSupp{}%
+ \EndAccSupp{}%
  }
 % requires stix
  \newrobustcmd{\upsym}{%
@@ -50,10 +88,20 @@
   \ensuremath{\baruparrow}%
   \EndAccSupp{}%
  }
+% requires boisik or stix
+ \newrobustcmd{\returnsym}{%
+  \BeginAccSupp{method=hex,unicode,ActualText=21B5}%
+  \ensuremath{\carriagereturn}%
+  \EndAccSupp{}%
+ }
+ \newrobustcmd{\shiftsym}{%
+  \BeginAccSupp{method=hex,unicode,ActualText=21E7}%
+  \ensuremath{\upwhitearrow}%
+  \EndAccSupp{}%
+ }
 }
 
 \newcommand{\nlct@definetikzsymbols}{%
-  \RequirePackage{tikz}%
   \usetikzlibrary{arrows.meta}%
   \newsavebox\tabsbox
   \sbox\tabsbox{%
@@ -73,14 +121,43 @@
    \thinspace
    \EndAccSupp{}%
   }%
-  \newrobustcmd{\upsym}{%
-   \BeginAccSupp{method=hex,unicode,ActualText=2B71}%
+  \newsavebox\upsymbox
+  \sbox\upsymbox{%
    \begin{tikzpicture}
    \draw[arrows={-To[width=6pt,length=5pt]Bar[width=8pt]}]
    (0,0) -- (0,2ex);
    \end{tikzpicture}
+  }%
+  \newrobustcmd{\upsym}{%
+   \BeginAccSupp{method=hex,unicode,ActualText=2B71}%
+   \usebox\upsymbox
    \EndAccSupp{}%
   }%
+ \newsavebox\returnbox
+ \sbox\returnbox{%
+   \begin{tikzpicture}
+   \draw [thick,arrows={Triangle[width=4pt,length=4pt]-}]
+   (0,0) -| (1em,1ex);
+   \end{tikzpicture}
+ }%
+  \newrobustcmd{\returnsym}{%
+   \BeginAccSupp{method=hex,unicode,ActualText=21B5}%
+   \usebox\returnbox
+   \EndAccSupp{}%
+  }%
+ \newsavebox\shiftbox
+ \sbox\shiftbox{%
+   \begin{tikzpicture}
+   \draw (0,0) -- (0,1ex) -- (-0.3ex,1ex) -- (0.3ex,1.6ex)
+   -- (0.9ex,1ex) -- (0.6ex,1ex) -- (0.6ex,0)
+    -- cycle;
+   \end{tikzpicture}%
+ }%
+ \newrobustcmd{\shiftsym}{%
+  \BeginAccSupp{method=hex,unicode,ActualText=21E7}%
+   \usebox\shiftbox
+  \EndAccSupp{}%
+ }
 }
 
 \DeclareOption{fontsymbols}{%
@@ -98,6 +175,8 @@
 \DeclareOption*{\PassOptionsToPackage{\CurrentOption}{glossaries-extra}}
 
 \ProcessOptions
+
+\nlct@definesymbols
 
 \PassOptionsToPackage{hidelinks}{hyperref}
 \RequirePackage{hyperref}
@@ -126,6 +205,14 @@
 }
 
 \renewcommand{\title}[1]{\gdef\@title{#1}\hypersetup{pdftitle={\text_purify:n{#1}}}}
+
+% Base bookmark level
+\int_new:N \l_texjavahelp_base_bookmark_level_int
+
+\cs_if_exist:NF \chapter
+ {
+   \int_set_eq:NN \l_texjavahelp_base_bookmark_level_int \c_one_int
+ }
 \ExplSyntaxOff
 
 \newrobustcmd{\visiblespace}{%
@@ -448,6 +535,7 @@
 \setabbreviationstyle[commonabbreviation]{short-nolong}
 
 \newignoredglossary{messages}
+\newignoredglossary{keystrokes}
 
 \newcommand{\TeXJavaHelpGlsFieldAdjustments}{
  description-case-change=firstuc,
@@ -480,7 +568,8 @@
      message=index,
      error=index,
      warning=index,
-     syntax=index
+     syntax=index,
+     keystroke=symbol
    },
   category = same as original entry,
   assign-fields=
@@ -535,6 +624,9 @@
 % messages, errors and warnings
       type = "messages"
         [ entrytype->original = /message|error|warning|syntax/ ], 
+% keystrokes
+      type = "keystrokes"
+        [ entrytype->original = /keystroke/ ], 
 % common
       defaultkeys = "format=glsignore"
         [ entrytype->original = /common.*/ ]
@@ -608,16 +700,35 @@
 
 \newcommand*{\menusep}{\,\discretionary{}{}{}\ding{220}\,\discretionary{}{}{}}
 
-\NewDocumentCommand\menu{sO{}m}{%
-  {%
-    \let\glsxtrhiernamesep\menusep
-    \def\glsxtrtitleopts{noindex}%
-    \glsxtrhiername{menu.#3}%
-  }%
+\NewDocumentCommand\menu{sO{}O{menu.}m}{%
+  \menutrail{#3#4}%
   \IfBooleanTF{#1}%
-  {\glsadd[format=glsignore,#2]{menu.#3}}%
-  {\glsadd[#2]{menu.#3}}%
+   {\glsadd[format=glsignore,#2]{#3#4}}%
+   {\glsadd[#2]{#3#4}}%
 }
+
+\NewDocumentCommand\menutrail{m}{%
+  \glstexorpdfstring{\@menutrail{#1}}{\glsentryname{#1}}%
+}
+
+\newcommand\@menutrail[1]{%
+  \glsdoifexists{#1}%
+  {%
+    \glsxtrifhasfield{parent}{#1}%
+    {%
+       \glsifcategory{\glscurrentfieldvalue}{menu}%
+       {%
+         \expandafter\@menutrail\expandafter{\glscurrentfieldvalue}%
+         \menusep
+       }%
+       {}%
+    }%
+    {}%
+    \menuitemref{#1}%
+  }%
+}
+
+\newcommand{\menuitemref}[1]{\glsname[noindex]{#1}}
 
 \newcommand{\menuitem}{\dgls}
 
@@ -632,6 +743,39 @@
     }%
   }%
 }
+
+% key strokes
+\newcommand{\keystrokefont}{\sffamily\bfseries}
+
+\newcommand{\keystrokefmt}[1]{%
+ \begin{tikzpicture}[baseline=(s.base)]
+ \node[minimum height=10pt,minimum width=10pt,align=center,
+   font={\keystrokefont},draw,double=lightgray,rounded corners]
+ (s) {#1};
+ \end{tikzpicture}%
+}
+
+\glsxtrnewgls{manual.keystroke.}{\keyref}
+\newcommand{\actualkey}[1]{#1}
+
+\newcommand{\keysep}{+}
+
+\ExplSyntaxOn
+\seq_new:N \l__texjavahelp_keys_seq
+
+\NewDocumentCommand \keys { m }
+{
+  \seq_set_split:Nnn \l__texjavahelp_keys_seq { + } { #1 }
+  \seq_map_indexed_inline:Nn \l__texjavahelp_keys_seq
+   {
+      \int_compare:nNnT { ##1 } > { \c_one_int }
+       {
+         \keysep
+       }
+      \keystrokefmt { ##2 }
+   }
+}
+\ExplSyntaxOff
 
 \newcommand{\appfmt}[1]{\texorpdfstring{\texttt{#1}}{#1}}
 \MFUblocker{\appfmt}
@@ -763,6 +907,11 @@
 
 \newcommand{\postclihook}{%
  \glsxtrifhasfield{syntax}{\glscurrententrylabel}%
+  {\space\glscurrentfieldvalue}{}%
+}
+
+\newcommand{\postmenuhook}{%
+ \glsxtrifhasfield{keystroke}{\glscurrententrylabel}%
   {\space\glscurrentfieldvalue}{}%
 }
 
@@ -964,6 +1113,7 @@
   \cs_set_eq:NN \glsxtrpostnameapplication \postclihook
   \cs_set_eq:NN \glsxtrpostnameswitch \postswitchhook
   \cs_set_eq:NN \glsxtrpostnameoption \postoptionhook
+  \cs_set_eq:NN \glsxtrpostnamemenu \postmenuhook
   \cs_set_eq:NN \glstopicSubItemBox \use_ii:nn
 }
 
@@ -997,6 +1147,85 @@
    }
    { \glsadd { #2 } }
  \group_end:
+}
+
+\NewDocumentCommand \listmenuitems { O{} m }
+{
+ \group_begin:
+  \ifglsentryexists { #2 }
+   {
+    \glsxtrifhasfield* { childlist } { #2 }
+     {
+      \cs_set:Npn \do ##1
+       {
+         \__texjavahelp_hier_copy:nn { minilist } { ##1 }
+       }
+      \glsxtrfielddolistloop { #2 } { childlist }
+     } 
+     { }
+    \printunsrtglossary 
+     [
+        preamble={ \glssummaryadd { #2 } },
+        type=minilist,
+        label={#2-summary},
+        style=menuitems,
+        title = { \glsfmttext{#2} ~ Summary},
+        nonumberlist,
+        leveloffset = { \int_eval:n { - \glsxtrusefield { #2 } { level } - 1 } } ,
+        #1
+     ]
+   }
+   { \glsadd { #2 } }
+ \group_end:
+}
+
+\newcommand{\menuitemsbetweenskip}{\medskip}
+\newcommand{\menusbetweenskip}{\bigskip}
+\int_new:N \l__texjavahelp_prev_level_int
+
+\NewDocumentCommand \menubookmark { m }
+ {
+   \pdfbookmark
+    [ \int_eval:n { \l_texjavahelp_base_bookmark_level_int + \c_one_int } ]
+    { \glsentryname { #1 } } { menusummary.#1 } 
+ }
+
+\newglossarystyle{menuitems}
+{%
+  \renewenvironment{theglossary}%
+    {\setlength{\parindent}{0pt}%
+     \setlength{\parskip}{0pt plus 0.3pt}%
+     \int_set:Nn \l__texjavahelp_prev_level_int { - \c_one_int }
+    }%
+  {\par}%
+  \renewcommand*{\glossaryheader}{}%
+  \renewcommand*{\glsgroupheading}[1]{}%
+  \renewcommand{\glossentry}[2]{\subglossentry{0}{##1}{##2}}%
+  \renewcommand*{\subglossentry}[3]{%
+    \int_compare:nNnF
+      { \l__texjavahelp_prev_level_int } < { \c_zero_int }
+    {
+       \int_if_zero:nTF { ##1 }
+        { \menusbetweenskip }
+        { \menuitemsbetweenskip }
+    }
+    \int_set:Nn \l__texjavahelp_prev_level_int { ##1 }
+    \par
+    \int_if_zero:nT { ##1 }
+     {
+       \menubookmark { ##2 }
+     }
+    \menutrail{##2}\hfill\glsxtrusefield{##2}{keystroke}\par
+    \ifglshasdesc{##2}{\Glossentrydesc{##2}\glspostdescription}%
+    {
+      \glsxtrifhasfield {tooltip} { ##2 }
+       {
+         \xmakefirstuc\glscurrentfieldvalue\glspostdescription
+       }
+       { }
+    }
+  }%
+  \renewcommand*{\glsgroupskip}{}%
 }
 
 \cs_new:Nn \__texjavahelp_hier_copy:nn
@@ -1064,7 +1293,6 @@
   \glsdefpostname{class}{ class}%
   \glsdefpostname{environment}{ environment}%
   \glsdefpostname{counter}{ counter}%
-  \glsdefpostname{menu}{ menu}%
 }
 
 \NewDocumentCommand\printindex{O{}}{%

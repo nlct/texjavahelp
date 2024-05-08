@@ -55,6 +55,21 @@ public class TeXJavaHelpDemo extends JFrame
       super(APP_NAME);
    }
 
+   protected void parseArgs(String[] args)
+   {
+      for (int i = 0; i < args.length; i++)
+      {
+         if (args[i].equals("debug"))
+         {
+            debugMode = 1;
+         }
+         else if (args[i].equals("nodebug"))
+         {
+            debugMode = 0;
+         }
+      }
+   }
+
    protected void init() throws IOException,SAXException
    {
       loadProperties();
@@ -448,14 +463,30 @@ public class TeXJavaHelpDemo extends JFrame
    @Override
    public void debug(String message, Throwable e)
    {
-      System.err.println(message);
-      e.printStackTrace();
+      if (debugMode > 0)
+      {
+         if (message != null)
+         {
+            System.err.println(message);
+         }
+
+         if (e != null)
+         {
+            e.printStackTrace();
+         }
+      }
+   }
+
+   @Override
+   public void debug(String message)
+   {
+      debug(message, null);
    }
 
    @Override
    public void debug(Throwable e)
    {
-      e.printStackTrace();
+      debug(e.getMessage(), e);
    }
 
    @Override
@@ -464,7 +495,7 @@ public class TeXJavaHelpDemo extends JFrame
       return APP_NAME;
    }
 
-   public static void main(String[] args)
+   public static void main(final String[] args)
    {
       try
       {
@@ -473,6 +504,7 @@ public class TeXJavaHelpDemo extends JFrame
             public void run()
             {
                TeXJavaHelpDemo gui = new TeXJavaHelpDemo();
+               gui.parseArgs(args);
 
                try
                {
@@ -519,6 +551,8 @@ public class TeXJavaHelpDemo extends JFrame
    private TeXJavaHelpLib helpLib;
 
    private Properties properties;
+
+   private int debugMode = 1;
 
    public final static String APP_NAME = "TeX Java Help Demo";
 }

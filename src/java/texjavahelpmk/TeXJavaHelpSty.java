@@ -27,6 +27,7 @@ import com.dickimawbooks.texparserlib.latex.*;
 import com.dickimawbooks.texparserlib.latex.glossaries.GlossariesSty;
 import com.dickimawbooks.texparserlib.latex.glossaries.GlsFieldLink;
 import com.dickimawbooks.texparserlib.latex.glossaries.AbstractGlsCommand;
+import com.dickimawbooks.texparserlib.latex.glossaries.Gls;
 import com.dickimawbooks.texparserlib.latex.glossaries.Dgls;
 import com.dickimawbooks.texparserlib.latex.glossaries.Dglsfield;
 import com.dickimawbooks.texparserlib.latex.glossaries.GlsEntryField;
@@ -34,8 +35,10 @@ import com.dickimawbooks.texparserlib.latex.color.ColorSty;
 
 import com.dickimawbooks.texparserlib.html.L2HConverter;
 import com.dickimawbooks.texparserlib.html.Widget;
+import com.dickimawbooks.texparserlib.html.WidgetKeyStroke;
 import com.dickimawbooks.texparserlib.html.StartElement;
 import com.dickimawbooks.texparserlib.html.EndElement;
+import com.dickimawbooks.texparserlib.html.HtmlTag;
 
 import com.dickimawbooks.texparserlib.latex.nlctdoc.UserGuideSty;
 import com.dickimawbooks.texparserlib.latex.nlctdoc.TaggedColourBox;
@@ -91,16 +94,38 @@ public class TeXJavaHelpSty extends UserGuideSty
       addBib2GlsCommands();
       addGlsCommands();
 
+      registerControlSequence(listener.createSymbol(
+        "backspacekeysym", 0x232B));
+      registerControlSequence(listener.createSymbol(
+        "leftkeysym", 0x2190));
+      registerControlSequence(listener.createSymbol(
+        "upkeysym", 0x2191));
+      registerControlSequence(listener.createSymbol(
+        "rightkeysym", 0x2192));
+      registerControlSequence(listener.createSymbol(
+        "downkeysym", 0x2193));
+      registerControlSequence(listener.createSymbol(
+        "shiftsym", 0x21E7));
+      registerControlSequence(listener.createSymbol(
+        "returnsym", 0x21B5));
+      registerControlSequence(listener.createSymbol(
+        "tabsym", 0x21B9));
+
+      registerControlSequence(new GenericCommand(true,
+        "spacekeysym", null, new HtmlTag("<span class=\"spacekey\"> </span>")));
+
       registerControlSequence(new FilterTerms(glossariesSty));
       registerControlSequence(new PrintMainInit());
       registerControlSequence(new PrintMain(glossariesSty));
       registerControlSequence(new ListEntry(glossariesSty));
       registerControlSequence(new ListEntryDescendents(glossariesSty));
       registerControlSequence(new ListEntryDescendentsInit());
+      registerControlSequence(new ListMenuItems(glossariesSty));
       registerControlSequence(new PrintHelpIndex(glossariesSty));
       registerControlSequence(new IndexInitPostNameHooks());
       registerControlSequence(new AbbrPostNameHook(glossariesSty));
       registerControlSequence(new PostSwitchHook(glossariesSty));
+      registerControlSequence(new PostMenuHook(glossariesSty));
       registerControlSequence(new PostNameFieldHook("postclihook", "syntax", glossariesSty));
       registerControlSequence(new PostNameFieldHook("postoptionhook", "syntax", 
        listener.getOther('='), null, glossariesSty));
@@ -122,7 +147,10 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new Dgls("menuitem", CaseChange.NO_CHANGE, glossariesSty));
       registerControlSequence(new Dgls("widget", CaseChange.NO_CHANGE, glossariesSty));
 
-      registerControlSequence(new Menu(glossariesSty));
+      registerControlSequence(new MenuCs(glossariesSty));
+      registerControlSequence(new MenuTrail(glossariesSty));
+      registerControlSequence(new MenuItemsStyle(glossariesSty));
+
       registerControlSequence(new DialogCs());
 
       registerControlSequence(
@@ -140,6 +168,13 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new Widget("menufmt", "menu"));
       registerControlSequence(new Widget("widgetfmt", "widget"));
       registerControlSequence(new Widget("dialogfmt", "dialog"));
+      registerControlSequence(new WidgetKeyStroke("keystrokefmt"));
+
+      registerControlSequence(new AtFirstOfOne("actualkey"));
+      registerControlSequence(new TextualContentCommand("keysep", "+"));
+      registerControlSequence(new KeysCs());
+
+      registerControlSequence(new KeyRef(glossariesSty));
 
       registerControlSequence(new TextualContentCommand("warningtext",
         getHelpLib().getMessage("manual.warning")));
@@ -169,6 +204,12 @@ public class TeXJavaHelpSty extends UserGuideSty
         getHelpLib().getMessage("manual.result")));
       registerControlSequence(new TextualContentCommand("transcripttext",
         getHelpLib().getMessage("manual.transcript")));
+
+      registerControlSequence(new AtGobble("menubookmark"));
+      registerControlSequence(new GenericCommand(true,
+       "menuitemsbetweenskip", null, new TeXCsRef("medskip")));
+      registerControlSequence(new GenericCommand(true,
+       "menusbetweenskip", null, new TeXCsRef("bigskip")));
 
       registerControlSequence(new Icon());
 
@@ -214,6 +255,16 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new LaTeXGenericCommand(true, "glssummaryadd",
         "m", def));
+
+      def = listener.createStack();
+      def.add(listener.getOther('['));
+      def.addAll(listener.createString("noindex"));
+      def.add(listener.getOther(']'));
+      def.add(TeXParserUtils.createGroup(listener,
+        listener.getParam(1)));
+
+      registerControlSequence(new LaTeXGenericCommand(true,
+       "menuitemref", "m", def));
    }
 
    @Override
@@ -281,6 +332,8 @@ public class TeXJavaHelpSty extends UserGuideSty
       }
 
       glossariesSty.createGlossary("messages", null, null, null, null, null,
+       true, true, Overwrite.FORBID);
+      glossariesSty.createGlossary("keystrokes", null, null, null, null, null,
        true, true, Overwrite.FORBID);
    }
 

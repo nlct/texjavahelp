@@ -35,6 +35,8 @@ public interface TeXJavaHelpLibApp
 
    public void error(String message, Throwable e);
 
+   public void debug(String message);
+
    public void debug(Throwable e);
 
    public void debug(String message, Throwable e);

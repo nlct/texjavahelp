@@ -29,6 +29,7 @@ public enum EntryType
    WARNING("warning", null),
    SYNTAX("syntax", null),
    SYMBOL("symbol", "symbolfmt"),
+   KEYSTROKE("keystroke", null),
    INDEX("index", null);
 
    EntryType(String type, String cmd)
@@ -103,7 +104,21 @@ public enum EntryType
             return SYMBOL;
          }
 
-         if (prefix.equals("manual") || prefix.equals("text"))
+         if (prefix.equals("manual"))
+         {
+            String str = key.substring(idx+1);
+
+            if (str.startsWith("keystroke"))
+            {
+               return KEYSTROKE;
+            }
+            else
+            {
+               return INDEX;
+            }
+         }
+
+         if (prefix.equals("text") || prefix.equals("index"))
          {
             return INDEX;
          }

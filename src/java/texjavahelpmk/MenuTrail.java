@@ -24,29 +24,29 @@ import java.io.IOException;
 import com.dickimawbooks.texparserlib.*;
 
 import com.dickimawbooks.texparserlib.latex.KeyValList;
+import com.dickimawbooks.texparserlib.latex.MissingValue;
 
 import com.dickimawbooks.texparserlib.latex.glossaries.GlossariesSty;
 import com.dickimawbooks.texparserlib.latex.glossaries.AbstractGlsCommand;
 import com.dickimawbooks.texparserlib.latex.glossaries.GlsLabel;
 import com.dickimawbooks.texparserlib.latex.glossaries.GlossaryEntry;
 
-public class Menu extends AbstractGlsCommand
+public class MenuTrail extends AbstractGlsCommand
 {
-   public Menu(GlossariesSty sty)
+   public MenuTrail(GlossariesSty sty)
    {
-      this("menu", sty);
+      this("menutrail", sty);
    }
 
-   public Menu(String name, GlossariesSty sty)
+   public MenuTrail(String name, GlossariesSty sty)
    {
       super(name, sty);
-      setEntryLabelPrefix("menu.");
    }
 
    @Override
    public Object clone()
    {
-      return new Menu(getName(), sty);
+      return new MenuTrail(getName(), sty);
    }
 
    @Override
@@ -55,49 +55,33 @@ public class Menu extends AbstractGlsCommand
    {
       TeXParserListener listener = parser.getListener();
 
-      boolean isStar = (popModifier(parser, stack, '*') != -1);
-
-      KeyValList options = TeXParserUtils.popOptKeyValList(parser, stack);
-
-      if (options == null)
-      {
-         options = new KeyValList();
-      }
-
-      if (isStar && !options.containsKey("format"))
-      {
-         options.put("format", listener.createString("glsignore"));
-      }
-
       GlsLabel glslabel = popEntryLabel(parser, stack);
-
-      GlossaryEntry parentEntry = glslabel.getParent(stack);
 
       TeXObjectList expanded = parser.getListener().createStack();
 
-      Group grp = listener.createGroup();
-      expanded.add(grp);
-
-      grp.add(listener.getControlSequence("let"));
-      grp.add(new TeXCsRef("glsxtrhiernamesep"));
-      grp.add(listener.getControlSequence("menusep"));
-
-      grp.add(listener.getControlSequence("def"));
-      grp.add(new TeXCsRef("glsxtrtitleopts"));
-      grp.add(listener.createGroup("noindex"));
-
-      grp.add(listener.getControlSequence("glsxtrhiername"));
-      grp.add(TeXParserUtils.createGroup(listener, glslabel));
-
-      expanded.add(listener.getControlSequence("glsadd"));
-      expanded.add(listener.getOther('['));
-
-      expanded.add(options);
-
-      expanded.add(listener.getOther(']'));
-      expanded.add(TeXParserUtils.createGroup(listener, glslabel));
+      pushEntry(expanded, glslabel.getEntry(), parser, stack);
 
       return expanded;
    }
 
+   protected void pushEntry(TeXObjectList expanded, GlossaryEntry entry,
+     TeXParser parser, TeXObjectList stack)
+   throws IOException
+   {
+      TeXParserListener listener = parser.getListener();
+
+      if (entry != null)
+      {
+         expanded.push(listener.createGroup(entry.getLabel()));
+         expanded.push(listener.getControlSequence("glsmenuitemref"));
+
+         GlossaryEntry parentEntry = entry.getParent(stack);
+
+         if (parentEntry != null && "menu".equals(parentEntry.getCategory()))
+         {
+            expanded.push(listener.getControlSequence("menusep"));
+            pushEntry(expanded, parentEntry, parser, stack);
+         }
+      }
+   }
 }

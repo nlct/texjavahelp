@@ -260,6 +260,18 @@ public class TeXJavaHelpLib
       }
    }
 
+   public void debug(String message)
+   {
+      if (application == null)
+      {
+         System.err.println(message);
+      }
+      else
+      {
+         application.debug(message);
+      }
+   }
+
    public void debug(String message, Throwable e)
    {
       if (application == null)

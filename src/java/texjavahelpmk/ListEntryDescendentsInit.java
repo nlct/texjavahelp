@@ -51,6 +51,8 @@ public class ListEntryDescendentsInit extends ControlSequence
         "glsxtrpostnameswitch", null, new TeXCsRef("postswitchhook")));
       parser.putControlSequence(true, new GenericCommand(true, 
         "glsxtrpostnameoption", null, new TeXCsRef("postoptionhook")));
+      parser.putControlSequence(true, new GenericCommand(true, 
+        "glsxtrpostnamemenu", null, new TeXCsRef("postmenuhook")));
    }
 
    @Override
