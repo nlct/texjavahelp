@@ -27,6 +27,7 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Enumeration;
+import java.util.Vector;
 
 import java.text.MessageFormat;
 
@@ -39,6 +40,11 @@ import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 
 public class Xml2Bib implements TeXJavaHelpLibApp
 {
+   public Xml2Bib()
+   {
+      inFileNames = new Vector<String>();
+   }
+
    protected void initHelpLibrary() throws IOException
    {
       helpLib = new TeXJavaHelpLib(this);
@@ -254,9 +260,13 @@ public class Xml2Bib implements TeXJavaHelpLibApp
 
       try
       {
-         in = new FileInputStream(inFile);
-
-         props.loadFromXML(in);
+         for (String filename : inFileNames)
+         {
+            in = new FileInputStream(new File(filename));
+            props.loadFromXML(in);
+            in.close();
+            in = null;
+         }
       }
       finally
       {
@@ -610,13 +620,7 @@ public class Xml2Bib implements TeXJavaHelpLibApp
                    args[i-1]));
             }
 
-            if (inFile != null)
-            {
-               throw new InvalidSyntaxException(
-                 getMessage("error.syntax.only_one_input"));
-            }
-
-            inFile = new File(args[i]);
+            inFileNames.add(args[i]);
          }
          else if (args[i].equals("--output") || args[i].equals("-o"))
          {
@@ -657,26 +661,13 @@ public class Xml2Bib implements TeXJavaHelpLibApp
          }
          else
          {
-            // if no option specified, assume --in or --out
+            // if no option specified, assume --in
 
-            if (inFile == null)
-            {
-               inFile = new File(args[i]);
-            }
-            else if (outFile == null)
-            {
-               outFile = new File(args[i]);
-            }
-            else
-            {
-               throw new InvalidSyntaxException(
-                 getMessage("error.syntax.only_one_inout"));
-            }
-
+            inFileNames.add(args[i]);
          }
       }
 
-      if (inFile == null)
+      if (inFileNames.isEmpty())
       {
          throw new InvalidSyntaxException(
             getMessage("error.syntax.missing_in"));
@@ -715,7 +706,8 @@ public class Xml2Bib implements TeXJavaHelpLibApp
 
    protected boolean debugMode = false;
    protected boolean shownVersion = false;
-   protected File inFile, outFile;
+   protected File outFile;
+   protected Vector<String> inFileNames;
    private Charset outCharset = Charset.defaultCharset();
 
    private TeXJavaHelpLib helpLib;

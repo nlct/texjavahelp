@@ -8,7 +8,7 @@
 
 <!--  Syntax -->
 <entry key="syntax.title">Syntax:</entry>
-<entry key="syntax.opt_in">{0} [&lt;option&gt;]+ &lt;XML file&gt; &lt;BIB file&gt;</entry>
+<entry key="syntax.opt_in">{0} [&lt;option&gt;]+ &lt;XML file&gt;...</entry>
 <entry key="syntax.general">General Options:</entry>
 <entry key="syntax.in">{0} (or {1}) &lt;XML file&gt;		Input XML file.</entry>
 <entry key="syntax.out">{0} (or {1}) &lt;BIB file&gt;		Output BIB file.</entry>
@@ -24,12 +24,10 @@
 <entry key="error.syntax">Syntax error: {0}</entry>
 <entry key="error.syntax.unknown_option">Unknown option ''{0}''. (Use --help or -h for help.)</entry>
 <entry key="error.syntax.only_one">Only one {0} permitted</entry>
-<entry key="error.syntax.only_one_input">Only one input file permitted</entry>
-<entry key="error.syntax.only_one_inout">Only one input file and one output file permitted</entry>
 <entry key="error.syntax.missing_filename">Filename expected after {0}</entry>
 <entry key="error.syntax.missing_input">File name expected after {0}</entry>
 <entry key="error.syntax.missing_in">Missing input file</entry>
-<entry key="error.syntax.missing_out">Missing output directory</entry>
+<entry key="error.syntax.missing_out">Missing output file</entry>
 <entry key="error.syntax.missing_value">Value expected after {0}</entry>
 
 
