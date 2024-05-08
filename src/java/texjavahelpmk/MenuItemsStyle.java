@@ -155,6 +155,9 @@ class MenuItemGlossEntry extends AbstractGlsCommand
 
       expanded.add(startElem);
 
+      expanded.add(listener.getControlSequence("glssummaryadd"));
+      expanded.add(TeXParserUtils.createGroup(listener, glslabel));
+
       expanded.add(listener.getControlSequence("menutrail"));
       expanded.add(TeXParserUtils.createGroup(listener, glslabel));
 

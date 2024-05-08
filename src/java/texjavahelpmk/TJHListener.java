@@ -95,11 +95,13 @@ public class TJHListener extends L2HConverter
 
       noSearchWords = omissions.trim().split("\\s+");
 
+      // HTMLDocument only has very limited support
+
       addCssStyle("div.figure { margin-top: 10pt; }");
       addCssStyle(".locationlist { padding-left: 20pt; }");
       addCssStyle("span.locationprefix { font-family: \"Linux Libertine Display O\", \"URW Bookman\", serif; }");
       addCssStyle(".spacekey { padding-left: 2ex; padding-right: 2ex; }");
-      addCssStyle(".keystroke { font-family: sans-serif; font-weight: bold; border: 2pt outset gray; }");
+      addCssStyle(".keystroke { font-family: sans-serif; font-weight: bold; border: 2pt outset gray; background-color: silver; }");
 
       String locPrefString = app.getMessageIfExists("manual.location_prefix");
 

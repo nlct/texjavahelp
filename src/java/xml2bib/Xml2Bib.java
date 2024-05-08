@@ -31,6 +31,7 @@ import java.util.Enumeration;
 import java.text.MessageFormat;
 
 import java.awt.event.KeyEvent;
+import javax.swing.KeyStroke;
 
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLibApp;
@@ -318,68 +319,13 @@ public class Xml2Bib implements TeXJavaHelpLibApp
 
                if (suffix.equals("keystroke"))
                {
-                  String[] split = fieldValue.split("\\s+");
+                  String keyStrokeVal = getKeyStrokeValue(fieldValue, props);
 
-                  StringBuilder builder = new StringBuilder();
-
-                  for (String s : split)
+                  if (keyStrokeVal != null)
                   {
-                     String keyref = "manual.keystroke." + s.toLowerCase();
-                     String propVal = props.getProperty(keyref);
-
-                     if (propVal == null && !s.equals("_") && s.contains("_"))
-                     {
-                        keyref = "manual.keystroke."
-                            + s.replaceAll("_", "").toLowerCase();
-                        propVal = props.getProperty(keyref);
-                     }
-
-                     if (builder.length() > 0)
-                     {
-                        builder.append('+');
-                     }
-
-                     if (propVal != null)
-                     {
-                        builder.append("\\keyref{");
-                        builder.append(keyref);
-                        builder.append("}");
-                     }
-                     else if (!(s.equals("typed")
-                             || s.equals("released")
-                             || s.equals("pressed")))
-                     {
-                        int keyCode = 0;
-
-                        try
-                        {
-                           keyCode = KeyEvent.class.getField(s).getInt(KeyEvent.class);
-                        }
-                        catch (NoSuchFieldException | IllegalAccessException e)
-                        {
-                        }
-
-                        if (keyCode >= 0x20 && keyCode < 0x7F)
-                        {
-                           builder.append("\\actualkey{");
-                           Entry.encodeTeXChars(builder, keyCode);
-                           builder.append("}");
-                        }
-                        else
-                        {
-                           builder.append("\\actualkey{");
-                           Entry.encodeTeXChars(builder, s);
-                           builder.append("}");
-                        }
-                     }
+                     fieldValue = keyStrokeVal;
+                     encode = false;
                   }
-
-                  if (builder.length() > 0)
-                  {
-                     fieldValue = "\\keys{" + builder.toString() + "}";
-                  }
-
-                  encode = false;
                }
 
                entry.put(suffix, fieldValue, encode);
@@ -470,6 +416,164 @@ public class Xml2Bib implements TeXJavaHelpLibApp
             out.close();
             out = null;
          }
+      }
+   }
+
+   protected String getKeyStrokeValue(String fieldValue, Properties props)
+   {
+      String[] split = fieldValue.split("\\s+");
+
+      StringBuilder builder = new StringBuilder();
+
+      for (String s : split)
+      {
+         String keyref = "manual.keystroke." + s.toLowerCase();
+         String propVal = props.getProperty(keyref);
+
+         if (propVal == null && !s.equals("_") && s.contains("_"))
+         {
+            keyref = "manual.keystroke."
+                + s.replaceAll("_", "").toLowerCase();
+            propVal = props.getProperty(keyref);
+         }
+
+         if (builder.length() > 0)
+         {
+            builder.append('+');
+         }
+
+         if (propVal != null)
+         {
+            builder.append("\\keyref{");
+            builder.append(keyref);
+            builder.append("}");
+         }
+         else if (!(s.equals("typed")
+                 || s.equals("released")
+                 || s.equals("pressed")))
+         {
+            KeyStroke ks = KeyStroke.getKeyStroke(s);
+
+            boolean encode = true;
+
+            if (ks != null)
+            {
+               switch (ks.getKeyCode())
+               {
+                  case KeyEvent.VK_AT:
+                    s = "@";
+                    break;
+                  case KeyEvent.VK_BACK_QUOTE:
+                    s = "\\textasciigrave ";
+                    encode = false;
+                    break;
+                  case KeyEvent.VK_BACK_SLASH:
+                    s = "\\";
+                    break;
+                  case KeyEvent.VK_BRACELEFT:
+                    s = "{";
+                    break;
+                  case KeyEvent.VK_BRACERIGHT:
+                    s = "}";
+                    break;
+                  case KeyEvent.VK_CIRCUMFLEX:
+                    s = "^";
+                    break;
+                  case KeyEvent.VK_CLOSE_BRACKET:
+                    s = "]";
+                    break;
+                  case KeyEvent.VK_COLON:
+                    s = ":";
+                    break;
+                  case KeyEvent.VK_COMMA:
+                    s = ",";
+                    break;
+                  case KeyEvent.VK_DOLLAR:
+                    s = "$";
+                    break;
+                  case KeyEvent.VK_EQUALS:
+                    s = "$";
+                    break;
+                  case KeyEvent.VK_EURO_SIGN:
+                    s = "\\texteuro ";
+                    encode = false;
+                    break;
+                  case KeyEvent.VK_EXCLAMATION_MARK:
+                    s = "!";
+                    break;
+                  case KeyEvent.VK_GREATER:
+                    s = ">";
+                    break;
+                  case KeyEvent.VK_INVERTED_EXCLAMATION_MARK:
+                    s = "\\textexclamdown ";
+                    encode = false;
+                    break;
+                  case KeyEvent.VK_LEFT_PARENTHESIS:
+                    s = "(";
+                    break;
+                  case KeyEvent.VK_LESS:
+                    s = "<";
+                    break;
+                  case KeyEvent.VK_MINUS:
+                    s = "-";
+                    break;
+                  case KeyEvent.VK_NUMBER_SIGN:
+                    s = "#";
+                    break;
+                  case KeyEvent.VK_OPEN_BRACKET:
+                    s = "[";
+                    break;
+                  case KeyEvent.VK_PERIOD:
+                    s = ".";
+                    break;
+                  case KeyEvent.VK_PLUS:
+                    s = "+";
+                    break;
+                  case KeyEvent.VK_QUOTE:
+                    s = "\\textquotesingle ";
+                    encode = false;
+                    break;
+                  case KeyEvent.VK_QUOTEDBL:
+                    s = "\\textquotedouble ";
+                    encode = false;
+                    break;
+                  case KeyEvent.VK_RIGHT_PARENTHESIS:
+                    s = "+";
+                    break;
+                  case KeyEvent.VK_SEMICOLON:
+                    s = "+";
+                    break;
+                  case KeyEvent.VK_SLASH:
+                    s = "/";
+                    break;
+                  case KeyEvent.VK_UNDERSCORE:
+                    s = "_";
+                    break;
+               }
+            }
+
+            builder.append("\\actualkey{");
+
+            if (encode)
+            {
+               Entry.encodeTeXChars(builder, s);
+            }
+            else
+            {
+               builder.append(s);
+            }
+
+            builder.append("}");
+         }
+      }
+
+      if (builder.length() > 0)
+      {
+         return "\\keys{" + builder.toString() + "}";
+      }
+      else
+      {
+         return null;
       }
    }
 

@@ -24,13 +24,7 @@ import java.awt.Color;
 
 import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texparserlib.latex.*;
-import com.dickimawbooks.texparserlib.latex.glossaries.GlossariesSty;
-import com.dickimawbooks.texparserlib.latex.glossaries.GlsFieldLink;
-import com.dickimawbooks.texparserlib.latex.glossaries.AbstractGlsCommand;
-import com.dickimawbooks.texparserlib.latex.glossaries.Gls;
-import com.dickimawbooks.texparserlib.latex.glossaries.Dgls;
-import com.dickimawbooks.texparserlib.latex.glossaries.Dglsfield;
-import com.dickimawbooks.texparserlib.latex.glossaries.GlsEntryField;
+import com.dickimawbooks.texparserlib.latex.glossaries.*;
 import com.dickimawbooks.texparserlib.latex.color.ColorSty;
 
 import com.dickimawbooks.texparserlib.html.L2HConverter;
@@ -247,7 +241,7 @@ public class TeXJavaHelpSty extends UserGuideSty
        null, def));
 
       // wrglossary location formats
-      registerControlSequence(new AtSecondOfTwo("glsxtrwrglossarylocfmt"));
+      registerControlSequence(new GlsXtrWrGlossaryLocFmt(false));
 
       def = listener.createStack();
       def.add(new TeXCsRef("glsadd"));
@@ -257,9 +251,8 @@ public class TeXJavaHelpSty extends UserGuideSty
         "m", def));
 
       def = listener.createStack();
-      def.add(listener.getOther('['));
-      def.addAll(listener.createString("noindex"));
-      def.add(listener.getOther(']'));
+
+      def.add(new TeXCsRef("glshyperlink"));
       def.add(TeXParserUtils.createGroup(listener,
         listener.getParam(1)));
 

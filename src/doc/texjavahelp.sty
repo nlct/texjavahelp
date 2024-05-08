@@ -728,7 +728,7 @@
   }%
 }
 
-\newcommand{\menuitemref}[1]{\glsname[noindex]{#1}}
+\newcommand{\menuitemref}[1]{\glshyperlink{#1}}
 
 \newcommand{\menuitem}{\dgls}
 
@@ -1215,7 +1215,7 @@
      {
        \menubookmark { ##2 }
      }
-    \menutrail{##2}\hfill\glsxtrusefield{##2}{keystroke}\par
+    \glssummaryadd{##2}\menutrail{##2}\hfill\glsxtrusefield{##2}{keystroke}\par
     \ifglshasdesc{##2}{\Glossentrydesc{##2}\glspostdescription}%
     {
       \glsxtrifhasfield {tooltip} { ##2 }

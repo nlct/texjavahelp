@@ -45,7 +45,8 @@
 
 <entry key="menu.helpframe.navigation">Navigation</entry>
 <entry key="menu.helpframe.navigation.mnemonic">N</entry>
-<entry key="menu.helpframe.navigation.description">Switching from one page to another</entry>
+<entry key="menu.helpframe.navigation.tooltip">Navigate around the document</entry>
+<entry key="menu.helpframe.navigation.description">Actions to switch the view to another page</entry>
 
 <entry key="menu.helpframe.navigation.home">Home</entry>
 <entry key="menu.helpframe.navigation.home.tooltip">Home Page</entry>
@@ -139,12 +140,12 @@
 <entry key="menu.helpframe.settings.font.decrease">Font Decrease</entry>
 <entry key="menu.helpframe.settings.font.decrease.tooltip">Decrease Font Size</entry>
 <entry key="menu.helpframe.settings.font.decrease.mnemonic">D</entry>
-<entry key="menu.helpframe.settings.font.decrease.keystroke">LESS</entry>
+<entry key="menu.helpframe.settings.font.decrease.keystroke">SUBTRACT</entry>
 
 <entry key="menu.helpframe.settings.font.increase">Font Increase</entry>
 <entry key="menu.helpframe.settings.font.increase.tooltip">Increase Font Size</entry>
 <entry key="menu.helpframe.settings.font.increase.mnemonic">I</entry>
-<entry key="menu.helpframe.settings.font.increase.keystroke">GREATER</entry>
+<entry key="menu.helpframe.settings.font.increase.keystroke">ADD</entry>
 
 <entry key="menu.helpframe.settings.font">Font...</entry>
 <entry key="menu.helpframe.settings.font.tooltip">Select Font</entry>
@@ -173,7 +174,13 @@
 <entry key="indexmap.short_description">{0}: {1}</entry>
 <entry key="indexmap.long_short_description">{0} ({1}): {2}</entry>
 
-<!-- Language sensitive common text for the manual -->
+<!--
+  Language sensitive common text for the manual.
+  The key need to be in the form
+    manual.keystroke.label
+  where label is obtained from the KeyStroke identifier that has been converted
+  to lowercase and had any underscores stripped. 
+ -->
 
 <entry key="manual.keystroke.shift">\shiftsym</entry>
 <entry key="manual.keystroke.shift.description">Shift</entry>
@@ -209,6 +216,11 @@
 <entry key="manual.keystroke.return">\returnsym</entry>
 <entry key="manual.keystroke.return.description">Return</entry>
 
+<entry key="manual.keystroke.clear">Clear</entry>
+<entry key="manual.keystroke.add">NumPad +</entry>
+<entry key="manual.keystroke.subtract">NumPad -</entry>
+<entry key="manual.keystroke.divide">NumPad /</entry>
+<entry key="manual.keystroke.multiple">NumPad *</entry>
 <entry key="manual.keystroke.enter">Enter</entry>
 
 <entry key="manual.keystroke.esc">Esc</entry>
@@ -219,9 +231,9 @@
 <entry key="manual.keystroke.delete">Delete</entry>
 <entry key="manual.keystroke.backspace">Backspace</entry>
 <entry key="manual.keystroke.capslock">Caps Lock</entry>
-<entry key="manual.keystroke.clear">Clear</entry>
-<entry key="manual.keystroke.prtscn">PrtScn</entry>
-<entry key="manual.keystroke.prtscn.description">Print Screen</entry>
+<entry key="manual.keystroke.printscreen">PrtScn</entry>
+<entry key="manual.keystroke.printscreen.description">Print Screen</entry>
+
 
 <!--  Errors -->
 <entry key="error.xml.more_than_one_tag">More than 1 &lt;{0}&gt; found</entry>

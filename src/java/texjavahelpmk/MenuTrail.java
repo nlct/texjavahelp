@@ -73,7 +73,7 @@ public class MenuTrail extends AbstractGlsCommand
       if (entry != null)
       {
          expanded.push(listener.createGroup(entry.getLabel()));
-         expanded.push(listener.getControlSequence("glsmenuitemref"));
+         expanded.push(listener.getControlSequence("menuitemref"));
 
          GlossaryEntry parentEntry = entry.getParent(stack);
 
