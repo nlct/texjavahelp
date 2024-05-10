@@ -8,15 +8,14 @@
 
 <!--  Syntax -->
 <entry key="syntax.title">Syntax:</entry>
-<entry key="syntax.opt_in">{0} [&lt;option&gt;]+ &lt;XML file&gt;...</entry>
-<entry key="syntax.general">General Options:</entry>
-<entry key="syntax.in">{0} (or {1}) &lt;XML file&gt;		Input XML file.</entry>
-<entry key="syntax.out">{0} (or {1}) &lt;BIB file&gt;		Output BIB file.</entry>
-<entry key="syntax.version">{0} (or {1})		Print version and exit.</entry>
-<entry key="syntax.help">{0} (or {1})			Print this help message and exit.</entry>
+<entry key="syntax.options">{0} [&lt;option&gt;]+ &lt;XML file&gt;...</entry>
+<entry key="syntax.in">{0} (or {1}) &lt;XML file&gt;		add &lt;XML file&gt; to the list of input files (cumulative).</entry>
+<entry key="syntax.out">{0} (or {1}) &lt;BIB file&gt;	The output BIB file.</entry>
+<entry key="syntax.version">{0} (or {1})	Print version and exit.</entry>
+<entry key="syntax.help">{0} (or {1})		Print this help message and exit.</entry>
 <entry key="syntax.debug">{0}			Switch on debug mode.</entry>
-<entry key="syntax.nodebug">{0}			Switch off debug mode. (Default.)</entry>
-<entry key="syntax.out.charset">{0} &lt;charset&gt;			Set the character encoding to &lt;charset&gt; for the output file.</entry>
+<entry key="syntax.nodebug">{0}		Switch off debug mode. (Default.)</entry>
+<entry key="syntax.out.charset">{0} &lt;charset&gt;		Set the character encoding to &lt;charset&gt; for the output file.</entry>
 <entry key="syntax.bugreport">Report bugs to: {0}</entry>
 <entry key="syntax.homepage">{0} home page: {1}</entry>
 

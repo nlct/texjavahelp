@@ -86,12 +86,21 @@ public class PrintHelpIndex extends PrintIndex
 
             TeXObject locationPrefix = l2h.getLocationPrefix();
 
-            if (locationPrefix != null)
+            TeXObject location = list.get(i);
+
+            if (locationPrefix != null && !location.isEmpty() && 
+                 l2h.getParser().isStack(location))
             {
-               content.add(locationPrefix);
+               TeXObject firstElem = ((TeXObjectList)location).firstElement();
+
+               if (TeXParserUtils.isControlSequence(firstElem,
+                    "glsxtrdisplaylocnameref"))
+               {
+                  content.add(locationPrefix);
+               }
             }
 
-            content.add(list.get(i));
+            content.add(location);
          }
 
          content.add(new EndElement("div"));

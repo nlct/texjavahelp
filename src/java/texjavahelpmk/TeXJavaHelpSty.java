@@ -81,7 +81,10 @@ public class TeXJavaHelpSty extends UserGuideSty
       addBasicBoxCommands();
       addStandaloneDefCommands();
       addCodeBoxCommands();
+
       addIndexBoxCommands();
+      createIndexItemBox(3);
+      createIndexItemBox(4);
 
       addInlineDefCommands();
       addLocationCommands();

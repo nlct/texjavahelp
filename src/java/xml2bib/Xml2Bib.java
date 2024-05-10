@@ -181,21 +181,16 @@ public class Xml2Bib implements TeXJavaHelpLibApp
       System.out.println();
       System.out.println(getMessage("syntax.title"));
       System.out.println();
-      System.out.println(getMessage("syntax.opt_in", getApplicationName()));
+      System.out.println(getMessage("syntax.options", getApplicationName()));
       System.out.println();
-      System.out.println(getMessage("syntax.general"));
       System.out.println(getMessage("syntax.in", "--in", "-i", getApplicationName()));
+      System.out.println(getMessage("syntax.out", "--output", "-o"));
+      System.out.println(getMessage("syntax.out.charset", "--out-charset"));
       System.out.println();
       System.out.println(getMessage("syntax.debug", "--debug"));
       System.out.println(getMessage("syntax.nodebug", "--nodebug"));
-      System.out.println();
       System.out.println(getMessage("syntax.version", "--version", "-v"));
       System.out.println(getMessage("syntax.help", "--help", "-h"));
-      System.out.println();
-      System.out.println(getMessage("syntax.output.options"));
-      System.out.println();
-      System.out.println(getMessage("syntax.out", "--output", "-o"));
-      System.out.println(getMessage("syntax.out.charset", "--out-charset"));
       System.out.println();
       System.out.println(getMessage("syntax.bugreport",
         "https://github.com/nlct/texjavahelp"));

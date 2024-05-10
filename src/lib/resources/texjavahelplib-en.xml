@@ -135,20 +135,23 @@
 <!-- Navigation -->
 <entry key="menu.helpframe.settings">Settings</entry>
 <entry key="menu.helpframe.settings.mnemonic">S</entry>
-<entry key="menu.helpframe.settings.mnemonic">Change the graphical interface</entry>
+<entry key="menu.helpframe.settings.description">Change the graphical interface</entry>
 
 <entry key="menu.helpframe.settings.font.decrease">Font Decrease</entry>
 <entry key="menu.helpframe.settings.font.decrease.tooltip">Decrease Font Size</entry>
+<entry key="menu.helpframe.settings.font.decrease.description">Decrease the font size for the help pages</entry>
 <entry key="menu.helpframe.settings.font.decrease.mnemonic">D</entry>
 <entry key="menu.helpframe.settings.font.decrease.keystroke">SUBTRACT</entry>
 
 <entry key="menu.helpframe.settings.font.increase">Font Increase</entry>
 <entry key="menu.helpframe.settings.font.increase.tooltip">Increase Font Size</entry>
+<entry key="menu.helpframe.settings.font.increase.description">Increase the font size for the help pages</entry>
 <entry key="menu.helpframe.settings.font.increase.mnemonic">I</entry>
 <entry key="menu.helpframe.settings.font.increase.keystroke">ADD</entry>
 
 <entry key="menu.helpframe.settings.font">Font...</entry>
 <entry key="menu.helpframe.settings.font.tooltip">Select Font</entry>
+<entry key="menu.helpframe.settings.font.description">Change the font used by the help pages</entry>
 <entry key="menu.helpframe.settings.font.mnemonic">F</entry>
 <entry key="menu.helpframe.settings.font.keystroke">ctrl F</entry>
 
@@ -162,6 +165,7 @@
 
 <entry key="menu.helpframe.settings.nav">Lower Navigation...</entry>
 <entry key="menu.helpframe.settings.nav.mnemonic">L</entry>
+<entry key="menu.helpframe.settings.nav.description">Adjust the bottom navigation panel</entry>
 
 <entry key="help.settings.nav.title">Lower Navigation Settings</entry>
 <entry key="help.settings.nav.label_limit">Maximum number of characters:</entry>
@@ -223,8 +227,8 @@
 <entry key="manual.keystroke.multiple">NumPad *</entry>
 <entry key="manual.keystroke.enter">Enter</entry>
 
-<entry key="manual.keystroke.esc">Esc</entry>
-<entry key="manual.keystroke.esc.description">Escape</entry>
+<entry key="manual.keystroke.escape">Esc</entry>
+<entry key="manual.keystroke.escape.description">Escape</entry>
 
 <entry key="manual.keystroke.menu">Menu</entry>
 <entry key="manual.keystroke.insert">Insert</entry>
