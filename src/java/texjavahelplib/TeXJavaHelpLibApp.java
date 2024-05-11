@@ -25,6 +25,8 @@ public interface TeXJavaHelpLibApp
 {
    public String getApplicationName();
 
+   public void message(String warning);
+
    public void warning(String warning);
 
    public void warning(String warning, Throwable e);

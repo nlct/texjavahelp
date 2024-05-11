@@ -402,6 +402,12 @@ public class TeXJavaHelpDemo extends JFrame
    }
 
    @Override
+   public void message(String msg)
+   {
+      System.out.println(msg);
+   }
+
+   @Override
    public void warning(String msg)
    {
       JOptionPane.showMessageDialog(this, msg,

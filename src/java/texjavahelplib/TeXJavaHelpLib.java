@@ -83,12 +83,13 @@ public class TeXJavaHelpLib
       Locale messagesLocale, Locale helpsetLocale)
     throws IOException
    {
+      this.application = application;
       this.applicationName = applicationName;
       this.resourcebase = resourcebase;
       this.resourceIconBase = resourcebase + "/icons";
       this.helpsetLocale = helpsetLocale;
 
-      messages = new MessageSystem(getResourcePath(), "texjavahelplib", messagesLocale);
+      messages = new MessageSystem(this, "texjavahelplib", messagesLocale);
 
       if (dictPrefix != null)
       {
@@ -174,6 +175,18 @@ public class TeXJavaHelpLib
       String choiceLabel, int numChoices, Object... args)
    {
       return messages.getChoiceMessage(label, argIdx, choiceLabel, numChoices, args);
+   }
+
+   public void message(String message)
+   {
+      if (application == null)
+      {
+         System.out.println(message);
+      }
+      else
+      {
+         application.message(message);
+      }
    }
 
    public void warning(String message)

@@ -123,6 +123,15 @@ public class Xml2Bib implements TeXJavaHelpLibApp
       message("warning", message, e);
    }
 
+   @Override
+   public void message(String message)
+   {
+      if (verboseLevel > 0)
+      {
+         System.out.println(message);
+      }
+   }
+
    public void message(String msgTag, String message, Throwable e)
    {
       if (message == null)
@@ -604,6 +613,10 @@ public class Xml2Bib implements TeXJavaHelpLibApp
          {
             debugMode = false;
          }
+         else if (args[i].equals("--verbose"))
+         {
+            verboseLevel = 1;
+         }
          else if (args[i].equals("--in") || args[i].equals("-i"))
          {
             i++;
@@ -704,6 +717,7 @@ public class Xml2Bib implements TeXJavaHelpLibApp
    protected File outFile;
    protected Vector<String> inFileNames;
    private Charset outCharset = Charset.defaultCharset();
+   protected int verboseLevel = 0;
 
    private TeXJavaHelpLib helpLib;
 

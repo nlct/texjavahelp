@@ -548,79 +548,118 @@
   entry-type-aliases=
    {
      application=index,
+     commonapplication=index,
      file=index,
+     commonfile=index,
      fileext=index,
+     commonfileext=index,
      package=index,
+     commonpackage=index,
      class=index,
+     commonclass=index,
      option=index,
+     commonoption=index,
      command=index,
+     commoncommand=index,
      switch=index,
+     commonswitch=index,
      environment=index,
+     commonenvironment=index,
      counter=index,
+     commoncounter=index,
      menu=index,
+     commonmenu=index,
      menuitem=index,
+     commonmenuitem=index,
      dialog=index,
+     commondialog=index,
      widget=index,
      commonwidget=index,
      term=entry,
+     commonterm=entry,
      commonabbreviation=abbreviation,
-     commonfileext=index,
      message=index,
      error=index,
      warning=index,
      syntax=index,
      keystroke=symbol
    },
-  category = same as original entry,
   assign-fields=
    {
 % applications
       name = "\cs{appfmt}{" + \MGP{1} + "}"
-        [ entrytype->original = "application" & entrylabel->original=/app\.(.+)/], 
+        [ 
+           entrytype->original = /(?:common)?application/
+         & entrylabel->original=/app\.(.+)/
+        ], 
       name = "\cs{appfmt}{" + entrylabel->original + "}"
-        [ entrytype->original = "application"], 
+        [ entrytype->original = /(common)?application/ ], 
 % files
       name = "\cs{filefmt}{" + \MGP{1} + "}"
-        [ entrytype->original = "file" & entrylabel->original=/file\.(.+)/], 
+        [
+           entrytype->original = /(?:common)?file/
+         & entrylabel->original=/file\.(.+)/
+        ], 
       name = "\cs{filefmt}{" + entrylabel->original + "}"
-        [ entrytype->original = "file"], 
+        [ entrytype->original = /(common)?file/], 
 % file extensions
       name = "\cs{filefmt}{" + \MGP{1} + "}"
-        [ entrytype->original = /(common)?fileext/ & entrylabel->original=/ext\.(.+)/], 
+        [
+            entrytype->original = /(?:common)?fileext/
+          & entrylabel->original=/ext\.(.+)/
+        ], 
       name = "\cs{filefmt}{" + entrylabel->original + "}"
         [ entrytype->original = /(common)?fileext/], 
 % packages
       name = "\cs{styfmt}{" + \MGP{1} + "}"
-        [ entrytype->original = "package" & entrylabel->original=/pkg\.(.+)/], 
+        [
+           entrytype->original =/(?:common)?package/
+         & entrylabel->original=/pkg\.(.+)/
+        ], 
       name = "\cs{styfmt}{" + entrylabel->original + "}"
-        [ entrytype->original = "package"], 
+        [ entrytype->original =/(common)?package/ ], 
 % classes
       name = "\cs{clsfmt}{" + \MGP{1} + "}"
-        [ entrytype->original = "class" & entrylabel->original=/cls\.(.+)/], 
+        [
+           entrytype->original =/(?:common)?class/
+         & entrylabel->original=/cls\.(.+)/
+        ], 
       name = "\cs{clsfmt}{" + entrylabel->original + "}"
-        [ entrytype->original = "class"], 
+        [ entrytype->original =/(common)?class/ ], 
 % options
       name = "\cs{optfmt}{" + \MGP{1} + "}"
-        [ entrytype->original = "option" & entrylabel->original=/opt\.(.+)/], 
+        [
+           entrytype->original =/(?:common)?option/
+         & entrylabel->original=/opt\.(.+)/
+        ], 
       name = "\cs{optfmt}{" + entrylabel->original + "}"
-        [ entrytype->original = "option"], 
+        [ entrytype->original =/(common)?option/], 
 % (La)TeX commands
       name = "\cs{csfmt}{" + \MGP{1} + "}"
-        [ entrytype->original = "command" & entrylabel->original=/cs\.(.+)/], 
+        [
+           entrytype->original =/(?:common)?command/
+         & entrylabel->original=/cs\.(.+)/
+        ], 
       name = "\cs{csfmt}{" + entrylabel->original + "}"
-        [ entrytype->original = "command"], 
+        [ entrytype->original =/(?:common)?command/ ], 
 % switches
       name = "\cs{longargfmt}{" + \MGP{1} + "}"
-        [ entrytype->original = "switch" & entrylabel->original=/switch\.(.+)/], 
+        [
+            entrytype->original =/(?:common)?switch/
+          & entrylabel->original=/switch\.(.+)/
+        ], 
       name = "\cs{longargfmt}{" + entrylabel->original + "}"
-        [ entrytype->original = "switch"], 
+        [ entrytype->original =/(common)?switch/ ], 
       shortswitch =[o] "\cs{shortargfmt}{" + shortswitch + "}"
-        [ entrytype->original = "switch" & shortswitch <> \NULL], 
+        [ entrytype->original =/(common)?switch/ & shortswitch <> \NULL], 
 % counters
       name = "\cs{ctrfmt}{" + \MGP{1} + "}"
-        [ entrytype->original = "counter" & entrylabel->original=/ctr\.(.+)/], 
+        [
+           entrytype->original =/(?:common)?counter/
+         & entrylabel->original=/ctr\.(.+)/
+        ], 
       name = "\cs{ctrfmt}{" + entrylabel->original + "}"
-        [ entrytype->original = "counter"], 
+        [ entrytype->original =/(common)?counter/ ], 
 % messages, errors and warnings
       type = "messages"
         [ entrytype->original = /message|error|warning|syntax/ ], 
@@ -629,7 +668,12 @@
         [ entrytype->original = /keystroke/ ], 
 % common
       defaultkeys = "format=glsignore"
-        [ entrytype->original = /common.*/ ]
+        [ entrytype->original = /common.*/ ] ,
+      category = entrytype -> original 
+        [ entrytype->original = /common(abbreviation|acronym)/ ] ,
+      category = \MGP{1} 
+        [ entrytype->original = /common(.*)/ ] ,
+      category = entrytype -> original 
    },
    save-child-count,
    symbol-sort-fallback=name,
@@ -1001,7 +1045,7 @@
 \glsxtrnewgls{env.}{\env}
 \glsxtrnewgls{ctr.}{\ctr}
 \glsxtrnewgls{dual.}{\ac}
-\glsxtrnewgls[format=glsignore]{ext.}{\ext}
+\glsxtrnewgls{ext.}{\ext}
 \glsxtrnewgls{app.}{\app}
 \glsxtrnewgls{switch.}{\switch}
 \newcommand{\sswitch}[1]{\shortswitchref{switch.#1}}

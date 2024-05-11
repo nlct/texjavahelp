@@ -21,6 +21,7 @@ package com.dickimawbooks.texjavahelplib;
 import java.util.Properties;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.util.ArrayDeque;
 
 import java.text.MessageFormat;
 import java.text.ChoiceFormat;
@@ -36,27 +37,18 @@ import java.net.URL;
  */
 public class MessageSystem extends Hashtable<String,MessageFormat>
 {
-   public MessageSystem(String tagPrefix) throws IOException
+   public MessageSystem(TeXJavaHelpLib helpLib, String tagPrefix)
+       throws IOException
    {
-      this("/resources", tagPrefix);
+      this(helpLib, tagPrefix, Locale.getDefault());
    }
 
-   public MessageSystem(String tagPrefix, Locale locale) throws IOException
-   {
-      this("/resources", tagPrefix, locale);
-   }
-
-   public MessageSystem(String resourcebase, String tagPrefix) throws IOException
-   {
-      this(resourcebase, tagPrefix, Locale.getDefault());
-   }
-
-   public MessageSystem(String resourcebase, String tagPrefix, Locale locale)
+   public MessageSystem(TeXJavaHelpLib helpLib, String tagPrefix, Locale locale)
      throws IOException
    {
       super();
 
-      this.resourcebase = resourcebase;
+      this.helpLib = helpLib;
       this.locale = locale;
 
       loadDictionary(tagPrefix);
@@ -64,18 +56,30 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
 
    protected String getLanguageFileName(String tagPrefix, String tag)
    {
-      return String.format("%s/%s-%s.xml", resourcebase, tagPrefix, tag);
+      return String.format("%s/%s-%s.xml", helpLib.getResourcePath(), tagPrefix, tag);
    }
 
-   protected URL getLanguageFile(String tagPrefix) throws FileNotFoundException
+   /*
+     This returns a list to allow more specific locales to override more general
+     locales. For example, prefix-en.xml may have the default for all keys
+     and prefix-en-GB.xml overrides just the different keys specific to GB.
+    */ 
+   protected ArrayDeque<URL> getLanguageFile(String tagPrefix)
+     throws FileNotFoundException
    {
+      ArrayDeque<URL> deque = new ArrayDeque<URL>();
+
       String tag = locale.toLanguageTag();
 
       String dict = getLanguageFileName(tagPrefix, tag);
 
       URL url = getClass().getResource(dict);
 
-      if (url != null) return url;
+      if (url != null)
+      {
+         deque.addFirst(url);
+         url = null;
+      }
 
       String lang = locale.getLanguage();
       String region = locale.getCountry();
@@ -87,44 +91,78 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
          dict = getLanguageFileName(tagPrefix, tag);
          url = getClass().getResource(dict);
 
-         if (url != null) return url;
+         if (url != null)
+         {
+            if (!deque.contains(url))
+            {
+               deque.addFirst(url);
+            }
+
+            url = null;
+         }
       }
 
       dict = getLanguageFileName(tagPrefix, lang);
       url = getClass().getResource(dict);
 
-      if (url != null) return url;
-
-      dict = getLanguageFileName(tagPrefix, "en");
-      url = getClass().getResource(dict);
-
-      if (url == null)
+      if (url != null)
       {
-         throw new FileNotFoundException
-         (
-            "Can't find dictionary resource file matching locale "
-             + locale
-             + " or fallback \"en\" matching "
-             + getLanguageFileName(tagPrefix, "*")
-         );
+         if (!deque.contains(url))
+         {
+            deque.addFirst(url);
+         }
+
+         url = null;
       }
 
-      return url;
+      if (deque.isEmpty())
+      {
+         dict = getLanguageFileName(tagPrefix, "en");
+         url = getClass().getResource(dict);
+
+         if (url == null)
+         {
+            throw new FileNotFoundException
+            (
+               "Can't find dictionary resource file matching locale "
+                + locale
+                + " or fallback \"en\" matching "
+                + getLanguageFileName(tagPrefix, "*")
+            );
+         }
+         else
+         {
+            deque.addFirst(url);
+         }
+      }
+
+      return deque;
    }
 
    public void loadDictionary(String tagPrefix)
       throws IOException
    {
-      URL url = getLanguageFile(tagPrefix);
+      ArrayDeque<URL> deque = getLanguageFile(tagPrefix);
 
       InputStream in = null;
 
       try
       {
-         in = url.openStream();
+         URL url;
 
          Properties dictionary = new Properties();
-         dictionary.loadFromXML(in);
+
+         while ((url = deque.pollFirst()) != null)
+         {
+            helpLib.message("Loading "+url);
+
+            in = url.openStream();
+
+            dictionary.loadFromXML(in);
+
+            in.close();
+            in = null;
+         }
 
          for (Object key : dictionary.keySet())
          {
@@ -220,6 +258,6 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
       return locale;
    }
 
-   protected String resourcebase;
+   protected TeXJavaHelpLib helpLib;
    protected Locale locale;
 }
