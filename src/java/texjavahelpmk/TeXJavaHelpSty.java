@@ -136,7 +136,7 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new GlsFieldLink("shortswitchref",
         "shortswitch", glossariesSty));
 
-      AbstractGlsCommand gcs = new GlsFieldLink("sswitch", "shortswitch", glossariesSty);
+      AbstractGlsCommand gcs = new GlsFieldLink("swch", "shortswitch", glossariesSty);
       gcs.setEntryLabelPrefix("switch.");
       registerControlSequence(gcs);
 
