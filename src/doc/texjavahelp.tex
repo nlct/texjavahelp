@@ -1,5 +1,5 @@
 % arara: lualatex
-% arara: bib2gls: { group: on }
+% arara: bib2gls: { group: on, options: [ --no-warn-unknown-entry-types ] }
 % arara: lualatex
 % arara: lualatex
 \documentclass[toc=listof]{scrreport}
@@ -17,6 +17,10 @@
 
 \title{\TeXJavaHelp}
 \author{Nicola L.C. Talbot\\\href{https://www.dickimaw-books.com/}{\nolinkurl{dickimaw-books.com}}}
+
+\GlsXtrLoadResources[
+ \TeXJavaHelpSymbolResourceOptions
+]
 
 \GlsXtrLoadResources[src={\jobname,texjavahelplib},
  \TeXJavaHelpGlsResourceOptions,
@@ -185,6 +189,12 @@ sets up entry type aliases and field adjustments to assist formatting and work
 with the semantic commands described in \sectionref{sec:semanticcmds}.
 This means that custom entry types and fields are available that aren't
 ordinarily recognised by \app{bib2gls}.
+
+For example, the custom \code{@punctuation} field is used to index
+the following symbols in this document:
+\glsname{dblqt}, \glsname{percent}, \glsname{tilde},
+\glsname{exclam}, and \glsname{bksl}.
+
 
 \section{Semantic Commands}
 \label{sec:semanticcmds}

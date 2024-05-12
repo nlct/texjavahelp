@@ -91,6 +91,18 @@ public class TeXJavaHelpSty extends UserGuideSty
       addBib2GlsCommands();
       addGlsCommands();
 
+      // no-op for resource related commands
+
+      registerControlSequence(new GenericCommand("TeXJavaHelpGlsResourceOptions"));
+      registerControlSequence(new GenericCommand("TeXJavaHelpSymbolResourceOptions"));
+      registerControlSequence(new GenericCommand("TeXJavaHelpGlsFieldAdjustments"));
+      registerControlSequence(new GenericCommand("TeXJavaHelpExtraAssignFields"));
+      registerControlSequence(new GenericCommand("TeXJavaHelpExtraEntryTypeAliases"));
+      registerControlSequence(new GenericCommand("TeXJavaHelpPuncAssignFields"));
+      registerControlSequence(new GenericCommand("TeXJavaHelpMaxPuncDesc"));
+
+      // keystroke symbols
+
       registerControlSequence(listener.createSymbol(
         "backspacekeysym", 0x232B));
       registerControlSequence(listener.createSymbol(

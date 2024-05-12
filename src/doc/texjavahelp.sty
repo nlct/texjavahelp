@@ -537,10 +537,44 @@
 \newignoredglossary{messages}
 \newignoredglossary{keystrokes}
 
+% punctuation is best dealt with in a separate resource set
+
+\newcommand{\TeXJavaHelpSymbolResourceOptions}{
+  group={glssymbols},
+  sort=letter-case,
+  selection=recorded and deps and see,
+  match = {entrytype=symbol}, match-action=filter ,
+  entry-type-aliases = 
+   {
+      punctuation=symbol
+   },
+  assign-fields=
+   {
+     \TeXJavaHelpPuncAssignFields
+   },
+  save-child-count,
+  symbol-sort-fallback=name,
+}
+
+\newcommand{\TeXJavaHelpMaxPuncDesc}{20}
+\newcommand{\TeXJavaHelpPuncAssignFields}{%
+  name = symbol + " (" + description + ")"
+    [ entrytype->original =/(common)?punctuation/
+      & \LEN{ description } < \TeXJavaHelpMaxPuncDesc ] ,
+  name = symbol
+    [ entrytype->original =/(common)?punctuation/ ] ,
+  text = description + " (" + symbol + ")"
+    [ entrytype->original =/(common)?punctuation/ ] ,
+}
+
 \newcommand{\TeXJavaHelpGlsFieldAdjustments}{
  description-case-change=firstuc,
  post-description-dot=check
 }
+
+\newcommand{\TeXJavaHelpExtraEntryTypeAliases}{}
+
+\newcommand{\TeXJavaHelpExtraAssignFields}{}
 
 \newcommand{\TeXJavaHelpGlsResourceOptions}{
   \TeXJavaHelpGlsFieldAdjustments,
@@ -582,7 +616,8 @@
      error=index,
      warning=index,
      syntax=index,
-     keystroke=symbol
+     keystroke=symbol,
+     \TeXJavaHelpExtraEntryTypeAliases
    },
   assign-fields=
    {
@@ -666,6 +701,8 @@
 % keystrokes
       type = "keystrokes"
         [ entrytype->original = /keystroke/ ], 
+% customise
+      \TeXJavaHelpExtraAssignFields 
 % common
       defaultkeys = "format=glsignore"
         [ entrytype->original = /common.*/ ] ,
