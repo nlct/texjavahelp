@@ -124,6 +124,8 @@ public class TeXJavaHelpSty extends UserGuideSty
         "spacekeysym", null, new HtmlTag("<span class=\"spacekey\"> </span>")));
 
       registerControlSequence(new FloatFig());
+      registerControlSequence(new SeeAlsoRefs());
+      registerControlSequence(new TextualContentCommand("multiseealsosep", ":"));
 
       registerControlSequence(new FilterTerms(glossariesSty));
       registerControlSequence(new PrintMainInit());

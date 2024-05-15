@@ -299,6 +299,35 @@
 \MFUaddmap{\sectionsref}{\Sectionsref}
 \MFUaddmap{\sectionsrefprefix}{\Sectionsrefprefix}
 
+\newcommand{\seealsopreskip}{\medskip}
+\newcommand{\multiseealsosep}{:}
+
+\ExplSyntaxOn
+\clist_new:N \l__texjavahelp_refs_clist
+\NewDocumentCommand \seealsorefs { m }
+ {
+   \par \seealsopreskip \par \noindent
+   \MFUsentencecase { \seealsoname } 
+   \clist_set:Nn \l__texjavahelp_refs_clist { #1 }
+   \int_compare:nNnTF
+     { \clist_count:N \l__texjavahelp_refs_clist }
+      > 
+     { \c_one_int }
+   {
+     \multiseealsosep 
+     \begin { itemize }
+      \clist_map_inline:Nn \l__texjavahelp_refs_clist
+       {
+          \item \ref { ##1 } ~ \nameref { ##1 }
+       }
+     \end { itemize }
+   }
+   {
+     ~ \ref { #1 } ~ \nameref { #1 } .
+   }
+ }
+\ExplSyntaxOff
+
 \newcommand{\tablerefprefix}{Table~}
 \newcommand{\Tablerefprefix}{Table~}
 
