@@ -359,6 +359,20 @@
 }
 \MFUaddmap{\figuresref}{\Figuresref}
 
+% \FloatFig[pos]{label}{content}[lof]{caption}
+\NewDocumentCommand\FloatFig{ommom}{%
+ \IfValueTF{#1}%
+  {\begin{figure}[#1]}%
+  {\begin{figure}}%
+ \centering
+ #3%
+ \IfValueTF{#4}%
+ {\caption[#4]{#5}}%
+ {\caption{#5}}%
+ \label{#2}%
+ \end{figure}%
+}
+
 \providecommand{\examplerefprefix}{Example~}
 \providecommand{\Examplerefprefix}{Example~}
 
@@ -409,6 +423,87 @@
 
 % requires glossaries.sty v4.54+
 \renewcommand{\glsdohypertargethook}[2]{\glslabelhypertarget{#1}{#2}}
+
+% Examples
+
+\newcounter{example}
+
+\newcommand{\addtolistofexamples}[1]{%
+ \addcontentsline{loe}{example}{\protect\numberline{\theexample}#1}%
+}
+
+\newenvironment{example}[2]{%
+  \par\vskip10pt\noindent
+  \refstepcounter{example}\label{#2}%
+  {%
+    \def\cmd##1{\csfmt{##1}}%
+    \let\nlctexampletitlefont\nlctexampleenvtitlefont
+    \nlctexampletitlefmt{#1}%
+  }%
+  {%
+    \@loe@disable@cmds
+    \addtolistofexamples{#1}%
+  }%
+  \nopagebreak\par\vskip10pt\nopagebreak
+}
+{%
+  \nopagebreak\begin{center}\rule{2in}{1pt}\end{center}%
+}
+
+\newcommand{\@loe@disable@cmds}{%
+  \def\dequals{\protect\dequals}%
+  \def\dhyphen{\protect\dhyphen}%
+  \def\dunderscore{\protect\dunderscore}%
+  \def\cmd##1{\protect\csfmt{##1}}%
+  \def\code##1{\protect\code{##1}}%
+  \def\optfmt##1{\protect\optfmt{##1}}%
+  \def\styfmt##1{\protect\styfmt{##1}}%
+  \def\clsfmt##1{\protect\clsfmt{##1}}%
+  \def\envfmt##1{\protect\envfmt{##1}}%
+  \def\appfmt##1{\protect\appfmt{##1}}%
+}
+
+\newcommand{\nlctexampledisablecmds}{}
+
+\newcommand{\nlctexampletag}{\Examplename~\theexample}
+
+\newcommand{\nlctexampletitlefont}{}
+\newcommand{\nlctexampleenvtitlefont}{\bfseries\large}
+
+\newcommand{\nlctbacklink}[1]{%
+ \ifdefempty\nlct@exbacklink
+ {%
+   \ifdefempty\nlct@example@label{}%
+   {%
+    \ifcsdef{r@\nlct@example@label-backref}%
+    {\hyperref[\nlct@example@label-backref]{\upsym}}%
+    {}%
+   }%
+ }%
+ {\hyperref[\nlct@exbacklink]{\upsym}}%
+ #1%
+}
+
+\newcommand{\nlctexampletitlefmt}[1]{%
+  \nlctexampletitlefont
+  \raggedright\exhyphenpenalty 0 % space intended
+  \nlctbacklink{\nlctexampletag}\ifstrempty{#1}{}{: #1}\par
+}
+
+\ifdef\chapter
+{
+  \ifdef\titlepagestyle{\renewcommand{\titlepagestyle}{empty}}{}
+  \pagenumbering{alph}
+
+  \newcommand{\listofexamples}{%
+   \@ifstar{\chapter*{\listofexamplesname}\@starttoc{loe}}%
+   {\chapter{\listofexamplesname}\listofexampleslabel\listofexamplesheader\@starttoc{loe}}}
+}
+{
+  \newcommand{\listofexamples}{%
+   \@ifstar{\section*{\listofexamplesname}\@starttoc{loe}}%
+   {\section{\listofexamplesname}\listofexampleslabel\listofexamplesheader\@starttoc{loe}}}
+}
 
 % Symbols and punctuation
 

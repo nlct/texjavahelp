@@ -282,9 +282,9 @@ buttons: \btn{helpframe.navigation.home} (go to the start of the manual),
 \btn{helpframe.navigation.next} (go
 to the next section).
 
-\begin{figure}
-\centering
-\includeimg
+\FloatFig
+{fig:navbuttons}
+{\includeimg
  [alt=
    {
      [\entrytooltip{menu.helpframe.navigation.home} Button]
@@ -292,10 +292,9 @@ to the next section).
      [\entrytooltip{menu.helpframe.navigation.up} Button]
      [\entrytooltip{menu.helpframe.navigation.next} Button]
    }
- ]{images/navbuttons}
-\caption{Navigation Buttons}
-\label{fig:navbuttons}
-\end{figure}
+ ]{images/navbuttons}%
+}
+{Navigation Buttons}
 
 There are also history buttons, which allow the user to go back to
 previously viewed pages (the \btn{helpframe.navigation.historyback}
