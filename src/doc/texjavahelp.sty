@@ -373,8 +373,13 @@
  \end{figure}%
 }
 
-\providecommand{\examplerefprefix}{Example~}
-\providecommand{\Examplerefprefix}{Example~}
+\newcommand{\codepar}{\par\mbox{}\par}
+
+\providecommand{\examplename}{example}
+\providecommand{\Examplename}{Example}
+
+\providecommand{\examplerefprefix}{\Examplename~}
+\providecommand{\Examplerefprefix}{\Examplename~}
 
 \newrobustcmd*{\exampleref}{\@ifstar\s@exampleref\@exampleref}
 \newcommand*{\@exampleref}[1]{\examplerefprefix\nlct@ns@ref@cs{#1}}
@@ -470,24 +475,10 @@
 \newcommand{\nlctexampletitlefont}{}
 \newcommand{\nlctexampleenvtitlefont}{\bfseries\large}
 
-\newcommand{\nlctbacklink}[1]{%
- \ifdefempty\nlct@exbacklink
- {%
-   \ifdefempty\nlct@example@label{}%
-   {%
-    \ifcsdef{r@\nlct@example@label-backref}%
-    {\hyperref[\nlct@example@label-backref]{\upsym}}%
-    {}%
-   }%
- }%
- {\hyperref[\nlct@exbacklink]{\upsym}}%
- #1%
-}
-
 \newcommand{\nlctexampletitlefmt}[1]{%
   \nlctexampletitlefont
   \raggedright\exhyphenpenalty 0 % space intended
-  \nlctbacklink{\nlctexampletag}\ifstrempty{#1}{}{: #1}\par
+  \nlctexampletag\ifstrempty{#1}{}{: #1}\par
 }
 
 \ifdef\chapter
