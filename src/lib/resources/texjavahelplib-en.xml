@@ -238,6 +238,94 @@
 <entry key="manual.keystroke.printscreen">PrtScn</entry>
 <entry key="manual.keystroke.printscreen.description">Print Screen</entry>
 
+<entry key="manual.warning">Warning</entry>
+<entry key="manual.warning.description">a warning</entry>
+
+<entry key="manual.important">Important</entry>
+<entry key="manual.important.description">an important message</entry>
+
+<entry key="manual.information">Information</entry>
+<entry key="manual.information.description">prominent information</entry>
+
+<entry key="manual.definition">Definition</entry>
+<entry key="manual.definition.description">the syntax and usage of a command,
+environment or option etc</entry>
+
+<entry key="manual.valuesetting">Setting</entry>
+<entry key="manual.valuesetting.description">an option 
+that takes a value</entry>
+
+<entry key="manual.novaluesetting">Valueless Setting</entry>
+<entry key="manual.novaluesetting.description">an 
+option that doesn't take a value</entry>
+
+<entry key="manual.toggleonsetting">Toggle (On)</entry>
+<entry key="manual.toggleonsetting.description">a 
+boolean option that is initially true</entry>
+
+<entry key="manual.toggleoffsetting">Toggle (Off)</entry>
+<entry key="manual.toggleoffsetting.description">a 
+boolean option that is initially false</entry>
+
+<entry key="manual.optionvaluedef">Option Value Definition</entry>
+<entry key="manual.optionvaluedef.description">the definition of an option value</entry>
+
+<entry key="manual.counterdef">Counter</entry>
+<entry key="manual.counterdef.description">a counter is
+being described</entry>
+
+<entry key="manual.deprecated">Deprecated</entry>
+<entry key="manual.deprecated.description">a command, environment or option that
+is now deprecated</entry>
+
+<entry key="manual.banned">Don't use</entry>
+<entry key="manual.banned.description"></entry>
+
+<entry key="manual.terminal">Terminal</entry>
+<entry key="manual.terminal.description">a command-line application invocation
+that needs to be entered into a \href'{'https://www.dickimaw-books.com/latex/novices/html/terminal.html'}''{'terminal or command prompt'}'</entry>
+
+<entry key="manual.codeinput">Input</entry>
+<entry key="manual.codeinput.description">\LaTeX\ code to
+insert into your document</entry>
+
+<entry key="manual.badcode">Problematic Input</entry>
+<entry key="manual.badcode.description">problematic code which should be avoided</entry>
+
+<entry key="manual.unicodeinput">Unicode Input</entry>
+<entry key="manual.unicodeinput.description">code that requires a native Unicode
+engine (\XeLaTeX\ or \LuaLaTeX)</entry>
+
+<entry key="manual.coderesult">Result</entry>
+<entry key="manual.coderesult.description">how the example 
+code should appear in the PDF</entry>
+
+<entry key="manual.transcript">Transcript</entry>
+<entry key="manual.transcript.description">text in a transcript or log file or written to STDOUT or STDERR</entry>
+
+<entry key="manual.figure">figure</entry>
+<entry key="manual.figure.plural">figures</entry>
+<entry key="manual.table">table</entry>
+<entry key="manual.table.plural">tables</entry>
+<entry key="manual.example">example</entry>
+<entry key="manual.example.plural">examples</entry>
+<entry key="manual.section">section</entry>
+<entry key="manual.section.plural">sections</entry>
+<entry key="manual.seealso">see also</entry>
+
+<entry key="manual.contents">Contents</entry>
+<entry key="manual.listofexamples">Examples</entry>
+<entry key="manual.index">Index</entry>
+<entry key="manual.glossary">Glossary</entry>
+<entry key="manual.abbreviations">Abbreviations</entry>
+<entry key="manual.glssymbolsgroup">Symbols</entry>
+
+<entry key="manual.cont_explanation">(The symbol \continuesymbol\ above indicates a~line wrap. Don't insert a~line break at that point.)</entry>
+
+<entry key="manual.idxenv">environment</entry>
+<entry key="manual.idxpackage">package</entry>
+<entry key="manual.idxclass">class</entry>
+<entry key="manual.idxcounter">counter</entry>
 
 <!--  Errors -->
 <entry key="error.xml.more_than_one_tag">More than 1 &lt;{0}&gt; found</entry>

@@ -328,8 +328,8 @@
  }
 \ExplSyntaxOff
 
-\newcommand{\tablerefprefix}{Table~}
-\newcommand{\Tablerefprefix}{Table~}
+\newcommand{\tablerefprefix}{\Tablename~}
+\newcommand{\Tablerefprefix}{\Tablename~}
 
 \newrobustcmd*{\tableref}{\@ifstar\s@tableref\@tableref}
 \newrobustcmd*{\Tableref}{\@ifstar\s@Tableref\@Tableref}
@@ -342,8 +342,8 @@
 
 \MFUaddmap{\tableref}{\Tableref}
 
-\newcommand{\tablesrefprefix}{tables~}
-\newcommand{\Tablesrefprefix}{Tables~}
+\newcommand{\tablesrefprefix}{\tablesname~}
+\newcommand{\Tablesrefprefix}{\Tablesname~}
 
 \newrobustcmd{\tablesref}{%
  \@ifstar
@@ -358,8 +358,8 @@
 }
 \MFUaddmap{\tablesref}{\Tablesref}
 
-\newcommand{\figurerefprefix}{figure~}
-\newcommand{\Figurerefprefix}{Figure~}
+\newcommand{\figurerefprefix}{\figurename~}
+\newcommand{\Figurerefprefix}{\Figurename~}
 
 \newrobustcmd*{\figureref}{\@ifstar\s@figureref\@figureref}
 \newrobustcmd*{\Figureref}{\@ifstar\s@Figureref\@Figureref}
@@ -372,8 +372,8 @@
 
 \MFUaddmap{\figureref}{\Figureref}
 
-\newcommand{\figuresrefprefix}{figures~}
-\newcommand{\Figuresrefprefix}{Figures~}
+\newcommand{\figuresrefprefix}{\figuresname~}
+\newcommand{\Figuresrefprefix}{\Figuresname~}
 
 \newrobustcmd{\figuresref}{%
  \@ifstar
@@ -404,8 +404,13 @@
 
 \newcommand{\codepar}{\par\mbox{}\par}
 
-\providecommand{\examplename}{example}
-\providecommand{\Examplename}{Example}
+\newcommand{\continuesymbol}{$\hookleftarrow$}
+
+\newcommand*{\continue@symbol}{%
+ \smash{\raisebox{-1.6ex}{\makebox[0pt][r]{\continuesymbol}}}}
+  
+\newcommand*{\continueline}{\continue@symbol\newline}
+\newcommand*{\ContExplan}{\glsentrytext{manual.cont_explanation}}
 
 \providecommand{\examplerefprefix}{\Examplename~}
 \providecommand{\Examplerefprefix}{\Examplename~}
@@ -422,8 +427,8 @@
 
 \MFUaddmap{\exampleref}{\Exampleref}
 
-\newcommand{\examplesrefprefix}{examples~}
-\newcommand{\Examplesrefprefix}{Examples~}
+\newcommand{\examplesrefprefix}{\examplesname~}
+\newcommand{\Examplesrefprefix}{\Examplesname~}
 
 \newrobustcmd{\examplesref}{%
  \@ifstar
@@ -691,9 +696,18 @@
 
 \newcommand{\TeXJavaHelpExtraAssignFields}{}
 
+\newcommand{\TeXJavaHelpGlsSelection}{
+  selection=recorded and deps and see,
+  match-action=add,
+  match={
+    category=menu,
+    id=manual\string\..*
+  },
+}
+
 \newcommand{\TeXJavaHelpGlsResourceOptions}{
   \TeXJavaHelpGlsFieldAdjustments,
-  selection=recorded and deps and see,
+  \TeXJavaHelpGlsSelection,
   entry-type-aliases=
    {
      application=index,
@@ -1294,7 +1308,7 @@
      [
         type=minilist,
         style=topic,
-        title = { \glsfmttext{#2} ~ Summary},
+        title = { \glsfmttext{#2} ~ \summaryname},
         nonumberlist,
         leveloffset = { - \glsxtrusefield { #2 } { level } } ,
         label={#2-summary},
@@ -1335,7 +1349,7 @@
         type=minilist,
         label={#2-summary},
         style=topic,
-        title = { \glsfmttext{#2} ~ Summary},
+        title = { \glsfmttext{#2} ~ \summaryname},
         nonumberlist,
         leveloffset = { \int_eval:n { - \glsxtrusefield { #2 } { level } - 1 } } ,
         #1
@@ -1365,7 +1379,7 @@
         type=minilist,
         label={#2-summary},
         style=menuitems,
-        title = { \glsfmttext{#2} ~ Summary},
+        title = { \glsfmttext{#2} ~ \summaryname},
         nonumberlist,
         leveloffset = { \int_eval:n { - \glsxtrusefield { #2 } { level } - 1 } } ,
         #1
@@ -1483,12 +1497,72 @@
 
 \ExplSyntaxOff
 
+\newcommand{\manualtext}[2]{%
+ \ifglsentryexists{manual.#1}{\glsentrytext{manual.#1}}{#2}
+}
+\newcommand{\Manualtext}[2]{%
+ \ifglsentryexists{manual.#1}{\Glsentrytext{manual.#1}}{#2}
+}
+\newcommand{\ManualText}[2]{\Manualtext{#1}{\makefirstuc{#2}}}
+\MFUaddmap{\manualtext}{\ManualText}
+
+\newcommand{\manualplural}[2]{%
+ \ifglsentryexists{manual.#1}{\glsentryplural{manual.#1}}{#2}
+}
+\newcommand{\Manualplural}[2]{%
+ \ifglsentryexists{manual.#1}{\Glsentryplural{manual.#1}}{#2}
+}
+\newcommand{\ManualPlural}[2]{\Manualplural{#1}{\makefirstuc{#2}}}
+\MFUaddmap{\manualplural}{\ManualPlural}
+
+\newcommand{\manualdesc}[2]{%
+ \ifglsentryexists{manual.#1}{\glsentrydesc{manual.#1}}{#2}
+}
+\newcommand{\Manualdesc}[2]{%
+ \ifglsentryexists{manual.#1}{\Glsentrydesc{manual.#1}}{#2}
+}
+\newcommand{\ManualDesc}[2]{\Manualdesc{#1}{\makefirstuc{#2}}}
+\MFUaddmap{\manualdesc}{\ManualDesc}
+
+\renewcommand{\figurename}{\manualtext{figure}{figure}}
+\newcommand{\figuresname}{\manualplural{figure}{figures}}
+\newcommand{\Figurename}{\Manualtext{figure}{Figure}}
+\newcommand{\Figuresname}{\Manualplural{figure}{Figures}}
+
+\renewcommand{\tablename}{\manualtext{table}{table}}
+\newcommand{\tablesname}{\manualplural{table}{tables}}
+\newcommand{\Tablename}{\Manualtext{table}{Table}}
+\newcommand{\Tablesname}{\Manualplural{table}{Tables}}
+
+\newcommand{\listofexamplesname}{\manualtext{listofexamples}{Examples}}
+\renewcommand{\contentsname}{\manualtext{contents}{Contents}}
+\renewcommand{\glossaryname}{\manualtext{glossary}{Glossary}}
+\renewcommand{\abbreviationsname}{\manualtext{abbreviations}{Abbreviations}}
+\renewcommand{\glssymbolsgroupname}{\manualtext{glssymbolsgroup}{Symbols}}
+\renewcommand{\indexname}{\manualtext{index}{Index}}
+
+\newcommand{\summaryname}{\manualtext{summary}{Summary}}
+
+\newcommand{\sectionname}{\manualtext{section}{section}}
+
+\newcommand{\examplename}{\manualtext{example}{example}}
+\newcommand{\Examplename}{\Manualtext{example}{Example}}
+\newcommand{\examplesname}{\manualplural{example}{examples}}
+\newcommand{\Examplesname}{\Manualplural{example}{Examples}}
+
+\renewcommand{\seealsoname}{\manualtext{seealso}{see also}}
+
+\newcommand{\idxpackagename}{\manualtext{idxpackage}{package}}
+\newcommand{\idxclassname}{\manualtext{idxclass}{class}}
+\newcommand{\idxenvname}{\manualtext{idxenv}{environment}}
+\newcommand{\idxcountername}{\manualtext{idxcounter}{counter}}
+
 \newcommand{\nlctguideindexinitpostnamehooks}{%
   \glsdefpostname{abbreviation}{\abbrpostnamehook}%
-  \glsdefpostname{package}{ package}%
-  \glsdefpostname{class}{ class}%
-  \glsdefpostname{environment}{ environment}%
-  \glsdefpostname{counter}{ counter}%
+  \glsdefpostname{package}{ \idxpackagename}%
+  \glsdefpostname{class}{ \idxclassname}%
+  \glsdefpostname{environment}{ \idxenvname}%
+  \glsdefpostname{counter}{ \idxcountername}%
 }
 
 \NewDocumentCommand\printindex{O{}}{%
@@ -1522,90 +1596,101 @@
 \setlength{\boxtitleshift}{-2.5mm}
 
 \newcommand*{\warningsym}{\faExclamationTriangle}
-\newcommand*{\warningtext}{Warning}
-\newcommand*{\warningdesc}{a warning}
+\newcommand*{\warningtext}{\manualtext{warning}{Warning}}
+\newcommand*{\warningdesc}{\manualdesc{warning}{a warning}}
 
 \newcommand*{\importantsym}{\faInfo}
-\newcommand*{\importanttext}{Important}
-\newcommand*{\importantdesc}{an important message}
+\newcommand*{\importanttext}{\manualtext{important}{Important}}
+\newcommand*{\importantdesc}{\manualdesc{important}{an important message}}
 
 \newcommand*{\informationsym}{\faInfoCircle}
-\newcommand*{\informationtext}{Information}
-\newcommand*{\informationdesc}{prominent information}
+\newcommand*{\informationtext}{\manualtext{information}{Information}}
+\newcommand*{\informationdesc}{\manualdesc{information}{prominent information}}
 
 \newcommand*{\definitionsym}{\faThumbTack}
-\newcommand*{\definitiontext}{Definition}
-\newcommand*{\definitiondesc}{the syntax and usage of a command,
-environment or option etc}
+\newcommand*{\definitiontext}{\manualtext{definition}{Definition}}
+\newcommand*{\definitiondesc}{\manualtext{definition}{the syntax 
+and usage of a command, environment or option etc}}
 
 \newcommand*{\valuesettingsym}{\faSliders}
-\newcommand*{\valuesettingtext}{Setting}
-\newcommand*{\valuesettingdesc}{an option that takes a value}
+\newcommand*{\valuesettingtext}{\manualtext{valuesetting}{Setting}}
+\newcommand*{\valuesettingdesc}{\manualdesc{valuesetting}{an option
+that takes a value}}
 
 \newcommand*{\novaluesettingsym}{\faBars}
-\newcommand*{\novaluesettingtext}{Valueless Setting}
-\newcommand*{\novaluesettingdesc}{an option that doesn't take a value}
+\newcommand*{\novaluesettingtext}{\manualtext{novaluesetting}{Valueless Setting}}
+\newcommand*{\novaluesettingdesc}{\manualdesc{novaluesetting}{an
+option that doesn't take a value}}
 
 \newcommand*{\toggleonsettingsym}{\faToggleOn}
-\newcommand*{\toggleonsettingtext}{Toggle (On)}
-\newcommand*{\toggleonsettingdesc}{a boolean option that is initially true}
+\newcommand*{\toggleonsettingtext}{\manualtext{toggleonsetting}{Toggle (On)}}
+\newcommand*{\toggleonsettingdesc}{\manualdesc{toggleonsetting}{a
+boolean option that is initially true}}
 
 \newcommand*{\toggleoffsettingsym}{\faToggleOff}
-\newcommand*{\toggleoffsettingtext}{Toggle (Off)}
-\newcommand*{\toggleoffsettingdesc}{a boolean option that is initially false}
+\newcommand*{\toggleoffsettingtext}{\manualtext{toggleoffsetting}{Toggle (Off)}}
+\newcommand*{\toggleoffsettingdesc}{\manualdesc{toggleoffsetting}{a
+boolean option that is initially false}}
 
 \newcommand*{\optionvaluesym}{\faTag}
-\newcommand*{\optionvaluetext}{Option Value Definition}
-\newcommand*{\optionvaluedesc}{the definition of an option value}
+\newcommand*{\optionvaluetext}{\manualtext{optionvaluedef}{Option Value Definition}}
+\newcommand*{\optionvaluedesc}{\manualdesc{optionvaluedef}{the
+definition of an option value}}
 
 \newcommand*{\countersym}{\textnumero}
-\newcommand*{\countertext}{Counter}
-\newcommand*{\counterdesc}{a counter is being described}
+\newcommand*{\countertext}{\manualtext{counterdef}{Counter}}
+\newcommand*{\counterdesc}{\manualdesc{counterdef}{a counter is
+being described}}
 
 \definecolor{banned}{rgb}{0.8,0,0}
 
 \newrobustcmd{\deprecatedorbannedfmt}[1]{\textcolor{banned}{#1}}
 
 \newcommand*{\deprecatedsym}{\deprecatedorbannedfmt{\faTrashO}}
-\newcommand*{\deprecatedtext}{Deprecated}
-\newcommand*{\deprecateddesc}{a command, environment or option that
-is now deprecated}
+\newcommand*{\deprecatedtext}{\manualtext{deprecated}{Deprecated}}
+\newcommand*{\deprecateddesc}{\manualdesc{deprecated}{a command, environment or option that
+is now deprecated}}
 
 \newcommand*{\bannedsym}{\deprecatedorbannedfmt{\faBan}}
-\newcommand*{\bannedtext}{Don't use}
-\newcommand*{\banneddesc}{a command, environment or option that
-should not be used with \thispackage}
+\newcommand*{\bannedtext}{\manualtext{banned}{Don't use}}
+\newcommand*{\banneddesc}{\manualdesc{banned}{a command, environment or option that
+should not be used with \thispackage}}
 
 \newcommand*{\terminalsym}{\faTerminal}
-\newcommand*{\terminaltext}{Terminal}
-\newcommand*{\terminaldesc}{a command-line application invocation
+\newcommand*{\terminaltext}{\manualtext{terminal}{Terminal}}
+\newcommand*{\terminaldesc}{\manualdesc{terminal}{a command-line application invocation
 that needs to be entered into a
 \href{https://www.dickimaw-books.com/latex/novices/html/terminal.html}{terminal
-or command prompt}}
+or command prompt}}}
 
 \newcommand*{\codesym}{\faFileTextO}
-\newcommand*{\codetext}{Input}
-\newcommand*{\codedesc}{\LaTeX\ code to insert into your document}
+\newcommand*{\codetext}{\manualtext{codeinput}{Input}}
+\newcommand*{\codedesc}{\manualdesc{codeinput}{\LaTeX\ code to
+insert into your document}}
 
 \newrobustcmd*{\badcodesym}{\faFileTextO\llap{\deprecatedorbannedfmt{\scriptsize\faBan}}}
-\newcommand*{\badcodetext}{Problematic Input}
-\newcommand*{\badcodedesc}{problematic code which should be avoided}
+\newcommand*{\badcodetext}{\manualtext{badcode}{Problematic Input}}
+\newcommand*{\badcodedesc}{\manualdesc{badcode}{problematic code
+which should be avoided}}
 
 \newrobustcmd*{\unicodesym}{\faFileO\llap{\textsl{\tiny Uni}}}
-\newcommand*{\unicodetext}{Unicode Input}
-\newcommand*{\unicodedesc}{code that requires a native Unicode
-engine (\XeLaTeX\ or \LuaLaTeX)}
+\newcommand*{\unicodetext}{\manualtext{unicodeinput}{Unicode Input}}
+\newcommand*{\unicodedesc}{\manualdesc{unicodeinput}{code that requires a native Unicode
+engine (\XeLaTeX\ or \LuaLaTeX)}}
 
 \newcommand*{\resultsym}{\faFilePdfO}
-\newcommand*{\resulttext}{Result}
-\newcommand*{\resultdesc}{how the example code should appear in the PDF}
+\newcommand*{\resulttext}{\manualtext{coderesult}{Result}}
+\newcommand*{\resultdesc}{\manualdesc{coderesult}{how the example
+code should appear in the PDF}}
 
 \newcommand*{\transcriptsym}{\twemoji{1f50e}}
-\newcommand*{\transcripttext}{Transcript}
-\newcommand*{\transcriptdesc}{Text in a transcript or log file or written to STDOUT or STDERR}
+\newcommand*{\transcripttext}{\manualtext{transcript}{Transcript}}
+\newcommand*{\transcriptdesc}{\manualdesc{transcript}{text in a
+transcript or log file or written to STDOUT or STDERR}}
 
 \newcommand*{\icon}[1]{\csuse{#1sym}}
 \newcommand*{\icontext}[1]{\csuse{#1text}}
+\newcommand*{\icondesc}[1]{\csuse{#1desc}}
 
 \newtcolorbox{warning}[1][]{breakable,
  before upper={\parindent12pt\noindent},

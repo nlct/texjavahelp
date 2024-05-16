@@ -114,7 +114,7 @@ public enum EntryType
             }
             else
             {
-               return INDEX;
+               return MESSAGE;
             }
          }
 

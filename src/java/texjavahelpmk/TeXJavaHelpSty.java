@@ -100,6 +100,12 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new GenericCommand("TeXJavaHelpExtraEntryTypeAliases"));
       registerControlSequence(new GenericCommand("TeXJavaHelpPuncAssignFields"));
       registerControlSequence(new GenericCommand("TeXJavaHelpMaxPuncDesc"));
+      registerControlSequence(new GenericCommand("TeXJavaHelpGlsSelection"));
+
+      registerControlSequence(new GenericCommand("continueline"));
+      registerControlSequence(new GenericCommand("ContExplan"));
+
+      addLangCommands();
 
       // keystroke symbols
 
@@ -189,35 +195,6 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new KeyRef(glossariesSty));
 
-      registerControlSequence(new TextualContentCommand("warningtext",
-        getHelpLib().getMessage("manual.warning")));
-      registerControlSequence(new TextualContentCommand("informationtext",
-        getHelpLib().getMessage("manual.information")));
-      registerControlSequence(new TextualContentCommand("importanttext",
-        getHelpLib().getMessage("manual.important")));
-      registerControlSequence(new TextualContentCommand("definitiontext",
-        getHelpLib().getMessage("manual.definition")));
-      registerControlSequence(new TextualContentCommand("terminaltext",
-        getHelpLib().getMessage("manual.terminal")));
-      registerControlSequence(new TextualContentCommand("valuesettingtext",
-        getHelpLib().getMessage("manual.valuesetting")));
-      registerControlSequence(new TextualContentCommand("novaluesettingtext",
-        getHelpLib().getMessage("manual.novaluesetting")));
-      registerControlSequence(new TextualContentCommand("toggleonsettingtext",
-        getHelpLib().getMessage("manual.toggleonsetting")));
-      registerControlSequence(new TextualContentCommand("toggleoffsettingtext",
-        getHelpLib().getMessage("manual.toggleoffsetting")));
-      registerControlSequence(new TextualContentCommand("optionvaluetext",
-        getHelpLib().getMessage("manual.optionvalue")));
-      registerControlSequence(new TextualContentCommand("countertext",
-        getHelpLib().getMessage("manual.counter")));
-      registerControlSequence(new TextualContentCommand("codetext",
-        getHelpLib().getMessage("manual.code")));
-      registerControlSequence(new TextualContentCommand("resulttext",
-        getHelpLib().getMessage("manual.result")));
-      registerControlSequence(new TextualContentCommand("transcripttext",
-        getHelpLib().getMessage("manual.transcript")));
-
       registerControlSequence(new AtGobble("menubookmark"));
       registerControlSequence(new GenericCommand(true,
        "menuitemsbetweenskip", null, new TeXCsRef("medskip")));
@@ -235,6 +212,17 @@ public class TeXJavaHelpSty extends UserGuideSty
       grp.addAll(listener.createString("text"));
 
       registerControlSequence(new LaTeXGenericCommand(true, "icontext",
+       "m", def));
+
+      def = listener.createStack();
+      grp = listener.createGroup();
+
+      def.add(new TeXCsRef("csuse"));
+      def.add(grp);
+      grp.add(listener.getParam(1));
+      grp.addAll(listener.createString("desc"));
+
+      registerControlSequence(new LaTeXGenericCommand(true, "icondesc",
        "m", def));
 
       def = listener.createStack();
@@ -277,6 +265,174 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new LaTeXGenericCommand(true,
        "menuitemref", "m", def));
+   }
+
+   protected void addLangCommands()
+   {
+      registerControlSequence(new ManualText(glossariesSty));
+      registerControlSequence(
+        new ManualText("manualplural", "plural", glossariesSty));
+      registerControlSequence(
+        new ManualText("manualdesc", "description", glossariesSty));
+
+      registerControlSequence(
+        new ManualText("Manualtext", "text", CaseChange.SENTENCE, glossariesSty));
+      registerControlSequence(
+        new ManualText("Manualplural", "plural", CaseChange.SENTENCE, glossariesSty));
+      registerControlSequence(
+        new ManualText("Manualdesc", "description", CaseChange.SENTENCE, glossariesSty));
+
+      registerControlSequence(
+        new ManualText("ManualText", "text", CaseChange.SENTENCE, CaseChange.SENTENCE, glossariesSty));
+      registerControlSequence(
+        new ManualText("ManualPlural", "plural", CaseChange.SENTENCE, CaseChange.SENTENCE, glossariesSty));
+      registerControlSequence(
+        new ManualText("ManualDesc", "description", CaseChange.SENTENCE, CaseChange.SENTENCE, glossariesSty));
+
+      registerControlSequence(createLangCs("figure", "figure"));
+      registerControlSequence(createLangCs("Figurename",
+        "Manualtext", "figure", "Figure"));
+      registerControlSequence(createLangCs("figuresname",
+        "manualplural", "figure", "figures"));
+      registerControlSequence(createLangCs("Figuresname",
+        "Manualplural", "figure", "Figures"));
+
+      registerControlSequence(createLangCs("table", "table"));
+      registerControlSequence(createLangCs("Tablename",
+        "Manualtext", "table", "Table"));
+      registerControlSequence(createLangCs("tablesname",
+        "manualplural", "table", "tables"));
+      registerControlSequence(createLangCs("Tablesname",
+        "Manualplural", "table", "Tables"));
+
+      registerControlSequence(createLangCs("listofexamples", "Examples"));
+      registerControlSequence(createLangCs("contents", "Contents"));
+      registerControlSequence(createLangCs("glossary", "Glossary"));
+      registerControlSequence(createLangCs("abbreviations", "Abbreviations"));
+      registerControlSequence(createLangCs("glssymbolsgroup", "Symbols"));
+      registerControlSequence(createLangCs("index", "Index"));
+      registerControlSequence(createLangCs("summary", "Summary"));
+      registerControlSequence(createLangCs("section", "section"));
+      registerControlSequence(createLangCs("seealso", "see also"));
+
+      registerControlSequence(createLangCs("example", "example"));
+      registerControlSequence(createLangCs("Examplename",
+        "Manualtext", "example", "Example"));
+      registerControlSequence(createLangCs("examplesname",
+        "manualplural", "example", "examples"));
+      registerControlSequence(createLangCs("Examplesname",
+        "Manualplural", "example", "Examples"));
+
+      registerControlSequence(createLangCs("idxpackage", "package"));
+      registerControlSequence(createLangCs("idxclass", "class"));
+      registerControlSequence(createLangCs("idxenv", "environment"));
+      registerControlSequence(createLangCs("idxcounter", "counter"));
+
+      registerControlSequence(createLangCs("warningtext",
+        "manualtext", "warning", "Warning"));
+      registerControlSequence(createLangCs("warningdesc",
+        "manualdesc", "warning", "a warning"));
+
+      registerControlSequence(createLangCs("importanttext",
+        "manualtext", "important", "Important"));
+      registerControlSequence(createLangCs("importantdesc",
+        "manualdesc", "important", "an important message"));
+
+      registerControlSequence(createLangCs("informationtext",
+        "manualtext", "information", "Information"));
+      registerControlSequence(createLangCs("informationdesc",
+        "manualdesc", "information", "prominent information"));
+
+      registerControlSequence(createLangCs("definitiontext",
+        "manualtext", "definition", "Definition"));
+      registerControlSequence(createLangCs("informationdesc",
+        "manualdesc", "definition",
+        "the syntax and usage of a command, environment or option etc"));
+
+      registerControlSequence(createLangCs("valuesettingtext",
+        "manualtext", "valuesetting", "Setting"));
+      registerControlSequence(createLangCs("valuesettingdesc",
+        "manualdesc", "valuesetting", "an option that takes a value"));
+
+      registerControlSequence(createLangCs("novaluesettingtext",
+        "manualtext", "novaluesetting", "Valueless Setting"));
+      registerControlSequence(createLangCs("novaluesettingdesc",
+        "manualdesc", "novaluesetting", "an option that doesn't take a value"));
+
+      registerControlSequence(createLangCs("toggleonsettingtext",
+        "manualtext", "toggleonsetting", "Toggle (On)"));
+      registerControlSequence(createLangCs("toggleonsettingdesc",
+        "manualdesc", "toggleonsetting", "a boolean option that is initially true"));
+
+      registerControlSequence(createLangCs("toggleoffsettingtext",
+        "manualtext", "toggleoffsetting", "Toggle (Off)"));
+      registerControlSequence(createLangCs("toggleoffsettingdesc",
+        "manualdesc", "toggleoffsetting", "a boolean option that is initially false"));
+
+      registerControlSequence(createLangCs("optionvaluetext",
+        "manualtext", "optionvaluedef", "Option Value Definition"));
+      registerControlSequence(createLangCs("optionvaluedesc",
+        "manualdesc", "optionvaluedef", "the definition of an option value"));
+
+      registerControlSequence(createLangCs("countertext",
+        "manualtext", "counterdef", "Counter"));
+      registerControlSequence(createLangCs("counterdesc",
+        "manualdesc", "counterdef", "a counter is being described"));
+
+      registerControlSequence(createLangCs("bannedtext",
+        "manualtext", "banned", "Don't use"));
+      registerControlSequence(createLangCs("banneddesc",
+        "manualdesc", "banned", "a command, environment or option that should not be used with this package"));
+
+      registerControlSequence(createLangCs("terminaltext",
+        "manualtext", "terminal", "Terminal"));
+      registerControlSequence(createLangCs("terminaldesc",
+        "manualdesc", "terminal", "a command-line application invocation that needs to be entered into a terminal or command prompt"));
+
+      registerControlSequence(createLangCs("codetext",
+        "manualtext", "codeinput", "Input"));
+      registerControlSequence(createLangCs("codedesc",
+        "manualdesc", "codeinput", "LaTeX code to insert into your document"));
+
+      registerControlSequence(createLangCs("badcodetext",
+        "manualtext", "badcode", "Problematic Input"));
+      registerControlSequence(createLangCs("badcodedesc",
+        "manualdesc", "badcode", "problematic code which should be avoided"));
+
+      registerControlSequence(createLangCs("unicodetext",
+        "manualtext", "unicodeinput", "Unicode Input"));
+      registerControlSequence(createLangCs("unicodedesc",
+        "manualdesc", "unicodeinput", "code that requires a native Unicode engine (XeLaTeX or LuaLaTeX)"));
+
+      registerControlSequence(createLangCs("resulttext",
+        "manualtext", "coderesult", "Result"));
+      registerControlSequence(createLangCs("resultdesc",
+        "manualdesc", "coderesult", "how the example code should appear in the PDF"));
+
+      registerControlSequence(createLangCs("transcripttext",
+        "manualtext", "transcript", "Transcript"));
+      registerControlSequence(createLangCs("transcriptdesc",
+        "manualdesc", "transcript", "text in a transcript or log file or written to STDOUT or STDERR"));
+
+   }
+
+   protected ControlSequence createLangCs(String tag, String defText)
+   {
+      return createLangCs(tag+"name", "manualtext", tag, defText);
+   }
+
+   protected ControlSequence createLangCs(String name, String manualCsName,
+     String tag, String defText)
+   {
+      TeXJavaHelpLib helpLib = getHelpLib();
+      TeXParserListener listener = getListener();
+
+      return new GenericCommand(true, name, null,
+       TeXParserUtils.createStack(listener,
+        new TeXCsRef(manualCsName),
+        listener.createGroup(tag),
+        listener.createGroup(helpLib.getMessageWithFallback(
+          "manual."+tag, defText))));
    }
 
    @Override

@@ -110,6 +110,11 @@ public class Entry
             fields = new HashMap<String,FieldValue>();
          }
 
+         if (!encode)
+         {
+            value = value.replaceAll("'([{}])'", "$1");
+         }
+
          fields.put(field, new FieldValue(value, encode));
       }
    }
@@ -192,9 +197,12 @@ public class Entry
             {
                i += Character.charCount(cp);
 
-               cp = str.codePointAt(i);
+               if (i < str.length())
+               {
+                  cp = str.codePointAt(i);
 
-               encodeTeXChars(builder, cp);
+                  encodeTeXChars(builder, cp);
+               }
             }
             else if (cp == '{')
             {

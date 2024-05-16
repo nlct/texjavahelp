@@ -264,6 +264,12 @@ public class Xml2Bib implements TeXJavaHelpLibApp
 
       try
       {
+         /*
+          The order of files is important as duplicate keys will be overridden
+          in a subsequent file. This allows texjavahelplib-*.xml to be specified
+          first and the application's resource file next, which can override
+          default values.
+          */
          for (String filename : inFileNames)
          {
             in = new FileInputStream(new File(filename));
@@ -304,6 +310,7 @@ public class Xml2Bib implements TeXJavaHelpLibApp
               || suffix.equals("description")
               || suffix.equals("keystroke")
               || suffix.equals("defaultkeys")
+              || suffix.equals("plural")
                )
             {
                String fieldValue = (String)props.getProperty(key);
@@ -329,7 +336,8 @@ public class Xml2Bib implements TeXJavaHelpLibApp
                   entries.put(key, entry);
                }
 
-               boolean encode = true;
+               boolean encode
+                  = !(key.startsWith("index.") || key.startsWith("manual."));
 
                if (suffix.equals("keystroke"))
                {
