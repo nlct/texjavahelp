@@ -50,6 +50,7 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
    protected void initHelpLibrary() throws IOException
    {
       helpLib = new TeXJavaHelpLib(this);
+      helpLib.getMessageSystem().loadDictionary("texparserlib");
    }
 
    public TeXJavaHelpLib getHelpLib()

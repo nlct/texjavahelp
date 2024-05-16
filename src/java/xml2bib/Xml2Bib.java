@@ -20,8 +20,11 @@ package com.dickimawbooks.xml2bib;
 
 import java.io.*;
 
+import java.net.URL;
+
 import java.nio.file.Path;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.nio.charset.Charset;
 
 import java.util.HashMap;
@@ -195,6 +198,10 @@ public class Xml2Bib implements TeXJavaHelpLibApp
       System.out.println(getMessage("syntax.in", "--in", "-i", getApplicationName()));
       System.out.println(getMessage("syntax.out", "--output", "-o"));
       System.out.println(getMessage("syntax.out.charset", "--out-charset"));
+      System.out.println(getMessage("syntax.provide-xml",
+         "--provide-xml", "-p", getApplicationName()));
+      System.out.println(getMessage("syntax.copy",
+          "--copy-overwrite-xml", getApplicationName()));
       System.out.println();
       System.out.println(getMessage("syntax.debug", "--debug"));
       System.out.println(getMessage("syntax.nodebug", "--nodebug"));
@@ -255,6 +262,53 @@ public class Xml2Bib implements TeXJavaHelpLibApp
       return VERSION;
    }
 
+   protected boolean isNewer(File file1, File file2)
+   {
+      try
+      {
+         return file1.lastModified() > file2.lastModified();
+      }
+      catch (SecurityException e)
+      {
+         debug(e);
+         return false;
+      }
+   }
+
+   protected File getXmlFile(String filename)
+   {
+      File file = new File(filename);
+
+      if (copyXml)
+      {
+         URL url = getClass().getResource(
+           helpLib.getResourcePath()+"/"+file.getName());
+
+         if (url != null)
+         {
+            try
+            {
+               File resourceFile = new File(url.toURI());
+
+               if (!file.exists() || (replaceXml && isNewer(resourceFile, file)))
+               {
+                  message(getMessageWithFallback("message.copying",
+                    "Copying {0} -> {1}", resourceFile, file));
+
+                  Files.copy(resourceFile.toPath(), file.toPath(),
+                   StandardCopyOption.REPLACE_EXISTING);
+               }
+            }
+            catch (Exception e)
+            {
+               debug(e);
+            }
+         }
+      }
+
+      return file;
+   }
+
    protected void run() throws IOException
    {
       Properties props = new Properties();
@@ -272,7 +326,7 @@ public class Xml2Bib implements TeXJavaHelpLibApp
           */
          for (String filename : inFileNames)
          {
-            in = new FileInputStream(new File(filename));
+            in = new FileInputStream(getXmlFile(filename));
             props.loadFromXML(in);
             in.close();
             in = null;
@@ -625,6 +679,20 @@ public class Xml2Bib implements TeXJavaHelpLibApp
          {
             verboseLevel = 1;
          }
+         else if (args[i].equals("--provide-xml") || args[i].equals("-p"))
+         {
+            copyXml = true;
+            replaceXml = false;
+         }
+         else if (args[i].equals("--copy-overwrite-xml"))
+         {
+            copyXml = true;
+            replaceXml = true;
+         }
+         else if (args[i].equals("--nocopy-xml"))
+         {
+            copyXml = false;
+         }
          else if (args[i].equals("--in") || args[i].equals("-i"))
          {
             i++;
@@ -726,10 +794,11 @@ public class Xml2Bib implements TeXJavaHelpLibApp
    protected Vector<String> inFileNames;
    private Charset outCharset = Charset.defaultCharset();
    protected int verboseLevel = 0;
+   protected boolean copyXml = false, replaceXml = false;
 
    private TeXJavaHelpLib helpLib;
 
    public static final String NAME = "xml2bib";
    public static final String VERSION = "0.1a";
-   public static final String DATE = "2024-05-03";
+   public static final String DATE = "2024-05-16";
 }
