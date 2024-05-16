@@ -520,6 +520,9 @@
   \ifdef\titlepagestyle{\renewcommand{\titlepagestyle}{empty}}{}
   \pagenumbering{alph}
 
+  \providecommand{\frontmatter}{\pagenumbering{roman}}
+  \providecommand{\mainmatter}{\pagenumbering{arabic}}
+
   \newcommand{\listofexamples}{%
    \@ifstar{\chapter*{\listofexamplesname}\@starttoc{loe}}%
    {\chapter{\listofexamplesname}\listofexampleslabel\listofexamplesheader\@starttoc{loe}}}
