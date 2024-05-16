@@ -200,7 +200,7 @@ public class Xml2Bib implements TeXJavaHelpLibApp
       System.out.println(getMessage("syntax.out.charset", "--out-charset"));
       System.out.println(getMessage("syntax.provide-xml",
          "--provide-xml", "-p", getApplicationName()));
-      System.out.println(getMessage("syntax.copy",
+      System.out.println(getMessage("syntax.copy-overwrite-xml",
           "--copy-overwrite-xml", getApplicationName()));
       System.out.println();
       System.out.println(getMessage("syntax.debug", "--debug"));
