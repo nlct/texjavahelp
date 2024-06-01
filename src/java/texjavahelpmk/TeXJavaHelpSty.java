@@ -366,6 +366,7 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(createLangCs("idxclass", "class"));
       registerControlSequence(createLangCs("idxenv", "environment"));
       registerControlSequence(createLangCs("idxcounter", "counter"));
+      registerControlSequence(createLangCs("idxvariablename", "variable"));
 
       registerControlSequence(createLangCs("warningtext",
         "manualtext", "warning", "Warning"));
