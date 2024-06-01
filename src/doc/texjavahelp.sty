@@ -669,7 +669,8 @@
   match = {entrytype=symbol}, match-action=filter ,
   entry-type-aliases = 
    {
-      punctuation=symbol
+      punctuation=symbol,
+      cspunctuation=symbol
    },
   assign-fields=
    {
@@ -679,15 +680,17 @@
   symbol-sort-fallback=name,
 }
 
+\newcommand{\symbolparen}[1]{(\,#1\,)}
+
 \newcommand{\TeXJavaHelpMaxPuncDesc}{20}
 \newcommand{\TeXJavaHelpPuncAssignFields}{%
   name = symbol + " (" + description + ")"
-    [ entrytype->original =/(common)?punctuation/
+    [ entrytype->original =/(common)?(cs)?punctuation/
       & \LEN{ description } < \TeXJavaHelpMaxPuncDesc ] ,
   name = symbol
-    [ entrytype->original =/(common)?punctuation/ ] ,
-  text = description + " " + symbol
-    [ entrytype->original =/(common)?punctuation/ ] ,
+    [ entrytype->original =/(common)?(cs)?punctuation/ ] ,
+  text = description + " \cs{symbolparen}{" + symbol + "}"
+    [ entrytype->original =/(common)?(cs)?punctuation/ ] 
 }
 
 \newcommand{\TeXJavaHelpGlsFieldAdjustments}{
@@ -733,6 +736,8 @@
      commonenvironment=index,
      counter=index,
      commoncounter=index,
+     variable=index,
+     commonvariable=index,
      menu=index,
      commonmenu=index,
      menuitem=index,
@@ -777,6 +782,9 @@
         ], 
       name = "\cs{filefmt}{" + entrylabel->original + "}"
         [ entrytype->original = /(common)?fileext/], 
+% variables (e.g. environment variables)
+      name = "\cs{varfmt}{" + entrylabel->original + "}"
+        [ entrytype->original = /(common)?variable/], 
 % packages
       name = "\cs{styfmt}{" + \MGP{1} + "}"
         [
@@ -856,8 +864,10 @@
 \glsxtraddlabelprefix{button.}
 \glsxtraddlabelprefix{menu.}
 \glsxtraddlabelprefix{widget.}
+\glsxtraddlabelprefix{help.}
+\glsxtraddlabelprefix{}
 
-\newcommand{\widget}{\dgls}
+\newdglsfieldlike[textformat=widgetfmt]{text}{\widget}{\Widget}{\WIDGET}
 
 \newcommand{\symbolfmt}[1]{\textrm{#1}}
 
@@ -879,18 +889,22 @@
 \newcommand{\msgendcolon}[1]{}
 
 \ExplSyntaxOn
-\NewDocumentCommand \msg { O{} m }
-  { \__texjavahelp_msg:nn { #1 } { message.#2 } }
-\NewDocumentCommand \warnmsg { O{} m }
-  { \__texjavahelp_msg:nn { #1 } { warning.#2 } }
-\NewDocumentCommand \errmsg { O{} m }
-  { \__texjavahelp_msg:nn { #1 } { error.#2 } }
-\NewDocumentCommand \syntaxmsg { O{} m }
-  { \__texjavahelp_msg:nn { #1 } { syntax.#2 } }
+\NewDocumentCommand \msg { O{} m O{} }
+  { \__texjavahelp_msg:nnn { #1 } { message.#2 } { #3 } }
+\NewDocumentCommand \warnmsg { O{} m O{} }
+  { \__texjavahelp_msg:nnn { #1 } { warning.#2 } { #3 } }
+\NewDocumentCommand \errmsg { O{} m O{} }
+  { \__texjavahelp_msg:nnn { #1 } { error.#2 } { #3 } }
+\NewDocumentCommand \syntaxmsg { O{} m O{} }
+  { \__texjavahelp_msg:nnn { #1 } { syntax.#2 } { #3 } }
+\NewDocumentCommand \manmsg { O{} m O{} }
+  { \__texjavahelp_msg:nnn { #1 } { manual.#2 } { #3 } }
+\NewDocumentCommand \generalmsg { O{} m O{} }
+  { \__texjavahelp_msg:nnn { #1 } { #2 } { #3 } }
 
 \seq_new:N \l__texjavahelp_msg_seq
 
-\cs_new:Nn \__texjavahelp_msg:nn
+\cs_new:Nn \__texjavahelp_msg:nnn
 {
   \group_begin:
    \seq_set_from_clist:Nn \l__texjavahelp_msg_seq { #1 }
@@ -898,7 +912,7 @@
     {
       \defmsgparam { ##1 } { ##2 }
     }
-   \gls{#2}%
+   \gls{#2}[#3]%
   \group_end:
 }
 \ExplSyntaxOff
@@ -992,6 +1006,9 @@
 
 \newcommand{\appfmt}[1]{\texorpdfstring{\texttt{#1}}{#1}}
 \MFUblocker{\appfmt}
+
+\newcommand{\homedir}{\string~}
+\newcommand{\homefilefmt}[1]{\filefmt{\homedir\slash#1}}
 
 \newcommand{\filefmt}[1]{\texorpdfstring{\texttt{#1}}{#1}}
 \MFUblocker{\filefmt}
@@ -1150,6 +1167,14 @@
  \glsadd[format=main]{switch.#2}%
  \let\glsxtrpostnameswitch\postswitchhook
  \glsxtrglossentry{switch.#2}%
+ \end{pinnedbox}% 
+}
+
+\NewDocumentCommand\widgetdef{O{}mO{}}{%
+ \begin{pinnedbox}[#1]%
+ \glsadd[format=main]{#2}%
+ \glsxtrglossentry{#2}%
+ \hfill #3%
  \end{pinnedbox}% 
 }
 

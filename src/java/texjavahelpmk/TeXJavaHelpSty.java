@@ -79,7 +79,10 @@ public class TeXJavaHelpSty extends UserGuideSty
       addListCommands();
 
       addBasicBoxCommands();
+
       addStandaloneDefCommands();
+      registerControlSequence(new WidgetDef(pinnedBox, rightBox, noteBox, glossariesSty));
+
       addCodeBoxCommands();
 
       addIndexBoxCommands();
@@ -164,7 +167,25 @@ public class TeXJavaHelpSty extends UserGuideSty
 
 
       registerControlSequence(new Dgls("menuitem", CaseChange.NO_CHANGE, glossariesSty));
-      registerControlSequence(new Dgls("widget", CaseChange.NO_CHANGE, glossariesSty));
+
+
+      KeyValList defOpts = new KeyValList();
+      defOpts.put("textformat", listener.createString("widgetfmt"));
+
+      Dglsfield widgetCs = new Dglsfield("widget", glossariesSty, CaseChange.NO_CHANGE, "text");
+      widgetCs.setDefaultOptions(defOpts);
+
+      registerControlSequence(widgetCs);
+
+      widgetCs = new Dglsfield("Widget", glossariesSty, CaseChange.SENTENCE, "text");
+      widgetCs.setDefaultOptions(defOpts);
+
+      registerControlSequence(widgetCs);
+
+      widgetCs = new Dglsfield("WIDGET", glossariesSty, CaseChange.TO_UPPER, "text");
+      widgetCs.setDefaultOptions(defOpts);
+
+      registerControlSequence(widgetCs);
 
       registerControlSequence(new MenuCs(glossariesSty));
       registerControlSequence(new MenuTrail(glossariesSty));
@@ -239,7 +260,20 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new AtFirstOfOne("msgellipsis"));
       registerControlSequence(new AtGobble("msgendcolon"));
 
-      // TODO: \defmsgparam, \msgparam, \msgchoiceparam etc
+      registerControlSequence(new MsgParam());
+      registerControlSequence(new DefMsgParam());
+      registerControlSequence(new AtNumberOfNumber("msgchoiceparamitem", 3, 3));
+
+      // TODO
+      registerControlSequence(new LaTeXGenericCommand(true, "msgchoiceparam",
+       "mm", listener.createString("[\u2026]")));
+
+      registerControlSequence(new GeneralMsg());
+      registerControlSequence(new GeneralMsg("msg", "message."));
+      registerControlSequence(new GeneralMsg("warnmsg", "warning."));
+      registerControlSequence(new GeneralMsg("errmsg", "error."));
+      registerControlSequence(new GeneralMsg("syntaxmsg", "syntax."));
+      registerControlSequence(new GeneralMsg("manmsg", "manual."));
 
       // dual prefix list
       def = listener.createString("action.,button.,menu.,widget.,");
