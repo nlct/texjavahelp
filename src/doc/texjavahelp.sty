@@ -835,6 +835,14 @@
         ], 
       name = "\cs{ctrfmt}{" + entrylabel->original + "}"
         [ entrytype->original =/(common)?counter/ ], 
+% environments
+      name = "\cs{envfmt}{" + \MGP{1} + "}"
+        [
+           entrytype->original =/(?:common)?environment/
+         & entrylabel->original=/env\.(.+)/
+        ], 
+      name = "\cs{envfmt}{" + entrylabel->original + "}"
+        [ entrytype->original =/(common)?environment/], 
 % messages, errors and warnings
       type = "messages"
         [ entrytype->original = /message|error|warning|syntax/ ], 
