@@ -275,6 +275,11 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new GeneralMsg("syntaxmsg", "syntax."));
       registerControlSequence(new GeneralMsg("manmsg", "manual."));
 
+      registerControlSequence(new LaTeXGenericCommand(true,
+       "widgetdeffmt", "m", TeXParserUtils.createStack(listener,
+        new TeXCsRef("widgetfmt"), TeXParserUtils.createGroup(listener,
+         listener.getParam(1)))));
+
       // dual prefix list
       def = listener.createString("action.,button.,menu.,widget.,");
         def.add(listener.getControlSequence("empty"));

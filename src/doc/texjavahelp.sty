@@ -1170,10 +1170,12 @@
  \end{pinnedbox}% 
 }
 
+\newcommand{\widgetdeffmt}[1]{\widgetfmt{#1}}
+
 \NewDocumentCommand\widgetdef{O{}mO{}}{%
  \begin{pinnedbox}[#1]%
  \glsadd[format=main]{#2}%
- \glsxtrglossentry{#2}%
+ \widgetdeffmt{\glsxtrglossentry{#2}}%
  \hfill #3%
  \end{pinnedbox}% 
 }

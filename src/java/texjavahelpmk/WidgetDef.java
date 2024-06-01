@@ -48,6 +48,17 @@ public class WidgetDef extends StandaloneDef
    }
 
    @Override
+   protected void addEntryName(TeXObjectList list, GlsLabel glslabel, TeXParser parser)
+   {
+      list.add(parser.getListener().getControlSequence("widgetdeffmt"));
+      Group grp = parser.getListener().createGroup();
+      list.add(grp);
+
+      grp.add(parser.getListener().getControlSequence("glossentryname"));
+      grp.add(glslabel);
+   }
+
+   @Override
    protected void postArgHook(GlsLabel glslabel, TeXParser parser, TeXObjectList stack)
    throws IOException
    {
