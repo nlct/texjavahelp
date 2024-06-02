@@ -35,6 +35,13 @@ public class GeneralMsg extends ControlSequence
    public GeneralMsg(String name, String prefix)
    {
       super(name);
+
+      if (prefix == null)
+      {
+         throw new NullPointerException();
+      }
+
+      this.prefix = prefix;
    }
 
    @Override
