@@ -29,7 +29,7 @@ public class SeeAlsoRefs extends ControlSequence
 {
    public SeeAlsoRefs()
    {
-      this("SeeAlsoRefs");
+      this("seealsorefs");
    }
 
    public SeeAlsoRefs(String name)
