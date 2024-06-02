@@ -39,6 +39,7 @@ import com.dickimawbooks.texparserlib.latex.nlctdoc.TaggedColourBox;
 import com.dickimawbooks.texparserlib.latex.nlctdoc.ColourBox;
 import com.dickimawbooks.texparserlib.latex.nlctdoc.IndexInitPostNameHooks;
 import com.dickimawbooks.texparserlib.latex.nlctdoc.AbbrPostNameHook;
+import com.dickimawbooks.texparserlib.latex.nlctdoc.ExampleEnv;
 
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 
@@ -128,6 +129,8 @@ public class TeXJavaHelpSty extends UserGuideSty
         "returnsym", 0x21B5));
       registerControlSequence(listener.createSymbol(
         "tabsym", 0x21B9));
+
+      registerControlSequence(listener.createSymbol("Slash", '/'));
 
       registerControlSequence(new GenericCommand(true,
         "spacekeysym", null, new HtmlTag("<span class=\"spacekey\"> </span>")));
@@ -304,6 +307,15 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new LaTeXGenericCommand(true,
        "menuitemref", "m", def));
+
+      registerControlSequence(new LaTeXGenericCommand(true,
+        "symbolparen", "m", TeXParserUtils.createStack(listener,
+         listener.getOther('('), listener.getParam(1), listener.getOther(')'))));
+
+      registerControlSequence(new LaTeXGenericCommand(true,
+        "cspuncfmt", "m", TeXParserUtils.createStack(listener,
+         new TeXCsRef("csfmt"),
+          TeXParserUtils.createGroup(listener, listener.getParam(1)))));
    }
 
    protected void addLangCommands()
@@ -361,6 +373,14 @@ public class TeXJavaHelpSty extends UserGuideSty
         "manualplural", "example", "examples"));
       registerControlSequence(createLangCs("Examplesname",
         "Manualplural", "example", "Examples"));
+
+      registerControlSequence(new GenericCommand(true,
+        "nlctexampletag", null, TeXParserUtils.createStack(listener,
+          new TeXCsRef("examplename"), listener.getSpace(),
+          new TeXCsRef("theexample"))));
+
+      listener.newcounter("example");
+      registerControlSequence(new ExampleEnv());
 
       registerControlSequence(createLangCs("idxpackage", "package"));
       registerControlSequence(createLangCs("idxclass", "class"));
