@@ -1631,5 +1631,5 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
 
    public static final String NAME = "texjavahelpmk";
    public static final String VERSION = "0.1a";
-   public static final String DATE = "2024-06-01";
+   public static final String DATE = "2024-06-02";
 }
