@@ -97,6 +97,21 @@ public class TeXJavaHelpLib
       }
    }
 
+   public void dictionaryLoaded(URL url)
+   {
+      application.dictionaryLoaded(url);
+   }
+
+   public Locale getHelpSetLocale()
+   {
+      return helpsetLocale;
+   }
+
+   public Locale getMessagesLocale()
+   {
+      return messages.getLocale();
+   }
+
    /**
     * Encodes HTML special characters. See also
     * HtmlTag.encodeAttributeValue(String,boolean)

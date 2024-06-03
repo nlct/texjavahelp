@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.text.MessageFormat;
 
 import java.io.*;
+import java.net.URL;
 
 import java.nio.file.*;
 import java.nio.charset.Charset;
@@ -1587,6 +1588,11 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
 
          System.exit(1);
       }
+   }
+
+   @Override
+   public void dictionaryLoaded(URL url)
+   {
    }
 
    private Hashtable<String,String> kpsewhichResults;

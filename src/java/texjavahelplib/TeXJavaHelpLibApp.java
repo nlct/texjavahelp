@@ -18,6 +18,8 @@
 */
 package com.dickimawbooks.texjavahelplib;
 
+import java.net.URL;
+
 /**
  * Interface for main application using Java Help Library.
  */
@@ -25,7 +27,9 @@ public interface TeXJavaHelpLibApp
 {
    public String getApplicationName();
 
-   public void message(String warning);
+   public void dictionaryLoaded(URL url);
+
+   public void message(String msg);
 
    public void warning(String warning);
 

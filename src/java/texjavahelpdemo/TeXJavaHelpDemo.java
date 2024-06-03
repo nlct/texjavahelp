@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.File;
 import java.io.PrintWriter;
+import java.net.URL;
 
 import java.text.MessageFormat;
 
@@ -493,6 +494,11 @@ public class TeXJavaHelpDemo extends JFrame
    public void debug(Throwable e)
    {
       debug(e.getMessage(), e);
+   }
+
+   @Override
+   public void dictionaryLoaded(URL url)
+   {
    }
 
    @Override

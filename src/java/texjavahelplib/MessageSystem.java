@@ -134,6 +134,8 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
          {
             deque.addFirst(url);
          }
+
+         locale = Locale.ENGLISH;
       }
 
       return deque;
@@ -148,7 +150,7 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
 
       try
       {
-         URL url;
+         URL url = null;
 
          Properties dictionary = new Properties();
 
@@ -162,6 +164,8 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
 
             in.close();
             in = null;
+
+            helpLib.dictionaryLoaded(url);
          }
 
          for (Object key : dictionary.keySet())

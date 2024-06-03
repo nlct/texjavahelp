@@ -309,6 +309,11 @@ public class Xml2Bib implements TeXJavaHelpLibApp
       return file;
    }
 
+   @Override
+   public void dictionaryLoaded(URL url)
+   {
+   }
+
    protected void run() throws IOException
    {
       Properties props = new Properties();
