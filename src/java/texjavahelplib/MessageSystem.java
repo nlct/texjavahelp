@@ -56,24 +56,32 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
 
    protected String getLanguageFileName(String tagPrefix, String tag)
    {
-      return String.format("%s/%s-%s.xml", helpLib.getResourcePath(), tagPrefix, tag);
+      return String.format("%s/%s-%s.xml",
+        helpLib.getDictionaryPath(), tagPrefix, tag);
    }
 
-   /*
+   /**
+     Gets the list of available resource files for the specified locale.
      This returns a list to allow more specific locales to override more general
      locales. For example, prefix-en.xml may have the default for all keys
      and prefix-en-GB.xml overrides just the different keys specific to GB.
+     @param tagPrefix the prefix to use in front of the language tag
+     @return list of available language files
     */ 
-   protected ArrayDeque<URL> getLanguageFile(String tagPrefix)
+   protected ArrayDeque<URL> getLanguageFiles(String tagPrefix)
      throws FileNotFoundException
    {
+      String tag, dict;
+      URL url;
+      String lang = locale.getLanguage();
+
       ArrayDeque<URL> deque = new ArrayDeque<URL>();
 
-      String tag = locale.toLanguageTag();
+      tag = locale.toLanguageTag();
 
-      String dict = getLanguageFileName(tagPrefix, tag);
+      dict = getLanguageFileName(tagPrefix, tag);
 
-      URL url = getClass().getResource(dict);
+      url = getClass().getResource(dict);
 
       if (url != null)
       {
@@ -81,7 +89,6 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
          url = null;
       }
 
-      String lang = locale.getLanguage();
       String region = locale.getCountry();
 
       if (!region.isEmpty())
@@ -115,36 +122,31 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
          url = null;
       }
 
-      if (deque.isEmpty())
-      {
-         dict = getLanguageFileName(tagPrefix, "en");
-         url = getClass().getResource(dict);
-
-         if (url == null)
-         {
-            throw new FileNotFoundException
-            (
-               "Can't find dictionary resource file matching locale "
-                + locale
-                + " or fallback \"en\" matching "
-                + getLanguageFileName(tagPrefix, "*")
-            );
-         }
-         else
-         {
-            deque.addFirst(url);
-         }
-
-         locale = Locale.ENGLISH;
-      }
-
       return deque;
    }
 
    public void loadDictionary(String tagPrefix)
       throws IOException
    {
-      ArrayDeque<URL> deque = getLanguageFile(tagPrefix);
+      ArrayDeque<URL> deque = getLanguageFiles(tagPrefix);
+
+      if (deque.isEmpty())
+      {
+         Locale orgLocale = locale;
+         locale = Locale.ENGLISH;
+         deque = getLanguageFiles(tagPrefix);
+
+         if (deque.isEmpty())
+         {
+            throw new FileNotFoundException
+            (
+               String.format(
+               "Can't find dictionary resource file for locale \"%s\" or fallback \"%s\" matching \"%s\"",
+                orgLocale, locale, getLanguageFileName(tagPrefix, "*")
+               )
+            );
+         }
+      }
 
       InputStream in = null;
 

@@ -217,7 +217,8 @@ public class Xml2Bib implements TeXJavaHelpLibApp
       if (!shownVersion)
       {
          System.out.println(getMessageWithFallback("about.version",
-           "{0} version {1} ({2})", getApplicationName(), VERSION, DATE));
+           "{0} version {1} ({2})", getApplicationName(), 
+           TeXJavaHelpLib.VERSION, TeXJavaHelpLib.VERSION_DATE));
          shownVersion = true;
       }
    }
@@ -239,7 +240,7 @@ public class Xml2Bib implements TeXJavaHelpLibApp
    public String getCopyrightDate()
    {
       String startYr = getCopyrightStartYear();
-      String endYr = DATE.substring(0, 4);
+      String endYr = TeXJavaHelpLib.VERSION_DATE.substring(0, 4);
 
       if (startYr.equals(endYr))
       {
@@ -259,7 +260,7 @@ public class Xml2Bib implements TeXJavaHelpLibApp
 
    public String getApplicationVersion()
    {
-      return VERSION;
+      return TeXJavaHelpLib.VERSION;
    }
 
    protected boolean isNewer(File file1, File file2)
@@ -804,6 +805,4 @@ public class Xml2Bib implements TeXJavaHelpLibApp
    private TeXJavaHelpLib helpLib;
 
    public static final String NAME = "xml2bib";
-   public static final String VERSION = "0.1a";
-   public static final String DATE = "2024-05-16";
 }
