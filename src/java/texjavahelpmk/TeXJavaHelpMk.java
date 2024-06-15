@@ -1522,7 +1522,7 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
       System.out.println();
       System.out.format("Copyright %s Nicola Talbot%n",
        getCopyrightDate());
-      System.out.println(getMessage("about.license"));
+      System.out.println(getMessageWithFallback("about.license", "License"));
       System.out.println("https://github.com/nlct/texjavahelp");
    }
 
