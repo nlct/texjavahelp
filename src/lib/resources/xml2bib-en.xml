@@ -11,9 +11,10 @@
 <entry key="syntax.title">Syntax:</entry>
 <entry key="syntax.options">{0} [&lt;option&gt;]+ &lt;XML file&gt;...</entry>
 <entry key="syntax.in">{0} (or {1}) &lt;XML file&gt;		add &lt;XML file&gt; to the list of input files (cumulative).</entry>
+<entry key="syntax.prop">{0} &lt;prop file&gt;		add key=value &lt;prop file&gt; to the list of input files (cumulative). Property files are always processed after XML files.</entry>
 <entry key="syntax.out">{0} (or {1}) &lt;BIB file&gt;	The output BIB file.</entry>
-<entry key="syntax.provide-xml">{0} (or {1})	Copy XML source files from {2}'s resource directory if missing.</entry>
-<entry key="syntax.copy-overwrite-xml">{0}	Copy XML source files from {2}'s resource directory if missing or if {2}'s file is newer.</entry>
+<entry key="syntax.provide-xml">{0}	Copy XML source files from {1}''s resource directory if missing.</entry>
+<entry key="syntax.copy-overwrite-xml">{0}	Copy XML source files from {1}''s resource directory if missing or if {1}''s file is newer.</entry>
 <entry key="syntax.version">{0} (or {1})	Print version and exit.</entry>
 <entry key="syntax.help">{0} (or {1})		Print this help message and exit.</entry>
 <entry key="syntax.debug">{0}			Switch on debug mode.</entry>

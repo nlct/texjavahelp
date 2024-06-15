@@ -195,11 +195,12 @@ public class Xml2Bib implements TeXJavaHelpLibApp
       System.out.println();
       System.out.println(getMessage("syntax.options", getApplicationName()));
       System.out.println();
-      System.out.println(getMessage("syntax.in", "--in", "-i", getApplicationName()));
+      System.out.println(getMessage("syntax.in", "--in", "-i"));
+      System.out.println(getMessage("syntax.prop", "--prop"));
       System.out.println(getMessage("syntax.out", "--output", "-o"));
       System.out.println(getMessage("syntax.out.charset", "--out-charset"));
       System.out.println(getMessage("syntax.provide-xml",
-         "--provide-xml", "-p", getApplicationName()));
+         "--provide-xml", getApplicationName()));
       System.out.println(getMessage("syntax.copy-overwrite-xml",
           "--copy-overwrite-xml", getApplicationName()));
       System.out.println();
@@ -336,6 +337,18 @@ public class Xml2Bib implements TeXJavaHelpLibApp
             props.loadFromXML(in);
             in.close();
             in = null;
+         }
+
+         // Also support property files with key=value entries
+         if (propFileNames != null)
+         {
+            for (String filename : propFileNames)
+            {
+               in = new FileInputStream(new File(filename));
+               props.load(in);
+               in.close();
+               in = null;
+            }
          }
       }
       finally
@@ -685,7 +698,7 @@ public class Xml2Bib implements TeXJavaHelpLibApp
          {
             verboseLevel = 1;
          }
-         else if (args[i].equals("--provide-xml") || args[i].equals("-p"))
+         else if (args[i].equals("--provide-xml"))
          {
             copyXml = true;
             replaceXml = false;
@@ -711,6 +724,24 @@ public class Xml2Bib implements TeXJavaHelpLibApp
             }
 
             inFileNames.add(args[i]);
+         }
+         else if (args[i].equals("--prop"))
+         {
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                 getMessage("error.syntax.missing_input",
+                   args[i-1]));
+            }
+
+            if (propFileNames == null)
+            {
+               propFileNames = new Vector<String>();
+            }
+
+            propFileNames.add(args[i]);
          }
          else if (args[i].equals("--output") || args[i].equals("-o"))
          {
@@ -797,7 +828,7 @@ public class Xml2Bib implements TeXJavaHelpLibApp
    protected boolean debugMode = false;
    protected boolean shownVersion = false;
    protected File outFile;
-   protected Vector<String> inFileNames;
+   protected Vector<String> inFileNames, propFileNames;
    private Charset outCharset = Charset.defaultCharset();
    protected int verboseLevel = 0;
    protected boolean copyXml = false, replaceXml = false;
