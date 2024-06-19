@@ -873,7 +873,12 @@ public class TeXJavaHelpLib
 
    public NavigationNode getIndexNode()
    {
-      return navigationTree.getNodeById("docindex");
+      return getNavigationNodeById("docindex");
+   }
+
+   public NavigationNode getNavigationNodeById(String id)
+   {
+      return navigationTree == null ? null : navigationTree.getNodeById(id);
    }
 
    public SearchData getSearchData()
@@ -1322,5 +1327,5 @@ public class TeXJavaHelpLib
    protected HashMap<String,Object> resourceProperties;
 
    public static final String VERSION = "0.2a";
-   public static final String VERSION_DATE = "2024-06-08";
+   public static final String VERSION_DATE = "2024-06-19";
 }
