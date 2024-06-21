@@ -403,6 +403,18 @@ public class TeXJavaHelpDemo extends JFrame
    }
 
    @Override
+   public ImageIcon getSmallIcon(String base, String... extensions)
+   {
+      return null;
+   }
+
+   @Override
+   public ImageIcon getLargeIcon(String base, String... extensions)
+   {
+      return null;
+   }
+
+   @Override
    public void message(String msg)
    {
       System.out.println(msg);

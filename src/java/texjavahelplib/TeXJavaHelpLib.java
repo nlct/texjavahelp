@@ -442,6 +442,13 @@ public class TeXJavaHelpLib
 
    public ImageIcon getSmallIcon(String base, String... extensions)
    {
+      ImageIcon ic = application.getSmallIcon(base, extensions);
+
+      if (ic != null)
+      {
+         return ic;
+      }
+
       String basename = resourceIconBase + "/" + base + smallIconSuffix;
 
       for (String ext : extensions)
@@ -474,6 +481,13 @@ public class TeXJavaHelpLib
 
    public ImageIcon getLargeIcon(String base, String... extensions)
    {
+      ImageIcon ic = application.getLargeIcon(base, extensions);
+
+      if (ic != null)
+      {
+         return ic;
+      }
+
       String basename = resourceIconBase + "/" + base + largeIconSuffix;
 
       for (String ext : extensions)
@@ -1327,5 +1341,5 @@ public class TeXJavaHelpLib
    protected HashMap<String,Object> resourceProperties;
 
    public static final String VERSION = "0.2a";
-   public static final String VERSION_DATE = "2024-06-19";
+   public static final String VERSION_DATE = "2024-06-21";
 }

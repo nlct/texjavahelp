@@ -36,6 +36,7 @@ import java.text.MessageFormat;
 
 import java.awt.event.KeyEvent;
 import javax.swing.KeyStroke;
+import javax.swing.ImageIcon;
 
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLibApp;
@@ -185,6 +186,18 @@ public class Xml2Bib implements TeXJavaHelpLibApp
             e.printStackTrace();
          }
       }
+   }
+
+   @Override
+   public ImageIcon getSmallIcon(String base, String... extensions)
+   {
+      return null;
+   }
+
+   @Override
+   public ImageIcon getLargeIcon(String base, String... extensions)
+   {
+      return null;
    }
 
    public void help()

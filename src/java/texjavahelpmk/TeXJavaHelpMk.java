@@ -34,6 +34,7 @@ import java.nio.file.*;
 import java.nio.charset.Charset;
 
 import java.awt.Dimension;
+import javax.swing.ImageIcon;
 
 import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texparserlib.latex.LaTeXSty;
@@ -269,6 +270,18 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
    public boolean isDebuggingOn()
    {
       return debugMode > 0;
+   }
+
+   @Override
+   public ImageIcon getSmallIcon(String base, String... extensions)
+   {
+      return null;
+   }
+
+   @Override
+   public ImageIcon getLargeIcon(String base, String... extensions)
+   {
+      return null;
    }
 
    @Override
