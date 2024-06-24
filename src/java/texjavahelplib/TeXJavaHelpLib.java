@@ -66,31 +66,23 @@ public class TeXJavaHelpLib
      throws IOException
    {
       this(application, application.getApplicationName(),
-         application.getApplicationName().toLowerCase().replaceAll(" ", ""),
-         "/resources", messagesLocale, helpsetLocale);
+         "/resources", messagesLocale, helpsetLocale,
+         application.getApplicationName().toLowerCase().replaceAll(" ", ""));
    }
 
    public TeXJavaHelpLib(TeXJavaHelpLibApp application,
-      String applicationName, String dictPrefix, String resourcebase)
+      String applicationName, String resourcebase,
+      Locale messagesLocale, Locale helpsetLocale, String... dictPrefixes)
     throws IOException
    {
-      this(application, applicationName, dictPrefix, resourcebase,
-        Locale.getDefault(), Locale.getDefault());
+      this(application, applicationName, resourcebase,
+       resourcebase, messagesLocale, helpsetLocale, dictPrefixes);
    }
 
    public TeXJavaHelpLib(TeXJavaHelpLibApp application,
-      String applicationName, String dictPrefix, String resourcebase,
-      Locale messagesLocale, Locale helpsetLocale)
-    throws IOException
-   {
-      this(application, applicationName, dictPrefix, resourcebase,
-       resourcebase, messagesLocale, helpsetLocale);
-   }
-
-   public TeXJavaHelpLib(TeXJavaHelpLibApp application,
-      String applicationName, String dictPrefix, String resourcebase,
+      String applicationName, String resourcebase,
       String dictionaryBase,
-      Locale messagesLocale, Locale helpsetLocale)
+      Locale messagesLocale, Locale helpsetLocale, String... dictPrefixes)
     throws IOException
    {
       this.application = application;
@@ -119,7 +111,7 @@ public class TeXJavaHelpLib
 
       messages = new MessageSystem(this, "texjavahelplib", messagesLocale);
 
-      if (dictPrefix != null)
+      for (String dictPrefix : dictPrefixes)
       {
          if (dictPrefix.endsWith("-"))
          {
@@ -1341,5 +1333,5 @@ public class TeXJavaHelpLib
    protected HashMap<String,Object> resourceProperties;
 
    public static final String VERSION = "0.2a";
-   public static final String VERSION_DATE = "2024-06-22";
+   public static final String VERSION_DATE = "2024-06-24";
 }
