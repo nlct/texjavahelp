@@ -404,6 +404,26 @@ public class NavigationNode implements TreeNode
       return url;
    }
 
+   public boolean isAncestorOf(NavigationNode node)
+   {
+      if (getChildCount() == 0) return false;
+
+      for (NavigationNode childNode : children)
+      {
+         if (childNode.equals(node))
+         {
+            return true;
+         }
+
+         if (childNode.isAncestorOf(node))
+         {
+            return true;
+         }
+      }
+
+      return false;
+   }
+
    protected final String key, ref;
    protected String prefix;
    protected String title;

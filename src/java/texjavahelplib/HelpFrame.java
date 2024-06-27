@@ -58,7 +58,7 @@ import javax.swing.tree.TreePath;
 /**
  * Frame for showing pages of the manual.
  */
-public class HelpFrame extends JFrame
+public class HelpFrame extends JFrame implements HelpPageContainer
 {
    public HelpFrame(TeXJavaHelpLib helpLib, String title)
     throws IOException
@@ -81,7 +81,7 @@ public class HelpFrame extends JFrame
       JMenu settingsMenu = helpLib.createJMenu("menu.helpframe.settings");
       mBar.add(settingsMenu);
 
-      helpPage = new HelpPage(helpLib);
+      helpPage = new HelpPage(helpLib, this);
 
       navTree = new JTree(helpLib.getNavigationTree().getRoot());
       navTree.setEditable(false);
@@ -115,6 +115,7 @@ public class HelpFrame extends JFrame
         new JScrollPane(navTree), new JScrollPane(helpPage));
 
       splitPane.setResizeWeight(0.25);
+      splitPane.setOneTouchExpandable(true);
 
       getContentPane().add(splitPane, "Center");
 
@@ -589,6 +590,7 @@ public class HelpFrame extends JFrame
       return new LowerNavLabel(this, action, textPos, hPos);
    }
 
+   @Override
    public void updateNavWidgets()
    {
       NavigationNode currentNode = helpPage.getCurrentNode();

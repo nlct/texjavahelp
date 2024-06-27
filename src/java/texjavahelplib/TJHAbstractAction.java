@@ -147,6 +147,11 @@ public abstract class TJHAbstractAction extends AbstractAction
 
    }
 
+   public void setToolTipText(String tooltip)
+   {
+      putValue(SHORT_DESCRIPTION, tooltip);
+   }
+
    public abstract void doAction();
 
    @Override

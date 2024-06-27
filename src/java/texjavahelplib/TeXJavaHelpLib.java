@@ -38,6 +38,7 @@ import java.awt.event.ActionEvent;
 import javax.imageio.ImageIO;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -1082,6 +1083,20 @@ public class TeXJavaHelpLib
               }
            }
         };
+   }
+
+   public HelpDialogAction createHelpDialogAction(JDialog owner, String helpId)
+    throws IllegalArgumentException
+   {
+      NavigationNode node = getNavigationNodeById(helpId);
+
+      if (node == null)
+      {
+         throw new IllegalArgumentException(
+            getMessage("error.node_id_not_found", helpId));
+      }
+
+      return new HelpDialogAction(owner, node, this);
    }
 
    public int getMnemonic(String label)

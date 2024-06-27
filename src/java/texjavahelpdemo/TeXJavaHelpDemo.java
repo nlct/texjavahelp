@@ -31,6 +31,7 @@ import java.net.URL;
 
 import java.text.MessageFormat;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.FlowLayout;
@@ -240,6 +241,9 @@ public class TeXJavaHelpDemo extends JFrame
       helpM.add(new JMenuItem(manualAction));
       toolbar.add(manualAction);
 
+      createSampleDialog();
+      helpM.add(createJMenuItem("menu.help", "sampledialog"));
+
       JPanel mainPanel = new JPanel(new FlowLayout());
 
       getContentPane().add(mainPanel, "Center");
@@ -253,6 +257,36 @@ public class TeXJavaHelpDemo extends JFrame
       setSize(dim.width*3/4, dim.height*3/4);
 
       setLocationRelativeTo(null);
+   }
+
+   protected void createSampleDialog()
+   {
+      sampleDialog = new JDialog(this, helpLib.getMessage("sampledialog.title"), true);
+
+      sampleDialog.getContentPane().add(
+        helpLib.createJLabel("sampledialog.message"), BorderLayout.NORTH);
+
+      sampleDialog.getContentPane().add(new JScrollPane(new JTextArea()),
+        BorderLayout.CENTER);
+
+      JPanel buttonPanel = new JPanel();
+      sampleDialog.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+
+      //String helpId = "sec:texjavahelplib";
+      String helpId = "sec:texjavahelpsty";
+
+      try
+      {
+         buttonPanel.add(
+          new JButton(helpLib.createHelpDialogAction(sampleDialog, helpId)));
+      }
+      catch (IllegalArgumentException e)
+      {
+         error(e);
+      }
+
+      sampleDialog.pack();
+      sampleDialog.setLocationRelativeTo(null);
    }
 
    public void setUI(String lookandfeel)
@@ -308,6 +342,10 @@ public class TeXJavaHelpDemo extends JFrame
       else if (action.equals("quit"))
       {
          quit();
+      }
+      else if (action.equals("sampledialog"))
+      {
+         sampleDialog.setVisible(true);
       }
    }
 
@@ -576,6 +614,7 @@ public class TeXJavaHelpDemo extends JFrame
 
    private Properties properties;
 
+   private JDialog sampleDialog;
    private int debugMode = 1;
 
    public final static String APP_NAME = "TeX Java Help Demo";

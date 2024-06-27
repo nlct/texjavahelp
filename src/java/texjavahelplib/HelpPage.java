@@ -45,7 +45,15 @@ import java.beans.PropertyChangeEvent;
  */
 public class HelpPage extends JEditorPane implements HyperlinkListener
 {
-   public HelpPage(TeXJavaHelpLib helpLib)
+   public HelpPage(TeXJavaHelpLib helpLib, HelpPageContainer helpPageContainer)
+     throws IOException
+   {
+      this(helpLib, helpPageContainer,
+         helpLib.getNavigationTree().getRoot());
+   }
+
+   public HelpPage(TeXJavaHelpLib helpLib, HelpPageContainer helpPageContainer,
+      NavigationNode initialPage)
      throws IOException
    {
       super();
@@ -54,12 +62,11 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
       setEditable(false);
 
       this.helpLib = helpLib;
-
-      NavigationTree navTree = helpLib.getNavigationTree();
+      this.helpPageContainer = helpPageContainer;
 
       history = new Vector<HistoryItem>();
 
-      setPage(navTree.getRoot());
+      setPage(initialPage);
 
       addHyperlinkListener(this);
 
@@ -294,7 +301,7 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
             scrollToReference(ref);
          }
 
-         helpLib.getHelpFrame().updateNavWidgets();
+         helpPageContainer.updateNavWidgets();
       }
 
       addBodyFontRuleToStyleSheet();
@@ -475,6 +482,7 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
    }
 
    protected TeXJavaHelpLib helpLib;
+   protected HelpPageContainer helpPageContainer;
    protected NavigationNode currentNode;
 
    protected Vector<HistoryItem> history;

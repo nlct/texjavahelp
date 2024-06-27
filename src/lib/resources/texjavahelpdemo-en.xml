@@ -14,6 +14,14 @@
 <entry key="menu.file.quit.tooltip">Exit application</entry>
 <entry key="menu.file.quit.description">This menu item quits the application</entry>
 
+<entry key="menu.help.sampledialog">Sample Dialog...</entry>
+<entry key="menu.help.sampledialog.mnemonic">D</entry>
+
+<!-- Sample Dialog -->
+
+<entry key="sampledialog.title">Sample Dialog</entry>
+<entry key="sampledialog.message">An example modal dialog box.</entry>
+
 <!-- Application properties -->
 <entry key="properties.comment">Properties file for {0}</entry>
 

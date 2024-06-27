@@ -44,6 +44,8 @@
 
 <!-- Menus and Buttons for the Help System -->
 
+<!-- Main Help Frame -->
+
 <entry key="index.menu.helpframe">Help Frame Menus</entry>
 
 <!-- Navigation -->
@@ -177,6 +179,47 @@
 <entry key="help.settings.nav.label_limit.mnemonic">M</entry>
 <entry key="help.settings.nav.show_label">Include text</entry>
 <entry key="help.settings.nav.show_label.mnemonic">T</entry>
+
+<!-- Secondary Help Dialogs  -->
+
+<entry key="index.menu.helpdialog">Help Dialog Menu</entry>
+
+<!-- Navigation -->
+
+<entry key="menu.helpdialog.navigation">Navigation</entry>
+<entry key="menu.helpdialog.navigation.mnemonic">N</entry>
+<entry key="menu.helpdialog.navigation.tooltip">Navigate the document history</entry>
+<entry key="menu.helpdialog.navigation.description">Actions to switch the view to a previously visited page for this topic</entry>
+
+<entry key="menu.helpdialog.navigation.historyreset">Reset</entry>
+<entry key="menu.helpdialog.navigation.historyreset.mnemonic">R</entry>
+<entry key="menu.helpdialog.navigation.historyreset.keystroke">alt HOME</entry>
+<entry key="menu.helpdialog.navigation.historyreset.tooltip">Back to page {0}</entry>
+<entry key="menu.helpdialog.navigation.historyreset.description">Go back to the topic''s page</entry>
+
+<entry key="menu.helpdialog.navigation.historyback">Back</entry>
+<entry key="menu.helpdialog.navigation.historyback.mnemonic">B</entry>
+<entry key="menu.helpdialog.navigation.historyback.keystroke">alt shift LEFT</entry>
+<entry key="menu.helpdialog.navigation.historyback.tooltip">History Back</entry>
+<entry key="menu.helpdialog.navigation.historyback.description">Go back</entry>
+
+<entry key="menu.helpdialog.navigation.historyforward">Forward</entry>
+<entry key="menu.helpdialog.navigation.historyforward.mnemonic">F</entry>
+<entry key="menu.helpdialog.navigation.historyforward.keystroke">alt shift RIGHT</entry>
+<entry key="menu.helpdialog.navigation.historyforward.tooltip">History Forward</entry>
+<entry key="menu.helpdialog.navigation.historyforward.description">Go forward</entry>
+
+<entry key="menu.helpdialog.navigation.previous">Previous</entry>
+<entry key="menu.helpdialog.navigation.previous.mnemonic">P</entry>
+<entry key="menu.helpdialog.navigation.previous.tooltip">Previous Page</entry>
+<entry key="menu.helpdialog.navigation.previous.description">Go to the previous page</entry>
+<entry key="menu.helpdialog.navigation.previous.keystroke">alt LEFT</entry>
+
+<entry key="menu.helpdialog.navigation.next">Next</entry>
+<entry key="menu.helpdialog.navigation.next.mnemonic">N</entry>
+<entry key="menu.helpdialog.navigation.next.tooltip">Next Page</entry>
+<entry key="menu.helpdialog.navigation.next.description">Go to the next page</entry>
+<entry key="menu.helpdialog.navigation.next.keystroke">alt RIGHT</entry>
 
 <!-- Version information -->
 <entry key="about.version">{0} ({1})</entry>
