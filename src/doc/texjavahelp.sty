@@ -1188,6 +1188,12 @@
  \end{pinnedbox}% 
 }
 
+\newcommand{\mainentry}[1]{%
+ \glsxtrglossentry{#1}%
+ \glsxtrtitleorpdforheading
+  {\glsadd[format=main]{#1}}{}{}%
+}
+
 \NewDocumentCommand\pkgdef{O{}m}{%
  \begin{codebox}[#1]%
  \glsadd[format=main]{pkg.#2}%
@@ -1536,28 +1542,28 @@
 \ExplSyntaxOff
 
 \newcommand{\manualtext}[2]{%
- \ifglsentryexists{manual.#1}{\glsentrytext{manual.#1}}{#2}
+ \ifglsentryexists{manual.#1}{\glsentrytext{manual.#1}}{#2}%
 }
 \newcommand{\Manualtext}[2]{%
- \ifglsentryexists{manual.#1}{\Glsentrytext{manual.#1}}{#2}
+ \ifglsentryexists{manual.#1}{\Glsentrytext{manual.#1}}{#2}%
 }
 \newcommand{\ManualText}[2]{\Manualtext{#1}{\makefirstuc{#2}}}
 \MFUaddmap{\manualtext}{\ManualText}
 
 \newcommand{\manualplural}[2]{%
- \ifglsentryexists{manual.#1}{\glsentryplural{manual.#1}}{#2}
+ \ifglsentryexists{manual.#1}{\glsentryplural{manual.#1}}{#2}%
 }
 \newcommand{\Manualplural}[2]{%
- \ifglsentryexists{manual.#1}{\Glsentryplural{manual.#1}}{#2}
+ \ifglsentryexists{manual.#1}{\Glsentryplural{manual.#1}}{#2}%
 }
 \newcommand{\ManualPlural}[2]{\Manualplural{#1}{\makefirstuc{#2}}}
 \MFUaddmap{\manualplural}{\ManualPlural}
 
 \newcommand{\manualdesc}[2]{%
- \ifglsentryexists{manual.#1}{\glsentrydesc{manual.#1}}{#2}
+ \ifglsentryexists{manual.#1}{\glsentrydesc{manual.#1}}{#2}%
 }
 \newcommand{\Manualdesc}[2]{%
- \ifglsentryexists{manual.#1}{\Glsentrydesc{manual.#1}}{#2}
+ \ifglsentryexists{manual.#1}{\Glsentrydesc{manual.#1}}{#2}%
 }
 \newcommand{\ManualDesc}[2]{\Manualdesc{#1}{\makefirstuc{#2}}}
 \MFUaddmap{\manualdesc}{\ManualDesc}
@@ -1567,10 +1573,16 @@
 \newcommand{\Figurename}{\Manualtext{figure}{Figure}}
 \newcommand{\Figuresname}{\Manualplural{figure}{Figures}}
 
+\newcommand{\figurecaptionname}{\Manualtext{figure}{Figure}}
+\renewcommand{\fnum@figure}{\figurecaptionname~\thefigure}
+
 \renewcommand{\tablename}{\manualtext{table}{table}}
 \newcommand{\tablesname}{\manualplural{table}{tables}}
 \newcommand{\Tablename}{\Manualtext{table}{Table}}
 \newcommand{\Tablesname}{\Manualplural{table}{Tables}}
+
+\newcommand{\tablecaptionname}{\Manualtext{table}{Table}}
+\renewcommand{\fnum@table}{\tablecaptionname~\thetable}
 
 \newcommand{\listofexamplesname}{\manualtext{listofexamples}{Examples}}
 \renewcommand{\contentsname}{\manualtext{contents}{Contents}}

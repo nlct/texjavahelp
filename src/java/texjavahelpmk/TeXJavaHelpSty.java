@@ -83,6 +83,7 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       addStandaloneDefCommands();
       registerControlSequence(new WidgetDef(pinnedBox, rightBox, noteBox, glossariesSty));
+      registerControlSequence(new MainEntry(glossariesSty));
 
       addCodeBoxCommands();
 
@@ -348,6 +349,15 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(createLangCs("Figuresname",
         "Manualplural", "figure", "Figures"));
 
+      registerControlSequence(createLangCs("figurecaptionname",
+        "ManualText", "figure", "figure"));
+
+      registerControlSequence(new GenericCommand(true,
+        "fnum@figure", null, TeXParserUtils.createStack(getListener(),
+         new TeXCsRef("figurecaptionname"),
+         getListener().getSpace(),
+         new TeXCsRef("thefigure"))));
+
       registerControlSequence(createLangCs("table", "table"));
       registerControlSequence(createLangCs("Tablename",
         "Manualtext", "table", "Table"));
@@ -355,6 +365,15 @@ public class TeXJavaHelpSty extends UserGuideSty
         "manualplural", "table", "tables"));
       registerControlSequence(createLangCs("Tablesname",
         "Manualplural", "table", "Tables"));
+
+      registerControlSequence(createLangCs("tablecaptionname",
+        "ManualText", "table", "table"));
+
+      registerControlSequence(new GenericCommand(true,
+        "fnum@table", null, TeXParserUtils.createStack(getListener(),
+         new TeXCsRef("tablecaptionname"),
+         getListener().getSpace(),
+         new TeXCsRef("thetable"))));
 
       registerControlSequence(createLangCs("listofexamples", "Examples"));
       registerControlSequence(createLangCs("contents", "Contents"));

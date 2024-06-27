@@ -64,6 +64,8 @@ public class ManualText extends GlsEntryField
    public TeXObjectList expandonce(TeXParser parser, TeXObjectList stack)
      throws IOException
    {
+      TeXParserListener listener = parser.getListener();
+
       GlsLabel glslabel = popEntryLabel(parser, stack);
       TeXObject defText = popArg(parser, stack);
 
@@ -79,7 +81,7 @@ public class ManualText extends GlsEntryField
          }
          else
          {
-            expanded = parser.getListener().createStack();
+            expanded = listener.createStack();
             expanded.add(defText);
          }
 
@@ -88,19 +90,19 @@ public class ManualText extends GlsEntryField
          switch (defValCaseChange)
          {
             case SENTENCE:
-               caseChangeCs = new TeXCsRef("makefirstuc");
+               caseChangeCs = listener.getControlSequence("makefirstuc");
             break;
             case TITLE:
-               caseChangeCs = new TeXCsRef("glsxtrfieldtitlecasecs");
+               caseChangeCs = listener.getControlSequence("glsxtrfieldtitlecasecs");
             break;
             case TO_UPPER:
-               caseChangeCs = new TeXCsRef("mfirstucMakeUppercase");
+               caseChangeCs = listener.getControlSequence("mfirstucMakeUppercase");
             break;
          }
 
          if (caseChangeCs != null)
          {
-            Group grp = parser.getListener().createGroup();
+            Group grp = listener.createGroup();
             grp.addAll(expanded);
             expanded.clear();
             expanded.add(caseChangeCs);

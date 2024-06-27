@@ -72,11 +72,33 @@ public class FloatFig extends ControlSequence
       expanded.add(elem);
 
       listener.stepcounter("figure");
-      ControlSequence figName = listener.getControlSequence("figurename");
-      ControlSequence theFig = listener.getControlSequence("thefigure");
 
-      TeXObjectList labelText = TeXParserUtils.createStack(listener,
-       figName, listener.getSpace(), theFig);
+      ControlSequence cs = parser.getControlSequence("fnum@figure");
+
+      TeXObject captionPrefix;
+      TeXObjectList labelText;
+
+      if (cs == null)
+      {
+         ControlSequence figName = parser.getControlSequence("figurecaptionname");
+
+         if (figName == null)
+         {
+            figName = listener.getControlSequence("figurename");
+         }
+
+         ControlSequence theFig = listener.getControlSequence("thefigure");
+
+         labelText = TeXParserUtils.createStack(listener,
+           figName, listener.getSpace(), theFig);
+         captionPrefix =  TeXParserUtils.createStack(listener,
+           figName, listener.getSpace(), theFig);
+      }
+      else
+      {
+         labelText = TeXParserUtils.createStack(listener, cs);
+         captionPrefix = cs;
+      }
 
       if (lof == null)
       {
@@ -100,8 +122,7 @@ public class FloatFig extends ControlSequence
 
       expanded.add(listener.getControlSequence("@makecaption"));
 
-      expanded.add(TeXParserUtils.createGroup(listener,
-       figName, listener.getSpace(), theFig));
+      expanded.add(TeXParserUtils.createGroup(listener, captionPrefix));
 
       expanded.add(TeXParserUtils.createGroup(listener, caption));
 
