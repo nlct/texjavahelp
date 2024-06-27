@@ -950,6 +950,20 @@ public class TeXJavaHelpLib
       openHelp();
    }
 
+   public void openHelp(NavigationNode node)
+    throws UnknownNodeException,IOException,HelpSetNotInitialisedException
+   {
+      if (helpFrame == null)
+      {
+         throw new HelpSetNotInitialisedException(
+           getMessageWithFallback(
+           "error.no_helpset", "Helpset has not been initialised"));
+      }
+
+      helpFrame.setPage(node);
+      openHelp();
+   }
+
    public void setKeyStrokeProperty(String propertyName, KeyStroke keyStroke)
    {
       if (resourceProperties == null)
@@ -1076,6 +1090,34 @@ public class TeXJavaHelpLib
               try
               {
                  helpLib.openHelpForId(helpID);
+              }
+              catch (Exception e)
+              {
+                 helpLib.getApplication().error(e);
+              }
+           }
+        };
+   }
+
+   public TJHAbstractAction createHelpAction(NavigationNode node, JComponent comp)
+   {
+      return createHelpAction(node, "action", "help", "help", "help", 
+       getKeyStroke("action.help"), comp);
+   }
+
+   public TJHAbstractAction createHelpAction(final NavigationNode node,
+      String msgParentTag, String childTag, String action,
+      String iconPrefix, KeyStroke keyStroke, JComponent comp)
+   {
+      return  new TJHAbstractAction(this,
+        msgParentTag, childTag, action, iconPrefix, keyStroke, null, comp)
+        {
+           @Override
+           public void doAction()
+           {
+              try
+              {
+                 helpLib.openHelp(node);
               }
               catch (Exception e)
               {
