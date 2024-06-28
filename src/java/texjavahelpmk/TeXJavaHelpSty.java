@@ -83,7 +83,7 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       addStandaloneDefCommands();
       registerControlSequence(new WidgetDef(pinnedBox, rightBox, noteBox, glossariesSty));
-      registerControlSequence(new MainEntry(glossariesSty));
+      registerControlSequence(new SectionEntry(glossariesSty));
 
       addCodeBoxCommands();
 
@@ -109,6 +109,8 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new GenericCommand("continueline"));
       registerControlSequence(new GenericCommand("ContExplan"));
+      registerControlSequence(listener.createSymbol(
+        "continuesymbol", 0x21A9));
 
       addLangCommands();
 

@@ -1189,12 +1189,6 @@
  \end{pinnedbox}% 
 }
 
-\newcommand{\mainentry}[1]{%
- \glsxtrglossentry{#1}%
- \glsxtrtitleorpdforheading
-  {\glsadd[format=main]{#1}}{}{}%
-}
-
 \NewDocumentCommand\pkgdef{O{}m}{%
  \begin{codebox}[#1]%
  \glsadd[format=main]{pkg.#2}%
@@ -1236,6 +1230,12 @@
 \newrobustcmd*{\inlineglsdef}[1]{%
  \glsadd[format=main]{#1}%
  \glsxtrglossentry{#1}%
+}
+
+\NewDocumentCommand\sectionentry{O{\section}om}{%
+ #1{\glsxtrglossentry{#3}}%
+ \IfValueTF{#2}{\label{#2}}{\label{sec:#3}}%
+ \glsadd[format=main]{#3}%
 }
 
 \newcommand*{\filetext}[1]{\glsfmttext{file.#1}}

@@ -26,14 +26,14 @@ import com.dickimawbooks.texparserlib.latex.*;
 
 import com.dickimawbooks.texparserlib.latex.glossaries.*;
 
-public class MainEntry extends AbstractGlsCommand
+public class SectionEntry extends AbstractGlsCommand
 {
-   public MainEntry(GlossariesSty sty)
+   public SectionEntry(GlossariesSty sty)
    {
-      this("mainentry", sty);
+      this("sectionentry", sty);
    }
 
-   public MainEntry(String name, GlossariesSty sty)
+   public SectionEntry(String name, GlossariesSty sty)
    {
       super(name, sty);
    }
@@ -41,7 +41,7 @@ public class MainEntry extends AbstractGlsCommand
    @Override
    public Object clone()
    {
-      return new MainEntry(getName(), sty);
+      return new SectionEntry(getName(), sty);
    }
 
    @Override
@@ -51,37 +51,40 @@ public class MainEntry extends AbstractGlsCommand
       TeXParserListener listener = parser.getListener();
       TeXObjectList expanded = listener.createStack();
 
+      TeXObject secCs = popOptArg(parser, stack);
+      String secLabel = popOptLabelString(parser, stack);
       GlsLabel glslabel = popEntryLabel(parser, stack);
 
-      expanded.add(listener.getControlSequence("glsxtrglossentry"));
-      expanded.add(TeXParserUtils.createGroup(listener, glslabel));
+      if (secCs == null)
+      {
+         expanded.add(listener.getControlSequence("section"));
+      }
+      else
+      {
+         expanded.add(secCs, true);
+      }
+
+      Group grp = listener.createGroup();
+      expanded.add(grp);
+
+      grp.add(listener.getControlSequence("glsxtrglossentry"));
+      grp.add(TeXParserUtils.createGroup(listener, glslabel));
+
+      expanded.add(listener.getControlSequence("label"));
+
+      if (secLabel == null)
+      {
+         expanded.addAll(listener.createString("sec:"+glslabel.getLabel()));
+      }
+      else
+      {
+         expanded.addAll(listener.createString(secLabel));
+      }
+
       expanded.add(listener.getControlSequence("glsadd"));
       expanded.add(TeXParserUtils.createGroup(listener, glslabel));
 
       return expanded;
    }
 
-   @Override
-   public void process(TeXParser parser, TeXObjectList stack)
-    throws IOException
-   {
-      TeXParserListener listener = parser.getListener();
-      TeXObjectList expanded = listener.createStack();
-
-      GlsLabel glslabel = popEntryLabel(parser, stack);
-
-      expanded.add(listener.getControlSequence("glsxtrglossentry"));
-      expanded.add(glslabel);
-      expanded.add(listener.getControlSequence("glsadd"));
-      expanded.add(glslabel);
-
-      TeXParserUtils.process(expanded, parser, stack);
-   }
-
-   @Override
-   public void process(TeXParser parser)
-    throws IOException
-   {
-      process(parser, parser);
-   }
 }
