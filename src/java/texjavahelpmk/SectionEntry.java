@@ -74,11 +74,11 @@ public class SectionEntry extends AbstractGlsCommand
 
       if (secLabel == null)
       {
-         expanded.addAll(listener.createString("sec:"+glslabel.getLabel()));
+         expanded.add(listener.createGroup("sec:"+glslabel.getLabel()));
       }
       else
       {
-         expanded.addAll(listener.createString(secLabel));
+         expanded.add(listener.createGroup(secLabel));
       }
 
       expanded.add(listener.getControlSequence("glsadd"));
@@ -86,5 +86,4 @@ public class SectionEntry extends AbstractGlsCommand
 
       return expanded;
    }
-
 }
