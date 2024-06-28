@@ -296,7 +296,7 @@ public class HelpDialog extends JDialog implements HelpPageContainer
    public void nextPage()
    {
       NavigationNode currentNode = helpPage.getCurrentNode();
-      setPage(currentNode.getPreviousNode());
+      setPage(currentNode.getNextNode());
    }
 
    public void setPage(NavigationNode node)
