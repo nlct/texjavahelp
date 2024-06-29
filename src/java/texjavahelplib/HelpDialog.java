@@ -26,12 +26,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 
-import javax.swing.JDialog;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTree;
+import javax.swing.*;
 import javax.swing.tree.TreePath;
 
 import javax.swing.event.TreeSelectionListener;
@@ -79,6 +74,15 @@ public class HelpDialog extends JDialog implements HelpPageContainer
 
       helpPage = new HelpPage(helpLib, this, pageNode);
 
+      JComponent toolBar = new JPanel(new BorderLayout());
+      getContentPane().add(toolBar, BorderLayout.NORTH);
+
+      JComponent navComp = new JPanel();
+      toolBar.add(navComp, BorderLayout.WEST);
+
+      JComponent historyNavComp = new JPanel();
+      toolBar.add(historyNavComp, BorderLayout.EAST);
+
       JMenuBar mBar = new JMenuBar();
       setJMenuBar(mBar);
 
@@ -87,21 +91,22 @@ public class HelpDialog extends JDialog implements HelpPageContainer
       JMenu navMenu = helpLib.createJMenu("menu.helpframe.navigation");
       mBar.add(navMenu);
 
-      historyResetAction = new TJHAbstractAction(helpLib,
-        "menu.helpdialog.navigation", "historyreset")
+      resetAction = new TJHAbstractAction(helpLib,
+        "menu.helpdialog.navigation", "reset")
        {
          @Override
          public void doAction()
          {
-            historyReset();
+            reset();
          }
        };
 
-      historyResetAction.setToolTipText(
-        helpLib.getMessage("menu.helpdialog.navigation.historyreset.tooltip",
+      resetAction.setToolTipText(
+        helpLib.getMessage("menu.helpdialog.navigation.reset.tooltip",
           pageNode.getTitle()));
 
-      navMenu.add(historyResetAction);
+      navComp.add(createActionComponent(resetAction));
+      navMenu.add(resetAction);
 
       historyBackAction = new TJHAbstractAction(helpLib,
         "menu.helpdialog.navigation", "historyback")
@@ -113,6 +118,7 @@ public class HelpDialog extends JDialog implements HelpPageContainer
          }
        };
 
+      historyNavComp.add(createActionComponent(historyBackAction));
       navMenu.add(historyBackAction);
 
       historyForwardAction = new TJHAbstractAction(helpLib,
@@ -125,6 +131,7 @@ public class HelpDialog extends JDialog implements HelpPageContainer
          }
        };
 
+      historyNavComp.add(createActionComponent(historyForwardAction));
       navMenu.add(historyForwardAction);
 
       if (hasChildren)
@@ -141,6 +148,7 @@ public class HelpDialog extends JDialog implements HelpPageContainer
             }
          };
 
+         navComp.add(createActionComponent(previousAction));
          navMenu.add(previousAction);
 
          nextAction = new TJHAbstractAction(helpLib,
@@ -153,6 +161,7 @@ public class HelpDialog extends JDialog implements HelpPageContainer
             }
          };
 
+         navComp.add(createActionComponent(nextAction));
          navMenu.add(nextAction);
 
          navTree = new JTree(pageNode);
@@ -180,7 +189,7 @@ public class HelpDialog extends JDialog implements HelpPageContainer
          JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
            new JScrollPane(navTree), new JScrollPane(helpPage));
 
-         splitPane.setResizeWeight(0.25);
+         splitPane.setResizeWeight(0.1);
          splitPane.setOneTouchExpandable(true);
 
          getContentPane().add(splitPane, BorderLayout.CENTER);
@@ -197,6 +206,11 @@ public class HelpDialog extends JDialog implements HelpPageContainer
       setSize(dim.width/2, dim.height/2);
    }
 
+   protected JButton createActionComponent(Action action)
+   {
+      return helpLib.createToolBarButton(action);
+   }
+
    public void display()
    {
       HelpFrame helpFrame = helpLib.getHelpFrame();
@@ -208,7 +222,7 @@ public class HelpDialog extends JDialog implements HelpPageContainer
          helpFrame.setVisible(false);
       }
 
-      setHelpFont(helpFrame.getHelpFont());
+      updateHelpFont();
 
       try
       {
@@ -223,13 +237,15 @@ public class HelpDialog extends JDialog implements HelpPageContainer
       setVisible(true);
    }
 
-   public void setHelpFont(Font font)
+   public void updateHelpFont()
    {
-      helpPage.setFontStyle(font.getFamily(), font.getSize());
+      HelpFontSettings fontSettings = helpLib.getHelpFrame().getHelpFontSettings();
+
+      helpPage.updateFonts(fontSettings);
 
       if (navTree != null)
       {
-         navTree.setFont(font);
+         navTree.setFont(fontSettings.getBodyFont());
       }
    }
 
@@ -245,7 +261,7 @@ public class HelpDialog extends JDialog implements HelpPageContainer
       }
    }
 
-   public void historyReset()
+   public void reset()
    {
       try
       {
@@ -327,7 +343,7 @@ public class HelpDialog extends JDialog implements HelpPageContainer
 
       historyBackAction.setEnabled(helpPage.hasBackHistory());
       historyForwardAction.setEnabled(helpPage.hasForwardHistory());
-      historyResetAction.setEnabled(!currentNode.equals(pageNode));
+      resetAction.setEnabled(!currentNode.equals(pageNode));
 
       if (navTree != null)
       {
@@ -354,11 +370,6 @@ public class HelpDialog extends JDialog implements HelpPageContainer
       }
    }
 
-   public Font getHelpFont()
-   {
-      return helpPage.getBodyFont();
-   } 
-
    public TeXJavaHelpLib getHelpLib()
    {
       return helpLib;
@@ -367,7 +378,7 @@ public class HelpDialog extends JDialog implements HelpPageContainer
    protected HelpPage helpPage;
    protected TeXJavaHelpLib helpLib;
    protected NavigationNode pageNode;
-   protected TJHAbstractAction historyResetAction,
+   protected TJHAbstractAction resetAction,
      historyBackAction, historyForwardAction;
 
    // null if node has no children

@@ -18,7 +18,13 @@
 */
 package com.dickimawbooks.texjavahelplib;
 
+import java.util.Locale;
+import java.util.Vector;
+
+import java.text.Collator;
+
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
@@ -27,15 +33,10 @@ import java.awt.Insets;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 
-import javax.swing.JFrame;
-import javax.swing.JTextArea;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JComboBox;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.Box;
+import javax.swing.*;
+
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.StyleSheet;
 
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
@@ -43,13 +44,14 @@ import javax.swing.event.ChangeEvent;
 /**
  * Frame for showing font selector.
  */
-public class HelpFontSettingsFrame extends JFrame
+public class HelpFontSettingsFrame extends JFrame implements ItemListener
 {
    public HelpFontSettingsFrame(final HelpFrame helpFrame)
    {
       super(helpFrame.getHelpLib().getMessage("help.settings.font.title"));
 
       this.helpFrame = helpFrame;
+      sampleHelpFontSettings = new HelpFontSettings();
 
       init();
    }
@@ -58,10 +60,28 @@ public class HelpFontSettingsFrame extends JFrame
    {
       TeXJavaHelpLib helpLib = helpFrame.getHelpLib();
 
-      sampleComp = new JTextArea(helpLib.getMessage(
-       "text.help.settings.font_sample"), 3, 0);
-      sampleComp.setLineWrap(true);
-      sampleComp.setWrapStyleWord(true);
+      String locPrefix = helpLib.getMessageIfExists("manual.location_prefix");
+
+      if (locPrefix == null)
+      {
+         locPrefix = helpLib.getMessage("symbol.help.navigation.history.pointer");
+      }
+
+      String iconSample = locPrefix+"\u279C";
+      String keystrokeSample = "\u21E7\u21B9";
+
+      String sample = String.format(
+         "<html><style>%s %s %s { font-family: monospace; }</style><body>%s<pre class=\"code\">\\ | / -- * + %% ~ # { } [ ] ^ _</pre><p><span class=\"locationprefix\">%s</span> %s<span title=\"%s\" class=\"icon\">\u279C</span>%s <span class=\"keystroke\">I</span> <span class=\"keystroke\">L</span> <span class=\"keystroke\">1</span> <span class=\"keystroke\">\u21E7</span> <span class=\"keystroke\">\u21B9</span></body></html>",
+         TeXJavaHelpLib.KEYSTROKE_CSS,
+         TeXJavaHelpLib.ICON_CSS,
+         TeXJavaHelpLib.MONO_CSS_CLASSES,
+         helpLib.getMessage("text.help.settings.font_sample"),
+         locPrefix,
+         helpLib.getMessage("menu.help"),
+         helpLib.getMessage("manual.menu_separator_title"),
+         helpLib.getMessage("menu.help.manual"));
+
+      sampleComp = new JEditorPane("text/html", sample);
       sampleComp.setEditable(false);
 
       sampleComp.setMargin(new Insets(4, 4, 4, 4));
@@ -71,39 +91,75 @@ public class HelpFontSettingsFrame extends JFrame
       Box box = Box.createVerticalBox();
       box.setAlignmentX(0.0f);
 
-      getContentPane().add(box, "Center");
+      getContentPane().add(new JScrollPane(box), "Center");
 
-      JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-      panel.setAlignmentX(0.0f);
-
+      JComponent panel = createRow();
       box.add(panel);
-
-      JLabel familyLabel = helpLib.createJLabel("help.settings.font.family");
-      familyLabel.setAlignmentX(0.0f);
 
       GraphicsEnvironment grp = GraphicsEnvironment.getLocalGraphicsEnvironment();
-      fontFamily = new JComboBox<String>(grp.getAvailableFontFamilyNames());
-      fontFamily.addItemListener(new ItemListener()
-       {
-          @Override
-          public void itemStateChanged(ItemEvent e)
-          {
-             updateSample();
-          }
-       });
+      Locale locale = helpLib.getMessagesLocale();
+
+      Font[] allFonts = grp.getAllFonts();
+      fontNames = new Vector<String>(allFonts.length);
+      iconFontNames = new Vector<String>(allFonts.length);
+      keystrokeFontNames = new Vector<String>(allFonts.length);
+      monoFontNames = new Vector<String>(allFonts.length);
+
+      for (Font font : allFonts)
+      {
+         String name = font.getFamily(locale);
+
+         if (!fontNames.contains(name))
+         {
+            fontNames.add(name);
+         }
+
+         if (font.canDisplayUpTo(iconSample) == -1)
+         {
+            if (!iconFontNames.contains(name))
+            {
+               iconFontNames.add(name);
+            }
+         }
+
+         if (font.canDisplayUpTo(keystrokeSample) == -1)
+         {
+            if (!keystrokeFontNames.contains(name))
+            {
+               keystrokeFontNames.add(name);
+            }
+         }
+
+         if (!monoFontNames.contains(name))
+         {
+            FontMetrics fontMetrics = helpFrame.getHelpFontMetrics(font);
+
+            if (fontMetrics.charWidth('m') == fontMetrics.charWidth('i'))
+            {
+               monoFontNames.add(name);
+            }
+         }
+      }
+
+      Collator collator = Collator.getInstance(locale);
+      fontNames.sort(collator);
+      iconFontNames.sort(collator);
+      keystrokeFontNames.sort(collator);
+      monoFontNames.sort(collator);
+
+      // Default font family
+
+      fontFamily = new JComboBox<String>(fontNames);
+      fontFamily.addItemListener(this);
       fontFamily.setAlignmentX(0.0f);
 
-      familyLabel.setLabelFor(fontFamily);
-
-      panel.add(familyLabel);
+      panel.add(createJLabel("help.settings.font.family", fontFamily));
       panel.add(fontFamily);
 
-      panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-      panel.setAlignmentX(0.0f);
+      panel = createRow();
       box.add(panel);
 
-      JLabel sizeLabel = helpLib.createJLabel("help.settings.font.size");
-      sizeLabel.setAlignmentX(0.0f);
+      // Default font size
 
       fontSizeSpinnerModel = new SpinnerNumberModel(12, 2, 100, 1);
       fontSizeSpinner = new JSpinner(fontSizeSpinnerModel);
@@ -117,10 +173,41 @@ public class HelpFontSettingsFrame extends JFrame
        });
       fontSizeSpinner.setAlignmentX(0.0f);
 
-      sizeLabel.setLabelFor(fontSizeSpinner);
-
-      panel.add(sizeLabel);
+      panel.add(createJLabel("help.settings.font.size", fontSizeSpinner));
       panel.add(fontSizeSpinner);
+
+      // Icon font family
+
+      panel = createRow();
+      box.add(panel);
+
+      iconFontFamily = new JComboBox<String>(iconFontNames);
+      iconFontFamily.addItemListener(this);
+      iconFontFamily.setAlignmentX(0.0f);
+
+      panel.add(createJLabel("help.settings.icon_font.family", iconFontFamily));
+      panel.add(iconFontFamily);
+
+      panel = createRow();
+      box.add(panel);
+
+      keystrokeFontFamily = new JComboBox<String>(keystrokeFontNames);
+      keystrokeFontFamily.addItemListener(this);
+      keystrokeFontFamily.setAlignmentX(0.0f);
+
+      panel.add(createJLabel("help.settings.keystroke_font.family",
+         keystrokeFontFamily));
+      panel.add(keystrokeFontFamily);
+
+      panel = createRow();
+      box.add(panel);
+
+      monoFontFamily = new JComboBox<String>(monoFontNames);
+      monoFontFamily.addItemListener(this);
+      monoFontFamily.setAlignmentX(0.0f);
+
+      panel.add(createJLabel("help.settings.mono_font.family", monoFontFamily));
+      panel.add(monoFontFamily);
 
       box.add(Box.createVerticalStrut(40));
 
@@ -163,9 +250,7 @@ public class HelpFontSettingsFrame extends JFrame
          @Override
          public void doAction()
          {
-            helpFrame.setHelpFont((String)fontFamily.getSelectedItem(),
-              fontSizeSpinnerModel.getNumber().intValue());
-
+            apply();
             closeButton.setVisible(true);
             cancelButton.setVisible(false);
          }
@@ -178,8 +263,7 @@ public class HelpFontSettingsFrame extends JFrame
          @Override
          public void doAction()
          {
-            helpFrame.setHelpFont((String)fontFamily.getSelectedItem(),
-              fontSizeSpinnerModel.getNumber().intValue());
+            apply();
             setVisible(false);
          }
        };
@@ -192,13 +276,77 @@ public class HelpFontSettingsFrame extends JFrame
       pack();
    }
 
-   protected void updateSample()
+   protected JComponent createRow()
    {
-      sampleComp.setFont(new Font((String)fontFamily.getSelectedItem(),
-        Font.PLAIN, fontSizeSpinnerModel.getNumber().intValue()));
+      JComponent comp = new JPanel(new FlowLayout(FlowLayout.LEADING));
+      comp.setAlignmentX(0.0f);
+      return comp;
    }
 
-   public void open(Font f)
+   protected JLabel createJLabel(String label, JComponent comp)
+   {
+      JLabel jl = helpFrame.getHelpLib().createJLabel(label);
+      jl.setAlignmentX(0.0f);
+
+      if (comp != null)
+      {
+         jl.setLabelFor(comp);
+      }
+
+      return jl;
+   }
+
+   protected void apply()
+   {
+      updateSampleSettings();
+      helpFrame.setHelpFont(sampleHelpFontSettings);
+   }
+
+   @Override
+   public void itemStateChanged(ItemEvent e)
+   {
+      updateSample();
+
+      if (closeButton.isVisible())
+      {
+         closeButton.setVisible(false);
+         cancelButton.setVisible(true);
+      }
+   }
+
+   protected void updateSampleSettings()
+   {
+      sampleHelpFontSettings.setBodyFontSize(
+         fontSizeSpinnerModel.getNumber().intValue());
+
+      sampleHelpFontSettings.setBodyFontCssName(
+        HelpFontSettings.getFontCssName(
+           (String)fontFamily.getSelectedItem()));
+
+      sampleHelpFontSettings.setIconFontCssName(
+        HelpFontSettings.getFontCssName(
+           (String)iconFontFamily.getSelectedItem()));
+
+      sampleHelpFontSettings.setKeyStrokeFontCssName(
+        HelpFontSettings.getFontCssName(
+           (String)keystrokeFontFamily.getSelectedItem()));
+
+      sampleHelpFontSettings.setMonoFontCssName(
+        HelpFontSettings.getFontCssName(
+           (String)monoFontFamily.getSelectedItem()));
+   }
+
+   protected void updateSample()
+   {
+      updateSampleSettings();
+
+      HTMLDocument doc = (HTMLDocument)sampleComp.getDocument();
+      StyleSheet styles = doc.getStyleSheet();
+
+      sampleHelpFontSettings.addFontRulesToStyleSheet(styles);
+   }
+
+   public void open()
    {
       closeButton.setVisible(false);
       cancelButton.setVisible(true);
@@ -213,9 +361,22 @@ public class HelpFontSettingsFrame extends JFrame
          setVisible(true);
       }
 
-      fontFamily.setSelectedItem(f.getFamily());
+      sampleHelpFontSettings.copyFrom(helpFrame.getHelpFontSettings());
 
-      setFontSize(f.getSize());
+      int size = sampleHelpFontSettings.getBodyFontSize();
+      String bodyFont = sampleHelpFontSettings.getBodyFontName();
+      String iconFont = sampleHelpFontSettings.getIconFontName();
+      String keyStrokeFont = sampleHelpFontSettings.getKeyStrokeFontName();
+      String monoFont = sampleHelpFontSettings.getMonoFontName();
+
+      setFontSize(size);
+
+      fontFamily.setSelectedItem(bodyFont);
+      iconFontFamily.setSelectedItem(iconFont);
+      keystrokeFontFamily.setSelectedItem(keyStrokeFont);
+      monoFontFamily.setSelectedItem(monoFont);
+
+      fontFamily.requestFocusInWindow();
    }
 
    public void setFontSize(int size)
@@ -226,10 +387,35 @@ public class HelpFontSettingsFrame extends JFrame
       }
    }
 
+   public Vector<String> getAvailableFontNames()
+   {
+      return fontNames;
+   }
+
+   public Vector<String> getAvailableIconFontNames()
+   {
+      return iconFontNames;
+   }
+
+   public Vector<String> getAvailableKeyStrokeFontNames()
+   {
+      return keystrokeFontNames;
+   }
+
+   public Vector<String> getAvailableMonoFontNames()
+   {
+      return monoFontNames;
+   }
+
    protected HelpFrame helpFrame;
-   protected JComboBox<String> fontFamily;
+   protected JComboBox<String> fontFamily, iconFontFamily,
+     keystrokeFontFamily, monoFontFamily;
    protected SpinnerNumberModel fontSizeSpinnerModel;
    protected JSpinner fontSizeSpinner;
-   protected JTextArea sampleComp;
+   protected JEditorPane sampleComp;
    protected JButton closeButton, cancelButton;
+
+   protected HelpFontSettings sampleHelpFontSettings;
+   protected Vector<String> fontNames, iconFontNames, 
+     keystrokeFontNames, monoFontNames;
 }

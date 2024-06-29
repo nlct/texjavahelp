@@ -99,9 +99,10 @@ public class TJHListener extends L2HConverter
 
       addCssStyle("div.figure { margin-top: 10pt; }");
       addCssStyle(".locationlist { padding-left: 20pt; }");
-      addCssStyle("span.locationprefix { font-family: \"Linux Libertine Display O\", \"URW Bookman\", serif; }");
       addCssStyle(".spacekey { padding-left: 2ex; padding-right: 2ex; }");
-      addCssStyle(".keystroke { font-family: sans-serif; font-weight: bold; border: 2pt outset gray; background-color: silver; }");
+
+      addCssStyle(TeXJavaHelpLib.KEYSTROKE_CSS);
+      addCssStyle(TeXJavaHelpLib.ICON_CSS);
 
       String locPrefString = app.getMessageIfExists("manual.location_prefix");
 

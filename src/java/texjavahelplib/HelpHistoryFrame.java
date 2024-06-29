@@ -264,25 +264,30 @@ class HistoryItemRenderer extends JEditorPane
 
       int idx = table.getRowCount() - 1 - row;
 
-      String cssFontFamily = helpFrame.getHelpFontCssName();
+      HelpFontSettings fontSettings = helpFrame.getHelpFontSettings();
 
-      String text = "<html><style>"
-           + helpFrame.getHelpFontRule()
-           + "span.icon { font-family: serif ; }"
-           + "<style><body>";
+      StringBuilder builder = new StringBuilder();
+
+      builder.append("<html><style>");
+      fontSettings.appendRules(builder);
+      builder.append("<style><body>");
 
       if (idx == helpFrame.getHistoryIndex())
       {
-         text += "<b><span class=\"icon\">"+pointer + "</span> " + title+"</b>";
+         builder.append("<b><span class=\"icon\">");
+         builder.append(pointer);
+         builder.append("</span> ");
+         builder.append(title);
+         builder.append("</b>");
       }
       else
       {
-         text += title;
+         builder.append(title);
       }
 
-      text += "</body></html>";
+      builder.append("</body></html>");
 
-      setText(text);
+      setText(builder.toString());
 
       if (item != null)
       {

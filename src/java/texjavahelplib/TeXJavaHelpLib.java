@@ -1399,6 +1399,17 @@ public class TeXJavaHelpLib
 
    protected HashMap<String,Object> resourceProperties;
 
+   public static final String KEYSTROKE_CSS
+    = ".keystroke { font-family: sans-serif; font-weight: bold; border: 2pt outset gray; background-color: silver; }";
+
+   public static final String ICON_CSS_CLASSES = ".icon, .locationprefix";
+
+   public static final String ICON_CSS = ICON_CSS_CLASSES
+    + " { font-family: serif; }"; 
+
+   public static final String MONO_CSS_CLASSES
+    = ".code, .cmd, .cmdfmt, .csfmt, .csfmtfont, .csfmtcolourfont, .appfmt, .styfmt, .clsfmt, .envfmt, .optfmt, .csoptfmt, .styoptfmt, .clsoptfmt, .ctrfmt, .filefmt, .extfmt, .cbeg, .cend, .longargfmt, .shortargfmt, .qtt, .xmltagfmt, .varfmt, .terminal, .transcript, .filedef, .codebox, .badcodebox, .unicodebox, .compactcodebox, .sidebysidecode";
+
    public static final String VERSION = "0.2a";
-   public static final String VERSION_DATE = "2024-06-24";
+   public static final String VERSION_DATE = "2024-06-29";
 }

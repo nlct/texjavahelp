@@ -18,6 +18,7 @@
 */
 package com.dickimawbooks.texjavahelplib;
 
+import java.util.Locale;
 import java.util.Vector;
 
 import java.io.IOException;
@@ -28,7 +29,6 @@ import java.net.URISyntaxException;
 
 import java.awt.Rectangle;
 import java.awt.Desktop;
-import java.awt.Font;
 
 import javax.swing.JEditorPane;
 import javax.swing.event.HyperlinkListener;
@@ -63,6 +63,7 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
 
       this.helpLib = helpLib;
       this.helpPageContainer = helpPageContainer;
+      fontSettings = new HelpFontSettings();
 
       history = new Vector<HistoryItem>();
 
@@ -304,7 +305,15 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
          helpPageContainer.updateNavWidgets();
       }
 
-      addBodyFontRuleToStyleSheet();
+      addFontRulesToStyleSheet();
+   }
+
+   protected void addFontRulesToStyleSheet()
+   {
+      HTMLDocument doc = (HTMLDocument)getDocument();
+      StyleSheet styles = doc.getStyleSheet();
+
+      fontSettings.addFontRulesToStyleSheet(styles);
    }
 
    protected void addBodyFontRuleToStyleSheet()
@@ -312,69 +321,29 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
       HTMLDocument doc = (HTMLDocument)getDocument();
       StyleSheet styles = doc.getStyleSheet();
 
-      styles.addRule(getBodyFontRule());
+      fontSettings.addBodyFontRuleToStyleSheet(styles);
    }
 
-   public void setFontStyle(String fontName, int fontSize)
+   public void updateFonts(HelpFontSettings settings)
    {
-      this.fontSize = fontSize;
-      this.fontName = fontName;
-
-      fontNameNeedsQuotes = fontName.matches("[^\\p{IsAlphabetic}\\-]");
-
-      addBodyFontRuleToStyleSheet();
+      fontSettings.copyFrom(settings);
+      addFontRulesToStyleSheet();
    }
 
-   public void setFontStyle(int fontSize)
+   public void setBodyFontSize(int size)
    {
-      this.fontSize = fontSize;
-
+      fontSettings.setBodyFontSize(size);
       addBodyFontRuleToStyleSheet();
    }
 
    public int getBodyFontSize()
    {
-      return fontSize;
+      return fontSettings.getBodyFontSize();
    }
 
-   public String getBodyFontCssName()
+   public HelpFontSettings getFontSettings()
    {
-      return fontName;
-   }
-
-   public Font getBodyFont()
-   {
-      if (fontName.equals(FALLBACK_FONT_KEYWORD))
-      {
-         return new Font(FALLBACK_FONT_NAME, Font.PLAIN, fontSize);
-      }
-      else
-      {
-         return new Font(fontName, Font.PLAIN, fontSize);
-      }
-   }
-
-   public String getBodyFontRule()
-   {
-      String rule;
-
-      if (fontName.equals(FALLBACK_FONT_KEYWORD))
-      {
-         rule = String.format("body { font-family: %s; font-size: %d; }",
-           fontName, fontSize);
-      }
-      else if (fontNameNeedsQuotes)
-      {
-         rule = String.format("body { font-family: \"%s\", %s; font-size: %d; }",
-           fontName, FALLBACK_FONT_KEYWORD, fontSize);
-      }
-      else
-      {
-         rule = String.format("body { font-family: %s, %s; font-size: %d; }",
-           fontName, FALLBACK_FONT_KEYWORD, fontSize);
-      }
-
-      return rule;
+      return fontSettings;
    }
 
    public void open(URL url) throws IOException
@@ -488,9 +457,5 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
    protected Vector<HistoryItem> history;
    protected int historyIdx = 0;
 
-   public static final String FALLBACK_FONT_KEYWORD = "sans-serif";
-   public static final String FALLBACK_FONT_NAME = "SansSerif";
-   protected int fontSize = 12;
-   protected String fontName = FALLBACK_FONT_KEYWORD;
-   protected boolean fontNameNeedsQuotes = false;
+   protected HelpFontSettings fontSettings;
 }

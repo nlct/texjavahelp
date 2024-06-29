@@ -43,9 +43,16 @@ public class MessageDialog extends JDialog implements HyperlinkListener
 
       this.helpLib = helpLib;
 
-      editorPane = new JEditorPane("text/html", 
-       String.format("<html><head><style>%s</style></head><body>%s</body>",
-         helpLib.getHelpFrame().getHelpFontRule(), bodyText));
+      HelpFontSettings fontSettings = helpLib.getHelpFrame().getHelpFontSettings();
+
+      StringBuilder builder = new StringBuilder();
+      builder.append("<html><head><style>");
+      fontSettings.appendRules(builder);
+      builder.append("</style></head><body>");
+      builder.append(bodyText);
+      builder.append("</body></html>");
+
+      editorPane = new JEditorPane("text/html", builder.toString());
 
       init();
       setLocationRelativeTo(parent);

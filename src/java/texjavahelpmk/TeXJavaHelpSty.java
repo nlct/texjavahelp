@@ -138,6 +138,12 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new GenericCommand(true,
         "spacekeysym", null, new HtmlTag("<span class=\"spacekey\"> </span>")));
 
+      registerControlSequence(AccSuppObject.createSymbol(
+        listener, "menusep", 0x279C, 
+        getHelpLib().getMessageWithFallback(
+           "manual.menu_separator_title", "menu separator"),
+        true));
+
       registerControlSequence(new FloatFig());
       registerControlSequence(new SeeAlsoRefs());
       registerControlSequence(new TextualContentCommand("multiseealsosep", ":"));

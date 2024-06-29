@@ -82,7 +82,7 @@ public class HelpDialogAction extends TJHAbstractAction
       }
       else
       {
-         helpDialog.historyReset();
+         helpDialog.reset();
       }
 
       helpDialog.display();

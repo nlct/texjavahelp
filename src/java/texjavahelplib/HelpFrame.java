@@ -28,6 +28,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Image;
 
 import java.awt.event.KeyEvent;
@@ -312,7 +313,7 @@ public class HelpFrame extends JFrame implements HelpPageContainer
       middlePanel.add(createActionComponent(fontDecreaseAction));
       settingsMenu.add(fontDecreaseAction);
 
-      helpFontSettings = new HelpFontSettingsFrame(this);
+      helpFontSettingsFrame = new HelpFontSettingsFrame(this);
 
       TJHAbstractAction fontSelectAction = new TJHAbstractAction(helpLib,
         "menu.helpframe.settings", "font")
@@ -360,47 +361,48 @@ public class HelpFrame extends JFrame implements HelpPageContainer
 
    }
 
+   public FontMetrics getHelpFontMetrics(Font font)
+   {
+      return helpPage.getFontMetrics(font);
+   }
+
    public void openFontSettings()
    {
-      helpFontSettings.open(helpPage.getBodyFont());
+      helpFontSettingsFrame.open();
    }
 
-   public Font getHelpFont()
+   public HelpFontSettings getHelpFontSettings()
    {
-      return helpPage.getBodyFont();
+      return helpPage.getFontSettings();
    }
 
-   public String getHelpFontRule()
+   public int getHelpBodyFontSize()
    {
-      return helpPage.getBodyFontRule();
+      return helpPage.getBodyFontSize();
    }
 
-   public String getHelpFontCssName()
+   public void setHelpFont(HelpFontSettings settings)
    {
-      return helpPage.getBodyFontCssName();
-   }
+      helpPage.updateFonts(settings);
 
-   public void setHelpFont(String fontName, int fontSize)
-   {
-      helpPage.setFontStyle(fontName, fontSize);
-
-      Font f = helpPage.getBodyFont();
-      navTree.setFont(f);
-      helpHistoryFrame.update();
-      helpSearchFrame.update();
-      helpIndexFrame.update();
+      helpFontChanged();
    }
 
    public void setHelpFont(int fontSize)
    {
-      helpPage.setFontStyle(fontSize);
+      helpPage.setBodyFontSize(fontSize);
 
-      if (helpFontSettings.isVisible())
+      if (helpFontSettingsFrame.isVisible())
       {
-         helpFontSettings.setFontSize(fontSize);
+         helpFontSettingsFrame.setFontSize(fontSize);
       }
 
-      Font f = helpPage.getBodyFont();
+      helpFontChanged();
+   }
+
+   protected void helpFontChanged()
+   {
+      Font f = getHelpFontSettings().getBodyFont();
       navTree.setFont(f);
       helpHistoryFrame.update();
       helpSearchFrame.update();
@@ -422,7 +424,7 @@ public class HelpFrame extends JFrame implements HelpPageContainer
       super.setIconImage(image);
       helpHistoryFrame.setIconImage(image);
       helpSearchFrame.setIconImage(image);
-      helpFontSettings.setIconImage(image);
+      helpFontSettingsFrame.setIconImage(image);
 
       if (helpIndexFrame != null)
       {
@@ -435,7 +437,7 @@ public class HelpFrame extends JFrame implements HelpPageContainer
       super.setIconImages(icons);
       helpHistoryFrame.setIconImages(icons);
       helpSearchFrame.setIconImages(icons);
-      helpFontSettings.setIconImages(icons);
+      helpFontSettingsFrame.setIconImages(icons);
 
       if (helpIndexFrame != null)
       {
@@ -681,7 +683,7 @@ public class HelpFrame extends JFrame implements HelpPageContainer
    protected JTree navTree;
 
    protected HelpHistoryFrame helpHistoryFrame;
-   protected HelpFontSettingsFrame helpFontSettings;
+   protected HelpFontSettingsFrame helpFontSettingsFrame;
    protected HelpSearchFrame helpSearchFrame;
    protected HelpIndexFrame helpIndexFrame;
 

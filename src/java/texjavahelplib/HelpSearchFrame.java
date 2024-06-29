@@ -283,8 +283,10 @@ public class HelpSearchFrame extends JFrame
 
          StringBuilder builder = new StringBuilder();
 
+         HelpFontSettings fontSettings = helpFrame.getHelpFontSettings();
+
          builder.append("<html><head><style>.highlight { background: yellow; }");
-         builder.append(helpFrame.getHelpFontRule());
+         fontSettings.appendRules(builder);
          builder.append("</style></head><body>");
 
          SearchData searchData = getHelpLib().getSearchData();
@@ -430,7 +432,7 @@ public class HelpSearchFrame extends JFrame
       HTMLDocument doc = (HTMLDocument)resultComp.getDocument();
       StyleSheet styles = doc.getStyleSheet();
 
-      styles.addRule(helpFrame.getHelpFontRule());
+      helpFrame.getHelpFontSettings().addFontRulesToStyleSheet(styles);
    }
 
    protected HelpFrame helpFrame;

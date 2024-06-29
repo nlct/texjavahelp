@@ -189,17 +189,17 @@ public class HelpIndexFrame extends JFrame
 
    public void update()
    {
-      String rule = helpFrame.getHelpFontRule();
+      HelpFontSettings fontSettings = helpFrame.getHelpFontSettings();
 
       HTMLDocument doc = (HTMLDocument)editorPane.getDocument();
       StyleSheet styles = doc.getStyleSheet();
 
-      styles.addRule(rule);
+      fontSettings.addFontRulesToStyleSheet(styles);
 
       doc = (HTMLDocument)groupPane.getDocument();
       styles = doc.getStyleSheet();
 
-      styles.addRule(rule);
+      fontSettings.addFontRulesToStyleSheet(styles);
    }
 
 
