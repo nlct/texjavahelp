@@ -406,21 +406,17 @@ public class TeXJavaHelpLib
 
          String suffix = small ? smallIconSuffix : largeIconSuffix;
 
-         for (String ext : extensions)
-         {
-            in = getClass().getResourceAsStream(
-              "/com/dickimawbooks/texjavahelplib/icons/"+base+suffix+"."+ext);
+         in = getClass().getResourceAsStream(
+           "/com/dickimawbooks/texjavahelplib/icons/"+base+suffix+".png");
 
-            if (in != null)
+         if (in != null)
+         {
+            try
             {
-               try
-               {
-                  ic = new ImageIcon(ImageIO.read(in));
-                  break;
-               }
-               catch (IOException e)
-               {
-               }
+               ic = new ImageIcon(ImageIO.read(in));
+            }
+            catch (IOException e)
+            {
             }
          }
       }
@@ -442,7 +438,14 @@ public class TeXJavaHelpLib
          return ic;
       }
 
-      String basename = resourceIconBase + "/" + base + smallIconSuffix;
+      String basename = resourceIconBase;
+
+      if (!resourceIconBase.endsWith("/"))
+      {
+         basename += "/";
+      }
+
+      basename += base + smallIconSuffix;
 
       for (String ext : extensions)
       {
@@ -481,7 +484,14 @@ public class TeXJavaHelpLib
          return ic;
       }
 
-      String basename = resourceIconBase + "/" + base + largeIconSuffix;
+      String basename = resourceIconBase;
+
+      if (!resourceIconBase.endsWith("/"))
+      {
+         basename += "/";
+      }
+
+      basename += base + largeIconSuffix;
 
       for (String ext : extensions)
       {
