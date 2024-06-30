@@ -121,6 +121,8 @@ public class TeXJavaHelpLib
 
          messages.loadDictionary(dictPrefix);
       }
+
+      helpFontSettings = new HelpFontSettings();
    }
 
    public void dictionaryLoaded(URL url)
@@ -1048,6 +1050,37 @@ public class TeXJavaHelpLib
       return font;
    }
 
+   public void notifyFontChange(HelpFontChangeEvent evt)
+   {
+      if (listeners != null)
+      {
+         for (HelpFontChangeListener listener : listeners)
+         {
+            listener.fontChanged(evt);
+
+            if (evt.isConsumed())
+            {
+               break;
+            }
+         }
+      }
+   }
+
+   public void addHelpFontChangeListener(HelpFontChangeListener listener)
+   {
+      if (listeners == null)
+      {
+         listeners = new Vector<HelpFontChangeListener>();
+      }
+
+      listeners.add(listener);
+   }
+
+   public HelpFontSettings getHelpFontSettings()
+   {
+      return helpFontSettings;
+   }
+
    public TJHAbstractAction createHelpAction()
    {
       return new TJHAbstractAction(this,
@@ -1399,6 +1432,10 @@ public class TeXJavaHelpLib
 
    protected HashMap<String,Object> resourceProperties;
 
+   private Vector<HelpFontChangeListener> listeners; 
+
+   private HelpFontSettings helpFontSettings;
+
    public static final String KEYSTROKE_CSS
     = ".keystroke { font-family: sans-serif; font-weight: bold; border: 2pt outset gray; background-color: silver; }";
 
@@ -1411,5 +1448,5 @@ public class TeXJavaHelpLib
     = ".code, .cmd, .cmdfmt, .csfmt, .csfmtfont, .csfmtcolourfont, .appfmt, .styfmt, .clsfmt, .envfmt, .optfmt, .csoptfmt, .styoptfmt, .clsoptfmt, .ctrfmt, .filefmt, .extfmt, .cbeg, .cend, .longargfmt, .shortargfmt, .qtt, .xmltagfmt, .varfmt, .terminal, .transcript, .filedef, .codebox, .badcodebox, .unicodebox, .compactcodebox, .sidebysidecode";
 
    public static final String VERSION = "0.2a";
-   public static final String VERSION_DATE = "2024-06-29";
+   public static final String VERSION_DATE = "2024-06-30";
 }

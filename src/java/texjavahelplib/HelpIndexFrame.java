@@ -41,7 +41,7 @@ import javax.swing.event.HyperlinkEvent;
  * Frame for showing search results.
  */
 public class HelpIndexFrame extends JFrame
- implements HyperlinkListener
+ implements HyperlinkListener,HelpFontChangeListener
 {
    public HelpIndexFrame(final HelpFrame helpFrame,
      TreeSet<IndexItem> indexGroupData, URL indexURL)
@@ -52,16 +52,21 @@ public class HelpIndexFrame extends JFrame
       this.helpFrame = helpFrame;
 
       init(indexGroupData, indexURL);
+
+      helpFrame.getHelpLib().addHelpFontChangeListener(this);
    }
 
    protected void init(TreeSet<IndexItem> indexGroupData, URL indexURL)
     throws IOException
    {
       TeXJavaHelpLib helpLib = helpFrame.getHelpLib();
+      HelpFontSettings fontSettings = helpLib.getHelpFontSettings();
 
       StringBuilder builder = new StringBuilder();
 
-      builder.append("<html><style>h2 { margin-left: 5pt; margin-top: 2.5pt; margin-bottom: 2.5pt; }</style><body>");
+      builder.append("<html><style>h2 { margin-left: 5pt; margin-top: 2.5pt; margin-bottom: 2.5pt; } ");
+      fontSettings.appendRules(builder);
+      builder.append("</style><body>");
 
       for (IndexItem item : indexGroupData)
       {
@@ -85,8 +90,6 @@ public class HelpIndexFrame extends JFrame
       editorPane = new JEditorPane(indexURL);
       editorPane.setEditable(false);
       editorPane.addHyperlinkListener(this);
-
-      update();
 
       JSplitPane splitPane = new JSplitPane(
         JSplitPane.HORIZONTAL_SPLIT,
@@ -187,19 +190,20 @@ public class HelpIndexFrame extends JFrame
       }
    }
 
-   public void update()
+   @Override
+   public void fontChanged(HelpFontChangeEvent evt)
    {
-      HelpFontSettings fontSettings = helpFrame.getHelpFontSettings();
+      HelpFontSettings fontSettings = evt.getSettings();
 
       HTMLDocument doc = (HTMLDocument)editorPane.getDocument();
       StyleSheet styles = doc.getStyleSheet();
 
-      fontSettings.addFontRulesToStyleSheet(styles);
+      fontSettings.addFontRulesToStyleSheet(styles, evt.getModifiers());
 
       doc = (HTMLDocument)groupPane.getDocument();
       styles = doc.getStyleSheet();
 
-      fontSettings.addFontRulesToStyleSheet(styles);
+      fontSettings.addFontRulesToStyleSheet(styles, evt.getModifiers());
    }
 
 

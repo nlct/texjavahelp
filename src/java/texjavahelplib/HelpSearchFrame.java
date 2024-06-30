@@ -49,7 +49,7 @@ import java.beans.PropertyChangeEvent;
  * Frame for showing search results.
  */
 public class HelpSearchFrame extends JFrame
- implements HyperlinkListener
+ implements HyperlinkListener,HelpFontChangeListener
 {
    public HelpSearchFrame(final HelpFrame helpFrame)
    {
@@ -58,6 +58,8 @@ public class HelpSearchFrame extends JFrame
       this.helpFrame = helpFrame;
 
       init();
+
+      helpFrame.getHelpLib().addHelpFontChangeListener(this);
    }
 
    protected void init()
@@ -283,7 +285,7 @@ public class HelpSearchFrame extends JFrame
 
          StringBuilder builder = new StringBuilder();
 
-         HelpFontSettings fontSettings = helpFrame.getHelpFontSettings();
+         HelpFontSettings fontSettings = getHelpLib().getHelpFontSettings();
 
          builder.append("<html><head><style>.highlight { background: yellow; }");
          fontSettings.appendRules(builder);
@@ -427,12 +429,15 @@ public class HelpSearchFrame extends JFrame
       resultComp.setToolTipText(text);
    }
 
-   public void update()
+   @Override
+   public void fontChanged(HelpFontChangeEvent evt)
    {
+      HelpFontSettings fontSettings = evt.getSettings();
+
       HTMLDocument doc = (HTMLDocument)resultComp.getDocument();
       StyleSheet styles = doc.getStyleSheet();
 
-      helpFrame.getHelpFontSettings().addFontRulesToStyleSheet(styles);
+      fontSettings.addFontRulesToStyleSheet(styles, evt.getModifiers());
    }
 
    protected HelpFrame helpFrame;

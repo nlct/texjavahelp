@@ -39,7 +39,8 @@ import javax.swing.event.TreeSelectionEvent;
  * on modal dialogs will need to own a dialog that shows the
  * applicable help page.
  */
-public class HelpDialog extends JDialog implements HelpPageContainer
+public class HelpDialog extends JDialog
+ implements HelpPageContainer,HelpFontChangeListener
 {
    public HelpDialog(TeXJavaHelpLib helpLib,
       NavigationNode pageNode, Dialog owner)
@@ -66,6 +67,8 @@ public class HelpDialog extends JDialog implements HelpPageContainer
       this.pageNode = pageNode;
 
       init();
+
+      helpLib.addHelpFontChangeListener(this);
    }
 
    private void init() throws IOException
@@ -213,6 +216,11 @@ public class HelpDialog extends JDialog implements HelpPageContainer
 
    public void display()
    {
+      display(true);
+   }
+
+   public void display(boolean updateHelpFrame)
+   {
       HelpFrame helpFrame = helpLib.getHelpFrame();
 
       if (helpFrame.isVisible())
@@ -222,29 +230,28 @@ public class HelpDialog extends JDialog implements HelpPageContainer
          helpFrame.setVisible(false);
       }
 
-      updateHelpFont();
-
-      try
+      if (updateHelpFrame)
       {
-         // Add this page to the main help frame's history
-         helpFrame.setPage(getCurrentNode());
-      }
-      catch (IOException e)
-      {
-         helpLib.debug(e);
+         try
+         {
+            // Add this page to the main help frame's history
+            helpFrame.setPage(getCurrentNode());
+         }
+         catch (IOException e)
+         {
+            helpLib.debug(e);
+         }
       }
 
       setVisible(true);
    }
 
-   public void updateHelpFont()
+   @Override
+   public void fontChanged(HelpFontChangeEvent event)
    {
-      HelpFontSettings fontSettings = helpLib.getHelpFrame().getHelpFontSettings();
-
-      helpPage.updateFonts(fontSettings);
-
       if (navTree != null)
       {
+         HelpFontSettings fontSettings = event.getSettings();
          navTree.setFont(fontSettings.getBodyFont());
       }
    }

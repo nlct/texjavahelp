@@ -264,7 +264,7 @@ class HistoryItemRenderer extends JEditorPane
 
       int idx = table.getRowCount() - 1 - row;
 
-      HelpFontSettings fontSettings = helpFrame.getHelpFontSettings();
+      HelpFontSettings fontSettings = helpFrame.getHelpLib().getHelpFontSettings();
 
       StringBuilder builder = new StringBuilder();
 

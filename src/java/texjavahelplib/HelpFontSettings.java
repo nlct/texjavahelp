@@ -26,12 +26,78 @@ import javax.swing.text.html.StyleSheet;
 
 public class HelpFontSettings
 {
+   public void addFontRulesToStyleSheet(StyleSheet styles, int modifiers)
+   {
+      if ((modifiers & HelpFontChangeEvent.BODY_FONT)
+             == HelpFontChangeEvent.BODY_FONT
+          || (modifiers & HelpFontChangeEvent.BODY_SIZE)
+             == HelpFontChangeEvent.BODY_SIZE
+         )
+      {
+         styles.addRule(getBodyFontRule());
+      }
+
+      if ((modifiers & HelpFontChangeEvent.ICON_FONT)
+             == HelpFontChangeEvent.ICON_FONT
+         )
+      {
+         styles.addRule(getIconFontRule());
+      }
+
+      if ((modifiers & HelpFontChangeEvent.KEYSTROKE_FONT)
+             == HelpFontChangeEvent.KEYSTROKE_FONT
+         )
+      {
+         styles.addRule(getKeyStrokeFontRule());
+      }
+
+      if ((modifiers & HelpFontChangeEvent.MONO_FONT)
+             == HelpFontChangeEvent.MONO_FONT
+         )
+      {
+         styles.addRule(getMonoFontRule());
+      }
+   }
+
    public void addFontRulesToStyleSheet(StyleSheet styles)
    {
       styles.addRule(getBodyFontRule());
       styles.addRule(getIconFontRule());
       styles.addRule(getKeyStrokeFontRule());
       styles.addRule(getMonoFontRule());
+   }
+
+   public void appendRules(StringBuilder builder, int modifiers)
+   {
+      if ((modifiers & HelpFontChangeEvent.BODY_FONT)
+             == HelpFontChangeEvent.BODY_FONT
+          || (modifiers & HelpFontChangeEvent.BODY_SIZE)
+             == HelpFontChangeEvent.BODY_SIZE
+         )
+      {
+         builder.append(getBodyFontRule());
+      }
+
+      if ((modifiers & HelpFontChangeEvent.ICON_FONT)
+             == HelpFontChangeEvent.ICON_FONT
+         )
+      {
+         builder.append(getIconFontRule());
+      }
+
+      if ((modifiers & HelpFontChangeEvent.KEYSTROKE_FONT)
+             == HelpFontChangeEvent.KEYSTROKE_FONT
+         )
+      {
+         builder.append(getKeyStrokeFontRule());
+      }
+
+      if ((modifiers & HelpFontChangeEvent.MONO_FONT)
+             == HelpFontChangeEvent.MONO_FONT
+         )
+      {
+         builder.append(getMonoFontRule());
+      }
    }
 
    public void appendRules(StringBuilder builder)
@@ -178,6 +244,49 @@ public class HelpFontSettings
 
       monoFontName = other.monoFontName;
       monoFontNameNeedsQuotes = other.monoFontNameNeedsQuotes;
+   }
+
+   public void copyFrom(HelpFontChangeEvent event)
+   {
+      HelpFontSettings other = event.getSettings();
+      int modifiers = event.getModifiers();
+
+      if ( (modifiers & HelpFontChangeEvent.BODY_SIZE)
+             == HelpFontChangeEvent.BODY_SIZE )
+      {
+         fontSize = other.fontSize;
+      }
+
+      if ((modifiers & HelpFontChangeEvent.BODY_FONT)
+             == HelpFontChangeEvent.BODY_FONT )
+      {
+         fontName = other.fontName;
+         fontNameNeedsQuotes = other.fontNameNeedsQuotes;
+      }
+
+      if ((modifiers & HelpFontChangeEvent.ICON_FONT)
+             == HelpFontChangeEvent.ICON_FONT
+         )
+      {
+         iconFontName = other.iconFontName;
+         iconFontNameNeedsQuotes = other.iconFontNameNeedsQuotes;
+      }
+
+      if ((modifiers & HelpFontChangeEvent.KEYSTROKE_FONT)
+             == HelpFontChangeEvent.KEYSTROKE_FONT
+         )
+      {
+         keystrokeFontName = other.keystrokeFontName;
+         keystrokeFontNameNeedsQuotes = other.keystrokeFontNameNeedsQuotes;
+      }
+
+      if ((modifiers & HelpFontChangeEvent.MONO_FONT)
+             == HelpFontChangeEvent.MONO_FONT
+         )
+      {
+         monoFontName = other.monoFontName;
+         monoFontNameNeedsQuotes = other.monoFontNameNeedsQuotes;
+      }
    }
 
    public static boolean fontNameNeedsQuotes(String name)

@@ -59,7 +59,8 @@ import javax.swing.tree.TreePath;
 /**
  * Frame for showing pages of the manual.
  */
-public class HelpFrame extends JFrame implements HelpPageContainer
+public class HelpFrame extends JFrame
+ implements HelpPageContainer,HelpFontChangeListener
 {
    public HelpFrame(TeXJavaHelpLib helpLib, String title)
     throws IOException
@@ -69,6 +70,9 @@ public class HelpFrame extends JFrame implements HelpPageContainer
       this.helpLib = helpLib;
 
       init();
+
+      // helpPage needs updating first
+      helpLib.addHelpFontChangeListener(this);
    }
 
    private void init() throws IOException
@@ -301,7 +305,7 @@ public class HelpFrame extends JFrame implements HelpPageContainer
          @Override
          public void doAction()
          {
-            int size = helpPage.getBodyFontSize();
+            int size = helpLib.getHelpFontSettings().getBodyFontSize();
 
             if (size > 3)
             {
@@ -334,7 +338,7 @@ public class HelpFrame extends JFrame implements HelpPageContainer
          @Override
          public void doAction()
          {
-            setHelpFont(helpPage.getBodyFontSize()+1);
+            setHelpFont(helpLib.getHelpFontSettings().getBodyFontSize()+1);
          }
       };
 
@@ -371,42 +375,21 @@ public class HelpFrame extends JFrame implements HelpPageContainer
       helpFontSettingsFrame.open();
    }
 
-   public HelpFontSettings getHelpFontSettings()
+   @Override
+   public void fontChanged(HelpFontChangeEvent evt)
    {
-      return helpPage.getFontSettings();
-   }
-
-   public int getHelpBodyFontSize()
-   {
-      return helpPage.getBodyFontSize();
-   }
-
-   public void setHelpFont(HelpFontSettings settings)
-   {
-      helpPage.updateFonts(settings);
-
-      helpFontChanged();
-   }
-
-   public void setHelpFont(int fontSize)
-   {
-      helpPage.setBodyFontSize(fontSize);
-
-      if (helpFontSettingsFrame.isVisible())
-      {
-         helpFontSettingsFrame.setFontSize(fontSize);
-      }
-
-      helpFontChanged();
-   }
-
-   protected void helpFontChanged()
-   {
-      Font f = getHelpFontSettings().getBodyFont();
+      Font f = evt.getSettings().getBodyFont();
       navTree.setFont(f);
       helpHistoryFrame.update();
-      helpSearchFrame.update();
-      helpIndexFrame.update();
+   }
+
+   private void setHelpFont(int fontSize)
+   {
+      HelpFontSettings settings = helpLib.getHelpFontSettings();
+      settings.setBodyFontSize(fontSize);
+
+      helpLib.notifyFontChange(new HelpFontChangeEvent(this,
+       settings, HelpFontChangeEvent.BODY_SIZE));
    }
 
    protected JButton createActionComponent(Action action)

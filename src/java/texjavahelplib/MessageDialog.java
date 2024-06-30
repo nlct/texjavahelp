@@ -30,20 +30,30 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.HyperlinkEvent;
 
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.StyleSheet;
+
 /**
  * Simple non-editable HTML message dialog. Intended for about
  * dialogs or similar.
  */
-public class MessageDialog extends JDialog implements HyperlinkListener
+public class MessageDialog extends JDialog
+ implements HyperlinkListener,HelpFontChangeListener
 {
    public MessageDialog(JFrame parent, String title, boolean modal,
      TeXJavaHelpLib helpLib, String bodyText)
    {
+      this(parent, title, modal, helpLib, bodyText,
+         helpLib.getHelpFontSettings());
+   }
+
+   public MessageDialog(JFrame parent, String title, boolean modal,
+     TeXJavaHelpLib helpLib, String bodyText, HelpFontSettings fontSettings)
+   {
       super(parent, title, modal);
 
       this.helpLib = helpLib;
-
-      HelpFontSettings fontSettings = helpLib.getHelpFrame().getHelpFontSettings();
+      helpLib.addHelpFontChangeListener(this);
 
       StringBuilder builder = new StringBuilder();
       builder.append("<html><head><style>");
@@ -166,6 +176,16 @@ public class MessageDialog extends JDialog implements HyperlinkListener
             helpLib.error(e);
          }
       }
+   }
+
+   @Override
+   public void fontChanged(HelpFontChangeEvent event)
+   {
+      HTMLDocument doc = (HTMLDocument)editorPane.getDocument();
+      StyleSheet styles = doc.getStyleSheet();
+
+      event.getSettings().addFontRulesToStyleSheet(
+        styles, event.getModifiers());
    }
 
    private JEditorPane editorPane;

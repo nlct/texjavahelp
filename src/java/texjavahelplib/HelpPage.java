@@ -43,17 +43,26 @@ import java.beans.PropertyChangeEvent;
 /**
  * Panel for showing a page of the manual.
  */
-public class HelpPage extends JEditorPane implements HyperlinkListener
+public class HelpPage extends JEditorPane
+  implements HyperlinkListener,HelpFontChangeListener
 {
    public HelpPage(TeXJavaHelpLib helpLib, HelpPageContainer helpPageContainer)
      throws IOException
    {
       this(helpLib, helpPageContainer,
-         helpLib.getNavigationTree().getRoot());
+         helpLib.getNavigationTree().getRoot(), helpLib.getHelpFontSettings());
    }
 
    public HelpPage(TeXJavaHelpLib helpLib, HelpPageContainer helpPageContainer,
       NavigationNode initialPage)
+     throws IOException
+   {
+      this(helpLib, helpPageContainer, initialPage,
+        helpLib.getHelpFontSettings());
+   }
+
+   public HelpPage(TeXJavaHelpLib helpLib, HelpPageContainer helpPageContainer,
+      NavigationNode initialPage, HelpFontSettings fontSettings)
      throws IOException
    {
       super();
@@ -63,7 +72,8 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
 
       this.helpLib = helpLib;
       this.helpPageContainer = helpPageContainer;
-      fontSettings = new HelpFontSettings();
+      this.fontSettings = fontSettings;
+      helpLib.addHelpFontChangeListener(this);
 
       history = new Vector<HistoryItem>();
 
@@ -316,29 +326,16 @@ public class HelpPage extends JEditorPane implements HyperlinkListener
       fontSettings.addFontRulesToStyleSheet(styles);
    }
 
-   protected void addBodyFontRuleToStyleSheet()
+   @Override
+   public void fontChanged(HelpFontChangeEvent event)
    {
+      fontSettings.copyFrom(event);
+
       HTMLDocument doc = (HTMLDocument)getDocument();
       StyleSheet styles = doc.getStyleSheet();
 
-      fontSettings.addBodyFontRuleToStyleSheet(styles);
-   }
-
-   public void updateFonts(HelpFontSettings settings)
-   {
-      fontSettings.copyFrom(settings);
-      addFontRulesToStyleSheet();
-   }
-
-   public void setBodyFontSize(int size)
-   {
-      fontSettings.setBodyFontSize(size);
-      addBodyFontRuleToStyleSheet();
-   }
-
-   public int getBodyFontSize()
-   {
-      return fontSettings.getBodyFontSize();
+      fontSettings.addFontRulesToStyleSheet(
+        styles, event.getModifiers());
    }
 
    public HelpFontSettings getFontSettings()
