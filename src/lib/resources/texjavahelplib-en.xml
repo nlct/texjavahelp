@@ -192,6 +192,55 @@
 <entry key="help.settings.nav.show_label">Include text</entry>
 <entry key="help.settings.nav.show_label.mnemonic">T</entry>
 
+<!-- Help Popup Menu  -->
+
+<entry key="index.menu.helppage">Help Popup Menu</entry>
+
+<entry key="menu.helppage.view_image">View Image</entry>
+<entry key="menu.helppage.view_image.mnemonic">I</entry>
+
+<entry key="menu.helppage.home">Home</entry>
+<entry key="menu.helppage.home.tooltip">Home Page</entry>
+<entry key="menu.helppage.home.description">Go to the first page</entry>
+<entry key="menu.helppage.home.mnemonic">H</entry>
+<entry key="menu.helppage.home.keystroke">alt HOME</entry>
+
+<entry key="menu.helppage.reset">Reset</entry>
+<entry key="menu.helppage.reset.mnemonic">R</entry>
+<entry key="menu.helppage.reset.keystroke">alt HOME</entry>
+<entry key="menu.helppage.reset.tooltip">Back to page {0}</entry>
+<entry key="menu.helppage.reset.description">Go back to the topic''s page</entry>
+
+<entry key="menu.helppage.up">Up</entry>
+<entry key="menu.helppage.up.mnemonic">U</entry>
+<entry key="menu.helppage.up.tooltip">Up</entry>
+<entry key="menu.helppage.up.description">Go up a section</entry>
+<entry key="menu.helppage.up.keystroke">alt UP</entry>
+
+<entry key="menu.helppage.previous">Previous</entry>
+<entry key="menu.helppage.previous.mnemonic">P</entry>
+<entry key="menu.helppage.previous.tooltip">Previous Page</entry>
+<entry key="menu.helppage.previous.description">Go to the previous page</entry>
+<entry key="menu.helppage.previous.keystroke">alt LEFT</entry>
+
+<entry key="menu.helppage.next">Next</entry>
+<entry key="menu.helppage.next.mnemonic">N</entry>
+<entry key="menu.helppage.next.tooltip">Next Page</entry>
+<entry key="menu.helppage.next.description">Go to the next page</entry>
+<entry key="menu.helppage.next.keystroke">alt RIGHT</entry>
+
+<entry key="menu.helppage.historyback">Back</entry>
+<entry key="menu.helppage.historyback.mnemonic">B</entry>
+<entry key="menu.helppage.historyback.keystroke">alt shift LEFT</entry>
+<entry key="menu.helppage.historyback.tooltip">History Back</entry>
+<entry key="menu.helppage.historyback.description">Go back</entry>
+
+<entry key="menu.helppage.historyforward">Forward</entry>
+<entry key="menu.helppage.historyforward.mnemonic">F</entry>
+<entry key="menu.helppage.historyforward.keystroke">alt shift RIGHT</entry>
+<entry key="menu.helppage.historyforward.tooltip">History Forward</entry>
+<entry key="menu.helppage.historyforward.description">Go forward</entry>
+
 <!-- Secondary Help Dialogs  -->
 
 <entry key="index.menu.helpdialog">Help Dialog Menu</entry>
@@ -232,6 +281,12 @@
 <entry key="menu.helpdialog.navigation.next.tooltip">Next Page</entry>
 <entry key="menu.helpdialog.navigation.next.description">Go to the next page</entry>
 <entry key="menu.helpdialog.navigation.next.keystroke">alt RIGHT</entry>
+
+<!-- Image Viewer  -->
+
+<entry key="imageviewer.title">Image Viewer</entry>
+<entry key="imageviewer.magnify">Magnify (%):</entry>
+<entry key="imageviewer.magnify.mnemonic">M</entry>
 
 <!-- Version information -->
 
@@ -419,5 +474,6 @@ code should appear in the PDF</entry>
 Unable to open URL {0}</entry>
 <entry key="error.browse_failed">Unable to open browser to view {0}</entry>
 <entry key="error.missing_search_term">Missing search term</entry>
+<entry key="error.image_load_failed">Failed to load image ''{0}''</entry>
 
 </properties>

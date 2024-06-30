@@ -352,13 +352,19 @@ public class HelpDialog extends JDialog
       historyForwardAction.setEnabled(helpPage.hasForwardHistory());
       resetAction.setEnabled(!currentNode.equals(pageNode));
 
+      popupHistoryBackAction.setEnabled(historyBackAction.isEnabled());
+      popupHistoryForwardAction.setEnabled(historyForwardAction.isEnabled());
+      popupResetAction.setEnabled(resetAction.isEnabled());
+
       if (navTree != null)
       {
          NavigationNode prevPage = currentNode.getPreviousNode();
          previousAction.setEnabled(isInNavigationTree(prevPage));
+         popupPreviousAction.setEnabled(previousAction.isEnabled());
 
          NavigationNode nextPage = currentNode.getNextNode();
          nextAction.setEnabled(isInNavigationTree(nextPage));
+         popupNextAction.setEnabled(nextAction.isEnabled());
 
          if (isInNavigationTree(currentNode))
          {
@@ -382,14 +388,85 @@ public class HelpDialog extends JDialog
       return helpLib;
    }
 
+   @Override
+   public void addActions(JPopupMenu popupMenu)
+   { 
+      popupResetAction = new TJHAbstractAction(helpLib,
+        "menu.helppage", "reset")
+       {
+         @Override
+         public void doAction()
+         {
+            reset();
+         }
+       };
+
+      popupMenu.add(popupResetAction);
+
+      if (navTree != null)
+      {
+         popupPreviousAction = new TJHAbstractAction(helpLib,
+           "menu.helppage", "previous")
+         {
+            @Override
+            public void doAction()
+            {
+               prevPage();
+            }
+         };
+
+         popupMenu.add(popupPreviousAction);
+
+         popupNextAction = new TJHAbstractAction(helpLib,
+           "menu.helppage", "next")
+         {
+            @Override
+            public void doAction()
+            {
+               nextPage();
+            }
+         };
+
+         popupMenu.add(popupNextAction);
+
+         popupMenu.addSeparator();
+      }
+
+      popupHistoryBackAction = new TJHAbstractAction(helpLib,
+        "menu.helppage", "historyback")
+       {
+         @Override
+         public void doAction()
+         {
+            historyBack();
+         }
+       };
+
+      popupMenu.add(popupHistoryBackAction);
+
+      popupHistoryForwardAction = new TJHAbstractAction(helpLib,
+        "menu.helppage", "historyforward")
+       {
+         @Override
+         public void doAction()
+         {
+            historyForward();
+         }
+       };
+
+      popupMenu.add(popupHistoryForwardAction);
+   }
+
    protected HelpPage helpPage;
    protected TeXJavaHelpLib helpLib;
    protected NavigationNode pageNode;
    protected TJHAbstractAction resetAction,
-     historyBackAction, historyForwardAction;
+     historyBackAction, historyForwardAction,
+     popupResetAction, popupHistoryBackAction, popupHistoryForwardAction;
 
    // null if node has no children
    protected JSplitPane splitPane;
    protected JTree navTree;
-   protected TJHAbstractAction nextAction, previousAction;
+   protected TJHAbstractAction nextAction, previousAction,
+    popupNextAction, popupPreviousAction;
 }

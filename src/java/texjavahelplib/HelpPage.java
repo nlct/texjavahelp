@@ -27,13 +27,20 @@ import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import java.awt.Rectangle;
+import java.awt.Component;
 import java.awt.Desktop;
+import java.awt.Point;
+import java.awt.Rectangle;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JEditorPane;
+import javax.swing.JPopupMenu;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.*;
+import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.StyleSheet;
 
@@ -81,6 +88,20 @@ public class HelpPage extends JEditorPane
 
       addHyperlinkListener(this);
 
+      addMouseListener(new MouseAdapter()
+       {
+          @Override
+          public void mousePressed(MouseEvent evt)
+          {
+             checkForPopup(evt);
+          }
+          @Override
+          public void mouseReleased(MouseEvent evt)
+          {
+             checkForPopup(evt);
+          }
+       });
+
       addPropertyChangeListener("page", 
         new PropertyChangeListener()
          {
@@ -90,6 +111,21 @@ public class HelpPage extends JEditorPane
             }
          }
       );
+
+      popupMenu = new JPopupMenu();
+      viewImageAction = new TJHAbstractAction(helpLib,
+         "menu.helppage", "view_image", this)
+       {
+          @Override
+          public void doAction()
+          {
+             viewImage();
+          }
+       };
+      popupMenu.add(viewImageAction);
+      helpPageContainer.addActions(popupMenu);
+      imageViewer = new ImageViewer(helpLib,
+        helpLib.getMessage("imageviewer.title"));
    }
 
    public NavigationNode getCurrentNode()
@@ -447,9 +483,64 @@ public class HelpPage extends JEditorPane
       }
    }
 
+   public boolean checkForPopup(MouseEvent evt)
+   {     
+      currentImageAttributeSet = null;
+
+      if (evt.isPopupTrigger())
+      { 
+         if (evt.getSource() == this)
+         {
+            Point pt = new Point(evt.getX(), evt.getY());
+            int pos = viewToModel(pt);
+
+            HTMLDocument doc = (HTMLDocument)getDocument();
+            HTMLDocument.Iterator it = doc.getIterator(HTML.Tag.IMG);
+
+            while (it.isValid())
+            {
+               if (it.getStartOffset() <= pos && pos <= it.getEndOffset())
+               {
+                  AttributeSet as = it.getAttributes();
+
+                  if (as.getAttribute(HTML.Attribute.SRC) != null)
+                  {
+                     currentImageAttributeSet = as;
+                  }
+
+                  break;
+               }
+
+               it.next();
+            }
+         }
+
+         viewImageAction.setEnabled(currentImageAttributeSet != null);
+
+         popupMenu.show((Component)evt.getSource(), evt.getX(), evt.getY());
+
+         return true;
+      }
+
+      return false;
+   }
+
+   protected void viewImage()
+   {
+      if (currentImageAttributeSet != null)
+      {
+         imageViewer.display(currentImageAttributeSet);
+      }
+   }
+
    protected TeXJavaHelpLib helpLib;
    protected HelpPageContainer helpPageContainer;
    protected NavigationNode currentNode;
+
+   protected JPopupMenu popupMenu;
+   protected TJHAbstractAction viewImageAction;
+   protected AttributeSet currentImageAttributeSet;
+   protected ImageViewer imageViewer;
 
    protected Vector<HistoryItem> history;
    protected int historyIdx = 0;

@@ -36,20 +36,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JTree;
-import javax.swing.KeyStroke;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JButton;
-import javax.swing.Action;
-import javax.swing.ImageIcon;
-import javax.swing.SwingConstants;
-import javax.swing.Box;
+import javax.swing.*;
 
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -583,6 +570,9 @@ public class HelpFrame extends JFrame
       historyBackAction.setEnabled(helpPage.hasBackHistory());
       historyForwardAction.setEnabled(helpPage.hasForwardHistory());
 
+      popupHistoryBackAction.setEnabled(historyBackAction.isEnabled());
+      popupHistoryForwardAction.setEnabled(historyForwardAction.isEnabled());
+
       if (helpHistoryFrame.isVisible())
       {
          helpHistoryFrame.update();
@@ -605,6 +595,8 @@ public class HelpFrame extends JFrame
          previousLabel.setText(previousNode.getTitle());
       }
 
+      popupPreviousAction.setEnabled(previousAction.isEnabled());
+
       if (nextNode == null)
       {
          nextAction.setEnabled(false);
@@ -618,6 +610,8 @@ public class HelpFrame extends JFrame
          nextLabel.setText(nextNode.getTitle());
       }
 
+      popupNextAction.setEnabled(nextAction.isEnabled());
+
       if (upNode == null)
       {
          upAction.setEnabled(false);
@@ -630,6 +624,8 @@ public class HelpFrame extends JFrame
          upLabel.setEnabled(true);
          upLabel.setText(upNode.getTitle());
       }
+
+      popupUpAction.setEnabled(upAction.isEnabled());
 
       TreePath treePath = navTree.getSelectionPath();
 
@@ -660,6 +656,81 @@ public class HelpFrame extends JFrame
       return lowerNavLabelLimit;
    }
 
+   @Override
+   public void addActions(JPopupMenu popupMenu)
+   {
+      popupMenu.add(new TJHAbstractAction(helpLib,
+        "menu.helppage", "home")
+      {
+         @Override
+         public void doAction()
+         {
+            homePage();
+         }
+      });
+
+      popupPreviousAction = new TJHAbstractAction(helpLib,
+        "menu.helppage", "previous")
+      {
+         @Override
+         public void doAction()
+         {
+            prevPage();
+         }
+      };
+
+      popupMenu.add(popupPreviousAction);
+
+      popupUpAction = new TJHAbstractAction(helpLib, "menu.helppage", "up")
+      {
+         @Override
+         public void doAction()
+         {
+            upPage();
+         }
+      };
+
+      popupMenu.add(popupUpAction);
+
+      popupNextAction = new TJHAbstractAction(helpLib,
+        "menu.helppage", "next")
+      {
+         @Override
+         public void doAction()
+         {
+            nextPage();
+         }
+      };
+
+      popupMenu.add(popupNextAction);
+
+      popupMenu.addSeparator();
+
+      popupHistoryBackAction = new TJHAbstractAction(helpLib,
+        "menu.helppage", "historyback")
+       {
+         @Override
+         public void doAction()
+         {
+            historyBack();
+         }
+       };
+
+      popupMenu.add(popupHistoryBackAction);
+
+      popupHistoryForwardAction = new TJHAbstractAction(helpLib,
+        "menu.helppage", "historyforward")
+       {
+         @Override
+         public void doAction()
+         {
+            historyForward();
+         }
+       };
+
+      popupMenu.add(popupHistoryForwardAction);
+   }
+
    protected TeXJavaHelpLib helpLib;
    protected HelpPage helpPage;
    protected JSplitPane splitPane;
@@ -675,7 +746,9 @@ public class HelpFrame extends JFrame
 
    protected TJHAbstractAction previousAction, upAction, nextAction,
     historyAction, historyForwardAction, historyBackAction,
-    fontIncreaseAction, fontDecreaseAction, fontSelectAction;
+    fontIncreaseAction, fontDecreaseAction, fontSelectAction,
+    popupPreviousAction, popupUpAction, popupNextAction,
+    popupHistoryBackAction, popupHistoryForwardAction;
 
    protected LowerNavLabel previousLabel, upLabel, nextLabel;
    protected HelpLowerNavSettingsDialog lowerNavSettingsDialog;

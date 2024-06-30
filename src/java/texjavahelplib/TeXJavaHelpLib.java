@@ -1281,6 +1281,11 @@ public class TeXJavaHelpLib
 
    public JLabel createJLabel(String tag)
    {
+      return createJLabel(tag, null);
+   }
+
+   public JLabel createJLabel(String tag, JComponent comp)
+   {
       JLabel jlabel = new JLabel(getMessage(tag));
 
       int mnemonic = getMnemonic(tag+".mnemonic");
@@ -1302,6 +1307,11 @@ public class TeXJavaHelpLib
       if (desc != null)
       {
          jlabel.getAccessibleContext().setAccessibleDescription(desc);
+      }
+
+      if (comp != null)
+      {
+         jlabel.setLabelFor(comp);
       }
 
       return jlabel;

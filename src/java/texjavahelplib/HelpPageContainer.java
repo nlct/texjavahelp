@@ -18,7 +18,11 @@
 */
 package com.dickimawbooks.texjavahelplib;
 
+import javax.swing.JPopupMenu;
+
 public interface HelpPageContainer
 {
    public void updateNavWidgets();
+
+   public void addActions(JPopupMenu popupMenu);
 }
