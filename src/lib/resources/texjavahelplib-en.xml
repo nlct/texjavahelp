@@ -288,6 +288,34 @@
 <entry key="imageviewer.magnify">Magnify (%):</entry>
 <entry key="imageviewer.magnify.mnemonic">M</entry>
 
+<entry key="index.imageviewer.title">Image Viewer Menu</entry>
+
+<entry key="menu.imageviewer.fit_to_width">Fit to Width</entry>
+<entry key="menu.imageviewer.fit_to_width.mnemonic">W</entry>
+
+<entry key="menu.imageviewer.fit_to_height">Fit to Height</entry>
+<entry key="menu.imageviewer.fit_to_height.mnemonic">H</entry>
+
+<entry key="menu.imageviewer.fit_to_page">Fit to Page</entry>
+<entry key="menu.imageviewer.fit_to_page.mnemonic">P</entry>
+
+<entry key="menu.imageviewer.increase">Increase</entry>
+<entry key="menu.imageviewer.increase.mnemonic">I</entry>
+<entry key="menu.imageviewer.increase.keystroke">alt UP</entry>
+
+<entry key="menu.imageviewer.decrease">Decrease</entry>
+<entry key="menu.imageviewer.decrease.mnemonic">D</entry>
+<entry key="menu.imageviewer.decrease.keystroke">alt DOWN</entry>
+
+<entry key="menu.imageviewer.zoom_1">100%</entry>
+<entry key="menu.imageviewer.zoom_1.mnemonic">1</entry>
+
+<entry key="menu.imageviewer.zoom_2">200%</entry>
+<entry key="menu.imageviewer.zoom_2.mnemonic">2</entry>
+
+<entry key="menu.imageviewer.zoom_5">500%</entry>
+<entry key="menu.imageviewer.zoom_5.mnemonic">5</entry>
+
 <!-- Version information -->
 
 <entry key="about.version">{0} ({1})</entry>
