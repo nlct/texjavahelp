@@ -964,7 +964,7 @@
   }%
 }
 
-\newcommand{\menuitemref}[1]{\glshyperlink{#1}}
+\newcommand{\menuitemref}[1]{\glshyperlink[\menufmt{\glsentrytext{#1}}]{#1}}
 
 \newcommand{\menuitem}{\dgls}
 
@@ -1187,6 +1187,23 @@
  \widgetdeffmt{\glsxtrglossentry{#2}}%
  \hfill #3%
  \end{pinnedbox}% 
+}
+
+\NewDocumentCommand\menudef{sO{}mO{}}{%
+ \begin{settingsbox}[title={\icon{novaluesetting}},#2]%
+ \glsadd[format=main]{#3}%
+ \IfBooleanF{#1}%
+ {
+   \glsxtrifhasfield{parent}{#3}%
+   {%
+     \expandafter\menutrail\expandafter{\glscurrentfieldvalue}%
+     \menusep
+   }%
+   {}%
+ }%
+ \menufmt{\glsxtrglossentry{#3}}%
+ \hfill \glsxtrusefield{#3}{keystroke}#4%
+ \end{settingsbox}% 
 }
 
 \NewDocumentCommand\pkgdef{O{}m}{%

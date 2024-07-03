@@ -83,6 +83,7 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       addStandaloneDefCommands();
       registerControlSequence(new WidgetDef(pinnedBox, rightBox, noteBox, glossariesSty));
+      registerControlSequence(new MenuDef(settingsBox, rightBox, noteBox, glossariesSty));
       registerControlSequence(new SectionEntry(glossariesSty));
 
       addCodeBoxCommands();
@@ -311,6 +312,12 @@ public class TeXJavaHelpSty extends UserGuideSty
       def = listener.createStack();
 
       def.add(new TeXCsRef("glshyperlink"));
+      def.add(listener.getOther('['));
+      def.add(new TeXCsRef("menufmt"));
+      def.add(TeXParserUtils.createGroup(listener,
+        new TeXCsRef("glsentrytext"),
+         TeXParserUtils.createGroup(listener, listener.getParam(1))));
+      def.add(listener.getOther(']'));
       def.add(TeXParserUtils.createGroup(listener,
         listener.getParam(1)));
 

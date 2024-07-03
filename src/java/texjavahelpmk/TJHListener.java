@@ -100,6 +100,8 @@ public class TJHListener extends L2HConverter
       addCssStyle("div.figure { margin-top: 10pt; }");
       addCssStyle(".locationlist { padding-left: 20pt; }");
       addCssStyle(".spacekey { padding-left: 2ex; padding-right: 2ex; }");
+      addCssStyle("span.samp { font-weight: bold; }");
+      addCssStyle("div.valuesetting { margin-top: 10pt; }");
 
       addCssStyle(TeXJavaHelpLib.KEYSTROKE_CSS);
       addCssStyle(TeXJavaHelpLib.ICON_CSS);
@@ -114,6 +116,8 @@ public class TJHListener extends L2HConverter
 
       setImageExtensions("png", "PNG", "jpg", "JPG", "jpeg", "JPEG",
         "gif", "GIF", "pdf", "PDF", "tex");
+
+      nameAnchorRequired = true;
    }
 
    public void setNavigationXmlFile(File file)
