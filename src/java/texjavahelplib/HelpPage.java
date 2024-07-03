@@ -485,10 +485,10 @@ public class HelpPage extends JEditorPane
 
    public boolean checkForPopup(MouseEvent evt)
    {     
-      currentImageAttributeSet = null;
-
       if (evt.isPopupTrigger())
       { 
+         currentImageAttributeSet = null;
+
          if (evt.getSource() == this)
          {
             Point pt = new Point(evt.getX(), evt.getY());
