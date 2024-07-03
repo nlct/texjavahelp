@@ -128,4 +128,6 @@ public interface TeXJavaHelpLibApp
     * @param e an exception that has occurred
     */ 
    public void debug(String message, Throwable e);
+
+   public boolean isDebuggingOn();
 }

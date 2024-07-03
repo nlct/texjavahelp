@@ -518,6 +518,12 @@ public class TeXJavaHelpDemo extends JFrame
    }
 
    @Override
+   public boolean isDebuggingOn()
+   {
+      return debugMode > 0;
+   }
+
+   @Override
    public void debug(String message, Throwable e)
    {
       if (debugMode > 0)

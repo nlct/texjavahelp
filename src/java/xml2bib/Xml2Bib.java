@@ -166,6 +166,12 @@ public class Xml2Bib implements TeXJavaHelpLibApp
    }
 
    @Override
+   public boolean isDebuggingOn()
+   {
+      return debugMode;
+   }
+
+   @Override
    public void debug(String msg)
    {
       debug(msg, null);
