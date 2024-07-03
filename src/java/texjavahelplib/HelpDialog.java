@@ -356,7 +356,7 @@ public class HelpDialog extends JDialog
       popupHistoryForwardAction.setEnabled(historyForwardAction.isEnabled());
       popupResetAction.setEnabled(resetAction.isEnabled());
 
-      if (navTree != null)
+      if (pageNode.getChildCount() > 0)
       {
          NavigationNode prevPage = currentNode.getPreviousNode();
          previousAction.setEnabled(isInNavigationTree(prevPage));
@@ -403,7 +403,7 @@ public class HelpDialog extends JDialog
 
       popupMenu.add(popupResetAction);
 
-      if (navTree != null)
+      if (pageNode.getChildCount() > 0)
       {
          popupPreviousAction = new TJHAbstractAction(helpLib,
            "menu.helppage", "previous")
