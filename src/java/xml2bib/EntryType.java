@@ -28,7 +28,7 @@ public enum EntryType
    ERROR("error", null),
    WARNING("warning", null),
    SYNTAX("syntax", null),
-   SYMBOL("symbol", "symbolfmt"),
+   SYMBOL("symbol", "iconfmt"),
    KEYSTROKE("keystroke", null),
    INDEX("index", null);
 
@@ -94,11 +94,6 @@ public enum EntryType
             return SYNTAX;
          }
 
-         if (key.endsWith("title"))
-         {
-            return WINDOW;
-         }
-
          if (prefix.equals("symbol"))
          {
             return SYMBOL;
@@ -108,7 +103,7 @@ public enum EntryType
          {
             String str = key.substring(idx+1);
 
-            if (str.startsWith("keystroke"))
+            if (str.startsWith("keystroke."))
             {
                return KEYSTROKE;
             }
@@ -121,6 +116,11 @@ public enum EntryType
          if (prefix.equals("text") || prefix.equals("index"))
          {
             return INDEX;
+         }
+
+         if (key.endsWith(".title"))
+         {
+            return WINDOW;
          }
 
          return WIDGET;

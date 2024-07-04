@@ -174,6 +174,16 @@ public class Entry
                val = encode(val);
             }
 
+            if (field.equals("name"))
+            {
+               String encap = type.getEncap();
+
+               if (encap != null)
+               {
+                  val = String.format("\\%s{%s}", encap, val);
+               }
+            }
+
             out.format("  %s={%s}", field, val);
          }
       }
