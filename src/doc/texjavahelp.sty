@@ -878,8 +878,6 @@
 
 \newdglsfieldlike[textformat=widgetfmt]{text}{\widget}{\Widget}{\WIDGET}
 
-\newcommand{\symbolfmt}[1]{\textrm{#1}}
-
 \newcommand{\msgparam}[1]{%
  \ifcsdef{msgparam@\romannumeral #1}%
   {\csuse{msgparam@\romannumeral #1}}%
@@ -964,19 +962,16 @@
   }%
 }
 
-\newcommand{\menuitemref}[1]{\glshyperlink[\menufmt{\glsentrytext{#1}}]{#1}}
+\newcommand{\menuitemref}[1]{\glshyperlink{#1}}
 
 \newcommand{\menuitem}{\dgls}
 
 % \menutrailfmt{Parent Text,Child Text}
 \newrobustcmd*{\menutrailfmt}[1]{%
   \def\nlct@menusep{}%
-  \menufmt
-  {%
-    \@for\@menu@item:=#1\do{%
-      \nlct@menusep\@menu@item
-      \let\nlct@menusep\menusep
-    }%
+  \@for\@menu@item:=#1\do{%
+    \nlct@menusep\@menu@item
+    \let\nlct@menusep\menusep
   }%
 }
 
@@ -1201,7 +1196,7 @@
    }%
    {}%
  }%
- \menufmt{\glsxtrglossentry{#3}}%
+ \glsxtrglossentry{#3}%
  \hfill \glsxtrusefield{#3}{keystroke}#4%
  \end{settingsbox}% 
 }
@@ -1758,7 +1753,9 @@ code should appear in the PDF}}
 \newcommand*{\transcriptdesc}{\manualdesc{transcript}{text in a
 transcript or log file or written to STDOUT or STDERR}}
 
-\newcommand*{\icon}[1]{\csuse{#1sym}}
+\newcommand{\iconfmt}[1]{#1}
+
+\newcommand*{\icon}[1]{\iconfmt{\csuse{#1sym}}}
 \newcommand*{\icontext}[1]{\csuse{#1text}}
 \newcommand*{\icondesc}[1]{\csuse{#1desc}}
 

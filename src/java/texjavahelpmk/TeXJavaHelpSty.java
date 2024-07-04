@@ -72,6 +72,8 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       addSemanticCommand("varfmt", TeXFontFamily.VERB);
 
+      addSemanticCommand("iconfmt", "icon", null, null, null, null);
+
       addDiscretionaryCommands();
       addCrossRefCommands();
       addFootnoteCommands();
@@ -259,17 +261,6 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new LaTeXGenericCommand(true, "icondesc",
        "m", def));
 
-      def = listener.createStack();
-      StartElement startElem = new StartElement("span");
-      startElem.putAttribute("class", "symbol");
-      listener.addCssStyle("span.symbol { font-family: serif; }");
-      def.add(startElem);
-      def.add(listener.getParam(1));
-      def.add(new EndElement("span"));
-
-      registerControlSequence(new LaTeXGenericCommand(true, "symbolfmt",
-       "m", def));
-
       registerControlSequence(new AtFirstOfOne("msgellipsis"));
       registerControlSequence(new AtGobble("msgendcolon"));
 
@@ -312,12 +303,6 @@ public class TeXJavaHelpSty extends UserGuideSty
       def = listener.createStack();
 
       def.add(new TeXCsRef("glshyperlink"));
-      def.add(listener.getOther('['));
-      def.add(new TeXCsRef("menufmt"));
-      def.add(TeXParserUtils.createGroup(listener,
-        new TeXCsRef("glsentrytext"),
-         TeXParserUtils.createGroup(listener, listener.getParam(1))));
-      def.add(listener.getOther(']'));
       def.add(TeXParserUtils.createGroup(listener,
         listener.getParam(1)));
 
@@ -332,6 +317,12 @@ public class TeXJavaHelpSty extends UserGuideSty
         "cspuncfmt", "m", TeXParserUtils.createStack(listener,
          new TeXCsRef("csfmt"),
           TeXParserUtils.createGroup(listener, listener.getParam(1)))));
+
+      registerControlSequence(new GenericCommand(true, "quad", null, 
+       new TeXObject[] {new HtmlTag("<span class=\"quad\">&nbsp; </span>")}));
+      registerControlSequence(new GenericCommand(true, "qquad", null, 
+       new TeXObject[] {new HtmlTag("<span class=\"qquad\">&nbsp; &nbsp; </span>")}));
+
    }
 
    protected void addLangCommands()

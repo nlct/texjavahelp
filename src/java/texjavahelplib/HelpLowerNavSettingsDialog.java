@@ -30,7 +30,7 @@ public class HelpLowerNavSettingsDialog extends JDialog
    public HelpLowerNavSettingsDialog(final HelpFrame helpFrame)
    {
       super(helpFrame,
-        helpFrame.getHelpLib().getMessage("help.settings.nav.title"), true);
+        helpFrame.getHelpLib().getMessage("help_settings_nav.title"), true);
 
       this.helpFrame = helpFrame;
 
@@ -48,7 +48,7 @@ public class HelpLowerNavSettingsDialog extends JDialog
       panel.setAlignmentX(0.0f);
       box.add(panel);
 
-      JLabel limitLabel = helpLib.createJLabel("help.settings.nav.label_limit");
+      JLabel limitLabel = helpLib.createJLabel("help_settings_nav.label_limit");
       limitLabel.setAlignmentX(0.0f);
 
       labelLimitSpinnerModel = new SpinnerNumberModel(
@@ -61,7 +61,7 @@ public class HelpLowerNavSettingsDialog extends JDialog
       panel.add(limitLabel);
       panel.add(labelLimitSpinner);
 
-      showLabelCheckBox = helpLib.createJCheckBox("help.settings.nav",
+      showLabelCheckBox = helpLib.createJCheckBox("help_settings_nav",
        "show_label", helpFrame.isLowerNavLabelTextOn());
 
       box.add(showLabelCheckBox);

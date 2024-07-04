@@ -75,7 +75,7 @@ public class MenuDef extends StandaloneDef
 
       if (keystroke != null)
       {
-         list.add(parser.getListener().getSpace());
+         list.add(parser.getListener().getControlSequence("qquad"));
          list.add(keystroke, true);
       }
    }

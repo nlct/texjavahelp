@@ -287,7 +287,7 @@ public class HelpFrame extends JFrame
       // font
 
       TJHAbstractAction fontDecreaseAction = new TJHAbstractAction(helpLib,
-        "menu.helpframe.settings.font", "decrease")
+        "menu.helpframe.settings", "decrease")
       {
          @Override
          public void doAction()
@@ -320,7 +320,7 @@ public class HelpFrame extends JFrame
       settingsMenu.add(fontSelectAction);
 
       TJHAbstractAction fontIncreaseAction = new TJHAbstractAction(helpLib,
-        "menu.helpframe.settings.font", "increase")
+        "menu.helpframe.settings", "increase")
       {
          @Override
          public void doAction()

@@ -147,17 +147,17 @@
 <entry key="menu.helpframe.settings.mnemonic">S</entry>
 <entry key="menu.helpframe.settings.description">Change the graphical interface</entry>
 
-<entry key="menu.helpframe.settings.font.decrease">Font Decrease</entry>
-<entry key="menu.helpframe.settings.font.decrease.tooltip">Decrease Font Size</entry>
-<entry key="menu.helpframe.settings.font.decrease.description">Decrease the font size for the help pages</entry>
-<entry key="menu.helpframe.settings.font.decrease.mnemonic">D</entry>
-<entry key="menu.helpframe.settings.font.decrease.keystroke">SUBTRACT</entry>
+<entry key="menu.helpframe.settings.decrease">Font Decrease</entry>
+<entry key="menu.helpframe.settings.decrease.tooltip">Decrease Font Size</entry>
+<entry key="menu.helpframe.settings.decrease.description">Decrease the font size for the help pages</entry>
+<entry key="menu.helpframe.settings.decrease.mnemonic">D</entry>
+<entry key="menu.helpframe.settings.decrease.keystroke">SUBTRACT</entry>
 
-<entry key="menu.helpframe.settings.font.increase">Font Increase</entry>
-<entry key="menu.helpframe.settings.font.increase.tooltip">Increase Font Size</entry>
-<entry key="menu.helpframe.settings.font.increase.description">Increase the font size for the help pages</entry>
-<entry key="menu.helpframe.settings.font.increase.mnemonic">I</entry>
-<entry key="menu.helpframe.settings.font.increase.keystroke">ADD</entry>
+<entry key="menu.helpframe.settings.increase">Font Increase</entry>
+<entry key="menu.helpframe.settings.increase.tooltip">Increase Font Size</entry>
+<entry key="menu.helpframe.settings.increase.description">Increase the font size for the help pages</entry>
+<entry key="menu.helpframe.settings.increase.mnemonic">I</entry>
+<entry key="menu.helpframe.settings.increase.keystroke">ADD</entry>
 
 <entry key="menu.helpframe.settings.font">Font...</entry>
 <entry key="menu.helpframe.settings.font.tooltip">Select Font</entry>
@@ -165,32 +165,32 @@
 <entry key="menu.helpframe.settings.font.mnemonic">F</entry>
 <entry key="menu.helpframe.settings.font.keystroke">ctrl F</entry>
 
-<entry key="text.help.settings.font_sample">“Waltz, bad nymph! For quick jigs vex sylph’s fiddle. D’ye ken?”&lt;br&gt;(+/-)1234567890</entry>
+<entry key="text.help_font_settings_sample">“Waltz, bad nymph! For quick jigs vex sylph’s fiddle. D’ye ken?”&lt;br&gt;(+/-)1234567890</entry>
 
-<entry key="help.settings.font.title">Font</entry>
-<entry key="help.settings.font.family">Default Font Family:</entry>
-<entry key="help.settings.font.family.mnemonic">F</entry>
-<entry key="help.settings.font.size">Font Size:</entry>
-<entry key="help.settings.font.size.mnemonic">Z</entry>
+<entry key="help_font_settings.title">Help Page Font</entry>
+<entry key="help_font_settings.family">Default Font Family:</entry>
+<entry key="help_font_settings.family.mnemonic">F</entry>
+<entry key="help_font_settings.size">Font Size:</entry>
+<entry key="help_font_settings.size.mnemonic">Z</entry>
 
-<entry key="help.settings.icon_font.family">Icon Font:</entry>
-<entry key="help.settings.icon_font.family.mnemonic">I</entry>
+<entry key="help_font_settings.icon_font_family">Icon Font:</entry>
+<entry key="help_font_settings.icon_font_family.mnemonic">I</entry>
 
-<entry key="help.settings.keystroke_font.family">Keystroke Font:</entry>
-<entry key="help.settings.keystroke_font.family.mnemonic">K</entry>
+<entry key="help_font_settings.keystroke_font_family">Keystroke Font:</entry>
+<entry key="help_font_settings.keystroke_font_family.mnemonic">K</entry>
 
-<entry key="help.settings.mono_font.family">Mono Font:</entry>
-<entry key="help.settings.mono_font.family.mnemonic">M</entry>
+<entry key="help_font_settings.mono_font_family">Mono Font:</entry>
+<entry key="help_font_settings.mono_font_family.mnemonic">M</entry>
 
 <entry key="menu.helpframe.settings.nav">Lower Navigation...</entry>
 <entry key="menu.helpframe.settings.nav.mnemonic">L</entry>
 <entry key="menu.helpframe.settings.nav.description">Adjust the bottom navigation panel</entry>
 
-<entry key="help.settings.nav.title">Lower Navigation Settings</entry>
-<entry key="help.settings.nav.label_limit">Maximum number of characters:</entry>
-<entry key="help.settings.nav.label_limit.mnemonic">M</entry>
-<entry key="help.settings.nav.show_label">Include text</entry>
-<entry key="help.settings.nav.show_label.mnemonic">T</entry>
+<entry key="help_settings_nav.title">Lower Navigation Settings</entry>
+<entry key="help_settings_nav.label_limit">Maximum number of characters:</entry>
+<entry key="help_settings_nav.label_limit.mnemonic">M</entry>
+<entry key="help_settings_nav.show_label">Include text</entry>
+<entry key="help_settings_nav.show_label.mnemonic">T</entry>
 
 <!-- Help Popup Menu  -->
 
@@ -198,6 +198,7 @@
 
 <entry key="menu.helppage.view_image">View Image</entry>
 <entry key="menu.helppage.view_image.mnemonic">I</entry>
+<entry key="menu.helppage.view_image.tooltip">Open image in viewer</entry>
 
 <entry key="menu.helppage.home">Home</entry>
 <entry key="menu.helppage.home.tooltip">Home Page</entry>
@@ -249,8 +250,8 @@
 
 <entry key="menu.helpdialog.navigation">Navigation</entry>
 <entry key="menu.helpdialog.navigation.mnemonic">N</entry>
-<entry key="menu.helpdialog.navigation.tooltip">Navigate the document history</entry>
-<entry key="menu.helpdialog.navigation.description">Actions to switch the view to a previously visited page for this topic</entry>
+<entry key="menu.helpdialog.navigation.tooltip">Navigate the document topic</entry>
+<entry key="menu.helpdialog.navigation.description">Actions to switch the viewed page</entry>
 
 <entry key="menu.helpdialog.navigation.reset">Reset</entry>
 <entry key="menu.helpdialog.navigation.reset.mnemonic">R</entry>
@@ -282,13 +283,19 @@
 <entry key="menu.helpdialog.navigation.next.description">Go to the next page</entry>
 <entry key="menu.helpdialog.navigation.next.keystroke">alt RIGHT</entry>
 
+<entry key="menu.helpdialog.navigation.up">Up</entry>
+<entry key="menu.helpdialog.navigation.up.mnemonic">U</entry>
+<entry key="menu.helpdialog.navigation.up.tooltip">Up</entry>
+<entry key="menu.helpdialog.navigation.up.description">Go up a section</entry>
+<entry key="menu.helpdialog.navigation.up.keystroke">alt UP</entry>
+
 <!-- Image Viewer  -->
 
 <entry key="imageviewer.title">Image Viewer</entry>
 <entry key="imageviewer.magnify">Magnify (%):</entry>
 <entry key="imageviewer.magnify.mnemonic">M</entry>
 
-<entry key="index.imageviewer.title">Image Viewer Menu</entry>
+<entry key="index.menu.imageviewer">Image Viewer Menu</entry>
 
 <entry key="menu.imageviewer.fit_to_width">Fit to Width</entry>
 <entry key="menu.imageviewer.fit_to_width.mnemonic">W</entry>
@@ -335,6 +342,8 @@
   where label is obtained from the KeyStroke identifier that has been converted
   to lowercase and had any underscores stripped. 
  -->
+
+<entry key="index.help-page">help page</entry>
 
 <entry key="manual.keystroke.shift">\shiftsym</entry>
 <entry key="manual.keystroke.shift.description">Shift</entry>

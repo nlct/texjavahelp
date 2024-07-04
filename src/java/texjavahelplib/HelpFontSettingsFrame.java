@@ -49,7 +49,7 @@ public class HelpFontSettingsFrame extends JFrame
 {
    public HelpFontSettingsFrame(final HelpFrame helpFrame)
    {
-      super(helpFrame.getHelpLib().getMessage("help.settings.font.title"));
+      super(helpFrame.getHelpLib().getMessage("help_font_settings.title"));
 
       this.helpFrame = helpFrame;
       sampleHelpFontSettings = new HelpFontSettings();
@@ -81,7 +81,7 @@ public class HelpFontSettingsFrame extends JFrame
       sampleHelpFontSettings.appendRules(builder);
       builder.append("</style></head><body>");
 
-      builder.append(helpLib.getMessage("text.help.settings.font_sample"));
+      builder.append(helpLib.getMessage("text.help_font_settings_sample"));
       builder.append("<pre class=\"code\">\\ | / -- * + % ~ # { } [ ] ^ _</pre>");
       builder.append("<p><span class=\"locationprefix\">");
       builder.append(locPrefix);
@@ -172,7 +172,7 @@ public class HelpFontSettingsFrame extends JFrame
       fontFamily.addItemListener(this);
       fontFamily.setAlignmentX(0.0f);
 
-      panel.add(createJLabel("help.settings.font.family", fontFamily));
+      panel.add(createJLabel("help_font_settings.family", fontFamily));
       panel.add(fontFamily);
 
       panel = createRow();
@@ -197,7 +197,7 @@ public class HelpFontSettingsFrame extends JFrame
        });
       fontSizeSpinner.setAlignmentX(0.0f);
 
-      panel.add(createJLabel("help.settings.font.size", fontSizeSpinner));
+      panel.add(createJLabel("help_font_settings.size", fontSizeSpinner));
       panel.add(fontSizeSpinner);
 
       // Icon font family
@@ -210,7 +210,7 @@ public class HelpFontSettingsFrame extends JFrame
       iconFontFamily.addItemListener(this);
       iconFontFamily.setAlignmentX(0.0f);
 
-      panel.add(createJLabel("help.settings.icon_font.family", iconFontFamily));
+      panel.add(createJLabel("help_font_settings.icon_font_family", iconFontFamily));
       panel.add(iconFontFamily);
 
       panel = createRow();
@@ -222,7 +222,7 @@ public class HelpFontSettingsFrame extends JFrame
       keystrokeFontFamily.addItemListener(this);
       keystrokeFontFamily.setAlignmentX(0.0f);
 
-      panel.add(createJLabel("help.settings.keystroke_font.family",
+      panel.add(createJLabel("help_font_settings.keystroke_font_family",
          keystrokeFontFamily));
       panel.add(keystrokeFontFamily);
 
@@ -234,7 +234,7 @@ public class HelpFontSettingsFrame extends JFrame
       monoFontFamily.addItemListener(this);
       monoFontFamily.setAlignmentX(0.0f);
 
-      panel.add(createJLabel("help.settings.mono_font.family", monoFontFamily));
+      panel.add(createJLabel("help_font_settings.mono_font_family", monoFontFamily));
       panel.add(monoFontFamily);
 
       box.add(Box.createVerticalStrut(40));

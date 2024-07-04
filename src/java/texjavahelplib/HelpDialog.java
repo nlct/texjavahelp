@@ -154,6 +154,19 @@ public class HelpDialog extends JDialog
          navComp.add(createActionComponent(previousAction));
          navMenu.add(previousAction);
 
+         upAction = new TJHAbstractAction(helpLib,
+           "menu.helpdialog.navigation", "up")
+         {
+            @Override
+            public void doAction()
+            {
+               upPage();
+            }
+         };
+
+         navComp.add(createActionComponent(upAction));
+         navMenu.add(upAction);
+
          nextAction = new TJHAbstractAction(helpLib,
            "menu.helpdialog.navigation", "next")
          {
@@ -310,6 +323,12 @@ public class HelpDialog extends JDialog
       return node != null && (node.equals(pageNode) || pageNode.isAncestorOf(node));
    }
 
+   public void upPage()
+   {
+      NavigationNode currentNode = helpPage.getCurrentNode();
+      setPage(currentNode.getParentNode());
+   }
+
    public void prevPage()
    {
       NavigationNode currentNode = helpPage.getCurrentNode();
@@ -361,6 +380,10 @@ public class HelpDialog extends JDialog
          NavigationNode prevPage = currentNode.getPreviousNode();
          previousAction.setEnabled(isInNavigationTree(prevPage));
          popupPreviousAction.setEnabled(previousAction.isEnabled());
+
+         NavigationNode upPage = currentNode.getParentNode();
+         upAction.setEnabled(isInNavigationTree(upPage));
+         popupUpAction.setEnabled(upAction.isEnabled());
 
          NavigationNode nextPage = currentNode.getNextNode();
          nextAction.setEnabled(isInNavigationTree(nextPage));
@@ -417,6 +440,18 @@ public class HelpDialog extends JDialog
 
          popupMenu.add(popupPreviousAction);
 
+         popupUpAction = new TJHAbstractAction(helpLib,
+           "menu.helppage", "up")
+         {
+            @Override
+            public void doAction()
+            {
+               upPage();
+            }
+         };
+
+         popupMenu.add(popupUpAction);
+
          popupNextAction = new TJHAbstractAction(helpLib,
            "menu.helppage", "next")
          {
@@ -467,6 +502,6 @@ public class HelpDialog extends JDialog
    // null if node has no children
    protected JSplitPane splitPane;
    protected JTree navTree;
-   protected TJHAbstractAction nextAction, previousAction,
-    popupNextAction, popupPreviousAction;
+   protected TJHAbstractAction nextAction, previousAction, upAction,
+    popupNextAction, popupPreviousAction, popupUpAction;
 }
