@@ -50,13 +50,14 @@ public class HelpIndexFrame extends JFrame
       super(helpFrame.getHelpLib().getMessage("help.navigation.index.title"));
 
       this.helpFrame = helpFrame;
+      this.indexURL = indexURL;
 
-      init(indexGroupData, indexURL);
+      init(indexGroupData);
 
       helpFrame.getHelpLib().addHelpFontChangeListener(this);
    }
 
-   protected void init(TreeSet<IndexItem> indexGroupData, URL indexURL)
+   protected void init(TreeSet<IndexItem> indexGroupData)
     throws IOException
    {
       TeXJavaHelpLib helpLib = helpFrame.getHelpLib();
@@ -124,7 +125,7 @@ public class HelpIndexFrame extends JFrame
       return helpFrame.getHelpLib();
    }
 
-   public void goToGroup(String ref)
+   public void goToIndexRef(String ref)
    {
       HTMLDocument doc = (HTMLDocument)editorPane.getDocument();
 
@@ -156,6 +157,22 @@ public class HelpIndexFrame extends JFrame
       }
    }
 
+   protected void open(URL url) throws IOException
+   {
+      String ref = url.getRef();
+
+      if (indexURL.sameFile(url) && ref != null && !ref.isEmpty())
+      {
+         // likely a cross-reference
+         goToIndexRef(ref);
+      }
+      else
+      {
+         helpFrame.open(url);
+         helpFrame.requestHelpPageFocus();
+      }
+   }
+
    @Override
    public void hyperlinkUpdate(HyperlinkEvent evt)
    {
@@ -163,13 +180,13 @@ public class HelpIndexFrame extends JFrame
       {
          if (evt.getSource() == groupPane)
          {
-            goToGroup(evt.getDescription());
+            goToIndexRef(evt.getDescription());
          }
          else
          {
             try
             {
-               helpFrame.open(evt.getURL());
+               open(evt.getURL());
             }
             catch (IOException e)
             {
@@ -209,4 +226,5 @@ public class HelpIndexFrame extends JFrame
 
    protected HelpFrame helpFrame;
    protected JEditorPane editorPane, groupPane;
+   protected URL indexURL;
 }
