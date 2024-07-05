@@ -693,7 +693,12 @@
   name = symbol
     [ entrytype->original =/(common)?(cs)?(punctuation|icon)/ ] ,
   text = description + " \cs{symbolparen}{" + symbol + "}"
-    [ entrytype->original =/(common)?(cs)?punctuation/ ] 
+    [ entrytype->original =/(common)?(cs)?punctuation/ ] ,
+  text = name
+    [ entrytype->original=/icon|symbol/ & symbol=\NULL & description<>\NULL] ,
+  name =[o] name + " (" + description + ")"
+    [ entrytype->original=/icon|symbol/ & symbol=\NULL
+     & \LEN{ description } < \TeXJavaHelpMaxPuncDesc ]
 }
 
 \newcommand{\TeXJavaHelpGlsFieldAdjustments}{

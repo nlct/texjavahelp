@@ -123,7 +123,10 @@
 <entry key="menu.helpframe.navigation.history.description">View recent page list</entry>
 
 <entry key="help.navigation.history.title">Page History</entry>
+
 <entry key="symbol.help.navigation.history.pointer">&#x261E;</entry>
+<entry key="symbol.help.navigation.history.pointer.description">current page</entry>
+
 <entry key="help.navigation.history.header">Recent List</entry>
 <entry key="help.navigation.history.go">Go</entry>
 <entry key="help.navigation.history.go.mnemonic">G</entry>
