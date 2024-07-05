@@ -341,6 +341,7 @@ public class HelpSearchFrame extends JFrame
          try
          {
             helpFrame.setPage(desc, ref);
+            helpFrame.requestHelpPageFocus();
          }
          catch (IOException e)
          {
