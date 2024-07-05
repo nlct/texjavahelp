@@ -148,6 +148,36 @@ public class TeXJavaHelpSty extends UserGuideSty
         true));
 
       registerControlSequence(new FloatFig());
+
+      listener.newcounter("subfigure", null, "@alph");
+
+      registerControlSequence(new FloatSubFigs());
+      registerControlSequence(new SubFigureContent());
+      registerControlSequence(new SubFigRef());
+
+      registerControlSequence(new LaTeXGenericCommand(true,
+       "subfigurefmt", "m", TeXParserUtils.createStack(listener,
+         listener.getOther('('), listener.getParam(1),
+         listener.getOther(')'))));
+
+      addSemanticCommand("subfigurefmt", new TeXFontText(TeXFontShape.EM),
+        null, listener.getOther('('), listener.getOther(')'));
+
+      registerControlSequence(new GenericCommand(true,
+       "subfigurelabel", null, TeXParserUtils.createStack(listener,
+         new TeXCsRef("subfigurefmt"), new TeXCsRef("thesubfigure"))));
+
+      registerControlSequence(new LaTeXGenericCommand(true,
+       "subfigurecap", "m", TeXParserUtils.createStack(listener,
+         new TeXCsRef("subfigurelabel"), new TeXCsRef("space"),
+         listener.getParam(1))));
+
+      registerControlSequence(new LaTeXGenericCommand(true,
+       "subfigure@pfmt", "mm", TeXParserUtils.createStack(listener,
+         listener.getParam(1),
+         new TeXCsRef("subfigurefmt"), 
+         TeXParserUtils.createGroup(listener, listener.getParam(2)))));
+
       registerControlSequence(new SeeAlsoRefs());
       registerControlSequence(new TextualContentCommand("multiseealsosep", ":"));
 

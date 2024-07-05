@@ -24,14 +24,38 @@ The \gls{index.menu.helppage} (see \figureref{fig:helppagepopup})
 can be activated on the current \dgls{help-page} for both the primary and
 secondary help windows. The menu has the following items.
 
-\FloatFig
+\FloatSubFigs
 {fig:helppagepopup}
-{\includeimg
- [alt=
-   {Help page popup menu}
- ]{images/helppagepopup}%
+ {
+   {fig:helpframepopup}
+   {\includeimg
+     [alt=
+      {Primary help window popup menu}
+     ]{images/helppagepopup}%
+   }
+   {Primary},
+   {fig:helpdialogpopup}
+   {\includeimg
+     [alt=
+      {Secondary help multi-page dialog popup menu}
+     ]{images/helpdialogpopup}%
+   }
+   {Secondary (Multi)},
+   {fig:helpdialogsinglepopup}
+   {\includeimg
+     [alt=
+      {Secondary help single-page dialog popup menu}
+     ]{images/helpdialogsinglepopup}%
+   }
+   {Secondary (Single)}
 }
-{Help Page Popup Menu}
+[Help Page Popup Menus]
+{Help Page Popup Menus: 
+ \subfigref{fig:helpframepopup} Primary Help Window;
+ \subfigref{fig:helpdialogpopup} Secondary Help Dialog
+ with Multiple Topic Pages;
+ \subfigref{fig:helpdialogsinglepopup} Secondary Help Dialog
+ with Single Topic Pages}
 
 \menudef{menu.helppage.view_image}
 
@@ -43,14 +67,16 @@ over an image.
 
 \menudef{menu.helppage.home}
 
-If the popup menu is activated on the primary help window, this will
+If the popup menu is activated on the primary help window
+(\figureref{fig:helpframepopup}), this will
 behave as the \menu{helpframe.navigation.home} menu item (which
 switches the current page to the first page of the document).
 This menu item is not available on secondary help windows.
 
 \menudef{menu.helppage.reset}
 
-If the popup menu is activated on the secondary help dialog, this
+If the popup menu is activated on the secondary help dialog
+(\figuresref{fig:helpdialogpopup,fig:helpdialogsinglepopup}), this
 will behave as the \menu{helpdialog.navigation.reset} menu item
 (which switches the current page back to the relevant page or the
 first in the applicable section of the dialog topic).

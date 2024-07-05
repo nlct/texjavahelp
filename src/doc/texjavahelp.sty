@@ -402,6 +402,85 @@
  \end{figure}%
 }
 
+\newcounter{subfigure}
+\renewcommand{\thesubfigure}{\alph{subfigure}}
+\renewcommand{\theHsubfigure}{\theHfigure.\thesubfigure}
+\NewDocumentCommand\subfigurefmt{m}{(\emph{#1})}
+\newcommand{\subfigurelabel}{\subfigurefmt{\thesubfigure}}
+\newcommand{\subfigurecap}[1]{\subfigurelabel\space #1}
+
+\ExplSyntaxOn
+
+\cs_set:Npn \p@subfigure #1
+{
+  \protect\subfigure@pfmt
+   {
+     \int_eval:n { \c@figure + \c_one_int }
+   }
+   { \thesubfigure }
+}
+
+\cs_new:Nn \__texjavahelp_subfig_nofigfmt:nn
+ {
+   \subfigurefmt { #2 }
+ }
+
+\cs_new:Nn \__texjavahelp_subfig_figfmt:nn
+ {
+   #1 \subfigurefmt { #2 }
+ }
+
+\cs_set_eq:NN 
+ \subfigure@pfmt
+ \__texjavahelp_subfig_figfmt:nn
+
+\NewDocumentCommand \subfigref { m }
+ {
+   \group_begin:
+     \cs_set_eq:NN
+       \subfigure@pfmt
+       \__texjavahelp_subfig_nofigfmt:nn
+     \ref { #1 }
+   \group_end:
+ }
+
+% \FloatSubFigs[pos]{label}{list}[lof]{caption}
+\NewDocumentCommand\FloatSubFigs{ommom}{%
+ \IfValueTF{#1}%
+  {\begin{figure}[#1]}%
+  {\begin{figure}}%
+ \setcounter {subfigure} {0}
+ \centering
+ ~ \clist_map_inline:nn { #3 } { \SubFigureContent ##1 ~ }
+ \IfValueTF{#4}%
+  {\caption[#4]{#5}}%
+  {\caption{#5}}%
+ \label{#2}%
+ \end{figure}%
+}
+
+% \SubFigureContent{label}{image}[hyp cap]{sub-cap}
+\NewDocumentCommand \SubFigureContent { m m o m }
+{
+  \begin{tabular}{c}
+  { #2 }
+  \tabularnewline
+  \__texjavahelp_subfigcap:nnn { #1 } { #3 } { #4 }
+  \end{tabular}
+}
+
+\cs_new:Nn \__texjavahelp_subfigcap:nnn
+{
+  \IfValueTF { #2 }
+   { \def \@currentlabelname { #2 } }
+   { \def \@currentlabelname { #3 } }
+  \refstepcounter {subfigure}
+  \label { #1 }
+  \subfigurecap { #3 }
+}
+
+\ExplSyntaxOff
+
 \newcommand{\codepar}{\par\mbox{}\par}
 
 \newcommand{\continuesymbol}{$\hookleftarrow$}
