@@ -28,7 +28,7 @@ public enum EntryType
    ERROR("error", null),
    WARNING("warning", null),
    SYNTAX("syntax", null),
-   SYMBOL("symbol", "iconfmt"),
+   SYMBOL("icon", "iconfmt"),
    KEYSTROKE("keystroke", null),
    INDEX("index", null);
 

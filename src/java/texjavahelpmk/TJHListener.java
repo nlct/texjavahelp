@@ -106,7 +106,7 @@ public class TJHListener extends L2HConverter
       addCssStyle(TeXJavaHelpLib.KEYSTROKE_CSS);
       addCssStyle(TeXJavaHelpLib.ICON_CSS);
 
-      String locPrefString = app.getMessageIfExists("manual.location_prefix");
+      String locPrefString = app.getMessageIfExists("symbol.location_prefix");
 
       if (locPrefString != null)
       {

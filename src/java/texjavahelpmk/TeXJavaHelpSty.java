@@ -285,7 +285,7 @@ public class TeXJavaHelpSty extends UserGuideSty
          listener.getParam(1)))));
 
       // dual prefix list
-      def = listener.createString("action.,button.,menu.,widget.,");
+      def = listener.createString("action.,button.,menu.,widget.,help.,index.,");
         def.add(listener.getControlSequence("empty"));
       registerControlSequence(new GenericCommand(true, "@glsxtr@labelprefixes",
        null, def));
@@ -412,6 +412,11 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(createLangCs("idxenv", "environment"));
       registerControlSequence(createLangCs("idxcounter", "counter"));
       registerControlSequence(createLangCs("idxvariablename", "variable"));
+      registerControlSequence(createLangCs("idxmenu", "menu"));
+
+      registerControlSequence(new GenericCommand(true, "postmenuname",
+       null, TeXParserUtils.createStack(listener,
+        listener.getSpace(), new TeXCsRef("idxmenuname"))));
 
       registerControlSequence(createLangCs("warningtext",
         "manualtext", "warning", "Warning"));

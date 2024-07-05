@@ -660,7 +660,7 @@
 \newignoredglossary{messages}
 \newignoredglossary{keystrokes}
 
-% punctuation is best dealt with in a separate resource set
+% punctuation and icon characters are best dealt with in a separate resource set
 
 \newcommand{\TeXJavaHelpSymbolResourceOptions}{
   group={glssymbols},
@@ -670,7 +670,8 @@
   entry-type-aliases = 
    {
       punctuation=symbol,
-      cspunctuation=symbol
+      cspunctuation=symbol,
+      icon=symbol
    },
   assign-fields=
    {
@@ -682,13 +683,15 @@
 
 \newcommand{\symbolparen}[1]{(\,#1\,)}
 
-\newcommand{\TeXJavaHelpMaxPuncDesc}{20}
+\newcommand\postmenuname{ \idxmenuname}
+
+\newcommand{\TeXJavaHelpMaxPuncDesc}{25}
 \newcommand{\TeXJavaHelpPuncAssignFields}{%
   name = symbol + " (" + description + ")"
-    [ entrytype->original =/(common)?(cs)?punctuation/
+    [ entrytype->original =/(common)?(cs)?(punctuation|icon)/
       & \LEN{ description } < \TeXJavaHelpMaxPuncDesc ] ,
   name = symbol
-    [ entrytype->original =/(common)?(cs)?punctuation/ ] ,
+    [ entrytype->original =/(common)?(cs)?(punctuation|icon)/ ] ,
   text = description + " \cs{symbolparen}{" + symbol + "}"
     [ entrytype->original =/(common)?(cs)?punctuation/ ] 
 }
@@ -704,6 +707,7 @@
 
 \newcommand{\TeXJavaHelpGlsSelection}{
   selection=recorded and deps and see,
+  action=provide,
   match-action=add,
   match-op=or,
   match={
@@ -844,6 +848,11 @@
         ], 
       name = "\cs{envfmt}{" + entrylabel->original + "}"
         [ entrytype->original =/(common)?environment/], 
+% menus
+      text = name
+        [ entrytype->original =/menu/ & parent=\NULL ],
+      name =[o] name + "\cs{postmenuname}"
+        [ entrytype->original =/menu/ & parent=\NULL ],
 % messages, errors and warnings
       type = "messages"
         [ entrytype->original = /message|error|warning|syntax/ ], 
@@ -874,6 +883,7 @@
 \glsxtraddlabelprefix{menu.}
 \glsxtraddlabelprefix{widget.}
 \glsxtraddlabelprefix{help.}
+\glsxtraddlabelprefix{index.}
 \glsxtraddlabelprefix{}
 
 \newdglsfieldlike[textformat=widgetfmt]{text}{\widget}{\Widget}{\WIDGET}
@@ -1620,6 +1630,7 @@
 \newcommand{\idxenvname}{\manualtext{idxenv}{environment}}
 \newcommand{\idxcountername}{\manualtext{idxcounter}{counter}}
 \newcommand{\idxvariablename}{\manualtext{idxvariable}{variable}}
+\newcommand{\idxmenuname}{\manualtext{idxmenu}{menu}}
 
 \newcommand{\nlctguideindexinitpostnamehooks}{%
   \glsdefpostname{abbreviation}{\abbrpostnamehook}%

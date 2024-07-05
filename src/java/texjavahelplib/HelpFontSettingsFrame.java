@@ -62,7 +62,7 @@ public class HelpFontSettingsFrame extends JFrame
       TeXJavaHelpLib helpLib = helpFrame.getHelpLib();
       sampleHelpFontSettings.copyFrom(helpLib.getHelpFontSettings());
 
-      String locPrefix = helpLib.getMessageIfExists("manual.location_prefix");
+      String locPrefix = helpLib.getMessageIfExists("symbol.location_prefix");
 
       if (locPrefix == null)
       {

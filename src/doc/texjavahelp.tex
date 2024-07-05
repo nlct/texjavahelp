@@ -13,12 +13,12 @@
 
 \hypersetup{colorlinks,linkcolor=blue}
 
-\newcommand{\TeXJavaHelp}{\texorpdfstring{\TeX}{TeX} Java Help}
+\newcommand{\TeXJavaHelp}{\texorpdfstring{\TeX{}}{TeX} Java Help}
 
 \title{\TeXJavaHelp}
 \author{Nicola L.C. Talbot\\\href{https://www.dickimaw-books.com/}{\nolinkurl{dickimaw-books.com}}}
 
-\GlsXtrLoadResources[
+\GlsXtrLoadResources[src={\jobname,texjavahelplib},
  \TeXJavaHelpSymbolResourceOptions
 ]
 
@@ -251,15 +251,14 @@ Specifies the output directory. The switch may be omitted
 \switch{in} is also used or the output directory is specified after
 the input file.
 
-\chapter[Help Windows]{Help Windows:
-  The \TeX\ Java Help Library (\filetext{texjavahelplib.jar})}
+\chapter{The \TeX\ Java Help Library (\filetext{texjavahelplib.jar})}
 \label{sec:texjavahelplib}
 
 The \inlineglsdef{file.texjavahelplib.jar} file contains the 
 \TeX\ Java Help Library classes that may be used to load the
 files created by \app{texjavahelpmk} and display the information in
-a frame with navigation buttons. Some of these classes are also used
-by \app{texjavahelpmk}, so both \app{texjavahelpmk} and the
+a frame with navigation buttons. The library also deals with loading
+localisation files, so \app{xml2bib}, \app{texjavahelpmk} and the
 application requiring the \TeX\ Java Help Library's \gls{gui}
 elements need to have \file{texjavahelplib.jar} on the class path.
 
@@ -277,6 +276,10 @@ found. Similarly, the index is created during the document build
 process, which depends on \sty{glossaries-extra} and \app{bib2gls}
 to create the required files that are parsed by \app{texjavahelpmk}.
 
+The file \filefmt{helpinterface.tex} provides a description of the
+help system and is designed to be input into the application's
+documentation source file (as in \sectionref{sec:helpwindows}).
+
 The main help frame can't be accessed when a modal dialog is open.
 There is therefore an interface to allow just the pages applicable
 to a dialog to be viewed. This means that a help button in the
@@ -286,6 +289,9 @@ is opened to avoid confusion. The help dialog's page will be added
 to the main help frame's history so that the user can go back to it
 after the dialog has been closed by simply reopening the main help
 frame.
+
+\chapter{Help Windows}
+\label{sec:helpwindows}
 
 \input{helpinterface}
 

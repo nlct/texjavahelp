@@ -5,13 +5,23 @@ document, which can be viewed outside of the application, or as a
 set of \gls{html} files which can be viewed within the application
 via the \menu{help.manual} menu item. This will open the primary
 help window (\sectionref{sec:primaryhelp}), but some dialog boxes
-may also have a \btn{help} button that will open a secondary help
+may also have a \inlineglsdef{action.help} button that will open a secondary help
 dialog (\sectionref{sec:secondaryhelp}).
+
+Both the primary help window and the secondary help dialog windows
+have a panel that shows a page of the manual (a
+\inlineglsdef{index.help-page}).  Note that \qt{page} in this
+context refers to the \gls{html} file displayed in the help window, which
+typically contains a section, and doesn't relate to the page numbers
+in the \gls{pdf}. The \gls{html} index page is obtained from the
+same source code as the \gls{pdf} index page, but the locations are
+converted from a \gls{pdf} page number to the \gls{html} page title
+(preceded by the marker \gls{symbol.location_prefix}).
 
 \menudef{index.menu.helppage}
 
 The \gls{index.menu.helppage} (see \figureref{fig:helppagepopup})
-can be activated on the current \gls{index.help-page} for both the primary and
+can be activated on the current \dgls{help-page} for both the primary and
 secondary help windows. The menu has the following items.
 
 \FloatFig
@@ -89,11 +99,8 @@ This will behave as the primary
 \label{sec:primaryhelp}
 
 The main help frame has a panel that shows a page of the manual (a
-\inlineglsdef{index.help-page}).  Links in the page and the \gls{gui} navigation
-elements provide a way to switch to a different page.  Note that
-\qt{page} in this context refers to the file displayed in the help
-window, which typically contains a section, and doesn't relate to
-the page numbers in the \gls{pdf}.
+\dgls{help-page}). Links in the page and the \gls{gui} navigation
+elements provide a way to switch to a different page.
 
 There is a menu bar with items for navigation actions or adjusting
 \gls{gui} settings. Some menu items are replicated as buttons in the
@@ -209,7 +216,7 @@ group.
 If an indexed item is shown as a hyperlink, then that link will go
 to the principle definition of that item. The indexed item may also
 be followed by a list of pertinent locations that are preceded by
-the symbol \gls[textformat=iconfmt]{manual.location_prefix}.
+the symbol \gls{symbol.location_prefix}.
 
 \FloatFig
 {fig:indexframe}
@@ -347,7 +354,7 @@ can hide the text by deselecting the
 \label{sec:secondaryhelp}
 
 The secondary help windows are more minimalist and will only show
-the relevant page or set of pages that are applicable to the context
+the relevant \dgls{help-page} or set of pages that are applicable to the context
 that was used to open the secondary help window. The search, history
 and index items are unavailable. If only one page is applicable,
 there won't be a navigation tree, otherwise the navigation tree will

@@ -12,6 +12,66 @@
   name={data\-tool\-tk}
 }
 
+@application{app.xml2bib,
+ name={\appfmt{xml\-2\-bib}},
+ syntax={\oargm{options} \meta{XML-file}+}
+}
+
+@switch{switch.xml2bib.help,
+  parent={app.xml2bib},
+  shortswitch={h},
+  description={Prints help and exits}
+}
+
+@switch{switch.xml2bib.version,
+  parent={app.xml2bib},
+  shortswitch={v},
+  description={Prints version information and exits}
+}
+
+@switch{switch.xml2bib.in,
+  parent={app.xml2bib},
+  shortswitch={i},
+  syntax={\meta{XML-file}},
+  description={add \meta{XML-file} to the list of input files
+(cumulative)}
+}
+
+@switch{switch.xml2bib.output,
+  parent={app.xml2bib},
+  shortswitch={o},
+  syntax={\meta{BIB-file}},
+  description={specifies \meta{BIB-file} as the output file}
+}
+
+@switch{switch.xml2bib.out-charset,
+  parent={app.xml2bib},
+  syntax={\meta{charset}},
+  description={specifies \meta{charset} as the encoding for the output file}
+}
+
+@switch{switch.xml2bib.provide-xml,
+  parent={app.xml2bib},
+  description={copy XML source files from \app{xml2bib}['s] resource
+directory if missing}
+}
+
+@switch{switch.xml2bib.copy-overwrite-xml,
+  parent={app.xml2bib},
+  description={copy XML source files from \app{xml2bib}['s] resource
+directory if missing or if \app{xml2bib}['s] file is newer}
+}
+
+@switch{switch.xml2bib.debug,
+  parent={app.xml2bib},
+  description={switch on debug mode}
+}
+
+@switch{switch.xml2bib.nodebug,
+  parent={app.xml2bib},
+  description={switch off debug mode (default)}
+}
+
 @application{app.texjavahelpmk,
  name={\appfmt{tex\-java\-help\-mk}},
  syntax={\oargm{options} \meta{tex-file} \meta{out-dir}}
