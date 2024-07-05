@@ -5,6 +5,7 @@ else
   target_version =
 endif
 arara = arara --verbose
+texjavahelpmk=bin/texjavahelpmk #--debug-mode sty-data --log texparser.log
 
 lib/texjavahelpdemo.jar	: java/texjavahelpdemo/Manifest.txt \
 	classes/com/dickimawbooks/texjavahelpdemo/TeXJavaHelpDemo.class
@@ -28,7 +29,7 @@ classes/com/dickimawbooks/texjavahelpdemo	:
 	mkdir -p classes/com/dickimawbooks/texjavahelpdemo
 
 lib/resources/helpset/index.xml	: lib/texjavahelpmk.jar doc/texjavahelp.pdf
-	bin/texjavahelpmk doc/texjavahelp.tex lib/resources/helpset
+	$(texjavahelpmk) doc/texjavahelp.tex lib/resources/helpset
 	@grep -E 'Package glossaries(-extra)? Warning' doc/texjavahelp.log || true
 
 doc/texjavahelp.pdf	: doc/texjavahelplib.bib doc/texjavahelp.tex doc/helpinterface.tex doc/texjavahelp.sty doc/texjavahelp.bib doc/images/*.tex doc/images/*.png
