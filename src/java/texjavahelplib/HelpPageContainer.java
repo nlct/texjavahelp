@@ -25,4 +25,6 @@ public interface HelpPageContainer
    public void updateNavWidgets();
 
    public void addActions(JPopupMenu popupMenu);
+
+   public void requestHelpPageFocus();
 }

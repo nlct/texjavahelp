@@ -363,6 +363,12 @@ public class HelpDialog extends JDialog
    }
 
    @Override
+   public void requestHelpPageFocus()
+   {
+      helpPage.requestFocusInWindow();
+   }
+
+   @Override
    public void updateNavWidgets()
    {
       NavigationNode currentNode = helpPage.getCurrentNode();

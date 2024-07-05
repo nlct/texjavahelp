@@ -563,6 +563,12 @@ public class HelpFrame extends JFrame
    }
 
    @Override
+   public void requestHelpPageFocus()
+   {
+      helpPage.requestFocusInWindow();
+   }
+
+   @Override
    public void updateNavWidgets()
    {
       NavigationNode currentNode = helpPage.getCurrentNode();
