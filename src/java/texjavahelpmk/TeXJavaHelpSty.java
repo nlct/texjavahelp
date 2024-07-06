@@ -135,6 +135,8 @@ public class TeXJavaHelpSty extends UserGuideSty
         "returnsym", 0x21B5));
       registerControlSequence(listener.createSymbol(
         "tabsym", 0x21B9));
+      registerControlSequence(listener.createSymbol(
+        "contextmenusym", 0x2630));
 
       registerControlSequence(listener.createSymbol("Slash", '/'));
 

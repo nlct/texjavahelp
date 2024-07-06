@@ -18,11 +18,19 @@ same source code as the \gls{pdf} index page, but the locations are
 converted from a \gls{pdf} page number to the \gls{html} page title
 (preceded by the marker \gls{symbol.location_prefix}).
 
+Although the \dgls{help-page} is not editable, for some versions of
+Java, the caret is visible when the page has the focus, and
+the caret can be moved around using the arrow keys on your keyboard.
+
 \menudef{index.menu.helppage}
 
 The \gls{index.menu.helppage} (see \figureref{fig:helppagepopup})
-can be activated on the current \dgls{help-page} for both the primary and
-secondary help windows. The menu has the following items.
+can be activated on the current \dgls{help-page} for both the
+primary and secondary help windows. The mouse press to show a popup
+menu is typically the right mouse button, but this may not be the
+case for all operating systems.  The popup menu can also be
+activated using the context menu \keys{\keyref{contextmenu}} key if the
+\dgls{help-page} has the focus.  The menu has the following items.
 
 \FloatSubFigs
 {fig:helppagepopup}
@@ -64,6 +72,11 @@ item will open the \dialog{imageviewer} window (see
 \sectionref{sec:helpimageviewer}) which can be used to enlarge the
 image. This item will be disabled if the popup menu wasn't activated
 over an image.
+
+Where the popup menu was activated using the context menu
+\keys{\keyref{contextmenu}} key, 
+the position of the caret will determine
+whether or not to enable this menu item.
 
 \menudef{menu.helppage.home}
 
@@ -400,11 +413,24 @@ can hide the text by deselecting the
 \label{sec:secondaryhelp}
 
 The secondary help windows are more minimalist and will only show
-the relevant \dgls{help-page} or set of pages that are applicable to the context
-that was used to open the secondary help window. The search, history
-and index items are unavailable. If only one page is applicable,
-there won't be a navigation tree, otherwise the navigation tree will
-only show the applicable pages.
+the relevant \dgls{help-page} or set of pages that are applicable to
+the context that was used to open the secondary help window. If only
+one page is applicable, there won't be a navigation tree, otherwise
+the navigation tree will only show the applicable pages.
+
+The search, history and index windows are unavailable, but it is
+possible to move back and forward in the history list for the
+current secondary help window. The topic page will be added to the
+primary help window history but otherwise the page history lists
+aren't shared between the help windows.
+
+The secondary help windows are designed for use with modal dialogs
+(that is, a window that blocks the main application window)
+to provide help for the particular dialog. The primary help window
+can't be accessed while a modal dialog is open so it will
+automatically be closed when a secondary help window is opened.
+You can re-open the primary help window once you have closed the
+modal dialog.
 
 \menudef*{menu.helpdialog.navigation}
 
@@ -414,47 +440,78 @@ the topic pages.
 \menudef{menu.helpdialog.navigation.reset}
 
 The \menu{helpdialog.navigation.reset} item switches the current
-page to the first page of the context topic.
+page to the first page of the context topic. This menu item
+will be disabled if the current page is the reset target page.
 
 \menudef{menu.helpdialog.navigation.historyback}
 
 The \menu{helpdialog.navigation.historyback} goes back to the
 previously visited page. Note that the history is specific to the
 current secondary help dialog instance and does not include the history
-from the primary help window.
+from the primary help window. This menu item will be disabled if
+there is no page in the history list to go back to.
 
 \menudef{menu.helpdialog.navigation.historyforward}
 
 The \menu{helpdialog.navigation.historyforward} moves forward in the
-history list, if applicable.
+history list, if applicable. This menu item will be disabled if
+there is no page in the history list to go forward to.
+
+The \btn{menu.helpdialog.navigation.previous}, 
+\btn{menu.helpdialog.navigation.up} and
+\btn{menu.helpdialog.navigation.next} buttons
+(\figureref{fig:secondaryNavbuttons}) are only available if the
+topic context contains multiple pages.
+
+\FloatFig
+{fig:secondaryNavbuttons}
+{\includeimg
+ [alt=
+   {
+     [\entrytooltip{menu.helpdialog.navigation.reset} Button]
+     [\entrytooltip{menu.helpdialog.navigation.previous} Button]
+     [\entrytooltip{menu.helpdialog.navigation.up} Button]
+     [\entrytooltip{menu.helpdialog.navigation.next} Button]
+   }
+ ]{images/secondaryNavButtons}%
+}
+[Secondary Help Window Navigation Buttons for Multi-Page Topics]
+{Secondary Help Window Navigation Buttons for Multi-Page Topics
+  (Reset, Previous, Up, Next)}
 
 \menudef{menu.helpdialog.navigation.previous}
 
 The \menu{helpdialog.navigation.previous} menu item is only
 available if there are multiple pages for the topic context and will
 switch the current page with the previous page in the topic set.
+This menu item will be disabled if the previous page is not within the
+topic set.
 
 \menudef{menu.helpdialog.navigation.up}
 
 The \menu{helpdialog.navigation.up} menu item is only
 available if there are multiple pages for the topic context and will
 switch the current page with the parent page if it's within the topic set.
+This menu item will be disabled if there is no parent page or if the
+parent page is not in the topic set.
 
 \menudef{menu.helpdialog.navigation.next}
 
 The \menu{helpdialog.navigation.next} menu item is only
 available if there are multiple pages for the topic context and will
 switch the current page with the next page in the topic set.
+This menu item will be disabled if the next page is not within the
+topic set.
 
 \section{Image Viewer}
 \label{sec:helpimageviewer}
 
-The \menu{helppage.view_image} item in the \gls{index.menu.helppage} for both the
-primary and secondary help windows will be enabled if the popup menu
-is activated over an image. The \menu{helppage.view_image} item will
-open the image in the \inlineglsdef{imageviewer.title} window.
-If the image had alt text specified, this will be displayed in the
-area above the image.
+The \menu{helppage.view_image} item in the \gls{index.menu.helppage}
+for both the primary and secondary help windows will be enabled if
+the \gls{index.menu.helppage} is activated over an image. The
+\menu{helppage.view_image} item will open the image in the
+\inlineglsdef{imageviewer.title} window.  If the image had alt text
+specified, this will be displayed in the area above the image.
 
 Within the \dialog{imageviewer} window, the image can be enlarged
 using the \widget{imageviewer.magnify} spinner. The up and down

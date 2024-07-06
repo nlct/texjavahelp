@@ -33,6 +33,7 @@ import java.awt.Image;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -100,6 +101,20 @@ public class HelpFrame extends JFrame
                    }
                 }
              }
+          }
+       });
+
+      navTree.addMouseListener(new MouseAdapter()
+       {
+          @Override
+          public void mousePressed(MouseEvent evt)
+          {
+             helpPage.checkForPopup(evt);
+          }
+          @Override
+          public void mouseReleased(MouseEvent evt)
+          {
+             helpPage.checkForPopup(evt);
           }
        });
 

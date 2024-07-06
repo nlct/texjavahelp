@@ -34,9 +34,10 @@ import java.awt.Rectangle;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.ActionEvent;
 
-import javax.swing.JEditorPane;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.*;
@@ -126,6 +127,20 @@ public class HelpPage extends JEditorPane
       helpPageContainer.addActions(popupMenu);
       imageViewer = new ImageViewer(helpLib,
         helpLib.getMessage("imageviewer.title"));
+
+
+      getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+        KeyStroke.getKeyStroke(KeyEvent.VK_CONTEXT_MENU, 0),
+        "popupmenu");
+      getActionMap().put("popupmenu",
+         new AbstractAction()
+         {
+            @Override
+            public void actionPerformed(ActionEvent evt)
+            {
+               popupAt(getCaretPosition());
+            }
+         });
    }
 
    public NavigationNode getCurrentNode()
@@ -494,25 +509,7 @@ public class HelpPage extends JEditorPane
             Point pt = new Point(evt.getX(), evt.getY());
             int pos = viewToModel(pt);
 
-            HTMLDocument doc = (HTMLDocument)getDocument();
-            HTMLDocument.Iterator it = doc.getIterator(HTML.Tag.IMG);
-
-            while (it.isValid())
-            {
-               if (it.getStartOffset() <= pos && pos <= it.getEndOffset())
-               {
-                  AttributeSet as = it.getAttributes();
-
-                  if (as.getAttribute(HTML.Attribute.SRC) != null)
-                  {
-                     currentImageAttributeSet = as;
-                  }
-
-                  break;
-               }
-
-               it.next();
-            }
+            checkForImg(pos);
          }
 
          viewImageAction.setEnabled(currentImageAttributeSet != null);
@@ -523,6 +520,72 @@ public class HelpPage extends JEditorPane
       }
 
       return false;
+   }
+
+   public void popupAt(int pos)
+   {
+      currentImageAttributeSet = null;
+      checkForImg(pos);
+
+      viewImageAction.setEnabled(currentImageAttributeSet != null);
+
+      Rectangle view;
+      Component parentComp = getParent();
+      Point location = null;
+
+      if (parentComp instanceof JViewport)
+      {
+         view = ((JViewport)parentComp).getViewRect();
+      }
+      else
+      {
+         view = getBounds();
+      }
+
+      try
+      {
+         Rectangle rect = modelToView(pos);
+         Point p = rect.getLocation();
+
+         if (view.contains(p))
+         {
+            location = p;
+         }
+      }
+      catch (BadLocationException e)
+      {
+      }
+
+      if (location == null)
+      {
+         location = view.getLocation();
+      }
+
+      popupMenu.show(this, location.x, location.y);
+   }
+
+   protected void checkForImg(int pos)
+   {
+      HTMLDocument doc = (HTMLDocument)getDocument();
+      HTMLDocument.Iterator it = doc.getIterator(HTML.Tag.IMG);
+
+      while (it.isValid())
+      {
+         // allow a little leeway either side
+         if (it.getStartOffset()-2 <= pos && pos <= it.getEndOffset()+2)
+         {
+            AttributeSet as = it.getAttributes();
+
+            if (as.getAttribute(HTML.Attribute.SRC) != null)
+            {
+               currentImageAttributeSet = as;
+            }
+
+            break;
+         }
+
+         it.next();
+      }
    }
 
    protected void viewImage()

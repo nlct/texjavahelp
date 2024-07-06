@@ -96,6 +96,7 @@ public class HelpFontSettingsFrame extends JFrame
       builder.append(" <span class=\"keystroke\">1</span>");
       builder.append(" <span class=\"keystroke\">\u21E7</span>");
       builder.append(" <span class=\"keystroke\">\u21B9</span>");
+      builder.append(" <span class=\"keystroke\">\u2630</span>");
 
       builder.append("</body></html>");
 
