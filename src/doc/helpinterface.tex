@@ -33,21 +33,21 @@ secondary help windows. The menu has the following items.
       {Primary help window popup menu}
      ]{images/helppagepopup}%
    }
-   {Primary},
+   {},
    {fig:helpdialogpopup}
    {\includeimg
      [alt=
       {Secondary help multi-page dialog popup menu}
      ]{images/helpdialogpopup}%
    }
-   {Secondary (Multi)},
+   {},
    {fig:helpdialogsinglepopup}
    {\includeimg
      [alt=
       {Secondary help single-page dialog popup menu}
      ]{images/helpdialogsinglepopup}%
    }
-   {Secondary (Single)}
+   {}
 }
 [Help Page Popup Menus]
 {Help Page Popup Menus: 
@@ -80,31 +80,41 @@ If the popup menu is activated on the secondary help dialog
 will behave as the \menu{helpdialog.navigation.reset} menu item
 (which switches the current page back to the relevant page or the
 first in the applicable section of the dialog topic).
+It will be disabled if the current page is the reset target page.
 This menu item is not available on the primary help window.
 
 \menudef{menu.helppage.up}
 
 If the popup menu is activated on the primary help window or on the
-secondary help window that has multiple pages, then this will behave
+secondary help window that has multiple pages
+(\figuresref{fig:helpframepopup,fig:helpdialogpopup}), then this will behave
 as the primary \menu{helpframe.navigation.up} or
 secondary \menu{helpdialog.navigation.up} menu items. (That is, it
 will move up a hierarchical level, if available.)
+This menu item will be disabled if there is no parent page (or, for
+secondary windows, no parent page within the topic set).
 
 \menudef{menu.helppage.previous}
 
 If the popup menu is activated on the primary help window or on the
-secondary help window that has multiple pages, then this will behave
-as the primary \menu{helpframe.navigation.previous} or
-secondary \menu{helpdialog.navigation.previous} menu items.
-(That is, it will move to the previous page, if available.)
+secondary help window that has multiple pages
+(\figuresref{fig:helpframepopup,fig:helpdialogpopup}), then this
+will behave as the primary \menu{helpframe.navigation.previous} or
+secondary \menu{helpdialog.navigation.previous} menu items.  (That
+is, it will move to the previous page, if available.) This menu item
+will be disabled if there is no previous page (or, for secondary
+windows, no previous page within the topic set).
 
 \menudef{menu.helppage.next}
 
 If the popup menu is activated on the primary help window or on the
-secondary help window that has multiple pages, then this will behave
+secondary help window that has multiple pages
+(\figuresref{fig:helpframepopup,fig:helpdialogpopup}), then this will behave
 as the primary \menu{helpframe.navigation.next} or
 secondary \menu{helpdialog.navigation.next} menu items.
 (That is, it will move to the next page, if available.)
+This menu item will be disabled if there is no next page (or, for secondary
+windows, no next page within the topic set).
 
 \menudef{menu.helppage.historyback}
 
@@ -112,6 +122,13 @@ This will behave as the primary
 \menu{helpframe.navigation.historyback} or secondary
 \menu{helpdialog.navigation.historyback} menu items.
 (That is, it will move back a page in the history list, if available.)
+This menu item is in all the help page popup menus but will be
+disabled if there is no page to go back to.
+
+For the secondary help windows, it's possible to follow a link in
+the current page to a page outside the topic set. The menu item can
+take you back to the previously visited page viewed in that
+secondary dialog window.
 
 \menudef{menu.helppage.historyforward}
 
@@ -119,14 +136,17 @@ This will behave as the primary
 \menu{helpframe.navigation.historyforward} or secondary
 \menu{helpdialog.navigation.historyforward} menu items.
 (That is, it will move forward a page in the history list, if available.)
+This menu item is in all the help page popup menus but will be
+disabled if there is no page to go forward to.
 
 
 \section{The Primary Help Window}
 \label{sec:primaryhelp}
 
-The main help frame has a panel that shows a page of the manual (a
-\dgls{help-page}). Links in the page and the \gls{gui} navigation
-elements provide a way to switch to a different page.
+The primary help window is the main help frame accessed via
+\menu{help.manual}, which has a panel that shows a page of the
+manual (a \dgls{help-page}). Links in the page and the \gls{gui}
+navigation elements provide a way to switch to a different page.
 
 There is a menu bar with items for navigation actions or adjusting
 \gls{gui} settings. Some menu items are replicated as buttons in the
@@ -158,7 +178,8 @@ section).
    }
  ]{images/navbuttons}%
 }
-[Navigation Buttons]{Navigation Buttons (Home, Previous, Up, Next)}
+[Primary Help Window Navigation Buttons]
+{Primary Help Window Navigation Buttons (Home, Previous, Up, Next)}
 
 \menudef{menu.helpframe.navigation.home}
 
@@ -258,20 +279,19 @@ Note that the forward button is greyed (disabled) because the
 currently viewed page is at the end of the history list, so it's not
 possible to go forward.
 
-\begin{figure}
-\centering
-\includeimg
- [alt=
-  {[\entrytooltip{menu.helpframe.navigation.history} Button]
-   [\entrytooltip{menu.helpframe.navigation.historyback} Button]
-   [\entrytooltip{menu.helpframe.navigation.historyforward} Button]
-  }
- ]
- {images/historybuttons-annote}
-
-\caption{History Buttons}
-\label{fig:historybuttons}
-\end{figure}
+\FloatFig
+ {fig:historybuttons}
+ {%
+   \includeimg
+    [alt=
+     {[\entrytooltip{menu.helpframe.navigation.history} Button]
+      [\entrytooltip{menu.helpframe.navigation.historyback} Button]
+      [\entrytooltip{menu.helpframe.navigation.historyforward} Button]
+     }
+    ]
+    {images/historybuttons-annote}%
+ }
+ {History Buttons}
 
 \menudef{menu.helpframe.navigation.history}
 
@@ -285,13 +305,13 @@ the symbol \gls{symbol.help.navigation.history.pointer}.
 Select the required page and click on the
 \gls{help.navigation.history.go} button.
 
-\begin{figure}
-\centering
-\includegraphics{images/historyframe}
-
-\caption{The Page History Window}
-\label{fig:historywindow}
-\end{figure}
+\FloatFig
+ {fig:historywindow}
+ {\includeimg
+   [alt={image of the help page history window}]
+   {images/historyframe}%
+ }
+ {The Page History Window}
 
 \menudef{menu.helpframe.navigation.historyback}
 

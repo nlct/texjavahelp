@@ -69,7 +69,7 @@ public class FloatSubFigs extends ControlSequence
 
       TeXObjectList expanded = listener.createStack();
 
-      StartElement elem = listener.newHtml5StartElement("figure");
+      StartElement elem = listener.newHtml5StartElement("figure", "div", true, true);
       elem.putAttribute("id", label);
 
       expanded.add(elem);
@@ -135,7 +135,7 @@ public class FloatSubFigs extends ControlSequence
          }
       }
 
-      expanded.add(listener.newHtml5StartElement("figcaption"));
+      expanded.add(listener.newHtml5StartElement("figcaption", "div", true, true));
 
       expanded.add(listener.getControlSequence("@makecaption"));
 
@@ -143,9 +143,9 @@ public class FloatSubFigs extends ControlSequence
 
       expanded.add(TeXParserUtils.createGroup(listener, caption));
 
-      expanded.add(listener.newHtml5EndElement("figcaption"));
+      expanded.add(listener.newHtml5EndElement("figcaption", "div", true, true));
 
-      expanded.add(listener.newHtml5EndElement("figure"));
+      expanded.add(listener.newHtml5EndElement("figure", "div", true, true));
 
       TeXParserUtils.process(expanded, parser, stack);
    }

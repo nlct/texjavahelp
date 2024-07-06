@@ -41,31 +41,31 @@
 
 \newrobustcmd{\leftkeysym}{%
  \BeginAccSupp{method=hex,unicode,ActualText=2190}%
- \faArrowLeft
+ \textmd{\faArrowLeft}%
  \EndAccSupp{}%
 }
 
 \newrobustcmd{\upkeysym}{%
  \BeginAccSupp{method=hex,unicode,ActualText=2191}%
- \faArrowUp
+ \textmd{\faArrowUp}%
  \EndAccSupp{}%
 }
 
 \newrobustcmd{\rightkeysym}{%
  \BeginAccSupp{method=hex,unicode,ActualText=2192}%
- \faArrowRight
+ \textmd{\faArrowRight}%
  \EndAccSupp{}%
 }
 
 \newrobustcmd{\downkeysym}{%
  \BeginAccSupp{method=hex,unicode,ActualText=2193}%
- \faArrowDown
+ \textmd{\faArrowDown}
  \EndAccSupp{}%
 }
 
 \newrobustcmd{\backspacekeysym}{%
  \BeginAccSupp{method=hex,unicode,ActualText=232B}%
- \faBackspace
+ \textmd{\faBackspace}%
  \EndAccSupp{}%
 }
 
@@ -404,12 +404,21 @@
 
 \newcounter{subfigure}
 \renewcommand{\thesubfigure}{\alph{subfigure}}
-\renewcommand{\theHsubfigure}{\theHfigure.\thesubfigure}
 \NewDocumentCommand\subfigurefmt{m}{(\emph{#1})}
 \newcommand{\subfigurelabel}{\subfigurefmt{\thesubfigure}}
 \newcommand{\subfigurecap}[1]{\subfigurelabel\space #1}
 
 \ExplSyntaxOn
+
+% since the main figure caption occurs at the end, the figure
+% counter will be incremented after the subfigure counter
+
+\cs_set:Npn \theHsubfigure
+ {
+   \theHchapter .
+   \int_eval:n { \c@figure + \c_one_int }
+   . \thesubfigure
+ }
 
 \cs_set:Npn \p@subfigure #1
 {

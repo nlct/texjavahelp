@@ -24,7 +24,14 @@ import java.io.IOException;
 import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texparserlib.html.StartElement;
 import com.dickimawbooks.texparserlib.html.EndElement;
+import com.dickimawbooks.texparserlib.html.HtmlTag;
 
+/**
+ * An image with caption that forms a sub-figure.
+ * HTMLDocument doesn't seem to support display="inline-block" so
+ * the sub-figures can't be placed side-by-side.
+ * If there's no caption, just place the label to the side.
+ */
 public class SubFigureContent extends ControlSequence
 {
    public SubFigureContent()
@@ -61,45 +68,57 @@ public class SubFigureContent extends ControlSequence
       TeXObject lof = popOptArg(parser, stack);
       TeXObject caption = popArg(parser, stack);
 
+      boolean inline = caption.isEmpty();
+      String elemTag = inline ? "span" : "div";
+
       TeXObjectList expanded = listener.createStack();
 
       listener.stepcounter("subfigure");
 
-      StartElement elem = new StartElement("div");
+      StartElement elem = new StartElement(elemTag, true, false);
       elem.putAttribute("class", "subfigure");
       elem.putAttribute("id", label);
 
       expanded.add(elem);
 
-      TeXObjectList labelText;
-
       ControlSequence theFig = listener.getControlSequence("thefigure");
       ControlSequence theSubFigLabel = listener.getControlSequence("subfigurelabel");
 
-      if (lof == null)
-      {
-         labelText = TeXParserUtils.createStack(listener,
-           theFig, theSubFigLabel, listener.getSpace());
+      TeXObjectList labelText = TeXParserUtils.createStack(listener,
+        theFig, theSubFigLabel);
 
-         labelText.add((TeXObject)caption.clone(), true);
-      }
-      else
+      if (!inline)
       {
-         labelText = TeXParserUtils.createStack(listener,
-           theFig, theSubFigLabel, listener.getSpace(), lof);
+         labelText.add(listener.getSpace());
+
+         if (lof == null)
+         {
+            labelText.add((TeXObject)caption.clone(), true);
+         }
+         else
+         {
+            labelText.add(lof, true);
+         }
       }
 
       listener.provideLabel(label, labelText);
 
       expanded.add(content, true);
 
-      expanded.add(listener.createVoidElement("br"));
+      if (inline)
+      {
+         expanded.add(new HtmlTag("&#x2006;"));
+      }
+      else
+      {
+         expanded.add(listener.createVoidElement("br", true));
+      }
 
       expanded.add(listener.getControlSequence("subfigurecap"));
       expanded.add(TeXParserUtils.createGroup(listener,
          caption));
 
-      expanded.add(new EndElement("div"));
+      expanded.add(new EndElement(elemTag, true, false));
 
       TeXParserUtils.process(expanded, parser, stack);
    }
