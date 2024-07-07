@@ -107,7 +107,7 @@ public class SubFigureContent extends ControlSequence
 
       if (inline)
       {
-         expanded.add(new HtmlTag("&#x2006;"));
+         expanded.add(new HtmlTag("&nbsp;"));
       }
       else
       {
@@ -119,6 +119,11 @@ public class SubFigureContent extends ControlSequence
          caption));
 
       expanded.add(new EndElement(elemTag, true, false));
+
+      if (inline)
+      {
+         expanded.add(listener.getSpace());
+      }
 
       TeXParserUtils.process(expanded, parser, stack);
    }
