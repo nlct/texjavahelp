@@ -63,4 +63,6 @@ public class HelpFontChangeEvent
    public static final int ICON_FONT=4;
    public static final int KEYSTROKE_FONT=8;
    public static final int MONO_FONT=16;
+   public static final int LINK_COLOR=32;
+   public static final int LINK_DECORATION=64;
 }

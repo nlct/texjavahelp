@@ -20,6 +20,7 @@ package com.dickimawbooks.texjavahelplib;
 
 import java.util.Locale;
 
+import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.text.html.StyleSheet;
@@ -57,6 +58,15 @@ public class HelpFontSettings
       {
          styles.addRule(getMonoFontRule());
       }
+
+      if ((modifiers & HelpFontChangeEvent.LINK_COLOR)
+             == HelpFontChangeEvent.LINK_COLOR
+          || (modifiers & HelpFontChangeEvent.LINK_DECORATION)
+             == HelpFontChangeEvent.LINK_DECORATION
+         )
+      {
+         styles.addRule(getLinkRule());
+      }
    }
 
    public void addFontRulesToStyleSheet(StyleSheet styles)
@@ -65,6 +75,7 @@ public class HelpFontSettings
       styles.addRule(getIconFontRule());
       styles.addRule(getKeyStrokeFontRule());
       styles.addRule(getMonoFontRule());
+      styles.addRule(getLinkRule());
    }
 
    public void appendRules(StringBuilder builder, int modifiers)
@@ -98,6 +109,16 @@ public class HelpFontSettings
       {
          builder.append(getMonoFontRule());
       }
+
+      if ((modifiers & HelpFontChangeEvent.LINK_COLOR)
+             == HelpFontChangeEvent.LINK_COLOR
+          || (modifiers & HelpFontChangeEvent.LINK_DECORATION)
+             == HelpFontChangeEvent.LINK_DECORATION
+         )
+      {
+         builder.append(getLinkRule());
+      }
+
    }
 
    public void appendRules(StringBuilder builder)
@@ -106,6 +127,7 @@ public class HelpFontSettings
       builder.append(getIconFontRule());
       builder.append(getKeyStrokeFontRule());
       builder.append(getMonoFontRule());
+      builder.append(getLinkRule());
    }
 
    public void addBodyFontRuleToStyleSheet(StyleSheet styles)
@@ -126,6 +148,11 @@ public class HelpFontSettings
    public void addMonoFontRuleToStyleSheet(StyleSheet styles)
    {
       styles.addRule(getMonoFontRule());
+   }
+
+   public void addLinkRuleToStyleSheet(StyleSheet styles)
+   {
+      styles.addRule(getLinkRule());
    }
 
    public String getIconFontCssName()
@@ -230,6 +257,31 @@ public class HelpFontSettings
       return getBodyFontRule(fontNameNeedsQuotes, fontName, fontSize);
    }
 
+   public String getLinkRule()
+   {
+      return getLinkRule(linkColor, linkDecoration);
+   }
+
+   public String getLinkDecoration()
+   {
+      return linkDecoration;
+   }
+
+   public void setLinkDecoration(String decoration)
+   {
+      linkDecoration = decoration;
+   }
+
+   public Color getLinkColor()
+   {
+      return linkColor;
+   }
+
+   public void setLinkColor(Color color)
+   {
+      linkColor = color;
+   }
+
    public void copyFrom(HelpFontSettings other)
    {
       fontSize = other.fontSize;
@@ -244,6 +296,9 @@ public class HelpFontSettings
 
       monoFontName = other.monoFontName;
       monoFontNameNeedsQuotes = other.monoFontNameNeedsQuotes;
+
+      linkDecoration = other.linkDecoration;
+      linkColor = other.linkColor;
    }
 
    public void copyFrom(HelpFontChangeEvent event)
@@ -286,6 +341,16 @@ public class HelpFontSettings
       {
          monoFontName = other.monoFontName;
          monoFontNameNeedsQuotes = other.monoFontNameNeedsQuotes;
+      }
+
+      if ((modifiers & HelpFontChangeEvent.LINK_COLOR)
+             == HelpFontChangeEvent.LINK_COLOR
+          || (modifiers & HelpFontChangeEvent.LINK_DECORATION)
+             == HelpFontChangeEvent.LINK_DECORATION
+         )
+      {
+         linkDecoration = other.linkDecoration;
+         linkColor = other.linkColor;
       }
    }
 
@@ -430,6 +495,13 @@ public class HelpFontSettings
       return rule;
    }
 
+   public static String getLinkRule(Color col, String decoration)
+   {
+      return String.format((Locale)null,
+        "a { text-decoration: %s; color: rgb(%d,%d,%d); }",
+        decoration, col.getRed(), col.getGreen(), col.getBlue());
+   }
+
    public static final String FALLBACK_FONT_KEYWORD = "sans-serif";
    public static final String FALLBACK_FONT_NAME = "SansSerif";
    protected int fontSize = 12;
@@ -447,4 +519,7 @@ public class HelpFontSettings
    public static final String FALLBACK_MONO_FONT_KEYWORD = "monospace";
    protected String monoFontName = FALLBACK_MONO_FONT_KEYWORD;
    protected boolean monoFontNameNeedsQuotes = false;
+
+   protected String linkDecoration = "none";
+   protected Color linkColor = Color.BLUE;
 }

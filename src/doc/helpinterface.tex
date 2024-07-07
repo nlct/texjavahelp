@@ -361,31 +361,8 @@ size by 1.
 \menudef{menu.helpframe.settings.font}
 
 The \menu{helpframe.settings.font} item opens the
-\inlineglsdef{help_font_settings.title} dialog (see
-\figureref{fig:helpfontdialog}). Use the
-\widget{help_font_settings.family} selector for the main body font
-family and the \widget{help_font_settings.size} selector for the
-main body font size. Icon characters, such as
-\gls{symbol.help.navigation.history.pointer}, may not be available
-for your preferred font family, so you can specify an alternative
-with the \widget{help_font_settings.icon_font_family} selector. This
-will only list fonts that support some commonly used icon
-characters.
-
-\FloatFig
-{fig:helpfontdialog}
-{\includeimg
- [alt=
-   {Help page font dialog}
- ]{images/helpfontdialog}%
-}
-{Help Page Font Dialog}
-
-Use the \widget{help_font_settings.keystroke_font_family} selector to
-choose the font to show keystrokes (such as
-\keyref[textformat=keystrokefmt]{shift}) and the
-\widget{help_font_settings.mono_font_family} selector to choose the
-font to display code fragments (such as \verb|% \ { } #|).
+\dialog{help_font_settings} dialog (see
+\sectionref{sec:helpfontdialog}).
 
 \menudef{menu.helpframe.settings.nav}
 
@@ -502,6 +479,45 @@ available if there are multiple pages for the topic context and will
 switch the current page with the next page in the topic set.
 This menu item will be disabled if the next page is not within the
 topic set.
+
+\section{Help Font Dialog}
+\label{sec:helpfontdialog}
+
+The \menu{helpframe.settings.font} item opens the
+\inlineglsdef{help_font_settings.title} dialog (see
+\figureref{fig:helpfontdialog}). Use the
+\widget{help_font_settings.family} selector for the main body font
+family and the \widget{help_font_settings.size} selector for the
+main body font size. Icon characters, such as
+\gls{symbol.help.navigation.history.pointer}, may not be available
+for your preferred font family, so you can specify an alternative
+with the \widget{help_font_settings.icon_font_family} selector. This
+will only list fonts that support some commonly used icon
+characters.
+
+\FloatFig
+{fig:helpfontdialog}
+{\includeimg
+ [alt=
+   {Help page font dialog}
+ ]{images/helpfontdialog}%
+}
+{Help Page Font Dialog}
+
+Use the \widget{help_font_settings.keystroke_font_family} selector to
+choose the font to show keystrokes (such as
+\keyref[textformat=keystrokefmt]{shift}) and the
+\widget{help_font_settings.mono_font_family} selector to choose the
+font to display code fragments (such as \verb|% \ { } #|).
+
+The document hyperlink style can also be changed with the 
+\widget{help_font_settings.hyperlinks} 
+\btn{help_font_settings.choose_colour} and
+\btn{help_font_settings.underline} widgets.
+
+The styles are applied to the primary help window, all secondary
+help windows and related windows, such as the \dialog{help.navigation.history} 
+or index windows.
 
 \section{Image Viewer}
 \label{sec:helpimageviewer}

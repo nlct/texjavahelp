@@ -23,15 +23,12 @@ import java.util.Vector;
 
 import java.text.Collator;
 
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GraphicsEnvironment;
-import java.awt.Insets;
+import java.awt.*;
 
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
@@ -40,12 +37,18 @@ import javax.swing.text.html.StyleSheet;
 
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+
 
 /**
  * Frame for showing font selector.
  */
 public class HelpFontSettingsFrame extends JFrame
- implements ItemListener,HelpFontChangeListener
+ implements ItemListener,
+   HelpFontChangeListener,
+   HyperlinkListener,
+   ActionListener
 {
    public HelpFontSettingsFrame(final HelpFrame helpFrame)
    {
@@ -102,15 +105,19 @@ public class HelpFontSettingsFrame extends JFrame
 
       sampleComp = new JEditorPane("text/html", builder.toString());
       sampleComp.setEditable(false);
+      sampleComp.addHyperlinkListener(this);
 
       sampleComp.setMargin(new Insets(4, 4, 4, 4));
-
-      getContentPane().add(sampleComp, "North");
 
       Box box = Box.createVerticalBox();
       box.setAlignmentX(0.0f);
 
-      getContentPane().add(new JScrollPane(box), "Center");
+      JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+        new JScrollPane(sampleComp), new JScrollPane(box));
+
+      splitPane.setOneTouchExpandable(true);
+
+      getContentPane().add(splitPane, "Center");
 
       JComponent panel = createRow();
       box.add(panel);
@@ -238,7 +245,29 @@ public class HelpFontSettingsFrame extends JFrame
       panel.add(createJLabel("help_font_settings.mono_font_family", monoFontFamily));
       panel.add(monoFontFamily);
 
-      box.add(Box.createVerticalStrut(40));
+      // link decoration and colour
+
+      panel = createRow();
+      box.add(panel);
+
+      panel.add(helpLib.createJLabel("help_font_settings.hyperlinks"));
+
+      colorChooser = new JColorChooser();
+      colorChooserTitle = helpLib.getMessage(
+        "help_font_settings.colour_chooser.title");
+
+      swatchComp = new JPanel();
+      swatchComp.setPreferredSize(new Dimension(40,20));
+      swatchComp.setBackground(sampleHelpFontSettings.getLinkColor());
+      swatchComp.setOpaque(true);
+      panel.add(swatchComp);
+
+      panel.add(helpLib.createJButton(
+        "help_font_settings", "choose_colour", this));
+
+      underlineBox = helpLib.createJCheckBox(
+        "help_font_settings", "underline", this);
+      panel.add(underlineBox);
 
       JPanel btnPanel = new JPanel(new BorderLayout());
       getContentPane().add(btnPanel, "South");
@@ -246,58 +275,22 @@ public class HelpFontSettingsFrame extends JFrame
       JPanel closeCancelPanel = new JPanel();
       btnPanel.add(closeCancelPanel, "West");
 
-      TJHAbstractAction closeAction = new TJHAbstractAction(helpLib, "action", "close")
-       {
-         @Override
-         public void doAction()
-         {
-            setVisible(false);
-         }
-       };
-
-      closeButton = new JButton(closeAction);
+      closeButton = helpLib.createCloseButton(this);
       closeCancelPanel.add(closeButton);
       closeButton.setVisible(false);
 
-      TJHAbstractAction cancelAction = new TJHAbstractAction(helpLib, "action", "cancel")
-       {
-         @Override
-         public void doAction()
-         {
-            setVisible(false);
-         }
-       };
-
-      cancelButton = new JButton(cancelAction);
+      cancelButton = helpLib.createCancelButton(this);
       closeCancelPanel.add(cancelButton);
+
+      closeCancelPanel.add(
+        helpLib.createHelpDialogButton(this, "sec:helpfontdialog"));
 
       JPanel applyOkayPanel = new JPanel();
       btnPanel.add(applyOkayPanel, "East");
 
-      TJHAbstractAction applyAction = new TJHAbstractAction(helpLib, "action", "apply")
-       {
-         @Override
-         public void doAction()
-         {
-            apply();
-            closeButton.setVisible(true);
-            cancelButton.setVisible(false);
-         }
-       };
+      applyOkayPanel.add(helpLib.createApplyButton(this));
 
-      applyOkayPanel.add(new JButton(applyAction));
-
-      TJHAbstractAction okayAction = new TJHAbstractAction(helpLib, "action", "okay")
-       {
-         @Override
-         public void doAction()
-         {
-            apply();
-            setVisible(false);
-         }
-       };
-
-      JButton okayButton = new JButton(okayAction);
+      JButton okayButton = helpLib.createOkayButton(this);
       getRootPane().setDefaultButton(okayButton);
 
       applyOkayPanel.add(okayButton);
@@ -331,6 +324,42 @@ public class HelpFontSettingsFrame extends JFrame
    {
       helpFrame.getHelpLib().notifyFontChange(
        new HelpFontChangeEvent(this, sampleHelpFontSettings));
+   }
+
+   @Override
+   public void actionPerformed(ActionEvent evt)
+   {
+      String action = evt.getActionCommand();
+
+      if (action == null) return;
+
+      if (action.equals("underline"))
+      {
+         setLinkDecoration(underlineBox.isSelected());
+      }
+      else if (action.equals("choose_colour"))
+      {
+         chooseLinkColor();
+      }
+      else if (action.equals("apply"))
+      {
+         apply();
+         closeButton.setVisible(true);
+         cancelButton.setVisible(false);
+      }
+      else if (action.equals("okay"))
+      {
+         apply();
+         setVisible(false);
+      }
+      else if (action.equals("cancel") || action.equals("close"))
+      {
+         setVisible(false);
+      }
+      else
+      {
+         System.err.println("Unknown help font setting action "+action);
+      }
    }
 
    @Override
@@ -459,6 +488,19 @@ public class HelpFontSettingsFrame extends JFrame
                monoFontFamily.setSelectedItem(monoFont);
             }
          }
+
+         if ( (modifiers & HelpFontChangeEvent.LINK_COLOR)
+             == HelpFontChangeEvent.LINK_COLOR )
+         {
+            setLinkColor(sampleHelpFontSettings.getLinkColor());
+         }
+
+         if ( (modifiers & HelpFontChangeEvent.LINK_DECORATION)
+             == HelpFontChangeEvent.LINK_DECORATION )
+         {
+            setLinkDecoration(sampleHelpFontSettings.getLinkDecoration());
+         }
+
       }
 
       HTMLDocument doc = (HTMLDocument)sampleComp.getDocument();
@@ -496,12 +538,73 @@ public class HelpFontSettingsFrame extends JFrame
       return monoFontNames;
    }
 
+   protected void chooseLinkColor()
+   {
+      Color color = colorChooser.showDialog(this, colorChooserTitle,
+         sampleHelpFontSettings.getLinkColor());
+
+      if (color != null)
+      {
+         sampleHelpFontSettings.setLinkColor(color);
+         swatchComp.setBackground(color);
+
+         fontChanged(new HelpFontChangeEvent(this, sampleHelpFontSettings,
+          HelpFontChangeEvent.LINK_COLOR));
+      }
+   }
+
+   protected void setLinkColor(Color color)
+   {
+      swatchComp.setBackground(color);
+   }
+
+   protected void setLinkDecoration(boolean underlined)
+   {
+      underlineBox.setSelected(underlined);
+      sampleHelpFontSettings.setLinkDecoration(
+         underlined ? "underlined" : "none");
+
+      fontChanged(new HelpFontChangeEvent(this, sampleHelpFontSettings,
+          HelpFontChangeEvent.LINK_DECORATION));
+   }
+
+   protected void setLinkDecoration(String decoration)
+   {
+      underlineBox.setSelected(decoration.equals("underline"));
+   }
+
+   @Override 
+   public void hyperlinkUpdate(HyperlinkEvent evt)
+   {
+      if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
+      {
+         String ref = evt.getDescription();
+
+         if (ref != null)
+         {
+            if (ref.startsWith("#"))
+            {
+               ref = ref.substring(1);
+            }
+
+            if (!ref.isEmpty())
+            {
+               sampleComp.scrollToReference(ref);
+            }
+         }
+      }
+   }
+
    protected HelpFrame helpFrame;
    protected JComboBox<String> fontFamily, iconFontFamily,
      keystrokeFontFamily, monoFontFamily;
    protected SpinnerNumberModel fontSizeSpinnerModel;
    protected JSpinner fontSizeSpinner;
    protected JEditorPane sampleComp;
+   protected JColorChooser colorChooser;
+   protected String colorChooserTitle;
+   protected JComponent swatchComp;
+   protected JCheckBox underlineBox;
    protected JButton closeButton, cancelButton;
 
    protected HelpFontSettings sampleHelpFontSettings;

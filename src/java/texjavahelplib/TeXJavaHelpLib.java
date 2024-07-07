@@ -39,6 +39,7 @@ import javax.imageio.ImageIO;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -1103,14 +1104,14 @@ public class TeXJavaHelpLib
    public TJHAbstractAction createHelpAction(String helpID, JComponent comp)
    {
       return createHelpAction(helpID, "action", "help", "help", "help", 
-       getKeyStroke("action.help"), comp);
+       getKeyStroke("action.help"), comp, Action.LARGE_ICON_KEY);
    }
 
    public TJHAbstractAction createHelpAction(String helpID,
-      KeyStroke keyStroke, JComponent comp)
+      KeyStroke keyStroke, JComponent comp, String... omitKeys)
    {
       return createHelpAction(helpID, "action", "help", 
-       "manual."+helpID, "help", keyStroke, comp);
+       "manual."+helpID, "help", keyStroke, comp, omitKeys);
    }
 
    public TJHAbstractAction createHelpAction(String helpID,
@@ -1122,10 +1123,10 @@ public class TeXJavaHelpLib
 
    public TJHAbstractAction createHelpAction(final String helpID,
       String msgParentTag, String childTag, String action,
-      String iconPrefix, KeyStroke keyStroke, JComponent comp)
+      String iconPrefix, KeyStroke keyStroke, JComponent comp, String... omitKeys)
    {
-      return  new TJHAbstractAction(this,
-        msgParentTag, childTag, action, iconPrefix, keyStroke, null, comp)
+      return new TJHAbstractAction(this,
+        msgParentTag, childTag, action, iconPrefix, keyStroke, null, comp, omitKeys)
         {
            @Override
            public void doAction()
@@ -1182,6 +1183,52 @@ public class TeXJavaHelpLib
       }
 
       return new HelpDialogAction(owner, node, this);
+   }
+
+   public HelpDialogAction createHelpDialogAction(JFrame owner, String helpId)
+    throws IllegalArgumentException
+   {
+      NavigationNode node = getNavigationNodeById(helpId);
+
+      if (node == null)
+      {
+         throw new IllegalArgumentException(
+            getMessage("error.node_id_not_found", helpId));
+      }
+
+      return new HelpDialogAction(owner, node, this);
+   }
+
+   public JButton createHelpDialogButton(JDialog owner, String helpId)
+    throws IllegalArgumentException
+   {
+      NavigationNode node = getNavigationNodeById(helpId);
+
+      if (node == null)
+      {
+         throw new IllegalArgumentException(
+            getMessage("error.node_id_not_found", helpId));
+      }
+
+      // don't use large icon
+      return new JButton(
+        new HelpDialogAction(owner, node, this, Action.LARGE_ICON_KEY));
+   }
+
+   public JButton createHelpDialogButton(JFrame owner, String helpId)
+    throws IllegalArgumentException
+   {
+      NavigationNode node = getNavigationNodeById(helpId);
+
+      if (node == null)
+      {
+         throw new IllegalArgumentException(
+            getMessage("error.node_id_not_found", helpId));
+      }
+
+      // don't use large icon
+      return new JButton(
+        new HelpDialogAction(owner, node, this, Action.LARGE_ICON_KEY));
    }
 
    public int getMnemonic(String label)
@@ -1330,6 +1377,26 @@ public class TeXJavaHelpLib
       return btn;
    }
 
+   public JButton createOkayButton(ActionListener listener)
+   {
+      return createJButton("action", "okay", listener);
+   }
+
+   public JButton createApplyButton(ActionListener listener)
+   {
+      return createJButton("action", "apply", listener);
+   }
+
+   public JButton createCancelButton(ActionListener listener)
+   {
+      return createJButton("action", "cancel", listener);
+   }
+
+   public JButton createCloseButton(ActionListener listener)
+   {
+      return createJButton("action", "close", listener);
+   }
+
    public JButton createJButton(String tag)
    {
       return createJButton(tag, null, null);
@@ -1338,9 +1405,22 @@ public class TeXJavaHelpLib
    public JButton createJButton(String parentTag, String action,
      ActionListener actionListener)
    {
+      return createJButton(parentTag, action, actionListener, action, true);
+   }
+
+   public JButton createJButton(String parentTag, String action,
+     ActionListener actionListener, String iconPrefix, boolean smallIcon)
+   {
       String tag = action == null ? parentTag : parentTag+"."+action;
 
-      JButton button = new JButton(getMessage(tag));
+      ImageIcon ic = null;
+
+      if (iconPrefix != null)
+      {
+         ic = getHelpIcon(iconPrefix, smallIcon);
+      }
+
+      JButton button = new JButton(getMessage(tag), ic);
 
       if (action != null)
       {
@@ -1384,6 +1464,18 @@ public class TeXJavaHelpLib
    public JCheckBox createJCheckBox(String parentTag, String action,
      boolean selected)
    {
+      return createJCheckBox(parentTag, action, selected, null);
+   }
+
+   public JCheckBox createJCheckBox(String parentTag, String action,
+     ActionListener listener)
+   {
+      return createJCheckBox(parentTag, action, false, listener);
+   }
+
+   public JCheckBox createJCheckBox(String parentTag, String action,
+     boolean selected, ActionListener listener)
+   {
       String tag = action == null ? parentTag : parentTag+"."+action;
 
       JCheckBox button = new JCheckBox(getMessage(tag), selected);
@@ -1407,6 +1499,12 @@ public class TeXJavaHelpLib
       if (desc != null)
       {
          button.getAccessibleContext().setAccessibleDescription(desc);
+      }
+
+      if (listener != null)
+      {
+         button.setActionCommand(action);
+         button.addActionListener(listener);
       }
 
       return button;

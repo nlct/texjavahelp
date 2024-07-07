@@ -24,6 +24,7 @@ import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Toolkit;
 
 import javax.swing.*;
@@ -65,6 +66,39 @@ public class HelpDialog extends JDialog
       super(owner, title, modal);
       this.helpLib = helpLib;
       this.pageNode = pageNode;
+
+      updateAndCloseHelpFrame = modal
+         || owner.getModalityType() != Dialog.ModalityType.MODELESS;
+
+      init();
+
+      helpLib.addHelpFontChangeListener(this);
+   }
+
+   public HelpDialog(TeXJavaHelpLib helpLib,
+      NavigationNode pageNode, Frame owner)
+   throws IOException
+   {
+      this(helpLib, pageNode, owner, pageNode.getTitle(), false);
+   }
+
+   public HelpDialog(TeXJavaHelpLib helpLib,
+      NavigationNode pageNode,
+      Frame owner, boolean modal)
+   throws IOException
+   {
+      this(helpLib, pageNode, owner, pageNode.getTitle(), modal);
+   }
+
+   public HelpDialog(TeXJavaHelpLib helpLib,
+      NavigationNode pageNode,
+      Frame owner, String title, boolean modal)
+   throws IOException
+   {
+      super(owner, title, modal);
+      this.helpLib = helpLib;
+      this.pageNode = pageNode;
+      updateAndCloseHelpFrame = modal;
 
       init();
 
@@ -229,22 +263,17 @@ public class HelpDialog extends JDialog
 
    public void display()
    {
-      display(true);
-   }
-
-   public void display(boolean updateHelpFrame)
-   {
-      HelpFrame helpFrame = helpLib.getHelpFrame();
-
-      if (helpFrame.isVisible())
+      if (updateAndCloseHelpFrame)
       {
-         // Since the user can't interact with the main help frame
-         // close it to avoid confusion.
-         helpFrame.setVisible(false);
-      }
+         HelpFrame helpFrame = helpLib.getHelpFrame();
 
-      if (updateHelpFrame)
-      {
+         if (helpFrame.isVisible())
+         {
+            // Since the user can't interact with the main help frame
+            // with modal dialogs close it to avoid confusion.
+            helpFrame.setVisible(false);
+         }
+
          try
          {
             // Add this page to the main help frame's history
@@ -348,7 +377,11 @@ public class HelpDialog extends JDialog
          if (isInNavigationTree(node))
          {
             helpPage.setPage(node);
-            helpLib.getHelpFrame().setPage(node);
+
+            if (updateAndCloseHelpFrame)
+            {
+               helpLib.getHelpFrame().setPage(node);
+            }
          }
       }
       catch (IOException e)
@@ -504,6 +537,8 @@ public class HelpDialog extends JDialog
    protected TJHAbstractAction resetAction,
      historyBackAction, historyForwardAction,
      popupResetAction, popupHistoryBackAction, popupHistoryForwardAction;
+
+   protected boolean updateAndCloseHelpFrame = true;
 
    // null if node has no children
    protected JSplitPane splitPane;

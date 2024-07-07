@@ -37,55 +37,113 @@ public abstract class TJHAbstractAction extends AbstractAction
       this(helpLib, parentTag, action, (Boolean)null, (JComponent)null);
    }
 
-   public TJHAbstractAction(TeXJavaHelpLib helpLib, String parentTag, String action, JComponent comp)
+   public TJHAbstractAction(TeXJavaHelpLib helpLib, String parentTag,
+      String action, JComponent comp, String... omitKeys)
    {
-      this(helpLib, parentTag, action, (Boolean)null, comp);
+      this(helpLib, parentTag, action, (Boolean)null, comp, omitKeys);
    }
 
-   public TJHAbstractAction(TeXJavaHelpLib helpLib, String parentTag, String action, Boolean selectedState)
+   public TJHAbstractAction(TeXJavaHelpLib helpLib, String parentTag,
+      String action, Boolean selectedState, String... omitKeys)
    {
-      this(helpLib, parentTag, action, selectedState, (JComponent)null);
+      this(helpLib, parentTag, action, selectedState, (JComponent)null,
+      omitKeys);
    }
 
-   public TJHAbstractAction(TeXJavaHelpLib helpLib, String parentTag, String action, Boolean selectedState, JComponent comp)
+   public TJHAbstractAction(TeXJavaHelpLib helpLib, String parentTag,
+      String action, Boolean selectedState, JComponent comp,
+      String... omitKeys)
    {
       this(helpLib, parentTag, action, 
        helpLib.getKeyStroke(action == null ? parentTag : parentTag+"."+action),
-       selectedState, comp);
+       selectedState, comp, omitKeys);
    }
 
    public TJHAbstractAction(TeXJavaHelpLib helpLib, String parentTag, String action,
-     KeyStroke keyStroke)
+     KeyStroke keyStroke, String... omitKeys)
    {
-      this(helpLib, parentTag, action, keyStroke, null, null);
+      this(helpLib, parentTag, action, keyStroke, null, null, omitKeys);
    }
 
    public TJHAbstractAction(TeXJavaHelpLib helpLib, String parentTag, String action,
-     KeyStroke keyStroke, JComponent comp)
+     KeyStroke keyStroke, JComponent comp, String... omitKeys)
    {
-      this(helpLib, parentTag, action, keyStroke, null, comp);
+      this(helpLib, parentTag, action, keyStroke, null, comp, omitKeys);
    }
 
    public TJHAbstractAction(TeXJavaHelpLib helpLib, String parentTag, String action,
-     KeyStroke keyStroke, Boolean selectedState, JComponent comp)
+     KeyStroke keyStroke, Boolean selectedState, JComponent comp,
+     String... omitKeys)
    {
-      this(helpLib, parentTag, action, action, action, keyStroke, selectedState, comp);
+      this(helpLib, parentTag, action, action, action, keyStroke,
+         selectedState, comp, omitKeys);
    }
 
    public TJHAbstractAction(TeXJavaHelpLib helpLib,
      String parentTag, String childTag, String actionName, String iconPrefix,
-     KeyStroke keyStroke, Boolean selectedState, JComponent comp)
+     KeyStroke keyStroke, Boolean selectedState, JComponent comp,
+     String... omitKeys)
    {
       super();
 
       this.helpLib = helpLib;
 
-      if (actionName != null)
+      boolean setCommand = true;
+      boolean setAccelerator = true;
+      boolean setSelected = true;
+      boolean setName = true;
+      boolean setMnemonic = true;
+      boolean setShortDesc = true;
+      boolean setLongDesc = true;
+      boolean setLargeIcon = true;
+      boolean setSmallIcon = true;
+
+      for (String key : omitKeys)
+      {
+         if (key.equals(ACTION_COMMAND_KEY))
+         {
+            setCommand = false;
+         }
+         else if (key.equals(ACCELERATOR_KEY))
+         {
+            setAccelerator = false;
+         }
+         else if (key.equals(SELECTED_KEY))
+         {
+            setSelected = false;
+         }
+         else if (key.equals(NAME))
+         {
+            setName = false;
+         }
+         else if (key.equals(MNEMONIC_KEY))
+         {
+            setMnemonic = false;
+         }
+         else if (key.equals(SHORT_DESCRIPTION))
+         {
+            setShortDesc = false;
+         }
+         else if (key.equals(LONG_DESCRIPTION))
+         {
+            setLongDesc = false;
+         }
+         else if (key.equals(LARGE_ICON_KEY))
+         {
+            setLargeIcon = false;
+         }
+         else if (key.equals(SMALL_ICON))
+         {
+            setSmallIcon = false;
+         }
+      }
+
+      if (setCommand && actionName != null)
       {
          putValue(ACTION_COMMAND_KEY, actionName);
       }
 
-      if (keyStroke != null)
+      if (setAccelerator && keyStroke != null)
       {
          putValue(ACCELERATOR_KEY, keyStroke);
 
@@ -96,53 +154,73 @@ public abstract class TJHAbstractAction extends AbstractAction
          }
       }
 
-      if (selectedState != null)
+      if (setSelected && selectedState != null)
       {
          putValue(SELECTED_KEY, selectedState);
       }
 
       String tag = parentTag == null ? childTag : parentTag+"."+childTag;
 
-      String text = helpLib.getMessageIfExists(tag);
-
-      if (text != null)
+      if (setName)
       {
-         putValue(NAME, text);
+         String text = helpLib.getMessageIfExists(tag);
+
+         if (text != null)
+         {
+            putValue(NAME, text);
+         }
       }
 
-      int mnemonic = helpLib.getMnemonic(tag+".mnemonic");
-
-      if (mnemonic > 0)
+      if (setMnemonic)
       {
-         putValue(MNEMONIC_KEY, Integer.valueOf(mnemonic));
+         int mnemonic = helpLib.getMnemonic(tag+".mnemonic");
+
+         if (mnemonic > 0)
+         {
+            putValue(MNEMONIC_KEY, Integer.valueOf(mnemonic));
+         }
       }
 
-      String tooltip = helpLib.getMessageIfExists(tag+".tooltip");
-
-      if (tooltip != null)
+      if (setShortDesc)
       {
-         putValue(SHORT_DESCRIPTION, tooltip);
+         String tooltip = helpLib.getMessageIfExists(tag+".tooltip");
+
+         if (tooltip != null)
+         {
+            putValue(SHORT_DESCRIPTION, tooltip);
+         }
       }
 
-      String desc = helpLib.getMessageIfExists(tag+".description");
-
-      if (desc != null)
+      if (setLongDesc)
       {
-         putValue(LONG_DESCRIPTION, tooltip);
+         String desc = helpLib.getMessageIfExists(tag+".description");
+
+         if (desc != null)
+         {
+            putValue(LONG_DESCRIPTION, desc);
+         }
       }
 
-      ImageIcon ic = helpLib.getHelpIcon(iconPrefix, false);
+      ImageIcon ic;
 
-      if (ic != null)
+      if (setLargeIcon)
       {
-         putValue(LARGE_ICON_KEY, ic);
+         ic = helpLib.getHelpIcon(iconPrefix, false);
+
+         if (ic != null)
+         {
+            putValue(LARGE_ICON_KEY, ic);
+         }
       }
 
-      ic = helpLib.getHelpIcon(iconPrefix, true);
-
-      if (ic != null)
+      if (setSmallIcon)
       {
-         putValue(SMALL_ICON, ic);
+         ic = helpLib.getHelpIcon(iconPrefix, true);
+
+         if (ic != null)
+         {
+            putValue(SMALL_ICON, ic);
+         }
       }
 
    }

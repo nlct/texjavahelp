@@ -249,7 +249,8 @@ public class TeXJavaHelpDemo extends JFrame
       getContentPane().add(mainPanel, "Center");
 
       mainPanel.add(createJLabel("label.demo"));
-      mainPanel.add(new JButton(helpLib.createHelpAction("sec:intro", mainPanel)));
+      mainPanel.add(new JButton(
+        helpLib.createHelpAction("sec:intro", mainPanel)));
       mainPanel.add(new JTextField("sample"));
 
       Toolkit tk = Toolkit.getDefaultToolkit();
@@ -273,12 +274,13 @@ public class TeXJavaHelpDemo extends JFrame
       sampleDialog.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
       //String helpId = "sec:texjavahelplib";
-      String helpId = "sec:texjavahelpsty";
+      //String helpId = "sec:texjavahelpsty";
+      String helpId = "sec:helpwindows";
 
       try
       {
          buttonPanel.add(
-          new JButton(helpLib.createHelpDialogAction(sampleDialog, helpId)));
+          helpLib.createHelpDialogButton(sampleDialog, helpId));
       }
       catch (IllegalArgumentException e)
       {
