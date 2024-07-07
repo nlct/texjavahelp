@@ -975,7 +975,7 @@
 
 % Semantic commands
 
-\newcommand*{\widgetfmt}[1]{\textsf{\bfseries #1}}
+\newcommand*{\widgetfmt}[1]{\texorpdfstring{\textsf{\bfseries #1}}{#1}}
 
 \glsxtraddlabelprefix{action.}
 \glsxtraddlabelprefix{button.}
@@ -1283,12 +1283,10 @@
  \end{pinnedbox}% 
 }
 
-\newcommand{\widgetdeffmt}[1]{\widgetfmt{#1}}
-
 \NewDocumentCommand\widgetdef{O{}mO{}}{%
  \begin{pinnedbox}[#1]%
  \glsadd[format=main]{#2}%
- \widgetdeffmt{\glsxtrglossentry{#2}}%
+ \glsxtrglossentry{#2}%
  \hfill #3%
  \end{pinnedbox}% 
 }

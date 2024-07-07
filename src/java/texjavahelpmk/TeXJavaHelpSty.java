@@ -140,8 +140,19 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(listener.createSymbol("Slash", '/'));
 
-      registerControlSequence(new GenericCommand(true,
-        "spacekeysym", null, new HtmlTag("<span class=\"spacekey\"> </span>")));
+      if (listener.isHtml5())
+      {
+         registerControlSequence(new GenericCommand(true,
+           "spacekeysym", null, new HtmlTag("<span class=\"spacekey\"> </span>")));
+      }
+      else
+      {
+         registerControlSequence(AccSuppObject.createSymbol(
+           listener, "spacekeysym", 0x2423, 
+           getHelpLib().getMessageWithFallback(
+              "manual.space_key_title", "space key"),
+           true));
+      }
 
       registerControlSequence(AccSuppObject.createSymbol(
         listener, "menusep", 0x279C, 
@@ -310,11 +321,6 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new GeneralMsg("errmsg", "error."));
       registerControlSequence(new GeneralMsg("syntaxmsg", "syntax."));
       registerControlSequence(new GeneralMsg("manmsg", "manual."));
-
-      registerControlSequence(new LaTeXGenericCommand(true,
-       "widgetdeffmt", "m", TeXParserUtils.createStack(listener,
-        new TeXCsRef("widgetfmt"), TeXParserUtils.createGroup(listener,
-         listener.getParam(1)))));
 
       // dual prefix list
       def = listener.createString("action.,button.,menu.,widget.,help.,index.,");

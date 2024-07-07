@@ -61,9 +61,15 @@ public class TJHListener extends L2HConverter
 {
    public TJHListener(TeXJavaHelpMk app, Charset outCharset)
    {
+      this(app, outCharset, false);
+   }
+
+   public TJHListener(TeXJavaHelpMk app, Charset outCharset, boolean isHtml5)
+   {
       super(app, app.isUseMathJaxOn(), app.getOutDirectory(),
         outCharset, app.isParsePackagesOn(), app.getSplitLevel());
 
+      this.isHtml5 = isHtml5;
       setSeparateCss(true);
 
       setSplitUseBaseNamePrefix(app.isSplitBaseNamePrefixOn());
@@ -95,14 +101,17 @@ public class TJHListener extends L2HConverter
 
       noSearchWords = omissions.trim().split("\\s+");
 
-      // HTMLDocument only has very limited support
+      if (!isHtml5)
+      {
+         // HTMLDocument only has very limited support
 
-      addCssStyle("div.figure { margin-top: 10pt; }");
-      addCssStyle(".locationlist { padding-left: 20pt; }");
-      addCssStyle(".spacekey { padding-left: 2ex; padding-right: 2ex; }");
-      addCssStyle("span.samp { font-weight: bold; }");
-      addCssStyle("div.valuesetting { margin-top: 10pt; }");
-      addCssStyle(".subfigure { display: inline-block; padding: 5pt; }");
+         addCssStyle("div.figure { margin-top: 10pt; }");
+         addCssStyle(".locationlist { padding-left: 20pt; }");
+         addCssStyle(".spacekey { padding-left: 2ex; padding-right: 2ex; }");
+         addCssStyle(".samp { font-weight: bold; }");
+         addCssStyle("div.valuesetting { margin-top: 10pt; }");
+         addCssStyle(".subfigure { display: inline-block; padding: 5pt; }");
+      }
 
       addCssStyle(TeXJavaHelpLib.KEYSTROKE_CSS);
       addCssStyle(TeXJavaHelpLib.ICON_CSS);
@@ -111,14 +120,17 @@ public class TJHListener extends L2HConverter
 
       if (locPrefString != null)
       {
+         // HTMLDocument has difficulty with nested span elements.
+
+         String tag = isHtml5 ? "span" : "font";
+
          locationPrefix = new HtmlTag(
-           String.format("<span class=\"locationprefix\">%s</span>", locPrefString));
+           String.format("<%s class=\"locationprefix\">%s</%s>",
+             tag, locPrefString, tag));
       }
 
       setImageExtensions("png", "PNG", "jpg", "JPG", "jpeg", "JPEG",
         "gif", "GIF", "pdf", "PDF", "tex");
-
-      //nameAnchorRequired = true;
    }
 
    public void setNavigationXmlFile(File file)
@@ -139,7 +151,13 @@ public class TJHListener extends L2HConverter
    @Override
    public boolean isHtml5()
    {
-      return false;
+      return isHtml5;
+   }
+
+   @Override
+   protected String getNonHtml5AccSuppTag(String tag)
+   {
+      return tag.equals(AccSupp.TAG_IMG) ? tag : "font";
    }
 
    @Override
@@ -677,6 +695,7 @@ public class TJHListener extends L2HConverter
    protected SearchData searchData;
 
    protected DocumentBlockWriter documentBlockWriter;
+   protected boolean isHtml5=false;
 
    public static final int MIN_SEARCH_LENGTH = 3;
 

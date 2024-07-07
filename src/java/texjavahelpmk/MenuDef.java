@@ -64,12 +64,8 @@ public class MenuDef extends StandaloneDef
          list.add(parser.getListener().getControlSequence("menusep"));
       }
 
-      list.add(parser.getListener().getControlSequence("menufmt"));
-      Group grp = parser.getListener().createGroup();
-      list.add(grp);
-
-      grp.add(parser.getListener().getControlSequence("glossentryname"));
-      grp.add(glslabel);
+      list.add(parser.getListener().getControlSequence("glossentryname"));
+      list.add(glslabel);
 
       TeXObject keystroke = glslabel.getField("keystroke");
 
