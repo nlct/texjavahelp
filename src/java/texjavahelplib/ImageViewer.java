@@ -36,12 +36,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import javax.swing.text.AttributeSet;
+import javax.swing.text.Document;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.StyleSheet;
 
 public class ImageViewer extends JDialog
- implements MouseListener,MouseMotionListener
+ implements MouseListener,MouseMotionListener,HelpFontChangeListener
 {
    public ImageViewer(TeXJavaHelpLib helpLib, Window owner, String title)
    {
@@ -228,22 +229,13 @@ public class ImageViewer extends JDialog
       zoomPanel.add(helpLib.createJLabel("imageviewer.magnify", zoomSpinner));
       zoomPanel.add(zoomSpinner);
 
-      messagePane = new JEditorPane("text/html", "");
-      messagePane.setEditable(false);
+      messagePane = new TJHEditorPane();
+      helpLib.addHelpFontChangeListener(this);
 
       mainPanel.add(new JScrollPane(messagePane), BorderLayout.NORTH);
 
-      HelpFrame helpFrame = helpLib.getHelpFrame();
-
-      if (helpFrame != null)
-      {
-         setIconImage(helpFrame.getIconImage());
-      }
-
-      Toolkit tk = Toolkit.getDefaultToolkit();
-      Dimension dim = tk.getScreenSize();
-      setSize(dim.width/2, dim.height/2);
-      setLocationRelativeTo(null);
+      setSize(helpLib.getHelpWindowInitialSize());
+      setLocationRelativeTo(owner);
    }
 
    protected void paintCurrentImage(Graphics2D g)
@@ -307,6 +299,21 @@ public class ImageViewer extends JDialog
 
       setVisible(true);
       imageComp.requestFocusInWindow();
+   }
+
+   @Override
+   public void fontChanged(HelpFontChangeEvent event)
+   {
+      Document doc = messagePane.getDocument();
+
+      if (doc instanceof HTMLDocument)
+      {
+         HTMLDocument htmlDoc = (HTMLDocument)doc;
+         StyleSheet styles = htmlDoc.getStyleSheet();
+
+         event.getSettings().addFontRulesToStyleSheet(
+           styles, event.getModifiers());
+      }
    }
 
    protected void loadImage(String src) throws IOException
@@ -677,7 +684,7 @@ public class ImageViewer extends JDialog
 
    protected JComponent imageComp;
    protected JScrollPane imageSp;
-   protected JEditorPane messagePane;
+   protected TJHEditorPane messagePane;
 
    protected SpinnerNumberModel zoomNumberModel;
    protected JSpinner zoomSpinner;
