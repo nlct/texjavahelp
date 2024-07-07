@@ -18,14 +18,18 @@
 */
 package com.dickimawbooks.texjavahelplib;
 
-import java.util.Locale;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.Locale;
+import java.util.Properties;
 import java.util.TreeSet;
+import java.util.Vector;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.io.Reader;
 
 import java.net.URL;
 
@@ -428,6 +432,70 @@ public class TeXJavaHelpLib
       smallIconSuffix = suffix;
    }
 
+   public void loadImageMap(String resourcePath)
+   throws IOException
+   {
+       InputStream in = null;
+       BufferedReader reader = null;
+
+       try
+       {
+          in = getClass().getResourceAsStream(resourcePath);
+
+          if (in == null)
+          {
+             throw new FileNotFoundException(
+               "Can't find resource "+resourcePath);
+          }
+
+          reader = new BufferedReader(new InputStreamReader(in));
+
+          loadImageMap(reader);
+       }
+       finally
+       {
+          if (reader != null)
+          {
+             reader.close();
+          }
+
+          if (in != null)
+          {
+             in.close();
+          }
+       }
+   }
+
+   public void loadImageMap(Reader reader)
+   throws IOException
+   {
+      if (imageMap == null)
+      {
+         imageMap = new Properties();
+      }
+
+      imageMap.load(reader);
+   }
+
+   public URL getMappedImageLocation(String action)
+   {
+      if (imageMap == null) return null;
+
+      String location = imageMap.getProperty(action);
+
+      if (location == null) return null;
+
+      URL imageURL = getClass().getResource(location);
+
+      if (imageURL == null)
+      {
+         application.debug("Can't find resource '"+location+"'");
+         imageMap.remove(action);
+      }
+
+      return imageURL;
+   }
+
    public ImageIcon getHelpIcon(String base, boolean small)
    {
       return getHelpIcon(base, small, "png", "jpg", "jpeg", "gif");
@@ -481,6 +549,18 @@ public class TeXJavaHelpLib
          return ic;
       }
 
+      URL mapped = getMappedImageLocation(base+"-small");
+
+      if (mapped == null)
+      {
+         mapped = getMappedImageLocation(base);
+      }
+
+      if (mapped != null)
+      {
+         return new ImageIcon(mapped);
+      }
+
       String basename = resourceIconBase;
 
       if (!resourceIconBase.endsWith("/"))
@@ -525,6 +605,13 @@ public class TeXJavaHelpLib
       if (ic != null)
       {
          return ic;
+      }
+
+      URL mapped = getMappedImageLocation(base);
+
+      if (mapped != null)
+      {
+         return new ImageIcon(mapped);
       }
 
       String basename = resourceIconBase;
@@ -1575,6 +1662,8 @@ public class TeXJavaHelpLib
    protected String resourceIconBase = "/resources/icons";
    protected String smallIconSuffix = "-16x16";
    protected String largeIconSuffix = "-32x32";
+
+   protected Properties imageMap = null;
 
    protected String helpsetdir = "helpset";
    protected String helpsetsubdir = null;
