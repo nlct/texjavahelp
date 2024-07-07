@@ -108,7 +108,9 @@ public class TJHListener extends L2HConverter
          addCssStyle("div.figure { margin-top: 10pt; }");
          addCssStyle(".locationlist { padding-left: 20pt; }");
          addCssStyle(".spacekey { padding-left: 2ex; padding-right: 2ex; }");
-         addCssStyle(".samp { font-weight: bold; }");
+         addCssStyle(".menu { font-weight: bold; }");
+         addCssStyle(".menuitem { font-weight: bold; }");
+         addCssStyle(".dialog { font-weight: bold; }");
          addCssStyle("div.valuesetting { margin-top: 10pt; }");
          addCssStyle(".subfigure { display: inline-block; padding: 5pt; }");
       }
