@@ -1033,7 +1033,7 @@
    \seq_set_from_clist:Nn \l__texjavahelp_msg_seq { #1 }
    \seq_map_indexed_inline:Nn \l__texjavahelp_msg_seq
     {
-      \defmsgparam { ##1 } { ##2 }
+      \defmsgparam { \int_eval:n { ##1 - \c_one_int } } { ##2 }
     }
    \gls{#2}[#3]%
   \group_end:
@@ -1045,7 +1045,7 @@
    \seq_set_from_clist:Nn \l__texjavahelp_msg_seq { #1 }
    \seq_map_indexed_inline:Nn \l__texjavahelp_msg_seq
     {
-      \defmsgparam { ##1 } { ##2 }
+      \defmsgparam { \int_eval:n { ##1 - \c_one_int } } { ##2 }
     }
    \inlineglsdef{#2}%
   \group_end:

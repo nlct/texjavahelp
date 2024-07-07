@@ -79,7 +79,8 @@ public class GeneralMsg extends ControlSequence
             {
                arg = (TeXObjectList)arg.clone();
             }
-            String csname = "msgparam@"+RomanNumeral.romannumeral(i+1);
+
+            String csname = "msgparam@"+RomanNumeral.romannumeral(i);
 
             parser.putControlSequence(true, new GenericCommand(csname, null, arg));
          }
