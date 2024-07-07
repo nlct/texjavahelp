@@ -35,8 +35,13 @@ lib/resources/helpset/index.xml	: lib/texjavahelpmk.jar doc/texjavahelp.pdf
 doc/texjavahelp.pdf	: doc/texjavahelplib.bib doc/texjavahelp.tex doc/helpinterface.tex doc/texjavahelp.sty doc/texjavahelp.bib doc/images/*.tex doc/images/*.png
 	$(arara) -d doc texjavahelp
 
-doc/texjavahelplib.bib	: lib/xml2bib.jar lib/resources/texjavahelplib-en.xml
-	bin/xml2bib lib/resources/texjavahelplib-en.xml -o doc/texjavahelplib.bib
+doc/texjavahelplib.bib	: lib/xml2bib.jar \
+			lib/resources/texjavahelplib-en.xml \
+			lib/resources/texjavahelpdemo-en.xml
+	bin/xml2bib \
+		lib/resources/texjavahelplib-en.xml \
+		lib/resources/texjavahelpdemo-en.xml \
+		-o doc/texjavahelplib.bib
 
 lib/texjavahelpmk.jar	: java/texjavahelpmk/Manifest.txt \
 	classes/com/dickimawbooks/texjavahelpmk/TeXJavaHelpMk.class

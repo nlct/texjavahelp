@@ -241,6 +241,12 @@ public class TeXJavaHelpDemo extends JFrame
       helpM.add(new JMenuItem(manualAction));
       toolbar.add(manualAction);
 
+      helpM.add(createJMenuItem("menu.help", "about"));
+
+      aboutDialog = new MessageDialog(this,
+       helpLib.getMessage("about.title", APP_NAME),    
+       true, helpLib, getAppInfo(true));
+
       createSampleDialog();
       helpM.add(createJMenuItem("menu.help", "sampledialog"));
 
@@ -258,6 +264,106 @@ public class TeXJavaHelpDemo extends JFrame
       setSize(dim.width*3/4, dim.height*3/4);
 
       setLocationRelativeTo(null);
+   }
+
+   public String getAppInfo(boolean html)
+   {
+      String par = html ? "<p>" : String.format("%n%n");
+      String nl = html ? "<br>" : String.format("%n");
+
+      StringBuilder builder = new StringBuilder();
+
+      builder.append(
+        helpLib.getMessage("about.version", APP_NAME, APP_VERSION, APP_DATE)
+      );
+
+      builder.append(nl);
+
+      builder.append(String.format(
+        "Copyright (C) %s Nicola L. C. Talbot (%s)",
+        COPYRIGHT_YEAR, getInfoUrl(html, "www.dickimaw-books.com")));
+
+      builder.append(nl);
+
+      String legalText = getMessageIfExists("about.legal");
+
+      if (legalText != null)
+      {
+         if (html)
+         {
+            legalText = TeXJavaHelpLib.encodeHTML(legalText, false).replaceAll("\n", nl);
+         }
+
+         builder.append(legalText);
+      }
+
+      String translator = helpLib.getMessageIfExists("about.translator_info");
+
+      if (translator != null && !translator.isEmpty())
+      {
+         builder.append(par);
+
+         if (html)
+         {
+            translator = TeXJavaHelpLib.encodeHTML(translator, false);
+         }
+
+         builder.append(translator);
+      }
+
+      String ack = helpLib.getMessageIfExists("about.acknowledgements");
+
+      if (ack != null && !ack.isEmpty())
+      {
+         builder.append(par);
+
+         if (html)
+         {
+            ack = TeXJavaHelpLib.encodeHTML(ack, false);
+         }
+
+         builder.append(ack);
+      }
+
+      builder.append(par);
+      builder.append(getMessageWithFallback("about.library.version",
+        "Bundled with {0} version {1} ({2})",
+        "texjavahelplib.jar", TeXJavaHelpLib.VERSION, TeXJavaHelpLib.VERSION_DATE));
+      builder.append(nl);
+
+      builder.append(getInfoUrl(html, "https://github.com/nlct/texjavahelplib"));
+
+/*
+      builder.append(par);
+      builder.append(getMessageWithFallback("about.library.version",
+        "Bundled with {0} version {1} ({2})",
+        "texparserlib.jar", TeXParser.VERSION, TeXParser.VERSION_DATE));
+      builder.append(nl);
+      builder.append(getInfoUrl(html, "https://github.com/nlct/texparser"));
+*/
+
+      return builder.toString();
+   }
+
+   public String getInfoUrl(boolean html, String url)
+   {
+      if (html)
+      {
+         String href = url;
+
+         if (!url.startsWith("http"))
+         {
+            href = "https://"+url;
+         }
+
+         return String.format("<a href=\"%s\">%s</a>",
+           TeXJavaHelpLib.encodeAttributeValue(href, true),
+           TeXJavaHelpLib.encodeHTML(url, false));
+      }
+      else
+      {
+         return url;
+      }
    }
 
    protected void createSampleDialog()
@@ -348,6 +454,10 @@ public class TeXJavaHelpDemo extends JFrame
       else if (action.equals("sampledialog"))
       {
          sampleDialog.setVisible(true);
+      }
+      else if (action.equals("about"))
+      {
+         aboutDialog.setVisible(true);
       }
    }
 
@@ -622,8 +732,17 @@ public class TeXJavaHelpDemo extends JFrame
 
    private Properties properties;
 
-   private JDialog sampleDialog;
+   private JDialog sampleDialog, aboutDialog;
    private int debugMode = 1;
 
    public final static String APP_NAME = "TeX Java Help Demo";
+
+   public static final String APP_VERSION = "1.0";
+   public static final String APP_DATE = "2024-07-07";
+   public static final String START_COPYRIGHT_YEAR = "2024";
+   public static final String COPYRIGHT_YEAR
+    = APP_DATE.startsWith(START_COPYRIGHT_YEAR) ?
+      APP_DATE.substring(0,4) :
+      START_COPYRIGHT_YEAR+"-"+APP_DATE.substring(0,4);
+
 }
