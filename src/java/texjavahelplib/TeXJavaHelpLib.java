@@ -145,7 +145,7 @@ public class TeXJavaHelpLib
 
    /**
     * Encodes HTML special characters. See also
-    * HtmlTag.encodeAttributeValue(String,boolean)
+    * encodeAttributeValue(String,boolean)
     * @param str HTML string
     * @param encodeQuotes true if quotes should be converted to
     * entities
@@ -177,6 +177,44 @@ public class TeXJavaHelpLib
          else if (encodeQuotes && (cp == '"' || cp == '\''))
          {
             builder.append(String.format("&#x%x;", cp));
+         }
+         else
+         {
+            builder.appendCodePoint(cp);
+         }
+      }
+
+      return builder.toString();
+   }
+
+   /**
+    * Encodes string for use in quoted attribute value.
+    * The string should have first been processed or expanded if it was
+    * obtained from TeX source, so it may already contain entities.
+    * (Copied from HtmlTag as TeX Parser Library may not otherwise be required
+    * for the application to run.)
+    */ 
+   public static String encodeAttributeValue(String value, boolean url)
+   {
+      StringBuilder builder = new StringBuilder();
+
+      for (int i = 0; i < value.length(); )
+      {
+         int cp = value.codePointAt(i);
+         i += Character.charCount(cp);
+
+         if (cp == '\\' || cp == '"' || cp == '\'' || cp == '<' || cp == '>')
+         {
+            if (url)
+            {
+               builder.append('%');
+            }
+            else
+            {
+               builder.append("\\x");
+            }
+
+            builder.append(String.format("%X", cp));
          }
          else
          {
