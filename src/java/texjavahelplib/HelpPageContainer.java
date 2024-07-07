@@ -27,4 +27,6 @@ public interface HelpPageContainer
    public void addActions(JPopupMenu popupMenu);
 
    public void requestHelpPageFocus();
+
+   public ImageViewer getImageViewer();
 }

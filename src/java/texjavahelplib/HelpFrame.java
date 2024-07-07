@@ -412,6 +412,23 @@ public class HelpFrame extends JFrame
       }
    }
 
+   protected void createImageViewer()
+   {
+      imageViewer = new ImageViewer(helpLib, this, 
+        helpLib.getMessage("imageviewer.title"), false);
+   }
+
+   @Override
+   public ImageViewer getImageViewer()
+   {
+      if (imageViewer == null)
+      {
+         createImageViewer();
+      }
+
+      return imageViewer;
+   }
+
    public void setIconImages(List<? extends Image> icons)
    {
       super.setIconImages(icons);
@@ -756,6 +773,8 @@ public class HelpFrame extends JFrame
    protected HelpFontSettingsFrame helpFontSettingsFrame;
    protected HelpSearchFrame helpSearchFrame;
    protected HelpIndexFrame helpIndexFrame;
+
+   protected ImageViewer imageViewer;
 
    protected int lowerNavLabelLimit = 20;
    protected boolean lowerNavLabelText = true;

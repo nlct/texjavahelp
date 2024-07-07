@@ -122,9 +122,6 @@ public class HelpPage extends TJHEditorPane
        };
       popupMenu.add(viewImageAction);
       helpPageContainer.addActions(popupMenu);
-      imageViewer = new ImageViewer(helpLib,
-        helpLib.getMessage("imageviewer.title"));
-
 
       getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
         KeyStroke.getKeyStroke(KeyEvent.VK_CONTEXT_MENU, 0),
@@ -558,7 +555,7 @@ public class HelpPage extends TJHEditorPane
    {
       if (currentImageAttributeSet != null)
       {
-         imageViewer.display(currentImageAttributeSet);
+         helpPageContainer.getImageViewer().display(currentImageAttributeSet);
       }
    }
 
@@ -569,7 +566,6 @@ public class HelpPage extends TJHEditorPane
    protected JPopupMenu popupMenu;
    protected TJHAbstractAction viewImageAction;
    protected AttributeSet currentImageAttributeSet;
-   protected ImageViewer imageViewer;
 
    protected Vector<HistoryItem> history;
    protected int historyIdx = 0;

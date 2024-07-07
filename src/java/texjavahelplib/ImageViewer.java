@@ -40,12 +40,26 @@ import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.StyleSheet;
 
-public class ImageViewer extends JFrame
+public class ImageViewer extends JDialog
  implements MouseListener,MouseMotionListener
 {
-   public ImageViewer(TeXJavaHelpLib helpLib, String title)
+   public ImageViewer(TeXJavaHelpLib helpLib, Window owner, String title)
    {
-      super(title);
+      this(helpLib, owner, title, Dialog.ModalityType.MODELESS);
+   }
+
+   public ImageViewer(TeXJavaHelpLib helpLib, Window owner,
+     String title, boolean modal)
+   {
+      this(helpLib, owner, title, 
+        modal ? Dialog.ModalityType.APPLICATION_MODAL : Dialog.ModalityType.MODELESS);
+   }
+
+   public ImageViewer(TeXJavaHelpLib helpLib, Window owner,
+     String title, Dialog.ModalityType modalityType)
+   {
+      super(owner, title, modalityType);
+
       this.helpLib = helpLib;
       defaultTitle = title;
 
@@ -218,6 +232,13 @@ public class ImageViewer extends JFrame
       messagePane.setEditable(false);
 
       mainPanel.add(new JScrollPane(messagePane), BorderLayout.NORTH);
+
+      HelpFrame helpFrame = helpLib.getHelpFrame();
+
+      if (helpFrame != null)
+      {
+         setIconImage(helpFrame.getIconImage());
+      }
 
       Toolkit tk = Toolkit.getDefaultToolkit();
       Dimension dim = tk.getScreenSize();

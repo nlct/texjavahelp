@@ -527,6 +527,23 @@ public class HelpDialog extends JDialog
       popupMenu.add(popupHistoryForwardAction);
    }
 
+   protected void createImageViewer()
+   {
+      imageViewer = new ImageViewer(helpLib, this, 
+        helpLib.getMessage("imageviewer.title"));
+   }
+
+   @Override
+   public ImageViewer getImageViewer()
+   {
+      if (imageViewer == null)
+      {
+         createImageViewer();
+      }
+
+      return imageViewer;
+   }
+
    protected HelpPage helpPage;
    protected TeXJavaHelpLib helpLib;
    protected NavigationNode pageNode;
@@ -535,6 +552,8 @@ public class HelpDialog extends JDialog
      popupResetAction, popupHistoryBackAction, popupHistoryForwardAction;
 
    protected boolean updateAndCloseHelpFrame = true;
+
+   protected ImageViewer imageViewer;
 
    // null if node has no children
    protected JSplitPane splitPane;
