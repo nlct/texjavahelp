@@ -27,17 +27,17 @@ import java.util.regex.Matcher;
 
 public class Entry
 {
-   public Entry(String key)
+   public Entry(Xml2Bib xml2bib, String key)
    {
-      this(key, null);
+      this(xml2bib, key, null);
    }
 
-   public Entry(String key, String value)
+   public Entry(Xml2Bib xml2bib, String key, String value)
    {
-      this(key, value, null);
+      this(xml2bib, key, value, null);
    }
 
-   public Entry(String key, String value, EntryType type)
+   public Entry(Xml2Bib xml2bib, String key, String value, EntryType type)
    {
       if (key == null)
       {
@@ -52,6 +52,8 @@ public class Entry
       }
 
       this.type = type;
+
+      this.xml2bib = xml2bib;
 
       put("name", value,
         !(key.startsWith("index") || key.startsWith("manual")));
@@ -161,6 +163,9 @@ public class Entry
    {
       if (fields != null)
       {
+         String encap = type.getEncap();
+         String noEncapField = xml2bib.getNoEncapField();
+
          for (String field : fields.keySet())
          {
             FieldValue fieldVal = fields.get(field);
@@ -174,17 +179,20 @@ public class Entry
                val = encode(val);
             }
 
-            if (field.equals("name"))
+            if (field.equals("name") && encap != null)
             {
-               String encap = type.getEncap();
+               out.format("  %s={%s}", field,
+                  String.format("\\%s{%s}", encap, val));
 
-               if (encap != null)
+               if (noEncapField != null && !fields.containsKey(noEncapField))
                {
-                  val = String.format("\\%s{%s}", encap, val);
+                  out.format(",%n  %s={%s}", noEncapField, val);
                }
             }
-
-            out.format("  %s={%s}", field, val);
+            else
+            {
+               out.format("  %s={%s}", field, val);
+            }
          }
       }
 
@@ -345,6 +353,7 @@ public class Entry
 
    protected String key, parent;
    protected EntryType type;
+   protected Xml2Bib xml2bib; 
 
    protected HashMap<String,FieldValue> fields;
 

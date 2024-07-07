@@ -15,6 +15,7 @@
 <entry key="syntax.out">{0} (or {1}) &lt;BIB file&gt;	The output BIB file.</entry>
 <entry key="syntax.provide-xml">{0}	Copy XML source files from {1}''s resource directory if missing.</entry>
 <entry key="syntax.copy-overwrite-xml">{0}	Copy XML source files from {1}''s resource directory if missing or if {1}''s file is newer.</entry>
+<entry key="syntax.encapless-field">{0} &lt;field&gt;		Copy original name value to the given field if that field is not set and the name field value is automatically encapsulated.</entry>
 <entry key="syntax.version">{0} (or {1})	Print version and exit.</entry>
 <entry key="syntax.help">{0} (or {1})		Print this help message and exit.</entry>
 <entry key="syntax.debug">{0}			Switch on debug mode.</entry>

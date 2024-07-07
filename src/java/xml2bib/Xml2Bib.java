@@ -222,6 +222,8 @@ public class Xml2Bib implements TeXJavaHelpLibApp
          "--provide-xml", getApplicationName()));
       System.out.println(getMessage("syntax.copy-overwrite-xml",
           "--copy-overwrite-xml", getApplicationName()));
+
+      System.out.println(getMessage("syntax.encapless-field", "--encapless-field"));
       System.out.println();
       System.out.println(getMessage("syntax.debug", "--debug"));
       System.out.println(getMessage("syntax.nodebug", "--nodebug"));
@@ -335,6 +337,11 @@ public class Xml2Bib implements TeXJavaHelpLibApp
    {
    }
 
+   public String getNoEncapField()
+   {
+      return noEncapField;
+   }
+
    protected void run() throws IOException
    {
       Properties props = new Properties();
@@ -424,7 +431,7 @@ public class Xml2Bib implements TeXJavaHelpLibApp
                if (entry == null)
                {
                   String value = (String)props.getProperty(key);
-                  entry = new Entry(key, value);
+                  entry = new Entry(this, key, value);
                   entries.put(key, entry);
                }
 
@@ -447,7 +454,7 @@ public class Xml2Bib implements TeXJavaHelpLibApp
 
             if (entry == null)
             {
-               entry = new Entry(key, (String)props.getProperty(key));
+               entry = new Entry(this, key, (String)props.getProperty(key));
                entries.put(key, entry);
             }
 
@@ -492,7 +499,7 @@ public class Xml2Bib implements TeXJavaHelpLibApp
 
                      if (val != null)
                      {
-                        parentEntry = new Entry(parent, val);
+                        parentEntry = new Entry(this, parent, val);
                         entries.put(parent, parentEntry);
                      }
                   }
@@ -506,7 +513,8 @@ public class Xml2Bib implements TeXJavaHelpLibApp
          }
          else
          {
-            entries.put(key, new Entry(key, (String)props.getProperty(key)));
+            entries.put(key,
+              new Entry(this, key, (String)props.getProperty(key)));
          }
       }
 
@@ -731,6 +739,19 @@ public class Xml2Bib implements TeXJavaHelpLibApp
          {
             copyXml = false;
          }
+         else if (args[i].equals("--encapless-field"))
+         {
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                 getMessage("error.syntax.missing_value",
+                   args[i-1]));
+            }
+
+            noEncapField = args[i];
+         }
          else if (args[i].equals("--in") || args[i].equals("-i"))
          {
             i++;
@@ -851,6 +872,7 @@ public class Xml2Bib implements TeXJavaHelpLibApp
    private Charset outCharset = Charset.defaultCharset();
    protected int verboseLevel = 0;
    protected boolean copyXml = false, replaceXml = false;
+   protected String noEncapField=null;// field to save non-encapsulated value
 
    private TeXJavaHelpLib helpLib;
 
