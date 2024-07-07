@@ -51,7 +51,7 @@ import java.beans.PropertyChangeEvent;
 /**
  * Panel for showing a page of the manual.
  */
-public class HelpPage extends JEditorPane
+public class HelpPage extends TJHEditorPane
   implements HyperlinkListener,HelpFontChangeListener
 {
    public HelpPage(TeXJavaHelpLib helpLib, HelpPageContainer helpPageContainer)
@@ -74,9 +74,6 @@ public class HelpPage extends JEditorPane
      throws IOException
    {
       super();
-
-      setContentType("text/html");
-      setEditable(false);
 
       this.helpLib = helpLib;
       this.helpPageContainer = helpPageContainer;
@@ -312,39 +309,6 @@ public class HelpPage extends JEditorPane
       }
    }
 
-   @Override
-   public void scrollToReference(String ref)
-   {
-      HTMLDocument doc = (HTMLDocument)getDocument();
-
-      Element element = doc.getElement(ref);
-
-      if (element == null)
-      {
-         super.scrollToReference(ref);
-      }
-      else
-      {
-         int pos = element.getStartOffset();
-
-         try
-         {
-            Rectangle r = modelToView(pos);
-
-            if (r != null)
-            {
-               Rectangle vis = getVisibleRect();
-               r.height = vis.height;
-               scrollRectToVisible(r);
-               setCaretPosition(pos);
-            }
-         }
-         catch (BadLocationException e)
-         {
-         }
-      }
-   }
-
    protected void pageChanged(PropertyChangeEvent evt)
    {
       Object oldValue = evt.getOldValue();
@@ -356,12 +320,14 @@ public class HelpPage extends JEditorPane
          URL oldUrl = (URL)oldValue;
          URL newUrl = (URL)newValue;
 
+/*
          String ref = newUrl.getRef();
 
          if (ref != null)
          {
             scrollToReference(ref);
          }
+*/
 
          helpPageContainer.updateNavWidgets();
       }

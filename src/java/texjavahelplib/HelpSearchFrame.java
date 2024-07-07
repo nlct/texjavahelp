@@ -105,8 +105,7 @@ public class HelpSearchFrame extends JFrame
       exactBox = helpLib.createJCheckBox("help.navigation.search", "exact", true);
       togglePanel.add(exactBox);
 
-      resultComp = new JEditorPane("text/html", "");
-      resultComp.setEditable(false);
+      resultComp = new TJHEditorPane();
 
       resultComp.addHyperlinkListener(this);
       resultComp.addMouseListener(new MouseAdapter()
@@ -447,7 +446,7 @@ public class HelpSearchFrame extends JFrame
    protected JButton searchButton, stopButton;
    protected JCheckBox exactBox, caseBox;
    protected JComponent processComp, foundComp;
-   protected JEditorPane resultComp;
+   protected TJHEditorPane resultComp;
    protected JProgressBar progressBar;
    protected SearchWorker worker;
 

@@ -118,7 +118,7 @@ public class TJHListener extends L2HConverter
       setImageExtensions("png", "PNG", "jpg", "JPG", "jpeg", "JPEG",
         "gif", "GIF", "pdf", "PDF", "tex");
 
-      nameAnchorRequired = true;
+      //nameAnchorRequired = true;
    }
 
    public void setNavigationXmlFile(File file)

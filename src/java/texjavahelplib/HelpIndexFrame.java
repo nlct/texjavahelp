@@ -84,12 +84,10 @@ public class HelpIndexFrame extends JFrame
 
       builder.append("</body></html>");
 
-      groupPane = new JEditorPane("text/html", builder.toString());
-      groupPane.setEditable(false);
+      groupPane = new TJHEditorPane("text/html", builder.toString());
       groupPane.addHyperlinkListener(this);
 
-      editorPane = new JEditorPane(indexURL);
-      editorPane.setEditable(false);
+      editorPane = new TJHEditorPane(indexURL);
       editorPane.addHyperlinkListener(this);
 
       JSplitPane splitPane = new JSplitPane(
@@ -127,34 +125,7 @@ public class HelpIndexFrame extends JFrame
 
    public void goToIndexRef(String ref)
    {
-      HTMLDocument doc = (HTMLDocument)editorPane.getDocument();
-
-      Element element = doc.getElement(ref);
-
-      if (element == null)
-      {
-         editorPane.scrollToReference(ref);
-      }
-      else
-      {
-         int pos = element.getStartOffset();
-
-         try
-         {
-            Rectangle r = editorPane.modelToView(pos);
-
-            if (r != null)
-            {
-               Rectangle vis = editorPane.getVisibleRect();
-               r.height = vis.height;
-               editorPane.scrollRectToVisible(r);
-               editorPane.setCaretPosition(pos);
-            }
-         }
-         catch (BadLocationException e)
-         {
-         }
-      }
+      editorPane.scrollToReference(ref);
    }
 
    protected void open(URL url) throws IOException
@@ -225,6 +196,6 @@ public class HelpIndexFrame extends JFrame
 
 
    protected HelpFrame helpFrame;
-   protected JEditorPane editorPane, groupPane;
+   protected TJHEditorPane editorPane, groupPane;
    protected URL indexURL;
 }

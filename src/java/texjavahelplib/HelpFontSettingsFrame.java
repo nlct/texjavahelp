@@ -103,8 +103,7 @@ public class HelpFontSettingsFrame extends JFrame
 
       builder.append("</body></html>");
 
-      sampleComp = new JEditorPane("text/html", builder.toString());
-      sampleComp.setEditable(false);
+      sampleComp = new TJHEditorPane("text/html", builder.toString());
       sampleComp.addHyperlinkListener(this);
 
       sampleComp.setMargin(new Insets(4, 4, 4, 4));
@@ -600,7 +599,7 @@ public class HelpFontSettingsFrame extends JFrame
      keystrokeFontFamily, monoFontFamily;
    protected SpinnerNumberModel fontSizeSpinnerModel;
    protected JSpinner fontSizeSpinner;
-   protected JEditorPane sampleComp;
+   protected TJHEditorPane sampleComp;
    protected JColorChooser colorChooser;
    protected String colorChooserTitle;
    protected JComponent swatchComp;
