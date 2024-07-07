@@ -101,21 +101,16 @@ public class TJHListener extends L2HConverter
 
       noSearchWords = omissions.trim().split("\\s+");
 
-      if (!isHtml5)
-      {
-         // HTMLDocument only has very limited support
+      // HTMLDocument only has very limited support
 
-         addCssStyle("div.figure { margin-top: 10pt; }");
-         addCssStyle(".locationlist { padding-left: 20pt; }");
-         addCssStyle(".spacekey { padding-left: 2ex; padding-right: 2ex; }");
-         addCssStyle(".menu { font-weight: bold; }");
-         addCssStyle(".menuitem { font-weight: bold; }");
-         addCssStyle(".dialog { font-weight: bold; }");
-         addCssStyle("div.valuesetting { margin-top: 10pt; }");
-         addCssStyle(".subfigure { display: inline-block; padding: 5pt; }");
-      }
+      addCssStyle("div.figure { margin-top: 10pt; }");
+      addCssStyle(".locationlist { padding-left: 20pt; }");
+      addCssStyle(".spacekey { padding-left: 2ex; padding-right: 2ex; }");
+      addCssStyle("div.valuesetting { margin-top: 10pt; }");
+      addCssStyle(".subfigure { display: inline-block; padding: 5pt; }");
 
       addCssStyle(TeXJavaHelpLib.KEYSTROKE_CSS);
+      addCssStyle(TeXJavaHelpLib.MENU_CSS);
       addCssStyle(TeXJavaHelpLib.ICON_CSS);
 
       String locPrefString = app.getMessageIfExists("symbol.location_prefix");

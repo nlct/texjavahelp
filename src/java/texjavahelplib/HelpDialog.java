@@ -22,10 +22,8 @@ import java.io.IOException;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.Toolkit;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;
@@ -251,9 +249,7 @@ public class HelpDialog extends JDialog
 
       updateNavWidgets();
 
-      Toolkit tk = Toolkit.getDefaultToolkit();
-      Dimension dim = tk.getScreenSize();
-      setSize(dim.width/2, dim.height/2);
+      setSize(helpLib.getHelpWindowInitialSize());
    }
 
    protected JButton createActionComponent(Action action)

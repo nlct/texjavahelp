@@ -29,8 +29,10 @@ import java.io.FileNotFoundException;
 
 import java.net.URL;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.Toolkit;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -828,7 +830,15 @@ public class TeXJavaHelpLib
    public void initHelpSet(String helpsetdir, String navBaseName, String title)
     throws IOException,SAXException
    {
+      initHelpSet(helpsetdir, navBaseName, title, null);
+   }
+
+   public void initHelpSet(String helpsetdir, String navBaseName, String title,
+    Dimension helpWindowInitSize)
+    throws IOException,SAXException
+   {
       this.helpsetdir = helpsetdir;
+      this.helpWindowInitSize = helpWindowInitSize;
 
       navhtmlfilename = navBaseName+"."+htmlsuffix;
       navxmlfilename = navBaseName+".xml";
@@ -884,6 +894,18 @@ public class TeXJavaHelpLib
       searchData = SearchData.load(this);
 
       helpFrame = new HelpFrame(this, title);
+   }
+
+   public Dimension getHelpWindowInitialSize()
+   {
+      if (helpWindowInitSize == null)
+      {
+         Toolkit tk = Toolkit.getDefaultToolkit();
+         Dimension dim = tk.getScreenSize();
+         helpWindowInitSize = new Dimension(dim.width/2, dim.height*9/10);
+      }
+
+      return helpWindowInitSize;
    }
 
    public TreeSet<IndexItem> getIndexGroupData()
@@ -1544,6 +1566,8 @@ public class TeXJavaHelpLib
 
    private HelpFontSettings helpFontSettings;
 
+   private Dimension helpWindowInitSize;
+
    public static final String KEYSTROKE_CSS
     = ".keystroke { font-family: sans-serif; font-weight: bold; border: 2pt outset gray; background-color: silver; }";
 
@@ -1551,6 +1575,11 @@ public class TeXJavaHelpLib
 
    public static final String ICON_CSS = ICON_CSS_CLASSES
     + " { font-family: serif; }"; 
+
+   public static final String MENU_CSS_CLASSES = ".menu, .menuitem .dialog";
+
+   public static final String MENU_CSS = MENU_CSS_CLASSES
+    + " { font-weight: bold; }"; 
 
    public static final String MONO_CSS_CLASSES
     = ".code, .cmd, .cmdfmt, .csfmt, .csfmtfont, .csfmtcolourfont, .appfmt, .styfmt, .clsfmt, .envfmt, .optfmt, .csoptfmt, .styoptfmt, .clsoptfmt, .ctrfmt, .filefmt, .extfmt, .cbeg, .cend, .longargfmt, .shortargfmt, .qtt, .xmltagfmt, .varfmt, .terminal, .transcript, .filedef, .codebox, .badcodebox, .unicodebox, .compactcodebox, .sidebysidecode";

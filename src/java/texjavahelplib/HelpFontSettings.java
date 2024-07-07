@@ -123,6 +123,8 @@ public class HelpFontSettings
 
    public void appendRules(StringBuilder builder)
    {
+      builder.append(TeXJavaHelpLib.MENU_CSS);
+
       builder.append(getBodyFontRule());
       builder.append(getIconFontRule());
       builder.append(getKeyStrokeFontRule());

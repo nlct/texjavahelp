@@ -24,8 +24,6 @@ import java.net.URL;
 
 import java.util.List;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -361,10 +359,7 @@ public class HelpFrame extends JFrame
 
       settingsMenu.add(lowerNavSettingsAction);
 
-      Toolkit tk = Toolkit.getDefaultToolkit();
-      Dimension dim = tk.getScreenSize();
-      setSize(dim.width/2, dim.height/2);
-
+      setSize(helpLib.getHelpWindowInitialSize());
    }
 
    public FontMetrics getHelpFontMetrics(Font font)

@@ -80,6 +80,7 @@ public class HelpFontSettingsFrame extends JFrame
       builder.append(TeXJavaHelpLib.KEYSTROKE_CSS);
       builder.append(TeXJavaHelpLib.ICON_CSS);
       builder.append(TeXJavaHelpLib.MONO_CSS_CLASSES);
+      builder.append(TeXJavaHelpLib.MENU_CSS_CLASSES);
       builder.append(" { font-family: monospace; }");
       sampleHelpFontSettings.appendRules(builder);
       builder.append("</style></head><body>");
@@ -89,11 +90,19 @@ public class HelpFontSettingsFrame extends JFrame
       builder.append("<p><span class=\"locationprefix\">");
       builder.append(locPrefix);
       builder.append("</span> ");
+
+      builder.append("<span class=\"menu\">");
       builder.append(helpLib.getMessage("menu.help"));
+      builder.append("</span>");
+
       builder.append("<span title=\"");
       builder.append(helpLib.getMessage("manual.menu_separator_title"));
       builder.append("\" class=\"icon\">\u279C</span>");
+
+      builder.append("<span class=\"menuitem\">");
       builder.append(helpLib.getMessage("menu.help.manual"));
+      builder.append("</span>");
+
       builder.append(" <span class=\"keystroke\">I</span>");
       builder.append(" <span class=\"keystroke\">L</span>");
       builder.append(" <span class=\"keystroke\">1</span>");
