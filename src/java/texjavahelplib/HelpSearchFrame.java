@@ -224,7 +224,7 @@ public class HelpSearchFrame extends JFrame
 
       if (searchList.isEmpty())
       {
-         helpLib.error(
+         helpLib.getApplication().error(this,
            helpLib.getMessage("error.missing_search_term"));
 
          return;

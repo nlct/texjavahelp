@@ -34,6 +34,7 @@ import java.nio.file.*;
 import java.nio.charset.Charset;
 
 import java.awt.Dimension;
+import java.awt.Component;
 import javax.swing.ImageIcon;
 
 import com.dickimawbooks.texparserlib.*;
@@ -44,20 +45,66 @@ import com.dickimawbooks.texparserlib.html.*;
 import com.dickimawbooks.texparserlib.latex2latex.LaTeXPreambleListener;
 
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
-import com.dickimawbooks.texjavahelplib.TeXJavaHelpLibApp;
+import com.dickimawbooks.texjavahelplib.TeXJavaHelpLibAppAdapter;
 import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 
-public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
+public class TeXJavaHelpMk implements TeXApp
 {
    protected void initHelpLibrary() throws IOException
    {
-      helpLib = new TeXJavaHelpLib(this);
+      helpLibApp = new TeXJavaHelpLibAppAdapter()
+       {
+          @Override
+          public String getApplicationName()
+          {
+             return NAME;
+          }
+
+          @Override
+          public boolean isGUI() { return false; }
+
+          @Override
+          public boolean isDebuggingOn()
+          {
+             return debugMode > 0;
+          }
+
+          @Override
+          public void stdOutMessage(String text)
+          {
+             logAndPrintMessage(text);
+          }
+
+          @Override
+          public void stdErrMessage(Throwable e, String msg)
+          {
+             logAndStdErrMessage(e, msg);
+          }
+
+          @Override   
+          public void error(Component owner, String msg, Throwable e)
+          {  
+             if (msg == null && e instanceof TeXSyntaxException)
+             {
+                msg = ((TeXSyntaxException)e).getMessage(getTeXApp());
+             }
+
+             super.error(owner, msg, e);
+          }
+       };
+      helpLib = new TeXJavaHelpLib(helpLibApp);
+      helpLibApp.setHelpLib(helpLib);
       helpLib.getMessageSystem().loadDictionary("texparserlib");
    }
 
    public TeXJavaHelpLib getHelpLib()
    {
       return helpLib;
+   }
+
+   public TeXApp getTeXApp()
+   {
+      return this;
    }
 
    public String getMessageWithFallback(String label,
@@ -106,23 +153,11 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
    }
 
    @Override
-   public void warning(String message)
-   {
-      logAndStdErrMessage(String.format("%s: %s", getApplicationName(), message));
-   }
-
-   @Override
-   public void warning(String message, Throwable e)
-   {
-      logAndStdErrMessage(e, String.format("%s: %s", getApplicationName(), message));
-   }
-
-   @Override
    public void warning(TeXParser parser, String message)
    {     
       if (parser == null)
       {
-         warning(message);
+         helpLibApp.warning(message);
       }
       else
       {
@@ -139,43 +174,20 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
    }
 
    @Override
-   public void error(String message)
-   {
-      logAndStdErrMessage(String.format("%s: %s", getApplicationName(), message));
-   }
-
-   @Override
    public void error(Exception e)
    {
-      error((Throwable)e);
+      error(null, e);
    }
 
-   @Override
-   public void error(Throwable e)
+   public void error(String msg, Throwable e)
    {
-      if (e instanceof TeXSyntaxException)
+      if (helpLibApp != null)
       {
-         error(((TeXSyntaxException)e).getMessage(this));
+         helpLibApp.error(msg, e);
       }
       else
       {
-         error(e.getMessage());
-      }
-
-      if (debugMode > 0)
-      {
-         e.printStackTrace();
-      }
-   }
-
-   @Override
-   public void error(String message, Throwable e)
-   {
-      error(message);
-
-      if (debugMode > 0)
-      {
-         e.printStackTrace();
+         logAndStdErrMessage(e, msg);
       }
    }
 
@@ -241,47 +253,9 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
       }
    }
 
-   public void debug(String message)
-   {
-      if (debugMode > 0)
-      {
-         logAndPrintMessage(String.format("%s: %s", getApplicationName(), message));
-      }
-   }
-
-   @Override
-   public void debug(Throwable e)
-   {
-      if (debugMode > 0)
-      {
-         logAndStdErrMessage(e, String.format("%s:", getApplicationName()));
-      }
-   }
-
-   @Override
-   public void debug(String message, Throwable e)
-   {
-      if (debugMode > 0)
-      {
-         logAndStdErrMessage(e, String.format("%s: %s", getApplicationName(), message));
-      }
-   }
-
    public boolean isDebuggingOn()
    {
       return debugMode > 0;
-   }
-
-   @Override
-   public ImageIcon getSmallIcon(String base, String... extensions)
-   {
-      return null;
-   }
-
-   @Override
-   public ImageIcon getLargeIcon(String base, String... extensions)
-   {
-      return null;
    }
 
    @Override
@@ -737,7 +711,7 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
 
          if (isDebuggingOn())
          {
-            debug(getMessageWithFallback("message.running",
+            helpLibApp.debug(getMessageWithFallback("message.running",
               "Running {0}", String.format("%s \"%s\"", invoker, name)));
          }
          
@@ -916,7 +890,7 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
             }
             catch (NumberFormatException e)
             {// shouldn't happen, pattern ensures format correct
-               debug(e);
+               helpLibApp.debug(e);
             }
          }
       }
@@ -968,16 +942,16 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
 
       if (file == null)
       {
-         warning(message);
+         helpLibApp.warning(message);
       }
       else if (lineNum > 0)
       {
-         warning(String.format("%s:%d: %s", file.getName(),
+         helpLibApp.warning(String.format("%s:%d: %s", file.getName(),
            lineNum, message));
       }
       else
       {
-         warning(String.format("%s: %s", file.getName(), message));
+         helpLibApp.warning(String.format("%s: %s", file.getName(), message));
       }
    }
 
@@ -1042,7 +1016,7 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
    {
       if (isDebuggingOn())
       {
-         debug(getMessageWithFallback("message.running",
+         helpLibApp.debug(getMessageWithFallback("message.running",
            "Running {0}", cmdListToString(cmd)));
       }
          
@@ -1063,14 +1037,14 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
       }
       catch (Exception e)
       {
-         debug(e);
+         helpLibApp.debug(e);
 
          return exitCode;
       }
 
       if (exitCode != 0 && warnOnNonZeroExit)
       {
-         warning(getMessageWithFallback("error.app_failed",
+         helpLibApp.warning(getMessageWithFallback("error.app_failed",
            "{0} failed with exit code {1}",
            cmdListToString(cmd),  exitCode));
       }
@@ -1120,7 +1094,7 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
             }
          }
 
-         debug(getMessageWithFallback("message.process.result",
+         helpLibApp.debug(getMessageWithFallback("message.process.result",
            "Processed returned: {0}", result));
       }
 
@@ -1434,7 +1408,7 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
             throw new IOException(getMessage("message.no.write", destDirFile));
          }
 
-          debug(String.format("mkdir %s", destDirFile));
+          helpLibApp.debug(String.format("mkdir %s", destDirFile));
           Files.createDirectories(destDirFile.toPath());
       }
 
@@ -1443,7 +1417,7 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
          throw new IOException(getMessage("message.no.write", dest));
       }
 
-      debug(String.format("%s -> %s", src, dest));
+      helpLibApp.debug(String.format("%s -> %s", src, dest));
 
       Files.copy(src.toPath(), dest.toPath(),
          StandardCopyOption.REPLACE_EXISTING);
@@ -1592,21 +1566,16 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
       }
       catch (InvalidSyntaxException e)
       {
-         app.error(e.getMessage());
+         app.error(e.getMessage(), null);
 
          System.exit(1);
       }
-      catch (Exception e)
+      catch (Throwable e)
       {
-         app.error(e);
+         app.error(null, e);
 
-         System.exit(1);
+         System.exit(2);
       }
-   }
-
-   @Override
-   public void dictionaryLoaded(URL url)
-   {
    }
 
    private Hashtable<String,String> kpsewhichResults;
@@ -1625,6 +1594,7 @@ public class TeXJavaHelpMk implements TeXApp,TeXJavaHelpLibApp
    private File logFile = null;
    private PrintWriter logWriter = null;
    private TeXJavaHelpLib helpLib;
+   private TeXJavaHelpLibAppAdapter helpLibApp;
 
    private int debugMode = 0;
    private int verboseLevel = 0;

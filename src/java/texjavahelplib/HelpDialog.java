@@ -247,6 +247,16 @@ public class HelpDialog extends JDialog
          getContentPane().add(new JScrollPane(helpPage), BorderLayout.CENTER);
       }
 
+      navMenu.addSeparator();
+      navMenu.add(new TJHAbstractAction(helpLib, "action", "close")
+        {
+           @Override
+           public void doAction()
+           {
+              setVisible(false);
+           }
+        });
+
       updateNavWidgets();
 
       setSize(helpLib.getHelpWindowInitialSize());

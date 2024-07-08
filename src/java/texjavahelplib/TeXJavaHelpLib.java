@@ -1711,6 +1711,6 @@ public class TeXJavaHelpLib
    public static final String MONO_CSS_CLASSES
     = ".code, .cmd, .cmdfmt, .csfmt, .csfmtfont, .csfmtcolourfont, .appfmt, .styfmt, .clsfmt, .envfmt, .optfmt, .csoptfmt, .styoptfmt, .clsoptfmt, .ctrfmt, .filefmt, .extfmt, .cbeg, .cend, .longargfmt, .shortargfmt, .qtt, .xmltagfmt, .varfmt, .terminal, .transcript, .filedef, .codebox, .badcodebox, .unicodebox, .compactcodebox, .sidebysidecode";
 
-   public static final String VERSION = "0.2a";
-   public static final String VERSION_DATE = "2024-06-30";
+   public static final String VERSION = "0.3a";
+   public static final String VERSION_DATE = "2024-07-08";
 }

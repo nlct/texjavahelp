@@ -39,10 +39,10 @@ import javax.swing.KeyStroke;
 import javax.swing.ImageIcon;
 
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
-import com.dickimawbooks.texjavahelplib.TeXJavaHelpLibApp;
+import com.dickimawbooks.texjavahelplib.TeXJavaHelpLibAppAdapter;
 import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 
-public class Xml2Bib implements TeXJavaHelpLibApp
+public class Xml2Bib
 {
    public Xml2Bib()
    {
@@ -51,7 +51,26 @@ public class Xml2Bib implements TeXJavaHelpLibApp
 
    protected void initHelpLibrary() throws IOException
    {
-      helpLib = new TeXJavaHelpLib(this);
+      helpLibApp = new TeXJavaHelpLibAppAdapter()
+       {
+          @Override
+          public boolean isGUI() { return false; }
+
+          @Override
+          public String getApplicationName()
+          {
+             return NAME;
+          }
+
+          @Override
+          public boolean isDebuggingOn()
+          {
+             return debugMode;
+          }
+
+       };
+      helpLib = new TeXJavaHelpLib(helpLibApp);
+      helpLibApp.setHelpLib(helpLib);
    }
 
    public TeXJavaHelpLib getHelpLib()
@@ -97,42 +116,15 @@ public class Xml2Bib implements TeXJavaHelpLibApp
       return helpLib.getMessage(label, params);
    }
 
-   @Override
-   public void error(String message)
-   {
-      error(message, null);
-   }
-
-   @Override
-   public void error(Throwable e)
-   {
-      error(e.getMessage(), e);
-   }
-
-   @Override
    public void error(String message, Throwable e)
    {
-      message("error", message, e);
-   }
-
-   @Override
-   public void warning(String message)
-   {
-      warning(message, null);
-   }
-
-   @Override
-   public void warning(String message, Throwable e)
-   {
-      message("warning", message, e);
-   }
-
-   @Override
-   public void message(String message)
-   {
-      if (verboseLevel > 0)
+      if (helpLibApp != null)
       {
-         System.out.println(message);
+         helpLibApp.error(message, e);
+      }
+      else
+      {
+         message("error", message, e);
       }
    }
 
@@ -159,51 +151,12 @@ public class Xml2Bib implements TeXJavaHelpLibApp
       }
    }
 
-   @Override
-   public void debug(Throwable e)
-   {
-      debug(e.getMessage(), e);
-   }
-
-   @Override
-   public boolean isDebuggingOn()
-   {
-      return debugMode;
-   }
-
-   @Override
-   public void debug(String msg)
-   {
-      debug(msg, null);
-   }
-
-   @Override
    public void debug(String message, Throwable e)
    {
       if (debugMode)
       {
-         if (message != null)
-         {
-            System.out.println(message);
-         }
-
-         if (e != null)
-         {
-            e.printStackTrace();
-         }
+         error(message, e);
       }
-   }
-
-   @Override
-   public ImageIcon getSmallIcon(String base, String... extensions)
-   {
-      return null;
-   }
-
-   @Override
-   public ImageIcon getLargeIcon(String base, String... extensions)
-   {
-      return null;
    }
 
    public void help()
@@ -274,7 +227,6 @@ public class Xml2Bib implements TeXJavaHelpLibApp
       }
    }
 
-   @Override
    public String getApplicationName()
    {
       return NAME;
@@ -293,7 +245,7 @@ public class Xml2Bib implements TeXJavaHelpLibApp
       }
       catch (SecurityException e)
       {
-         debug(e);
+         debug(null, e);
          return false;
       }
    }
@@ -315,7 +267,7 @@ public class Xml2Bib implements TeXJavaHelpLibApp
 
                if (!file.exists() || (replaceXml && isNewer(resourceFile, file)))
                {
-                  message(getMessageWithFallback("message.copying",
+                  helpLibApp.message(getMessageWithFallback("message.copying",
                     "Copying {0} -> {1}", resourceFile, file));
 
                   Files.copy(resourceFile.toPath(), file.toPath(),
@@ -324,17 +276,12 @@ public class Xml2Bib implements TeXJavaHelpLibApp
             }
             catch (Exception e)
             {
-               debug(e);
+               debug(null, e);
             }
          }
       }
 
       return file;
-   }
-
-   @Override
-   public void dictionaryLoaded(URL url)
-   {
    }
 
    public String getNoEncapField()
@@ -853,15 +800,15 @@ public class Xml2Bib implements TeXJavaHelpLibApp
       }
       catch (InvalidSyntaxException e)
       {
-         app.error(e.getMessage());
+         app.error(e.getMessage(), null);
 
          System.exit(1);
       }
-      catch (Exception e)
+      catch (Throwable e)
       {
-         app.error(e);
+         app.error(null, e);
 
-         System.exit(1);
+         System.exit(2);
       }
    }
 
@@ -875,6 +822,7 @@ public class Xml2Bib implements TeXJavaHelpLibApp
    protected String noEncapField=null;// field to save non-encapsulated value
 
    private TeXJavaHelpLib helpLib;
+   private TeXJavaHelpLibAppAdapter helpLibApp;
 
    public static final String NAME = "xml2bib";
 }

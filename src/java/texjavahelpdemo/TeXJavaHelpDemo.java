@@ -50,7 +50,7 @@ import org.xml.sax.SAXException;
 import com.dickimawbooks.texjavahelplib.*;
 
 public class TeXJavaHelpDemo extends JFrame
-  implements TeXJavaHelpLibApp, ActionListener
+  implements ActionListener
 {
    protected TeXJavaHelpDemo()
    {
@@ -76,10 +76,29 @@ public class TeXJavaHelpDemo extends JFrame
    {
       loadProperties();
 
-      helpLib = new TeXJavaHelpLib(this,
+      helpLibApp = new TeXJavaHelpLibAppAdapter()
+       {
+          @Override
+          public String getApplicationName()
+          {
+             return APP_NAME;
+          }
+
+          @Override
+          public boolean isGUI() { return true; }
+
+          @Override
+          public boolean isDebuggingOn()
+          {
+             return debugMode != 0;
+          }
+       };
+
+      helpLib = new TeXJavaHelpLib(helpLibApp,
        getLocaleProperty("messages.locale", Locale.getDefault()),
        getLocaleProperty("helpset.locale", Locale.getDefault()));
 
+      helpLibApp.setHelpLib(helpLib);
       helpLib.initHelpSet();
 
       initGui();
@@ -552,124 +571,36 @@ public class TeXJavaHelpDemo extends JFrame
       return helpLib.getMessage(label, params);
    }
 
-   @Override
-   public ImageIcon getSmallIcon(String base, String... extensions)
-   {
-      return null;
-   }
-
-   @Override
-   public ImageIcon getLargeIcon(String base, String... extensions)
-   {
-      return null;
-   }
-
-   @Override
-   public void message(String msg)
-   {
-      System.out.println(msg);
-   }
-
-   @Override
-   public void warning(String msg)
-   {
-      JOptionPane.showMessageDialog(this, msg,
-        getMessageWithFallback("warning.title", "Warning"),
-        JOptionPane.ERROR_MESSAGE);
-   }
-
-   @Override
-   public void warning(String msg, Throwable e)
-   {
-      JOptionPane.showMessageDialog(this, msg,
-        getMessageWithFallback("warning.title", "Warning"),
-        JOptionPane.ERROR_MESSAGE);
-
-      e.printStackTrace();
-   }
-
-   @Override
    public void error(String msg)
    {
-      JOptionPane.showMessageDialog(this, msg, 
-        getMessageWithFallback("error.title", "Error"),
-        JOptionPane.ERROR_MESSAGE);
+      error(msg, null);
    }
 
-   @Override
    public void error(Throwable e)
    {
-      String msg = e.getMessage();
+      error(null, e);
+   }
 
-      if (msg == null)
+   public void error(String msg, Throwable e)
+   {
+      if (helpLibApp != null)
       {
-         if (e.getCause() == null)
-         {
-            msg = e.toString();
-         }
-         else
-         {
-            msg = e.getCause().getMessage();
-
-            if (msg == null)
-            {
-               msg = e.toString()+" caused by " + e.getCause();
-            }
-         }
+         helpLibApp.error(this, msg, e);
       }
-
-      error(msg);
-      e.printStackTrace();
-   }
-
-   @Override
-   public void error(String message, Throwable e)
-   {
-      error(message);
-      e.printStackTrace();
-   }
-
-   @Override
-   public boolean isDebuggingOn()
-   {
-      return debugMode > 0;
-   }
-
-   @Override
-   public void debug(String message, Throwable e)
-   {
-      if (debugMode > 0)
+      else
       {
-         if (message != null)
-         {
-            System.err.println(message);
-         }
+        if (msg != null)
+        {
+           System.err.println(msg);
+        }
 
-         if (e != null)
-         {
-            e.printStackTrace();
-         }
+        if (e != null)
+        {
+           e.printStackTrace();
+        }
       }
    }
 
-   @Override
-   public void debug(String message)
-   {
-      debug(message, null);
-   }
-
-   @Override
-   public void debug(Throwable e)
-   {
-      debug(e.getMessage(), e);
-   }
-
-   @Override
-   public void dictionaryLoaded(URL url)
-   {
-   }
-
-   @Override
    public String getApplicationName()
    {
       return APP_NAME;
@@ -692,7 +623,7 @@ public class TeXJavaHelpDemo extends JFrame
                }
                catch (Exception e)
                {
-                  gui.error(e);
+                  gui.error(null, e);
                   e.printStackTrace();
                   System.exit(1);
                }
@@ -729,6 +660,7 @@ public class TeXJavaHelpDemo extends JFrame
    }
 
    private TeXJavaHelpLib helpLib;
+   private TeXJavaHelpLibAppAdapter helpLibApp;
 
    private Properties properties;
 

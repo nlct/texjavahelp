@@ -165,11 +165,6 @@ public class HelpFrame extends JFrame
       docNavPanel.add(createActionComponent(previousAction));
       navMenu.add(previousAction);
 
-      previousLabel = createNavLabel(previousAction, 
-        SwingConstants.RIGHT, SwingConstants.LEFT);
-
-      navPanel.add(previousLabel, "West");
-
       upAction = new TJHAbstractAction(helpLib, "menu.helpframe.navigation", "up")
       {
          @Override
@@ -181,10 +176,6 @@ public class HelpFrame extends JFrame
 
       docNavPanel.add(createActionComponent(upAction));
       navMenu.add(upAction);
-
-      upLabel = createNavLabel(upAction,
-         SwingConstants.RIGHT, SwingConstants.CENTER);
-      navPanel.add(upLabel, "Center");
 
       nextAction = new TJHAbstractAction(helpLib,
         "menu.helpframe.navigation", "next")
@@ -291,6 +282,27 @@ public class HelpFrame extends JFrame
       historyPanel.add(createActionComponent(historyForwardAction));
       navMenu.add(historyForwardAction);
 
+      navMenu.addSeparator();
+      navMenu.add(new TJHAbstractAction(helpLib, "action", "close")
+        {
+           @Override
+           public void doAction()
+           {
+              setVisible(false);
+           }
+        });
+
+      // lower navigation panel
+
+      previousLabel = createNavLabel(previousAction, 
+        SwingConstants.RIGHT, SwingConstants.LEFT);
+
+      navPanel.add(previousLabel, "West");
+
+      upLabel = createNavLabel(upAction,
+         SwingConstants.RIGHT, SwingConstants.CENTER);
+      navPanel.add(upLabel, "Center");
+
       nextLabel = createNavLabel(nextAction,
          SwingConstants.LEFT, SwingConstants.RIGHT);
       navPanel.add(nextLabel, "East");
@@ -344,6 +356,8 @@ public class HelpFrame extends JFrame
 
       middlePanel.add(createActionComponent(fontIncreaseAction));
       settingsMenu.add(fontIncreaseAction);
+
+      // lower navigation panel settings
 
       lowerNavSettingsDialog = new HelpLowerNavSettingsDialog(this);
 

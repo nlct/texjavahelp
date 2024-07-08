@@ -19,6 +19,7 @@
 package com.dickimawbooks.texjavahelplib;
 
 import java.net.URL;
+import java.awt.Component;
 import javax.swing.ImageIcon;
 
 /**
@@ -76,12 +77,31 @@ public interface TeXJavaHelpLibApp
    public void warning(String warning);
 
    /**
+    * Warning message, which the application may display to the user
+    * or log or ignore.
+    * @param owner parent component if graphical interface or null
+    * if not applicable
+    * @param warning the message
+    */ 
+   public void warning(Component owner, String warning);
+
+   /**
     * Warning message and exception, which the application may display to the user
     * or log or ignore.
     * @param warning the message
     * @param e an exception that has occurred
     */ 
    public void warning(String warning, Throwable e);
+
+   /**
+    * Warning message and exception, which the application may display to the user
+    * or log or ignore.
+    * @param owner parent component if graphical interface or null
+    * if not applicable
+    * @param warning the message
+    * @param e an exception that has occurred
+    */ 
+   public void warning(Component owner, String warning, Throwable e);
 
    /**
     * Error message, which the application should display to the user
@@ -91,11 +111,29 @@ public interface TeXJavaHelpLibApp
    public void error(String message);
 
    /**
+    * Error message, which the application should display to the user
+    * or log.
+    * @param owner parent component if graphical interface or null
+    * if not applicable
+    * @param message the error message
+    */ 
+   public void error(Component owner, String message);
+
+   /**
     * Exception, which the application should display to the user
     * or log.
     * @param e an exception that has occurred
     */ 
    public void error(Throwable e);
+
+   /**
+    * Exception, which the application should display to the user
+    * or log.
+    * @param owner parent component if graphical interface or null
+    * if not applicable
+    * @param e an exception that has occurred
+    */ 
+   public void error(Component owner, Throwable e);
 
    /**
     * Error message and exception, which the application should display to the user
@@ -106,11 +144,30 @@ public interface TeXJavaHelpLibApp
    public void error(String message, Throwable e);
 
    /**
+    * Error message and exception, which the application should display to the user
+    * or log.
+    * @param owner parent component if graphical interface or null
+    * if not applicable
+    * @param message the error message
+    * @param e an exception that has occurred
+    */ 
+   public void error(Component component, String message, Throwable e);
+
+   /**
     * Debugging message, which the application may display to the user
     * or log if debugging mode is on.
     * @param message the message
     */ 
    public void debug(String message);
+
+   /**
+    * Debugging message, which the application may display to the user
+    * or log if debugging mode is on.
+    * @param owner parent component if graphical interface or null
+    * if not applicable
+    * @param message the message
+    */ 
+   public void debug(Component owner, String message);
 
    /**
     * Debugging exception, which the application may display to the user
@@ -121,6 +178,16 @@ public interface TeXJavaHelpLibApp
    public void debug(Throwable e);
 
    /**
+    * Debugging exception, which the application may display to the user
+    * or log if debugging mode is on. The exception is typically
+    * non-critical, such as a parsing error that can be ignored.
+    * @param owner parent component if graphical interface or null
+    * if not applicable
+    * @param e an exception that has occurred
+    */ 
+   public void debug(Component owner, Throwable e);
+
+   /**
     * Debugging message and exception, which the application may display to the user
     * or log if debugging mode is on. The exception is typically
     * non-critical, such as a parsing error that can be ignored.
@@ -128,6 +195,17 @@ public interface TeXJavaHelpLibApp
     * @param e an exception that has occurred
     */ 
    public void debug(String message, Throwable e);
+
+   /**
+    * Debugging message and exception, which the application may display to the user
+    * or log if debugging mode is on. The exception is typically
+    * non-critical, such as a parsing error that can be ignored.
+    * @param owner parent component if graphical interface or null
+    * if not applicable
+    * @param message the message
+    * @param e an exception that has occurred
+    */ 
+   public void debug(Component owner, String message, Throwable e);
 
    public boolean isDebuggingOn();
 }
