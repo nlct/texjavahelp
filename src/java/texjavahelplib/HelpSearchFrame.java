@@ -49,11 +49,11 @@ import java.beans.PropertyChangeEvent;
  * Frame for showing search results.
  */
 public class HelpSearchFrame extends JFrame
- implements HyperlinkListener,HelpFontChangeListener
+ implements HyperlinkListener,HelpFontChangeListener,ActionListener
 {
    public HelpSearchFrame(final HelpFrame helpFrame)
    {
-      super(helpFrame.getHelpLib().getMessage("help.navigation.search.title"));
+      super(helpFrame.getHelpLib().getMessage("help_page_search.title"));
 
       this.helpFrame = helpFrame;
 
@@ -66,43 +66,38 @@ public class HelpSearchFrame extends JFrame
    {
       TeXJavaHelpLib helpLib = helpFrame.getHelpLib();
 
-      titleTooltipText = helpLib.getMessage("help.navigation.search_link_title");
-      paraTooltipText = helpLib.getMessage("help.navigation.search_link_para");
+      titleTooltipText = helpLib.getMessage("help_page_search_link_title");
+      paraTooltipText = helpLib.getMessage("help_page_search_link_para");
 
       JComponent searchPanel = Box.createVerticalBox();
 
       JPanel inputPanel = new JPanel();
       searchPanel.add(inputPanel);
 
-      searchLabel = helpLib.createJLabel("help.navigation.search.keywords");
+      searchLabel = helpLib.createJLabel("help_page_search.keywords");
       inputPanel.add(searchLabel);
 
       searchBox = new JTextField(20);
       searchLabel.setLabelFor(searchBox);
       inputPanel.add(searchBox);
 
-      TJHAbstractAction findAction = new TJHAbstractAction(helpLib,
-        "help.navigation.search", "find")
-       {
-          @Override
-          public void doAction()
-          {
-             find();
-          }
-       };
+      searchButton = helpLib.createJButton(
+        "help_page_search", "search", this, true, true);
 
-      searchButton = new JButton(findAction);
       inputPanel.add(searchButton);
 
       getRootPane().setDefaultButton(searchButton);
 
+      inputPanel.add(Box.createHorizontalStrut(20));
+      inputPanel.add(helpLib.createCloseButton(this, true, true));
+
       JPanel togglePanel = new JPanel();
       searchPanel.add(togglePanel);
 
-      caseBox = helpLib.createJCheckBox("help.navigation.search", "case", false);
+      caseBox = helpLib.createJCheckBox("help_page_search", "case", false);
       togglePanel.add(caseBox);
 
-      exactBox = helpLib.createJCheckBox("help.navigation.search", "exact", true);
+      exactBox = helpLib.createJCheckBox("help_page_search", "exact", true);
       togglePanel.add(exactBox);
 
       resultComp = new TJHEditorPane();
@@ -135,7 +130,7 @@ public class HelpSearchFrame extends JFrame
       foundComp.add(foundLabel, "Center");
 
       TJHAbstractAction clearAction = new TJHAbstractAction(helpLib,
-        "help.navigation.search", "clear_results")
+        "help_page_search", "clear_results")
        {
           @Override
           public void doAction()
@@ -157,13 +152,13 @@ public class HelpSearchFrame extends JFrame
       processComp = new JPanel(new BorderLayout());
       getContentPane().add(processComp, "South");
 
-      processComp.add(helpLib.createJLabel("help.navigation.searching"), "West");
+      processComp.add(helpLib.createJLabel("help_page_searching"), "West");
 
       progressBar = new JProgressBar();
       processComp.add(progressBar, "Center");
 
       TJHAbstractAction stopAction = new TJHAbstractAction(helpLib,
-        "help.navigation.search", "stop")
+        "help_page_search", "stop")
        {
           @Override
           public void doAction()
@@ -181,6 +176,20 @@ public class HelpSearchFrame extends JFrame
       setSize(dim.width, dim.height);
    }
 
+   @Override
+   public void actionPerformed(ActionEvent evt)
+   {
+      String action = evt.getActionCommand();
+
+      if ("search".equals(action))
+      {
+         find();
+      }
+      else if ("close".equals(action))
+      {
+         setVisible(false);
+      }
+   }
 
    public void open()
    {
@@ -275,12 +284,12 @@ public class HelpSearchFrame extends JFrame
       if (matches == 0)
       {
          setFound(
-           getHelpLib().getMessage("help.navigation.search.not_found"));
+           getHelpLib().getMessage("help_page_search.not_found"));
       }
       else
       {
          setFound(
-           getHelpLib().getMessage("help.navigation.search.found", matches));
+           getHelpLib().getMessage("help_page_search.found", matches));
 
          StringBuilder builder = new StringBuilder();
 

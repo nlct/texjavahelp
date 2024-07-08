@@ -606,6 +606,7 @@ public class HelpFrame extends JFrame
    @Override
    public void requestHelpPageFocus()
    {
+      toFront();
       helpPage.requestFocusInWindow();
    }
 

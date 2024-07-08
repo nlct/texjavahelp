@@ -35,7 +35,7 @@
 <entry key="action.apply.defaultkeys">format=glsignore</entry>
 
 <entry key="action.close">Close</entry>
-<entry key="action.close.mnemonic">O</entry>
+<entry key="action.close.mnemonic">C</entry>
 <entry key="action.close.keystroke">alt F4</entry>
 <entry key="action.close.defaultkeys">format=glsignore</entry>
 
@@ -86,28 +86,28 @@
 <entry key="menu.helpframe.navigation.search.tooltip">Search document</entry>
 <entry key="menu.helpframe.navigation.search.description">Open search dialogue</entry>
 
-<entry key="help.navigation.search.title">Search</entry>
-<entry key="help.navigation.search.keywords">Keywords:</entry>
-<entry key="help.navigation.search.keywords.mnemonic">K</entry>
-<entry key="help.navigation.search.keywords.description">Search terms</entry>
-<entry key="help.navigation.search.find">Find</entry>
-<entry key="help.navigation.search.find.mnemonic">F</entry>
-<entry key="help.navigation.search.find.tooltip">Find keywords in document</entry>
-<entry key="help.navigation.search.case">Case-sensitive</entry>
-<entry key="help.navigation.search.case.mnemonic">V</entry>
-<entry key="help.navigation.search.exact">Match whole word</entry>
-<entry key="help.navigation.search.exact.mnemonic">W</entry>
+<entry key="help_page_search.title">Search</entry>
+<entry key="help_page_search.keywords">Keywords:</entry>
+<entry key="help_page_search.keywords.mnemonic">K</entry>
+<entry key="help_page_search.keywords.description">Search terms</entry>
+<entry key="help_page_search.search">Find</entry>
+<entry key="help_page_search.search.mnemonic">F</entry>
+<entry key="help_page_search.search.tooltip">Find keywords in document</entry>
+<entry key="help_page_search.case">Case-sensitive</entry>
+<entry key="help_page_search.case.mnemonic">V</entry>
+<entry key="help_page_search.exact">Match whole word</entry>
+<entry key="help_page_search.exact.mnemonic">W</entry>
 
-<entry key="help.navigation.searching">Searching...</entry>
-<entry key="help.navigation.search.stop">Stop</entry>
-<entry key="help.navigation.search.stop.keystroke">shift ESC</entry>
-<entry key="help.navigation.search.found">Found {0} {0,choice,1#match|1&lt;matches}</entry>
-<entry key="help.navigation.search.not_found">Not found</entry>
-<entry key="help.navigation.search_link_title">Go to start of section</entry>
-<entry key="help.navigation.search_link_para">Go to paragraph</entry>
-<entry key="help.navigation.search.clear_results">Clear</entry>
-<entry key="help.navigation.search.clear_results.mnemnonic">C</entry>
-<entry key="help.navigation.search.clear_results.tooltip">Clear results and keywords</entry>
+<entry key="help_page_searching">Searching...</entry>
+<entry key="help_page_search.stop">Stop</entry>
+<entry key="help_page_search.stop.keystroke">shift ESC</entry>
+<entry key="help_page_search.found">Found {0} {0,choice,1#match|1&lt;matches}</entry>
+<entry key="help_page_search.not_found">Not found</entry>
+<entry key="help_page_search_link_title">Go to start of section</entry>
+<entry key="help_page_search_link_para">Go to paragraph</entry>
+<entry key="help_page_search.clear_results">Clear</entry>
+<entry key="help_page_search.clear_results.mnemnonic">C</entry>
+<entry key="help_page_search.clear_results.tooltip">Clear results and keywords</entry>
 
 <entry key="menu.helpframe.navigation.index">Index...</entry>
 <entry key="menu.helpframe.navigation.index.mnemonic">I</entry>

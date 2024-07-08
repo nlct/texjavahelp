@@ -1544,6 +1544,13 @@ public class TeXJavaHelpLib
       return createJButton("action", "close", listener);
    }
 
+   public JButton createCloseButton(ActionListener listener,  
+     boolean smallIcon, boolean omitTextIfIcon)
+   {
+      return createJButton("action", "close", listener,
+        smallIcon, omitTextIfIcon);
+   }
+
    public JButton createJButton(String tag)
    {
       return createJButton(tag, null, null);
@@ -1552,11 +1559,21 @@ public class TeXJavaHelpLib
    public JButton createJButton(String parentTag, String action,
      ActionListener actionListener)
    {
-      return createJButton(parentTag, action, actionListener, action, true);
+      return createJButton(parentTag, action, actionListener, action,
+        true, false);
    }
 
    public JButton createJButton(String parentTag, String action,
-     ActionListener actionListener, String iconPrefix, boolean smallIcon)
+     ActionListener actionListener,  
+     boolean smallIcon, boolean omitTextIfIcon)
+   {
+      return createJButton(parentTag, action, actionListener, action,
+        smallIcon, omitTextIfIcon);
+   }
+
+   public JButton createJButton(String parentTag, String action,
+     ActionListener actionListener, String iconPrefix, 
+     boolean smallIcon, boolean omitTextIfIcon)
    {
       String tag = action == null ? parentTag : parentTag+"."+action;
 
@@ -1567,7 +1584,23 @@ public class TeXJavaHelpLib
          ic = getHelpIcon(iconPrefix, smallIcon);
       }
 
-      JButton button = new JButton(getMessage(tag), ic);
+      JButton button;
+      String tooltip = getMessageIfExists(tag+".tooltip");
+
+      if (omitTextIfIcon && ic != null)
+      {
+         button = new JButton(ic);
+         button.setMargin(new Insets(0, 0, 0, 0));
+
+         if (tooltip == null)
+         {
+            tooltip = getMessageIfExists(tag);
+         }
+      }
+      else
+      {
+         button = new JButton(getMessage(tag), ic);
+      }
 
       if (action != null)
       {
@@ -1585,8 +1618,6 @@ public class TeXJavaHelpLib
       {
          button.setMnemonic(mnemonic);
       }
-
-      String tooltip = getMessageIfExists(tag+".tooltip");
 
       if (tooltip != null)
       {
