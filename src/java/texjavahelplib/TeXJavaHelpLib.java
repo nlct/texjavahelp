@@ -43,17 +43,18 @@ import java.awt.event.ActionEvent;
 
 import javax.imageio.ImageIO;
 
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JCheckBox;
 import javax.swing.KeyStroke;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.Action;
 
 import java.awt.event.KeyEvent;
 
@@ -1518,9 +1519,43 @@ public class TeXJavaHelpLib
     */
    public JButton createToolBarButton(Action action)
    {
+      return createToolBarButton(action, false);
+   }
+
+   public JButton createToolBarButton(Action action, boolean onlySmallIcon)
+   {
       JButton btn = new JButton(action);
-      btn.setText(null);
-      btn.setMargin(new Insets(0, 0, 0, 0));
+      Insets insets = new Insets(0, 0, 0, 0);
+      Object value = action.getValue(Action.LARGE_ICON_KEY);
+
+      if (onlySmallIcon)
+      {
+         Object smallIcon = action.getValue(Action.SMALL_ICON);
+
+         if (smallIcon != null)
+         {
+            action.putValue(Action.LARGE_ICON_KEY, smallIcon);
+            value = smallIcon;
+            insets.set(2, 2, 2, 2);
+         }
+      }
+
+      if (value != null)
+      {
+         if (value instanceof Icon)
+         {
+            Icon ic = (Icon)value;
+
+            btn.setPreferredSize(new Dimension(
+              ic.getIconWidth() + insets.left + insets.right,
+              ic.getIconHeight() + insets.top + insets.bottom
+            ));
+         }
+
+         btn.setText(null);
+         btn.setMargin(insets);
+      }
+
       return btn;
    }
 

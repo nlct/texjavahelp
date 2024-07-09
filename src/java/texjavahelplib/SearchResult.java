@@ -19,6 +19,7 @@
 
 package com.dickimawbooks.texjavahelplib;
 
+import java.util.Locale;
 import java.util.TreeSet;
 
 public class SearchResult implements Comparable<SearchResult>
@@ -107,6 +108,17 @@ public class SearchResult implements Comparable<SearchResult>
    {
       StringBuilder builder = new StringBuilder();
 
+      return getHighlightedContext(builder, searchData);
+   }
+
+   public int getContextId()
+   {
+      return contextId;
+   }
+
+   public CharSequence getHighlightedContext(StringBuilder builder,
+      SearchData searchData)
+   {
       SearchContext context = searchData.getContext(contextId);
 
       if (context != null)
@@ -116,13 +128,14 @@ public class SearchResult implements Comparable<SearchResult>
 
          String nodeId = node.getKey();
 
-         builder.append("<h2><a href=\"");
+         builder.append(String.format((Locale)null,"<h2 id=\"%d\">", contextId));
+         builder.append("<a href=\"");
          builder.append(nodeId);
          builder.append("\">");
          builder.append(node.toString());
          builder.append("</a></h2>");
 
-         builder.append(String.format("<p id=\"%s#context%d\">",
+         builder.append(String.format((Locale)null, "<p id=\"%s#context%d\">",
             nodeId, context.getId()));
 
          if (items != null)

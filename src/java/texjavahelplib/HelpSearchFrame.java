@@ -49,7 +49,7 @@ import java.beans.PropertyChangeEvent;
  * Frame for showing search results.
  */
 public class HelpSearchFrame extends JFrame
- implements HyperlinkListener,HelpFontChangeListener,ActionListener
+ implements HyperlinkListener,HelpFontChangeListener
 {
    public HelpSearchFrame(final HelpFrame helpFrame)
    {
@@ -66,8 +66,14 @@ public class HelpSearchFrame extends JFrame
    {
       TeXJavaHelpLib helpLib = helpFrame.getHelpLib();
 
-      titleTooltipText = helpLib.getMessage("help_page_search_link_title");
-      paraTooltipText = helpLib.getMessage("help_page_search_link_para");
+      titleTooltipText = helpLib.getMessage("message.help_page_search_link_title");
+      paraTooltipText = helpLib.getMessage("message.help_page_search_link_para");
+
+      JMenuBar menuBar = new JMenuBar();
+      setJMenuBar(menuBar);
+
+      JMenu searchM = helpLib.createJMenu("menu.help_page_search.search_menu");
+      menuBar.add(searchM);
 
       JComponent searchPanel = Box.createVerticalBox();
 
@@ -79,17 +85,25 @@ public class HelpSearchFrame extends JFrame
 
       searchBox = new JTextField(20);
       searchLabel.setLabelFor(searchBox);
+      searchBox.setToolTipText(searchLabel.getToolTipText());
       inputPanel.add(searchBox);
 
-      searchButton = helpLib.createJButton(
-        "help_page_search", "search", this, true, true);
+      searchAction = new TJHAbstractAction(helpLib,
+        "menu.help_page_search.search_menu", "search")
+       {
+           @Override
+           public void doAction()
+           {
+              find();
+           }
+       };
+
+      JButton searchButton = helpLib.createToolBarButton(searchAction, true);
+      searchM.add(searchAction);
 
       inputPanel.add(searchButton);
 
       getRootPane().setDefaultButton(searchButton);
-
-      inputPanel.add(Box.createHorizontalStrut(20));
-      inputPanel.add(helpLib.createCloseButton(this, true, true));
 
       JPanel togglePanel = new JPanel();
       searchPanel.add(togglePanel);
@@ -129,8 +143,42 @@ public class HelpSearchFrame extends JFrame
       foundLabel = new JLabel();
       foundComp.add(foundLabel, "Center");
 
-      TJHAbstractAction clearAction = new TJHAbstractAction(helpLib,
-        "help_page_search", "clear_results")
+      JComponent foundButtonsComp = new JPanel();
+      foundComp.add(foundButtonsComp, "East");
+
+      previousAction = new TJHAbstractAction(helpLib,
+        "menu.help_page_search.search_menu", "previous")
+       {
+          @Override
+          public void doAction()
+          {
+             previousResult();
+          }
+       };
+
+      foundButtonsComp.add(helpLib.createToolBarButton(previousAction, true));
+      searchM.add(previousAction);
+      previousAction.setEnabled(false);
+
+      nextAction = new TJHAbstractAction(helpLib,
+        "menu.help_page_search.search_menu", "next")
+       {
+          @Override
+          public void doAction()
+          {
+             nextResult();
+          }
+       };
+
+      foundButtonsComp.add(helpLib.createToolBarButton(nextAction, true));
+      searchM.add(nextAction);
+      nextAction.setEnabled(false);
+
+      searchM.addSeparator();
+      foundButtonsComp.add(Box.createHorizontalStrut(10));
+
+      clearAction = new TJHAbstractAction(helpLib,
+        "menu.help_page_search.search_menu", "reset")
        {
           @Override
           public void doAction()
@@ -139,7 +187,9 @@ public class HelpSearchFrame extends JFrame
           }
        };
 
-      foundComp.add(new JButton(clearAction), "East");
+      foundButtonsComp.add(helpLib.createToolBarButton(clearAction, true));
+      searchM.add(clearAction);
+      clearAction.setEnabled(false);
 
       bottomPanel.add(foundComp, "North");
       bottomPanel.add(new JScrollPane(resultComp), "Center");
@@ -152,13 +202,14 @@ public class HelpSearchFrame extends JFrame
       processComp = new JPanel(new BorderLayout());
       getContentPane().add(processComp, "South");
 
-      processComp.add(helpLib.createJLabel("help_page_searching"), "West");
+      processComp.add(helpLib.createJLabel(
+        "message.help_page_search.searching"), "West");
 
       progressBar = new JProgressBar();
       processComp.add(progressBar, "Center");
 
-      TJHAbstractAction stopAction = new TJHAbstractAction(helpLib,
-        "help_page_search", "stop")
+      stopAction = new TJHAbstractAction(helpLib,
+        "menu.help_page_search.search_menu", "stop")
        {
           @Override
           public void doAction()
@@ -166,29 +217,26 @@ public class HelpSearchFrame extends JFrame
              stopSearch();
           }
        };
-      processComp.add(helpLib.createToolBarButton(stopAction));
+      processComp.add(helpLib.createToolBarButton(stopAction), "East");
+      searchM.add(stopAction);
+      stopAction.setEnabled(false);
 
       processComp.setVisible(false);
+
+      searchM.add(new TJHAbstractAction(helpLib,
+        "action", "close")
+       {
+          @Override
+          public void doAction()
+          {
+             setVisible(false);
+          }
+       });
 
       Toolkit tk = Toolkit.getDefaultToolkit();
       Dimension dim = getPreferredSize();
       dim.height = (int)tk.getScreenSize().getHeight()/2;
       setSize(dim.width, dim.height);
-   }
-
-   @Override
-   public void actionPerformed(ActionEvent evt)
-   {
-      String action = evt.getActionCommand();
-
-      if ("search".equals(action))
-      {
-         find();
-      }
-      else if ("close".equals(action))
-      {
-         setVisible(false);
-      }
    }
 
    public void open()
@@ -213,19 +261,71 @@ public class HelpSearchFrame extends JFrame
 
    public void setFound(String text)
    {
+      clearAction.setEnabled(true);
+      nextAction.setEnabled(true);
+      previousAction.setEnabled(true);
       foundComp.setVisible(true);
       foundLabel.setText(text);
    }
 
    public void clear()
    {
+      currentResult = null;
       searchBox.setText("");
       foundLabel.setText("");
       resultComp.setText("");
       foundComp.setVisible(false);
+      clearAction.setEnabled(false);
+      nextAction.setEnabled(false);
+      previousAction.setEnabled(false);
+      searchBox.requestFocusInWindow();
    }
 
-   public void find()
+   protected void nextResult()
+   {
+      if (results != null && !results.isEmpty())
+      {
+         if (currentResult == null)
+         {
+            currentResult = results.first();
+         }
+         else
+         {
+            currentResult = results.higher(currentResult);
+
+            if (currentResult == null)
+            {
+               currentResult = results.first();
+            }
+         }
+
+         resultComp.scrollToReference(""+currentResult.getContextId());
+      }
+   }
+
+   protected void previousResult()
+   {
+      if (results != null && !results.isEmpty())
+      {
+         if (currentResult == null)
+         {
+            currentResult = results.last();
+         }
+         else
+         {
+            currentResult = results.lower(currentResult);
+
+            if (currentResult == null)
+            {
+               currentResult = results.last();
+            }
+         }
+
+         resultComp.scrollToReference(""+currentResult.getContextId());
+      }
+   }
+
+   protected void find()
    {
       String searchList = searchBox.getText().trim();
 
@@ -235,6 +335,16 @@ public class HelpSearchFrame extends JFrame
       {
          helpLib.getApplication().error(this,
            helpLib.getMessage("error.missing_search_term"));
+
+         searchBox.requestFocusInWindow();
+
+         if (searchBox.getToolTipText() != null)
+         {
+            KeyEvent ke = new KeyEvent(searchBox, KeyEvent.KEY_PRESSED,
+                    System.currentTimeMillis(), InputEvent.CTRL_MASK,
+                    KeyEvent.VK_F1, KeyEvent.CHAR_UNDEFINED);
+            searchBox.dispatchEvent(ke);
+         }
 
          return;
       }
@@ -256,6 +366,7 @@ public class HelpSearchFrame extends JFrame
           }
        });
 
+      stopAction.setEnabled(true);
       processComp.setVisible(true);
 
       worker.execute();
@@ -280,16 +391,19 @@ public class HelpSearchFrame extends JFrame
    {
       worker = null;
       processComp.setVisible(false);
+      stopAction.setEnabled(false);
+      currentResult = null;
+      this.results = results;
 
       if (matches == 0)
       {
          setFound(
-           getHelpLib().getMessage("help_page_search.not_found"));
+           getHelpLib().getMessage("message.help_page_search.not_found"));
       }
       else
       {
          setFound(
-           getHelpLib().getMessage("help_page_search.found", matches));
+           getHelpLib().getMessage("message.help_page_search.found", matches));
 
          StringBuilder builder = new StringBuilder();
 
@@ -301,9 +415,11 @@ public class HelpSearchFrame extends JFrame
 
          SearchData searchData = getHelpLib().getSearchData();
 
+         currentResult = results.first();
+
          for (SearchResult result : results)
          {
-            builder.append(result.getHighlightedContext(searchData));
+            result.getHighlightedContext(builder, searchData);
 
             builder.append("<hr>");
          }
@@ -320,7 +436,9 @@ public class HelpSearchFrame extends JFrame
       setFound(e.getMessage());
 
       worker = null;
+      results = null;
       processComp.setVisible(false);
+      stopAction.setEnabled(false);
 
       getHelpLib().error(e);
    }
@@ -452,12 +570,18 @@ public class HelpSearchFrame extends JFrame
    protected HelpFrame helpFrame;
    protected JTextField searchBox;
    protected JLabel searchLabel, foundLabel;
-   protected JButton searchButton, stopButton;
+
+   TJHAbstractAction searchAction, clearAction, stopAction,
+    nextAction, previousAction;
+
    protected JCheckBox exactBox, caseBox;
    protected JComponent processComp, foundComp;
    protected TJHEditorPane resultComp;
    protected JProgressBar progressBar;
    protected SearchWorker worker;
+
+   protected TreeSet<SearchResult> results;
+   protected SearchResult currentResult;
 
    protected String titleTooltipText, paraTooltipText;
 }
