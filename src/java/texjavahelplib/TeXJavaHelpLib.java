@@ -1525,7 +1525,7 @@ public class TeXJavaHelpLib
    public JButton createToolBarButton(Action action, boolean onlySmallIcon)
    {
       JButton btn = new JButton(action);
-      Insets insets = new Insets(0, 0, 0, 0);
+      Insets insets = new Insets(1, 1, 1, 1);
       Object value = action.getValue(Action.LARGE_ICON_KEY);
 
       if (onlySmallIcon)
@@ -1778,5 +1778,5 @@ public class TeXJavaHelpLib
     = ".code, .cmd, .cmdfmt, .csfmt, .csfmtfont, .csfmtcolourfont, .appfmt, .styfmt, .clsfmt, .envfmt, .optfmt, .csoptfmt, .styoptfmt, .clsoptfmt, .ctrfmt, .filefmt, .extfmt, .cbeg, .cend, .longargfmt, .shortargfmt, .qtt, .xmltagfmt, .varfmt, .terminal, .transcript, .filedef, .codebox, .badcodebox, .unicodebox, .compactcodebox, .sidebysidecode";
 
    public static final String VERSION = "0.3a";
-   public static final String VERSION_DATE = "2024-07-08";
+   public static final String VERSION_DATE = "2024-07-09";
 }
