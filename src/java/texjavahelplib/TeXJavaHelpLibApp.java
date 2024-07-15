@@ -51,6 +51,8 @@ public interface TeXJavaHelpLibApp
     */ 
    public ImageIcon getSmallIcon(String base, String... extensions);
 
+   public IconSet getSmallIconSet(String base, String... extensions);
+
    /**
     * Get application large icon if not on the default TeXJavaHelpLib search path.
     * May return null if the default search path is sufficient or
@@ -61,6 +63,8 @@ public interface TeXJavaHelpLibApp
     * default search path
     */ 
    public ImageIcon getLargeIcon(String base, String... extensions);
+
+   public IconSet getLargeIconSet(String base, String... extensions);
 
    /**
     * General message, which the application may display to the user

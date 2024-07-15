@@ -433,6 +433,16 @@ public class TeXJavaHelpLib
       smallIconSuffix = suffix;
    }
 
+   public String getMappedSmallIconSuffix()
+   {
+      return mappedSmallIconSuffix;
+   }
+
+   public void setMappedSmallIconSuffix(String suffix)
+   {
+      mappedSmallIconSuffix = suffix;
+   }
+
    public void loadImageMap(String resourcePath)
    throws IOException
    {
@@ -518,22 +528,156 @@ public class TeXJavaHelpLib
 
          String suffix = small ? smallIconSuffix : largeIconSuffix;
 
-         in = getClass().getResourceAsStream(
-           "/com/dickimawbooks/texjavahelplib/icons/"+base+suffix+".png");
-
-         if (in != null)
+         try
          {
-            try
+            in = getClass().getResourceAsStream(
+              HELP_LIB_ICON_PATH+base+suffix+".png");
+
+            if (in != null)
             {
                ic = new ImageIcon(ImageIO.read(in));
             }
-            catch (IOException e)
+         }
+         catch (IOException e)
+         {
+         }
+         finally
+         {
+            if (in != null)
             {
+               try
+               {
+                  in.close();
+               }
+               catch (IOException e)
+               {
+                  debug(e);
+               }
             }
          }
       }
 
       return ic;
+   }
+
+   public IconSet getHelpIconSet(String base, boolean small)
+   {
+      return getHelpIconSet(base, small, "png", "jpg", "jpeg", "gif");
+   }
+
+   public IconSet getHelpIconSet(String base, boolean small, String... extensions)
+   {
+      /* Try the icon path first to allow application icons to take
+         precedence.
+       */
+
+      IconSet icSet = small ? getSmallIconSet(base, extensions)
+                    : getLargeIconSet(base, extensions);
+
+      if (icSet == null)
+      {
+         // Use icon provided in texjavahelplib.jar if available
+
+         InputStream in = null;
+
+         String suffix = small ? smallIconSuffix : largeIconSuffix;
+
+         try
+         {
+            in = getClass().getResourceAsStream(
+              HELP_LIB_ICON_PATH+base+suffix+".png");
+
+            if (in != null)
+            {
+               icSet = new IconSet(new ImageIcon(ImageIO.read(in)));
+               in.close();
+               in = null;
+
+// Currently not applicable:
+/*
+               in = getClass().getResourceAsStream(
+                 HELP_LIB_ICON_PATH+base+"_pressed"+suffix+".png");
+
+               if (in != null)
+               {
+                  icSets.setPressedIcon(new ImageIcon(ImageIO.read(in)));
+                  in.close();
+                  in = null;
+               }
+
+               in = getClass().getResourceAsStream(
+                 HELP_LIB_ICON_PATH+base+"_selected"+suffix+".png");
+
+               if (in != null)
+               {
+                  icSets.setSelectedIcon(new ImageIcon(ImageIO.read(in)));
+                  in.close();
+                  in = null;
+               }
+
+               in = getClass().getResourceAsStream(
+                 HELP_LIB_ICON_PATH+base+"_rollover"+suffix+".png");
+
+               if (in != null)
+               {
+                  icSets.setRolloverIcon(new ImageIcon(ImageIO.read(in)));
+                  in.close();
+                  in = null;
+               }
+
+               in = getClass().getResourceAsStream(
+                 HELP_LIB_ICON_PATH+base+"_rollover_selected"+suffix+".png");
+
+               if (in != null)
+               {
+                  icSets.setRolloverSelectedIcon(new ImageIcon(ImageIO.read(in)));
+                  in.close();
+                  in = null;
+               }
+
+               in = getClass().getResourceAsStream(
+                 HELP_LIB_ICON_PATH+base+"_disabled"+suffix+".png");
+
+               if (in != null)
+               {
+                  icSets.setDisabledIcon(new ImageIcon(ImageIO.read(in)));
+                  in.close();
+                  in = null;
+               }
+
+               in = getClass().getResourceAsStream(
+                 HELP_LIB_ICON_PATH+base+"_disabled_selected"+suffix+".png");
+
+               if (in != null)
+               {
+                  icSets.setDisabledSelectedIcon(new ImageIcon(ImageIO.read(in)));
+                  in.close();
+                  in = null;
+               }
+
+*/
+            }
+         }
+         catch (IOException e)
+         {
+         }
+         finally
+         {
+            if (in != null)
+            {
+               try
+               {
+                  in.close();
+               }
+               catch (IOException e)
+               {
+                  debug(e);
+               }
+            }
+         }
+      }
+
+      return icSet;
    }
 
    public ImageIcon getSmallIcon(String base)
@@ -550,7 +694,7 @@ public class TeXJavaHelpLib
          return ic;
       }
 
-      URL mapped = getMappedImageLocation(base+"-small");
+      URL mapped = getMappedImageLocation(base+mappedSmallIconSuffix);
 
       if (mapped == null)
       {
@@ -578,6 +722,138 @@ public class TeXJavaHelpLib
          if (url != null)
          {
             return new ImageIcon(url);
+         }
+      }
+
+      return null;
+   }
+
+   public IconSet getSmallIconSet(String base)
+   {
+      return getSmallIconSet(base, "png", "jpg", "jpeg", "gif");
+   }
+
+   public IconSet getSmallIconSet(String base, String... extensions)
+   {
+      IconSet icSet = application.getSmallIconSet(base, extensions);
+
+      if (icSet != null)
+      {
+         return icSet;
+      }
+
+      String mappedBase = base+mappedSmallIconSuffix;
+      URL mapped = getMappedImageLocation(mappedBase);
+
+      if (mapped != null)
+      {
+         icSet = new IconSet(new ImageIcon(mapped));
+
+         mapped = getMappedImageLocation(mappedBase+"_selected");
+
+         if (mapped != null)
+         {
+            icSet.setSelectedIcon(new ImageIcon(mapped));
+         }
+
+         mapped = getMappedImageLocation(mappedBase+"_pressed");
+
+         if (mapped != null)
+         {
+            icSet.setPressedIcon(new ImageIcon(mapped));
+         }
+
+         mapped = getMappedImageLocation(mappedBase+"_rollover");
+
+         if (mapped != null)
+         {
+            icSet.setRolloverIcon(new ImageIcon(mapped));
+         }
+
+         mapped = getMappedImageLocation(mappedBase+"_rollover_selected");
+
+         if (mapped != null)
+         {
+            icSet.setRolloverSelectedIcon(new ImageIcon(mapped));
+         }
+
+         mapped = getMappedImageLocation(mappedBase+"_disabled");
+
+         if (mapped != null)
+         {
+            icSet.setDisabledIcon(new ImageIcon(mapped));
+         }
+
+         mapped = getMappedImageLocation(mappedBase+"_disabled_selected");
+
+         if (mapped != null)
+         {
+            icSet.setDisabledSelectedIcon(new ImageIcon(mapped));
+         }
+
+         return icSet;
+      }
+
+      String basename = resourceIconBase;
+
+      if (!resourceIconBase.endsWith("/"))
+      {
+         basename += "/";
+      }
+
+      basename += base + smallIconSuffix;
+
+      for (String ext : extensions)
+      {
+         URL url = getClass().getResource(basename + "." + ext);
+
+         if (url != null)
+         {
+            icSet = new IconSet(new ImageIcon(url));
+
+            url = getClass().getResource(basename + "_selected." + ext);
+
+            if (url != null)
+            {
+               icSet.setSelectedIcon(new ImageIcon(url));
+            }
+
+            url = getClass().getResource(basename + "_pressed." + ext);
+
+            if (url != null)
+            {
+               icSet.setPressedIcon(new ImageIcon(url));
+            }
+
+            url = getClass().getResource(basename + "_rollover." + ext);
+
+            if (url != null)
+            {
+               icSet.setRolloverIcon(new ImageIcon(url));
+            }
+
+            url = getClass().getResource(basename + "_rollover_selected." + ext);
+
+            if (url != null)
+            {
+               icSet.setRolloverSelectedIcon(new ImageIcon(url));
+            }
+
+            url = getClass().getResource(basename + "_disabled." + ext);
+
+            if (url != null)
+            {
+               icSet.setDisabledIcon(new ImageIcon(url));
+            }
+
+            url = getClass().getResource(basename + "_disabled_selected." + ext);
+
+            if (url != null)
+            {
+               icSet.setDisabledSelectedIcon(new ImageIcon(url));
+            }
+
+            return icSet;
          }
       }
 
@@ -631,6 +907,137 @@ public class TeXJavaHelpLib
          if (url != null)
          {
             return new ImageIcon(url);
+         }
+      }
+
+      return null;
+   }
+
+   public IconSet getLargeIconSet(String base)
+   {
+      return getLargeIconSet(base, "png", "jpg", "jpeg", "gif");
+   }
+
+   public IconSet getLargeIconSet(String base, String... extensions)
+   {
+      IconSet icSet = application.getLargeIconSet(base, extensions);
+
+      if (icSet != null)
+      {
+         return icSet;
+      }
+
+      URL mapped = getMappedImageLocation(base);
+
+      if (mapped != null)
+      {
+         icSet = new IconSet(new ImageIcon(mapped));
+
+         mapped = getMappedImageLocation(base+"_selected");
+
+         if (mapped != null)
+         {
+            icSet.setSelectedIcon(new ImageIcon(mapped));
+         }
+
+         mapped = getMappedImageLocation(base+"_pressed");
+
+         if (mapped != null)
+         {
+            icSet.setPressedIcon(new ImageIcon(mapped));
+         }
+
+         mapped = getMappedImageLocation(base+"_rollover");
+
+         if (mapped != null)
+         {
+            icSet.setRolloverIcon(new ImageIcon(mapped));
+         }
+
+         mapped = getMappedImageLocation(base+"_rollover_selected");
+
+         if (mapped != null)
+         {
+            icSet.setRolloverSelectedIcon(new ImageIcon(mapped));
+         }
+
+         mapped = getMappedImageLocation(base+"_disabled");
+
+         if (mapped != null)
+         {
+            icSet.setDisabledIcon(new ImageIcon(mapped));
+         }
+
+         mapped = getMappedImageLocation(base+"_disabled_selected");
+
+         if (mapped != null)
+         {
+            icSet.setDisabledSelectedIcon(new ImageIcon(mapped));
+         }
+
+         return icSet;
+      }
+
+      String basename = resourceIconBase;
+
+      if (!resourceIconBase.endsWith("/"))
+      {
+         basename += "/";
+      }
+
+      basename += base + largeIconSuffix;
+
+      for (String ext : extensions)
+      {
+         URL url = getClass().getResource(basename + "." + ext);
+
+         if (url != null)
+         {
+            icSet = new IconSet(new ImageIcon(url));
+
+            url = getClass().getResource(basename + "_selected." + ext);
+
+            if (url != null)
+            {
+               icSet.setSelectedIcon(new ImageIcon(url));
+            }
+
+            url = getClass().getResource(basename + "_pressed." + ext);
+
+            if (url != null)
+            {
+               icSet.setPressedIcon(new ImageIcon(url));
+            }
+
+            url = getClass().getResource(basename + "_rollover." + ext);
+
+            if (url != null)
+            {
+               icSet.setRolloverIcon(new ImageIcon(url));
+            }
+
+            url = getClass().getResource(basename + "_rollover_selected." + ext);
+
+            if (url != null)
+            {
+               icSet.setRolloverSelectedIcon(new ImageIcon(url));
+            }
+
+            url = getClass().getResource(basename + "_disabled." + ext);
+
+            if (url != null)
+            {
+               icSet.setDisabledIcon(new ImageIcon(url));
+            }
+
+            url = getClass().getResource(basename + "_disabled_selected." + ext);
+
+            if (url != null)
+            {
+               icSet.setDisabledSelectedIcon(new ImageIcon(url));
+            }
+
+            return icSet;
          }
       }
 
@@ -1612,19 +2019,19 @@ public class TeXJavaHelpLib
    {
       String tag = action == null ? parentTag : parentTag+"."+action;
 
-      ImageIcon ic = null;
+      IconSet icSet = null;
 
       if (iconPrefix != null)
       {
-         ic = getHelpIcon(iconPrefix, smallIcon);
+         icSet = getHelpIconSet(iconPrefix, smallIcon);
       }
 
       JButton button;
       String tooltip = getMessageIfExists(tag+".tooltip");
 
-      if (omitTextIfIcon && ic != null)
+      if (omitTextIfIcon && icSet != null)
       {
-         button = new JButton(ic);
+         button = new JButton(icSet.getDefaultIcon());
          button.setMargin(new Insets(0, 0, 0, 0));
 
          if (tooltip == null)
@@ -1632,9 +2039,18 @@ public class TeXJavaHelpLib
             tooltip = getMessageIfExists(tag);
          }
       }
+      else if (icSet != null)
+      {
+         button = new JButton(getMessage(tag), icSet.getDefaultIcon());
+      }
       else
       {
-         button = new JButton(getMessage(tag), ic);
+         button = new JButton(getMessage(tag));
+      }
+
+      if (icSet != null)
+      {
+         icSet.setButtonExtraIcons(button);
       }
 
       if (action != null)
@@ -1730,6 +2146,10 @@ public class TeXJavaHelpLib
    protected String largeIconSuffix = "-32x32";
 
    protected Properties imageMap = null;
+   protected String mappedSmallIconSuffix = "-small";
+
+   public static final String HELP_LIB_ICON_PATH
+   = "/com/dickimawbooks/texjavahelplib/icons/";
 
    protected String helpsetdir = "helpset";
    protected String helpsetsubdir = null;
@@ -1778,5 +2198,5 @@ public class TeXJavaHelpLib
     = ".code, .cmd, .cmdfmt, .csfmt, .csfmtfont, .csfmtcolourfont, .appfmt, .styfmt, .clsfmt, .envfmt, .optfmt, .csoptfmt, .styoptfmt, .clsoptfmt, .ctrfmt, .filefmt, .extfmt, .cbeg, .cend, .longargfmt, .shortargfmt, .qtt, .xmltagfmt, .varfmt, .terminal, .transcript, .filedef, .codebox, .badcodebox, .unicodebox, .compactcodebox, .sidebysidecode";
 
    public static final String VERSION = "0.3a";
-   public static final String VERSION_DATE = "2024-07-09";
+   public static final String VERSION_DATE = "2024-07-15";
 }

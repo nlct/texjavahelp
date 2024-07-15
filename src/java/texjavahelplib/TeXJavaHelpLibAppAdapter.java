@@ -51,9 +51,121 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
    }
 
    @Override
+   public IconSet getSmallIconSet(String base, String... extensions)
+   {
+      ImageIcon ic = getSmallIcon(base, extensions);
+      IconSet icSet = null;
+
+      if (ic != null)
+      {
+         icSet = new IconSet(ic);
+
+         ic = getSmallIcon(base+"_pressed", extensions);
+
+         if (ic != null)
+         {
+            icSet.setPressedIcon(ic);
+         }
+
+         ic = getSmallIcon(base+"_selected", extensions);
+
+         if (ic != null)
+         {
+            icSet.setSelectedIcon(ic);
+         }
+
+         ic = getSmallIcon(base+"_rollover", extensions);
+
+         if (ic != null)
+         {
+            icSet.setRolloverIcon(ic);
+         }
+
+         ic = getSmallIcon(base+"_rollover_selected", extensions);
+
+         if (ic != null)
+         {
+            icSet.setRolloverSelectedIcon(ic);
+         }
+
+         ic = getSmallIcon(base+"_disabled", extensions);
+
+         if (ic != null)
+         {
+            icSet.setDisabledIcon(ic);
+         }
+
+         ic = getSmallIcon(base+"_disabled_selected", extensions);
+
+         if (ic != null)
+         {
+            icSet.setDisabledSelectedIcon(ic);
+         }
+      }
+
+      return icSet;
+   }
+
+   @Override
    public ImageIcon getLargeIcon(String base, String... extensions)
    {
       return null;
+   }
+
+   @Override
+   public IconSet getLargeIconSet(String base, String... extensions)
+   {
+      ImageIcon ic = getLargeIcon(base, extensions);
+      IconSet icSet = null;
+
+      if (ic != null)
+      {
+         icSet = new IconSet(ic);
+
+         ic = getLargeIcon(base+"_pressed", extensions);
+
+         if (ic != null)
+         {
+            icSet.setPressedIcon(ic);
+         }
+
+         ic = getLargeIcon(base+"_selected", extensions);
+
+         if (ic != null)
+         {
+            icSet.setSelectedIcon(ic);
+         }
+
+         ic = getLargeIcon(base+"_rollover", extensions);
+
+         if (ic != null)
+         {
+            icSet.setRolloverIcon(ic);
+         }
+
+         ic = getLargeIcon(base+"_rollover_selected", extensions);
+
+         if (ic != null)
+         {
+            icSet.setRolloverSelectedIcon(ic);
+         }
+
+         ic = getLargeIcon(base+"_disabled", extensions);
+
+         if (ic != null)
+         {
+            icSet.setDisabledIcon(ic);
+         }
+
+         ic = getLargeIcon(base+"_disabled_selected", extensions);
+
+         if (ic != null)
+         {
+            icSet.setDisabledSelectedIcon(ic);
+         }
+      }
+
+      return icSet;
    }
 
    public String getMessageWithFallback(String label, String fallbackFormat,
