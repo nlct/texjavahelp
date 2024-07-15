@@ -68,7 +68,7 @@ lib/texjavahelplib.jar	: classes/com/dickimawbooks/texjavahelplib/TeXJavaHelpLib
 	com/dickimawbooks/texjavahelplib/icons/*
 
 classes/com/dickimawbooks/texjavahelplib/TeXJavaHelpLib.class	: classes/com/dickimawbooks/texjavahelplib \
-	java/texjavahelplib/*.java
+	java/texjavahelplib/*.java java/texjavahelplib/icons/*.png
 	cd java/texjavahelplib; \
 	javac $(target_version) -d ../../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
