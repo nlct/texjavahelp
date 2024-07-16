@@ -1706,10 +1706,11 @@ public class TeXJavaHelpLib
 
    public TJHAbstractAction createHelpAction(final NavigationNode node,
       String msgParentTag, String childTag, String action,
-      String iconPrefix, KeyStroke keyStroke, JComponent comp)
+      String iconPrefix, KeyStroke keyStroke, JComponent comp,
+      String... omitKeys)
    {
       return  new TJHAbstractAction(this,
-        msgParentTag, childTag, action, iconPrefix, keyStroke, null, comp)
+        msgParentTag, childTag, action, iconPrefix, keyStroke, null, comp, omitKeys)
         {
            @Override
            public void doAction()
@@ -1765,6 +1766,11 @@ public class TeXJavaHelpLib
             getMessage("error.node_id_not_found", helpId));
       }
 
+      return createHelpDialogButton(owner, node);
+   }
+
+   public JButton createHelpDialogButton(JDialog owner, NavigationNode node)
+   {
       // don't use large icon
       return new JButton(
         new HelpDialogAction(owner, node, this, Action.LARGE_ICON_KEY));
@@ -1781,6 +1787,12 @@ public class TeXJavaHelpLib
             getMessage("error.node_id_not_found", helpId));
       }
 
+      return createHelpDialogButton(owner, node);
+   }
+
+   public JButton createHelpDialogButton(JFrame owner, NavigationNode node)
+    throws IllegalArgumentException
+   {
       // don't use large icon
       return new JButton(
         new HelpDialogAction(owner, node, this, Action.LARGE_ICON_KEY));
