@@ -90,6 +90,14 @@ public class JLabelGroup extends Vector<JLabel>
       return label;
    }
 
+   public JLabel createJLabel(TeXJavaHelpLib helpLib,
+     String tag, JComponent comp)
+   {
+      JLabel jlabel = helpLib.createJLabel(tag, comp);
+      add(jlabel);
+      return jlabel;
+   }
+
    @Override
    public boolean add(JLabel label)
    {
