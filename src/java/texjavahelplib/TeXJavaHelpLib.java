@@ -509,7 +509,7 @@ public class TeXJavaHelpLib
 
    public ImageIcon getHelpIcon(String base, boolean small)
    {
-      return getHelpIcon(base, small, "png", "jpg", "jpeg", "gif");
+      return getHelpIcon(base, small, imageExtensions);
    }
 
    public ImageIcon getHelpIcon(String base, boolean small, String... extensions)
@@ -562,7 +562,7 @@ public class TeXJavaHelpLib
 
    public IconSet getHelpIconSet(String base, boolean small)
    {
-      return getHelpIconSet(base, small, "png", "jpg", "jpeg", "gif");
+      return getHelpIconSet(base, small, imageExtensions);
    }
 
    public IconSet getHelpIconSet(String base, boolean small, String... extensions)
@@ -682,7 +682,7 @@ public class TeXJavaHelpLib
 
    public ImageIcon getSmallIcon(String base)
    {
-      return getSmallIcon(base, "png", "jpg", "jpeg", "gif");
+      return getSmallIcon(base, imageExtensions);
    }
 
    public ImageIcon getSmallIcon(String base, String... extensions)
@@ -730,7 +730,7 @@ public class TeXJavaHelpLib
 
    public IconSet getSmallIconSet(String base)
    {
-      return getSmallIconSet(base, "png", "jpg", "jpeg", "gif");
+      return getSmallIconSet(base, imageExtensions);
    }
 
    public IconSet getSmallIconSet(String base, String... extensions)
@@ -872,7 +872,7 @@ public class TeXJavaHelpLib
 
    public ImageIcon getLargeIcon(String base)
    {
-      return getLargeIcon(base, "png", "jpg", "jpeg", "gif");
+      return getLargeIcon(base, imageExtensions);
    }
 
    public ImageIcon getLargeIcon(String base, String... extensions)
@@ -915,7 +915,7 @@ public class TeXJavaHelpLib
 
    public IconSet getLargeIconSet(String base)
    {
-      return getLargeIconSet(base, "png", "jpg", "jpeg", "gif");
+      return getLargeIconSet(base, imageExtensions);
    }
 
    public IconSet getLargeIconSet(String base, String... extensions)
@@ -2193,6 +2193,11 @@ public class TeXJavaHelpLib
 
    private Dimension helpWindowInitSize;
 
+   /**
+    * List of image extensions to try when searching for icons.
+    */
+   public String[] imageExtensions = new String[] { "png" };
+
    public static final String KEYSTROKE_CSS
     = ".keystroke { font-family: sans-serif; font-weight: bold; border: 2pt outset gray; background-color: silver; }";
 
@@ -2210,5 +2215,5 @@ public class TeXJavaHelpLib
     = ".code, .cmd, .cmdfmt, .csfmt, .csfmtfont, .csfmtcolourfont, .appfmt, .styfmt, .clsfmt, .envfmt, .optfmt, .csoptfmt, .styoptfmt, .clsoptfmt, .ctrfmt, .filefmt, .extfmt, .cbeg, .cend, .longargfmt, .shortargfmt, .qtt, .xmltagfmt, .varfmt, .terminal, .transcript, .filedef, .codebox, .badcodebox, .unicodebox, .compactcodebox, .sidebysidecode";
 
    public static final String VERSION = "0.3a";
-   public static final String VERSION_DATE = "2024-07-16";
+   public static final String VERSION_DATE = "2024-07-17";
 }
