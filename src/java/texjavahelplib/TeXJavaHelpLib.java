@@ -565,6 +565,104 @@ public class TeXJavaHelpLib
       return ic;
    }
 
+   /**
+    * Gets icon provided in texjavahelplib.jar with the given
+    * suffix. This is just a shortcut for fetching the icon
+    * named base+suffix+".png" in the jar file.
+    */
+   public ImageIcon getHelpIcon(String base, String suffix)
+   {
+      InputStream in = null;
+      ImageIcon ic = null;
+
+      try
+      {
+         in = getClass().getResourceAsStream(
+           HELP_LIB_ICON_PATH+base+suffix+".png");
+
+         if (in != null)
+         {
+            ic = new ImageIcon(ImageIO.read(in));
+         }
+      }
+      catch (IOException e)
+      {
+      }
+      finally
+      {
+         if (in != null)
+         {
+            try
+            {
+               in.close();
+            }
+            catch (IOException e)
+            {
+               debug(e);
+            }
+         }
+      }
+
+      return ic;
+   }
+
+   /**
+    * Gets icons provided in texjavahelplib.jar with the given
+    * suffix.
+    */
+   public IconSet getHelpIconSet(String base, String suffix)
+   {
+      ImageIcon ic = getHelpIcon(base, suffix);
+
+      if (ic == null) return null;
+
+      IconSet icSet = new IconSet(ic);
+
+      ic = getHelpIcon(base+"_pressed", suffix);
+
+      if (ic != null)
+      {
+         icSet.setPressedIcon(ic);
+      }
+
+      ic = getHelpIcon(base+"_selected", suffix);
+
+      if (ic != null)
+      {
+         icSet.setSelectedIcon(ic);
+      }
+
+      ic = getHelpIcon(base+"_rollover", suffix);
+
+      if (ic != null)
+      {
+         icSet.setRolloverIcon(ic);
+      }
+
+      ic = getHelpIcon(base+"_rollover_selected", suffix);
+
+      if (ic != null)
+      {
+         icSet.setRolloverSelectedIcon(ic);
+      }
+
+      ic = getHelpIcon(base+"_disabled", suffix);
+
+      if (ic != null)
+      {
+         icSet.setDisabledIcon(ic);
+      }
+
+      ic = getHelpIcon(base+"_disabled_selected", suffix);
+
+      if (ic != null)
+      {
+         icSet.setDisabledSelectedIcon(ic);
+      }
+
+      return icSet;
+   }
+
    public IconSet getHelpIconSet(String base, boolean small)
    {
       return getHelpIconSet(base, small, imageExtensions);
