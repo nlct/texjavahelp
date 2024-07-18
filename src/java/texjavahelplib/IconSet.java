@@ -18,8 +18,15 @@
 */
 package com.dickimawbooks.texjavahelplib;
 
+import java.awt.Color;
+
 import javax.swing.AbstractButton;
 import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JRadioButton;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class IconSet
 {
@@ -98,6 +105,74 @@ public class IconSet
       disabledSelectedIcon = ic;
    }
 
+   public JRadioButton createIconRadioButton()
+   {
+      JRadioButton btn = new JRadioButton(defaultIcon);
+      setButtonExtraIcons(btn);
+
+      if (selectedIcon == null)
+      {
+         btn.addChangeListener(new ChangeListener()
+          {
+             @Override
+             public void stateChanged(ChangeEvent evt)
+             {
+                JRadioButton btn = (JRadioButton)evt.getSource();
+
+                if (btn.isSelected())
+                {
+                   if (!btn.isContentAreaFilled())
+                   {
+                      btn.setContentAreaFilled(true);
+                   }
+                }
+                else if (btn.isContentAreaFilled())
+                {
+                   btn.setContentAreaFilled(false);
+                }
+             }
+          });
+         btn.setBackground(HIGHLIGHT);
+         btn.setContentAreaFilled(false);
+      }
+
+      return btn;
+   }
+
+   public JCheckBox createIconCheckBox()
+   {
+      JCheckBox btn = new JCheckBox(defaultIcon);
+      setButtonExtraIcons(btn);
+
+      if (selectedIcon == null)
+      {
+         btn.addChangeListener(new ChangeListener()
+          {
+             @Override
+             public void stateChanged(ChangeEvent evt)
+             {
+                JRadioButton btn = (JRadioButton)evt.getSource();
+
+                if (btn.isSelected())
+                {
+                   if (!btn.isContentAreaFilled())
+                   {
+                      btn.setContentAreaFilled(true);
+                   }
+                }
+                else if (btn.isContentAreaFilled())
+                {
+                   btn.setContentAreaFilled(false);
+                }
+             }
+          });
+         btn.setBackground(HIGHLIGHT);
+         btn.setContentAreaFilled(false);
+      }
+
+      return btn;
+   }
+
    public void setButtonIcons(AbstractButton button)
    {
       if (defaultIcon != null)
@@ -144,4 +219,6 @@ public class IconSet
    protected Icon defaultIcon, selectedIcon,
     rolloverIcon, rolloverSelectedIcon,
     pressedIcon, disabledIcon, disabledSelectedIcon;
+
+   public static Color HIGHLIGHT = Color.YELLOW;
 }
