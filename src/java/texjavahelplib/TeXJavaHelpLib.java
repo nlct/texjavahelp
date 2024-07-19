@@ -2257,8 +2257,8 @@ public class TeXJavaHelpLib
    protected String resourcebase = "/resources";
    protected String dictionaryBase = resourcebase;
    protected String resourceIconBase = "/resources/icons";
-   protected String smallIconSuffix = "-16x16";
-   protected String largeIconSuffix = "-32x32";
+   protected String smallIconSuffix = "-16";
+   protected String largeIconSuffix = "-32";
 
    protected Properties imageMap = null;
    protected String mappedSmallIconSuffix = "-small";
@@ -2317,6 +2317,6 @@ public class TeXJavaHelpLib
    public static final String MONO_CSS_CLASSES
     = ".code, .cmd, .cmdfmt, .csfmt, .csfmtfont, .csfmtcolourfont, .appfmt, .styfmt, .clsfmt, .envfmt, .optfmt, .csoptfmt, .styoptfmt, .clsoptfmt, .ctrfmt, .filefmt, .extfmt, .cbeg, .cend, .longargfmt, .shortargfmt, .qtt, .xmltagfmt, .varfmt, .terminal, .transcript, .filedef, .codebox, .badcodebox, .unicodebox, .compactcodebox, .sidebysidecode";
 
-   public static final String VERSION = "0.3a";
-   public static final String VERSION_DATE = "2024-07-18";
+   public static final String VERSION = "0.4a";
+   public static final String VERSION_DATE = "2024-07-19";
 }
