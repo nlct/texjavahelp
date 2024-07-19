@@ -131,7 +131,7 @@ public class HelpFontSettingsFrame extends JFrame
       box.add(panel);
 
       GraphicsEnvironment grp = GraphicsEnvironment.getLocalGraphicsEnvironment();
-      Locale locale = helpLib.getMessagesLocale();
+      Locale locale = helpLib.getMessagesLocale().getLocale();
 
       Font[] allFonts = grp.getAllFonts();
       fontNames = new Vector<String>(allFonts.length);

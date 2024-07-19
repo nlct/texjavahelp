@@ -18,19 +18,25 @@
 */
 package com.dickimawbooks.texjavahelplib;
 
-import java.util.Properties;
+import java.util.ArrayDeque;
 import java.util.Hashtable;
 import java.util.Locale;
-import java.util.ArrayDeque;
+import java.util.Properties;
+import java.util.Vector;
 
-import java.text.MessageFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import java.text.ChoiceFormat;
+import java.text.MessageFormat;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
 import java.net.URL;
+import java.net.URISyntaxException;
 
 /**
  * Class for localised messages.
@@ -46,15 +52,86 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
    public MessageSystem(TeXJavaHelpLib helpLib, String tagPrefix, Locale locale)
      throws IOException
    {
+      this(helpLib, tagPrefix, new HelpSetLocale(locale));
+   }
+
+   public MessageSystem(TeXJavaHelpLib helpLib, String tagPrefix, 
+      HelpSetLocale hsLocale)
+     throws IOException
+   {
       super();
 
       this.helpLib = helpLib;
-      this.locale = locale;
+      this.hsLocale = hsLocale;
 
       loadDictionary(tagPrefix);
    }
 
-   protected String getLanguageFileName(String tagPrefix, String tag)
+   protected void initDictPattern()
+   {
+      dictionaryPattern = Pattern.compile(
+         ".+-([a-z]{2,3}(?:-[A-Z]{2})?(?:-[A-Z][a-z]{3})?)\\.(?:xml|prop)");
+   }
+
+   public void setDictionaryPattern(Pattern p)
+   {
+      availableDictionaries = null;
+      dictionaryPattern = p;
+   }
+
+   public Pattern getDictionaryPattern()
+   {
+      if (dictionaryPattern == null)
+      {
+         initDictPattern();
+      }
+
+      return dictionaryPattern;
+   }
+
+   public Vector<HelpSetLocale> getDictionaries()
+    throws URISyntaxException,FileNotFoundException
+   {
+      if (availableDictionaries == null)
+      {
+         String path = helpLib.getDictionaryPath();
+         URL url = getClass().getResource(path);
+
+         if (url == null)
+         {
+            throw new FileNotFoundException(getMessageWithFallback(
+             "error.resource_not_found", "Resource file ''{0}'' not found",
+             path));
+         }
+
+         File dir = new File(url.toURI());
+
+         String[] list = dir.list();
+
+         availableDictionaries = new Vector<HelpSetLocale>();
+
+         for (String filename : list)
+         {
+            Matcher m = getDictionaryPattern().matcher(filename);
+
+            if (m.matches())
+            {
+               HelpSetLocale hs = new HelpSetLocale(m.group(1));
+
+               if (!availableDictionaries.contains(hs))
+               {
+                  availableDictionaries.add(hs);
+               }
+            }
+         }
+
+         availableDictionaries.sort(null);
+      }
+
+      return availableDictionaries;
+   }
+
+   protected String getLanguageFileName(String tag)
    {
       return String.format("%s/%s-%s.xml",
         helpLib.getDictionaryPath(), tagPrefix, tag);
@@ -65,22 +142,22 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
      This returns a list to allow more specific locales to override more general
      locales. For example, prefix-en.xml may have the default for all keys
      and prefix-en-GB.xml overrides just the different keys specific to GB.
-     @param tagPrefix the prefix to use in front of the language tag
      @return list of available language files
     */ 
-   protected ArrayDeque<URL> getLanguageFiles(String tagPrefix)
+   protected ArrayDeque<URL> getLanguageFiles()
      throws FileNotFoundException
    {
       String tag, dict;
       URL url;
+
+      Locale locale = hsLocale.getLocale();
       String lang = locale.getLanguage();
 
       ArrayDeque<URL> deque = new ArrayDeque<URL>();
 
-      tag = locale.toLanguageTag();
-
-      dict = getLanguageFileName(tagPrefix, tag);
-
+      // preferred tag
+      tag = hsLocale.getTag();
+      dict = getLanguageFileName(tag);
       url = getClass().getResource(dict);
 
       if (url != null)
@@ -89,13 +166,11 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
          url = null;
       }
 
-      String region = locale.getCountry();
+      tag = locale.toLanguageTag();
 
-      if (!region.isEmpty())
+      if (!tag.equals(hsLocale.getTag()))
       {
-         tag = String.format("%s-%s", lang, region);
-
-         dict = getLanguageFileName(tagPrefix, tag);
+         dict = getLanguageFileName(tag);
          url = getClass().getResource(dict);
 
          if (url != null)
@@ -109,7 +184,27 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
          }
       }
 
-      dict = getLanguageFileName(tagPrefix, lang);
+      String region = locale.getCountry();
+
+      if (!region.isEmpty())
+      {
+         tag = String.format("%s-%s", lang, region);
+
+         dict = getLanguageFileName(tag);
+         url = getClass().getResource(dict);
+
+         if (url != null)
+         {
+            if (!deque.contains(url))
+            {
+               deque.addFirst(url);
+            }
+
+            url = null;
+         }
+      }
+
+      dict = getLanguageFileName(lang);
       url = getClass().getResource(dict);
 
       if (url != null)
@@ -128,13 +223,15 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
    public void loadDictionary(String tagPrefix)
       throws IOException
    {
-      ArrayDeque<URL> deque = getLanguageFiles(tagPrefix);
+      this.tagPrefix = tagPrefix;
+
+      ArrayDeque<URL> deque = getLanguageFiles();
 
       if (deque.isEmpty())
       {
-         Locale orgLocale = locale;
-         locale = Locale.ENGLISH;
-         deque = getLanguageFiles(tagPrefix);
+         HelpSetLocale orgLocale = hsLocale;
+         hsLocale = new HelpSetLocale("en", Locale.ENGLISH);
+         deque = getLanguageFiles();
 
          if (deque.isEmpty())
          {
@@ -142,7 +239,7 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
             (
                String.format(
                "Can't find dictionary resource file for locale \"%s\" or fallback \"%s\" matching \"%s\"",
-                orgLocale, locale, getLanguageFileName(tagPrefix, "*")
+                orgLocale.getTag(), hsLocale.getTag(), getLanguageFileName("*")
                )
             );
          }
@@ -259,11 +356,14 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
       return fmt.format(args);
    }
 
-   public Locale getLocale()
+   public HelpSetLocale getLocale()
    {
-      return locale;
+      return hsLocale;
    }
 
    protected TeXJavaHelpLib helpLib;
-   protected Locale locale;
+   protected HelpSetLocale hsLocale;
+   protected String tagPrefix;
+   protected Pattern dictionaryPattern;
+   protected Vector<HelpSetLocale> availableDictionaries;
 }

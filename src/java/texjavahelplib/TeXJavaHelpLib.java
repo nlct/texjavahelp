@@ -24,14 +24,19 @@ import java.util.Properties;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
-import java.io.FileNotFoundException;
 import java.io.Reader;
 
 import java.net.URL;
+import java.net.URISyntaxException;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -71,27 +76,40 @@ public class TeXJavaHelpLib
    }
 
    public TeXJavaHelpLib(TeXJavaHelpLibApp application,
-       Locale messagesLocale, Locale helpsetLocale)
+       Locale msgLocale, Locale hsLocale)
      throws IOException
    {
       this(application, application.getApplicationName(),
-         "/resources", messagesLocale, helpsetLocale,
+         "/resources", msgLocale, hsLocale,
          application.getApplicationName().toLowerCase().replaceAll(" ", ""));
    }
 
    public TeXJavaHelpLib(TeXJavaHelpLibApp application,
       String applicationName, String resourcebase,
-      Locale messagesLocale, Locale helpsetLocale, String... dictPrefixes)
+      Locale msgLocale, Locale hsLocale, String... dictPrefixes)
     throws IOException
    {
       this(application, applicationName, resourcebase,
-       resourcebase, messagesLocale, helpsetLocale, dictPrefixes);
+       resourcebase, msgLocale, hsLocale, dictPrefixes);
    }
 
    public TeXJavaHelpLib(TeXJavaHelpLibApp application,
       String applicationName, String resourcebase,
       String dictionaryBase,
-      Locale messagesLocale, Locale helpsetLocale, String... dictPrefixes)
+      Locale msgLocale, Locale hsLocale, String... dictPrefixes)
+    throws IOException
+   {
+      this(application, applicationName, resourcebase, dictionaryBase,
+       msgLocale == null ? null : new HelpSetLocale(msgLocale),
+       hsLocale == null ? null : new HelpSetLocale(hsLocale),
+       dictPrefixes);
+   }
+
+   public TeXJavaHelpLib(TeXJavaHelpLibApp application,
+      String applicationName, String resourcebase,
+      String dictionaryBase,
+      HelpSetLocale messagesLocale, HelpSetLocale helpsetLocale,
+      String... dictPrefixes)
     throws IOException
    {
       this.application = application;
@@ -138,12 +156,12 @@ public class TeXJavaHelpLib
       application.dictionaryLoaded(url);
    }
 
-   public Locale getHelpSetLocale()
+   public HelpSetLocale getHelpSetLocale()
    {
       return helpsetLocale;
    }
 
-   public Locale getMessagesLocale()
+   public HelpSetLocale getMessagesLocale()
    {
       return messages.getLocale();
    }
@@ -1081,6 +1099,73 @@ public class TeXJavaHelpLib
       return url;
    }
 
+   protected void initHelpsetPattern()
+   {
+      helpsetPattern = Pattern.compile(
+         "(?:.+-|^)([a-z]{2,3}(?:-[A-Z]{2})?(?:-[A-Z][a-z]{3})?)");
+   }
+
+   public void setHelpSetPattern(Pattern p)
+   {
+      availableHelpsets = null;
+      helpsetPattern = p;
+   }
+
+   public Pattern getHelpSetPattern()
+   {
+      if (helpsetPattern == null)
+      {
+         initHelpsetPattern();
+      }
+
+      return helpsetPattern;
+   }
+
+   /**
+    * Gets a sorted list of available helpsets.
+    */
+   public Vector<HelpSetLocale> getHelpSets()
+    throws URISyntaxException,FileNotFoundException
+   {
+      if (availableHelpsets == null)
+      {
+         String path = getHelpSetResourcePath();
+         URL url = getClass().getResource(path);
+
+         if (url == null)
+         {
+            throw new FileNotFoundException(getMessageWithFallback(
+             "error.resource_not_found", "Resource file ''{0}'' not found",
+             path));
+         }
+
+         File dir = new File(url.toURI()).getParentFile();
+
+         String[] list = dir.list();
+
+         availableHelpsets = new Vector<HelpSetLocale>();
+
+         for (String filename : list)
+         {
+            Matcher m = getHelpSetPattern().matcher(filename);
+
+            if (m.matches())
+            {
+               HelpSetLocale hs = new HelpSetLocale(m.group(1));
+
+               if (!availableHelpsets.contains(hs))
+               {
+                  availableHelpsets.add(hs);
+               }
+            }
+         }
+
+         availableHelpsets.sort(null);
+      }
+
+      return availableHelpsets;
+   }
+
    public InputStream getNavigationXMLInputStream()
      throws FileNotFoundException
    {
@@ -1096,16 +1181,26 @@ public class TeXJavaHelpLib
       {
          String base = resourcebase + "/" + helpsetdir;
 
-         helpsetsubdir = helpsetLocale.toLanguageTag();
+         Locale locale = helpsetLocale.getLocale();
+         helpsetsubdir = helpsetLocale.getTag();
 
-         path = base + "/" + helpsetSubdirPrefix+helpsetsubdir + "/" + navxmlfilename;
+         path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
+               + "/" + navxmlfilename;
 
          stream = getClass().getResourceAsStream(path);
 
          if (stream == null)
          {
-            String lang = helpsetLocale.getLanguage();
-            String country = helpsetLocale.getCountry();
+            helpsetsubdir = locale.toLanguageTag();
+            path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
+                 + "/" + navxmlfilename;
+            stream = getClass().getResourceAsStream(path);
+         }
+
+         if (stream == null)
+         {
+            String lang = locale.getLanguage();
+            String country = locale.getCountry();
             String tag = lang + "-" + country;
 
             if (country == null || country.isEmpty() || helpsetsubdir.equals(tag))
@@ -1137,7 +1232,7 @@ public class TeXJavaHelpLib
 
             if (stream == null)
             {
-               String script = helpsetLocale.getScript();
+               String script = locale.getScript();
 
                if (script != null && !script.isEmpty())
                {
@@ -1146,6 +1241,14 @@ public class TeXJavaHelpLib
                   path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
                      + "/" + navxmlfilename;
 
+                  stream = getClass().getResourceAsStream(path);
+               }
+
+               if (stream == null)
+               {
+                  helpsetsubdir = "en";
+                  path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
+                       + "/" + navxmlfilename;
                   stream = getClass().getResourceAsStream(path);
                }
 
@@ -1184,7 +1287,8 @@ public class TeXJavaHelpLib
       {
          String base = resourcebase + "/" + helpsetdir;
 
-         helpsetsubdir = helpsetLocale.toLanguageTag();
+         Locale locale = helpsetLocale.getLocale();
+         helpsetsubdir = helpsetLocale.getTag();
 
          path = base + "/" + helpsetsubdir + "/" + indexXmlFilename;
 
@@ -1192,8 +1296,15 @@ public class TeXJavaHelpLib
 
          if (stream == null)
          {
-            String lang = helpsetLocale.getLanguage();
-            String country = helpsetLocale.getCountry();
+            helpsetsubdir = locale.toLanguageTag();
+            path = base + "/" + helpsetsubdir + "/" + indexXmlFilename;
+            stream = getClass().getResourceAsStream(path);
+         }
+
+         if (stream == null)
+         {
+            String lang = locale.getLanguage();
+            String country = locale.getCountry();
             String tag = lang + "-" + country;
 
             if (country == null || country.isEmpty() || helpsetsubdir.equals(tag))
@@ -1222,7 +1333,7 @@ public class TeXJavaHelpLib
 
             if (stream == null)
             {
-               String script = helpsetLocale.getScript();
+               String script = locale.getScript();
 
                if (script != null && !script.isEmpty())
                {
@@ -1269,7 +1380,8 @@ public class TeXJavaHelpLib
       {
          String base = resourcebase + "/" + helpsetdir;
 
-         helpsetsubdir = helpsetLocale.toLanguageTag();
+         Locale locale = helpsetLocale.getLocale();
+         helpsetsubdir = helpsetLocale.getTag();
 
          path = base + "/" + helpsetsubdir + "/" + searchXmlFilename;
 
@@ -1277,8 +1389,15 @@ public class TeXJavaHelpLib
 
          if (stream == null)
          {
-            String lang = helpsetLocale.getLanguage();
-            String country = helpsetLocale.getCountry();
+            helpsetsubdir = locale.toLanguageTag();
+            path = base + "/" + helpsetsubdir + "/" + searchXmlFilename;
+            stream = getClass().getResourceAsStream(path);
+         }
+
+         if (stream == null)
+         {
+            String lang = locale.getLanguage();
+            String country = locale.getCountry();
             String tag = lang + "-" + country;
 
             if (country == null || country.isEmpty() || helpsetsubdir.equals(tag))
@@ -1307,7 +1426,7 @@ public class TeXJavaHelpLib
 
             if (stream == null)
             {
-               String script = helpsetLocale.getScript();
+               String script = locale.getScript();
 
                if (script != null && !script.isEmpty())
                {
@@ -2161,10 +2280,13 @@ public class TeXJavaHelpLib
    public static final String HELP_LIB_ICON_PATH
    = "/com/dickimawbooks/texjavahelplib/icons/";
 
+   protected Pattern helpsetPattern;
+   protected Vector<HelpSetLocale> availableHelpsets;
+
    protected String helpsetdir = "helpset";
    protected String helpsetsubdir = null;
    protected String helpsetSubdirPrefix = "";
-   protected Locale helpsetLocale;
+   protected HelpSetLocale helpsetLocale;
    protected NavigationTree navigationTree;
    protected String navhtmlfilename, navxmlfilename;
    protected String htmlsuffix = "html";
