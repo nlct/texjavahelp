@@ -670,117 +670,8 @@ public class TeXJavaHelpLib
 
    public IconSet getHelpIconSet(String base, boolean small, String... extensions)
    {
-      /* Try the icon path first to allow application icons to take
-         precedence.
-       */
-
-      IconSet icSet = small ? getSmallIconSet(base, extensions)
+      return small ? getSmallIconSet(base, extensions)
                     : getLargeIconSet(base, extensions);
-
-      if (icSet == null)
-      {
-         // Use icon provided in texjavahelplib.jar if available
-
-         InputStream in = null;
-
-         String suffix = small ? smallIconSuffix : largeIconSuffix;
-
-         try
-         {
-            in = getClass().getResourceAsStream(
-              HELP_LIB_ICON_PATH+base+suffix+".png");
-
-            if (in != null)
-            {
-               icSet = new IconSet(new ImageIcon(ImageIO.read(in)));
-               in.close();
-               in = null;
-
-// Currently not applicable:
-/*
-               in = getClass().getResourceAsStream(
-                 HELP_LIB_ICON_PATH+base+"_pressed"+suffix+".png");
-
-               if (in != null)
-               {
-                  icSets.setPressedIcon(new ImageIcon(ImageIO.read(in)));
-                  in.close();
-                  in = null;
-               }
-
-               in = getClass().getResourceAsStream(
-                 HELP_LIB_ICON_PATH+base+"_selected"+suffix+".png");
-
-               if (in != null)
-               {
-                  icSets.setSelectedIcon(new ImageIcon(ImageIO.read(in)));
-                  in.close();
-                  in = null;
-               }
-
-               in = getClass().getResourceAsStream(
-                 HELP_LIB_ICON_PATH+base+"_rollover"+suffix+".png");
-
-               if (in != null)
-               {
-                  icSets.setRolloverIcon(new ImageIcon(ImageIO.read(in)));
-                  in.close();
-                  in = null;
-               }
-
-               in = getClass().getResourceAsStream(
-                 HELP_LIB_ICON_PATH+base+"_rollover_selected"+suffix+".png");
-
-               if (in != null)
-               {
-                  icSets.setRolloverSelectedIcon(new ImageIcon(ImageIO.read(in)));
-                  in.close();
-                  in = null;
-               }
-
-               in = getClass().getResourceAsStream(
-                 HELP_LIB_ICON_PATH+base+"_disabled"+suffix+".png");
-
-               if (in != null)
-               {
-                  icSets.setDisabledIcon(new ImageIcon(ImageIO.read(in)));
-                  in.close();
-                  in = null;
-               }
-
-               in = getClass().getResourceAsStream(
-                 HELP_LIB_ICON_PATH+base+"_disabled_selected"+suffix+".png");
-
-               if (in != null)
-               {
-                  icSets.setDisabledSelectedIcon(new ImageIcon(ImageIO.read(in)));
-                  in.close();
-                  in = null;
-               }
-
-*/
-            }
-         }
-         catch (IOException e)
-         {
-         }
-         finally
-         {
-            if (in != null)
-            {
-               try
-               {
-                  in.close();
-               }
-               catch (IOException e)
-               {
-                  debug(e);
-               }
-            }
-         }
-      }
-
-      return icSet;
    }
 
    public ImageIcon getSmallIcon(String base)
@@ -904,52 +795,54 @@ public class TeXJavaHelpLib
          basename += "/";
       }
 
-      basename += base + smallIconSuffix;
+      basename += base;
 
       for (String ext : extensions)
       {
-         URL url = getClass().getResource(basename + "." + ext);
+         String suffix = smallIconSuffix + "." + ext;
+
+         URL url = getClass().getResource(basename + suffix);
 
          if (url != null)
          {
             icSet = new IconSet(new ImageIcon(url));
 
-            url = getClass().getResource(basename + "_selected." + ext);
+            url = getClass().getResource(basename + "_selected" + suffix);
 
             if (url != null)
             {
                icSet.setSelectedIcon(new ImageIcon(url));
             }
 
-            url = getClass().getResource(basename + "_pressed." + ext);
+            url = getClass().getResource(basename + "_pressed" + suffix);
 
             if (url != null)
             {
                icSet.setPressedIcon(new ImageIcon(url));
             }
 
-            url = getClass().getResource(basename + "_rollover." + ext);
+            url = getClass().getResource(basename + "_rollover" + suffix);
 
             if (url != null)
             {
                icSet.setRolloverIcon(new ImageIcon(url));
             }
 
-            url = getClass().getResource(basename + "_rollover_selected." + ext);
+            url = getClass().getResource(basename + "_rollover_selected" + suffix);
 
             if (url != null)
             {
                icSet.setRolloverSelectedIcon(new ImageIcon(url));
             }
 
-            url = getClass().getResource(basename + "_disabled." + ext);
+            url = getClass().getResource(basename + "_disabled" + suffix);
 
             if (url != null)
             {
                icSet.setDisabledIcon(new ImageIcon(url));
             }
 
-            url = getClass().getResource(basename + "_disabled_selected." + ext);
+            url = getClass().getResource(basename + "_disabled_selected" + suffix);
 
             if (url != null)
             {
@@ -960,7 +853,7 @@ public class TeXJavaHelpLib
          }
       }
 
-      return null;
+      return getHelpIconSet(base, smallIconSuffix);
    }
 
    public String getLargeIconSuffix()
@@ -1088,52 +981,54 @@ public class TeXJavaHelpLib
          basename += "/";
       }
 
-      basename += base + largeIconSuffix;
+      basename += base;
 
       for (String ext : extensions)
       {
-         URL url = getClass().getResource(basename + "." + ext);
+         String suffix = largeIconSuffix + "." + ext;
+
+         URL url = getClass().getResource(basename+suffix);
 
          if (url != null)
          {
             icSet = new IconSet(new ImageIcon(url));
 
-            url = getClass().getResource(basename + "_selected." + ext);
+            url = getClass().getResource(basename + "_selected" + suffix);
 
             if (url != null)
             {
                icSet.setSelectedIcon(new ImageIcon(url));
             }
 
-            url = getClass().getResource(basename + "_pressed." + ext);
+            url = getClass().getResource(basename + "_pressed" + suffix);
 
             if (url != null)
             {
                icSet.setPressedIcon(new ImageIcon(url));
             }
 
-            url = getClass().getResource(basename + "_rollover." + ext);
+            url = getClass().getResource(basename + "_rollover" + suffix);
 
             if (url != null)
             {
                icSet.setRolloverIcon(new ImageIcon(url));
             }
 
-            url = getClass().getResource(basename + "_rollover_selected." + ext);
+            url = getClass().getResource(basename + "_rollover_selected" + suffix);
 
             if (url != null)
             {
                icSet.setRolloverSelectedIcon(new ImageIcon(url));
             }
 
-            url = getClass().getResource(basename + "_disabled." + ext);
+            url = getClass().getResource(basename + "_disabled" + suffix);
 
             if (url != null)
             {
                icSet.setDisabledIcon(new ImageIcon(url));
             }
 
-            url = getClass().getResource(basename + "_disabled_selected." + ext);
+            url = getClass().getResource(basename + "_disabled_selected" + suffix);
 
             if (url != null)
             {
@@ -1144,7 +1039,7 @@ public class TeXJavaHelpLib
          }
       }
 
-      return null;
+      return getHelpIconSet(base, largeIconSuffix);
    }
 
    public void setHelpsetSubDirPrefix(String prefix)

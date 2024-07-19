@@ -216,6 +216,15 @@ public class IconSet
       }
    }
 
+   public String toString()
+   {
+      return String.format(
+        "%s[default=%s,selected=%s,pressed=%s,rollover=%s,rolloverSelected=%s,disabled=%s,disabledSelected=%s]",
+        getClass().getSimpleName(), defaultIcon, selectedIcon,
+        pressedIcon, rolloverIcon, rolloverSelectedIcon,
+        disabledIcon, disabledSelectedIcon);
+   }
+
    protected Icon defaultIcon, selectedIcon,
     rolloverIcon, rolloverSelectedIcon,
     pressedIcon, disabledIcon, disabledSelectedIcon;
