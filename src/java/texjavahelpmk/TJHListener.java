@@ -126,8 +126,8 @@ public class TJHListener extends L2HConverter
              tag, locPrefString, tag));
       }
 
-      setImageExtensions("png", "PNG", "jpg", "JPG", "jpeg", "JPEG",
-        "gif", "GIF", "pdf", "PDF", "tex");
+      setImageExtensions(".png", ".PNG", ".jpg", ".JPG", ".jpeg", ".JPEG",
+        ".gif", ".GIF", ".pdf", ".PDF", ".tex");
    }
 
    public void setNavigationXmlFile(File file)
