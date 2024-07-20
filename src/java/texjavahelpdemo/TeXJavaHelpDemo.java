@@ -22,11 +22,13 @@ package com.dickimawbooks.texjavahelpdemo;
 import java.util.Locale;
 import java.util.Properties;
 
-import java.io.IOException;
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.PrintWriter;
+
 import java.net.URL;
 
 import java.text.MessageFormat;
@@ -266,6 +268,27 @@ public class TeXJavaHelpDemo extends JFrame
        helpLib.getMessage("about.title", APP_NAME),    
        true, helpLib, getAppInfo(true));
 
+      try
+      {
+         URL url = getClass().getResource(LICENSE_PATH);
+
+         if (url == null)
+         {
+            throw new FileNotFoundException(helpLib.getMessage(
+              "error.resource_not_found", LICENSE_PATH));
+         }
+
+         licenseDialog = new MessageDialog(this,
+           helpLib.getMessage("license.title"), true,
+           helpLib, url);
+
+         helpM.add(createJMenuItem("menu.help", "license"));
+      }
+      catch (IOException e)
+      {
+         error(e);
+      }
+
       createSampleDialog();
       helpM.add(createJMenuItem("menu.help", "sampledialog"));
 
@@ -478,6 +501,13 @@ public class TeXJavaHelpDemo extends JFrame
       {
          aboutDialog.setVisible(true);
       }
+      else if (action.equals("license"))
+      {
+         if (licenseDialog != null)
+         {
+            licenseDialog.setVisible(true);
+         }
+      }
    }
 
    public JMenu createJMenu(String tag)
@@ -664,10 +694,12 @@ public class TeXJavaHelpDemo extends JFrame
 
    private Properties properties;
 
-   private JDialog sampleDialog, aboutDialog;
+   private JDialog sampleDialog, aboutDialog, licenseDialog;
    private int debugMode = 1;
 
-   public final static String APP_NAME = "TeX Java Help Demo";
+   public static final String APP_NAME = "TeX Java Help Demo";
+
+   public static final String LICENSE_PATH = "/gpl-3.0-standalone.html";
 
    public static final String APP_VERSION = "1.0";
    public static final String APP_DATE = "2024-07-07";

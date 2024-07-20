@@ -61,7 +61,7 @@ classes/com/dickimawbooks/texjavahelpmk	:
 	mkdir -p classes/com/dickimawbooks/texjavahelpmk
 
 lib/texjavahelplib.jar	: classes/com/dickimawbooks/texjavahelplib/TeXJavaHelpLib.class
-	cp -r java/texjavahelplib/icons classes/com/dickimawbooks/texjavahelplib/
+	cp -u -r java/texjavahelplib/icons classes/com/dickimawbooks/texjavahelplib/
 	cd classes; \
 	jar cf ../lib/texjavahelplib.jar \
 	com/dickimawbooks/texjavahelplib/*.class \

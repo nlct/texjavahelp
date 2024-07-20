@@ -20,6 +20,9 @@
 <entry key="menu.help.about">About</entry>
 <entry key="menu.help.about.mnemonic">A</entry>
 
+<entry key="menu.help.license">License</entry>
+<entry key="menu.help.license.mnemonic">L</entry>
+
 
 <!-- About Dialog -->
 
@@ -37,6 +40,10 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="about.translator_info"></entry>
 
 <entry key="about.version">{0} {1} ({2})</entry>
+
+<!-- License Dialog -->
+
+<entry key="license.title">License</entry>
 
 <!-- Sample Dialog -->
 
