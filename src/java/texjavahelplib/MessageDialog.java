@@ -189,6 +189,33 @@ public class MessageDialog extends JDialog
       setLocationRelativeTo(parent);
    }
 
+   /**
+    * Creates a message dialog with the given HTML content obtained
+    * from a URL that uses the TeXJavaHelpLib font settings and listens to font
+    * changes.
+    * @param parent the dialog owner
+    * @param title the dialog title
+    * @param modal true if modal
+    * @param helpLib the TeXJavaHelpLib with the localisation
+    * strings and font settings
+    * @param url the source (includes HTML head)
+    */
+   public MessageDialog(JFrame parent, String title, boolean modal,
+     TeXJavaHelpLib helpLib, URL url)
+    throws IOException
+   {
+      super(parent, title, modal);
+
+      this.helpLib = helpLib;
+
+      initEditor(url, helpLib.getHelpFontSettings());
+
+      helpLib.addHelpFontChangeListener(this);
+
+      initGUI();
+      setLocationRelativeTo(parent);
+   }
+
    private void initEditor(String bodyText, HelpFontSettings fontSettings)
    {
       StringBuilder builder = new StringBuilder();
@@ -199,6 +226,17 @@ public class MessageDialog extends JDialog
       builder.append("</body></html>");
 
       editorPane = new TJHEditorPane("text/html", builder.toString());
+   }
+
+   private void initEditor(URL url, HelpFontSettings fontSettings)
+    throws IOException
+   {
+      editorPane = new TJHEditorPane(url);
+
+      HTMLDocument htmlDoc = (HTMLDocument)editorPane.getDocument();
+      StyleSheet styles = htmlDoc.getStyleSheet();
+
+      fontSettings.addFontRulesToStyleSheet(styles);
    }
 
    protected void initGUI()
