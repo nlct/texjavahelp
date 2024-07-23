@@ -23,23 +23,24 @@ import java.awt.*;
 import javax.swing.*;
 
 /**
- * Dialog for showing lower navigation panel settings.
+ * Dialog for adjusting lower navigation panel settings.
  */
 public class HelpLowerNavSettingsDialog extends JDialog
 {
-   public HelpLowerNavSettingsDialog(final HelpFrame helpFrame)
+   public HelpLowerNavSettingsDialog(Window owner, final HelpPageNavPanel navPanel)
    {
-      super(helpFrame,
-        helpFrame.getHelpLib().getMessage("help_settings_nav.title"), true);
+      super(owner,
+        navPanel.getHelpLib().getMessage("help_settings_nav.title"), 
+        Dialog.ModalityType.APPLICATION_MODAL);
 
-      this.helpFrame = helpFrame;
+      this.navPanel = navPanel;
 
       init();
    }
 
    private void init()
    {
-      TeXJavaHelpLib helpLib = helpFrame.getHelpLib();
+      TeXJavaHelpLib helpLib = navPanel.getHelpLib();
 
       Box box = Box.createVerticalBox();
       getContentPane().add(box, "Center");
@@ -52,7 +53,7 @@ public class HelpLowerNavSettingsDialog extends JDialog
       limitLabel.setAlignmentX(0.0f);
 
       labelLimitSpinnerModel = new SpinnerNumberModel(
-        helpFrame.getLowerNavLabelLimit(), 4, 100, 1);
+        navPanel.getLowerNavLabelLimit(), 4, 100, 1);
       labelLimitSpinner = new JSpinner(labelLimitSpinnerModel);
       labelLimitSpinner.setAlignmentX(0.0f);
 
@@ -62,7 +63,7 @@ public class HelpLowerNavSettingsDialog extends JDialog
       panel.add(labelLimitSpinner);
 
       showLabelCheckBox = helpLib.createJCheckBox("help_settings_nav",
-       "show_label", helpFrame.isLowerNavLabelTextOn());
+       "show_label", navPanel.isLowerNavLabelTextOn());
 
       box.add(showLabelCheckBox);
 
@@ -86,9 +87,7 @@ public class HelpLowerNavSettingsDialog extends JDialog
          @Override
          public void doAction()
          {
-            helpFrame.setLowerNavSettings(showLabelCheckBox.isSelected(),
-              labelLimitSpinnerModel.getNumber().intValue());
-            setVisible(false);
+            okay();
          }
        };
 
@@ -100,13 +99,33 @@ public class HelpLowerNavSettingsDialog extends JDialog
       pack();
    }
 
+   protected void okay()
+   {
+      TeXJavaHelpLib helpLib = navPanel.getHelpLib();
+
+      helpLib.fireLowerNavSettingUpdate(
+       new LowerNavSettingsChangeEvent(
+         this,
+         labelLimitSpinnerModel.getNumber().intValue(),
+         showLabelCheckBox.isSelected()
+        )
+      );
+
+      setVisible(false);
+   }
+
+   public void open(Component comp)
+   {
+      setLocationRelativeTo(comp);
+      open();
+   }
+
    public void open()
    {
-      setLocationRelativeTo(helpFrame);
       setVisible(true);
 
-      showLabelCheckBox.setSelected(helpFrame.isLowerNavLabelTextOn());
-      setLabelLimit(helpFrame.getLowerNavLabelLimit());
+      showLabelCheckBox.setSelected(navPanel.isLowerNavLabelTextOn());
+      setLabelLimit(navPanel.getLowerNavLabelLimit());
    }
 
    public void setLabelLimit(int limit)
@@ -117,7 +136,7 @@ public class HelpLowerNavSettingsDialog extends JDialog
       }
    }
 
-   protected HelpFrame helpFrame;
+   protected HelpPageNavPanel navPanel;
    protected SpinnerNumberModel labelLimitSpinnerModel;
    protected JSpinner labelLimitSpinner;
    protected JCheckBox showLabelCheckBox;

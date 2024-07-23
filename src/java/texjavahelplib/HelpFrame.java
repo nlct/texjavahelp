@@ -136,9 +136,6 @@ public class HelpFrame extends JFrame
 
       getContentPane().add(buttonBar, "North");
 
-      JPanel navPanel = new JPanel(new BorderLayout());
-      getContentPane().add(navPanel, "South");
-
       TJHAbstractAction homeAction = new TJHAbstractAction(helpLib,
         "menu.helpframe.navigation", "home")
       {
@@ -294,18 +291,8 @@ public class HelpFrame extends JFrame
 
       // lower navigation panel
 
-      previousLabel = createNavLabel(previousAction, 
-        SwingConstants.RIGHT, SwingConstants.LEFT);
-
-      navPanel.add(previousLabel, "West");
-
-      upLabel = createNavLabel(upAction,
-         SwingConstants.RIGHT, SwingConstants.CENTER);
-      navPanel.add(upLabel, "Center");
-
-      nextLabel = createNavLabel(nextAction,
-         SwingConstants.LEFT, SwingConstants.RIGHT);
-      navPanel.add(nextLabel, "East");
+      navPanel = new HelpPageNavPanel(helpLib, previousAction, upAction, nextAction);
+      getContentPane().add(navPanel, "South");
 
       updateNavWidgets();
 
@@ -359,7 +346,7 @@ public class HelpFrame extends JFrame
 
       // lower navigation panel settings
 
-      lowerNavSettingsDialog = new HelpLowerNavSettingsDialog(this);
+      lowerNavSettingsDialog = new HelpLowerNavSettingsDialog(this, navPanel);
 
       TJHAbstractAction lowerNavSettingsAction = new TJHAbstractAction(helpLib,
         "menu.helpframe.settings", "nav")
@@ -367,7 +354,7 @@ public class HelpFrame extends JFrame
          @Override
          public void doAction()
          {
-            lowerNavSettingsDialog.open();
+            openNavSettings();
          }
       };
 
@@ -384,6 +371,11 @@ public class HelpFrame extends JFrame
    public void openFontSettings()
    {
       helpFontSettingsFrame.open();
+   }
+
+   public void openNavSettings()
+   {
+      lowerNavSettingsDialog.open(this);
    }
 
    @Override
@@ -598,11 +590,6 @@ public class HelpFrame extends JFrame
       return helpPage.getHistoryIndex();
    }
 
-   protected LowerNavLabel createNavLabel(TJHAbstractAction action, int textPos, int hPos)
-   {
-      return new LowerNavLabel(this, action, textPos, hPos);
-   }
-
    @Override
    public void requestHelpPageFocus()
    {
@@ -633,14 +620,12 @@ public class HelpFrame extends JFrame
       if (previousNode == null)
       {
          previousAction.setEnabled(false);
-         previousLabel.setEnabled(false);
-         previousLabel.setText("");
+         navPanel.updatePreviousLabel(false, "");
       }
       else
       {
          previousAction.setEnabled(true);
-         previousLabel.setEnabled(true);
-         previousLabel.setText(previousNode.getTitle());
+         navPanel.updatePreviousLabel(true, previousNode.getTitle());
       }
 
       popupPreviousAction.setEnabled(previousAction.isEnabled());
@@ -648,14 +633,12 @@ public class HelpFrame extends JFrame
       if (nextNode == null)
       {
          nextAction.setEnabled(false);
-         nextLabel.setEnabled(false);
-         nextLabel.setText("");
+         navPanel.updateNextLabel(false, "");
       }
       else
       {
          nextAction.setEnabled(true);
-         nextLabel.setEnabled(true);
-         nextLabel.setText(nextNode.getTitle());
+         navPanel.updateNextLabel(true, nextNode.getTitle());
       }
 
       popupNextAction.setEnabled(nextAction.isEnabled());
@@ -663,14 +646,12 @@ public class HelpFrame extends JFrame
       if (upNode == null)
       {
          upAction.setEnabled(false);
-         upLabel.setEnabled(false);
-         upLabel.setText("");
+         navPanel.updateUpLabel(false, "");
       }
       else
       {
          upAction.setEnabled(true);
-         upLabel.setEnabled(true);
-         upLabel.setText(upNode.getTitle());
+         navPanel.updateUpLabel(true, upNode.getTitle());
       }
 
       popupUpAction.setEnabled(upAction.isEnabled());
@@ -684,24 +665,9 @@ public class HelpFrame extends JFrame
       }
    }
 
-   public void setLowerNavSettings(boolean showText, int limit)
+   public HelpPageNavPanel getLowerNavPanel()
    {
-      this.lowerNavLabelText = showText;
-      this.lowerNavLabelLimit = limit;
-
-      previousLabel.update();
-      upLabel.update();
-      nextLabel.update();
-   }
-
-   public boolean isLowerNavLabelTextOn()
-   {
-      return lowerNavLabelText;
-   }
-
-   public int getLowerNavLabelLimit()
-   {
-      return lowerNavLabelLimit;
+      return navPanel;
    }
 
    @Override
@@ -791,123 +757,12 @@ public class HelpFrame extends JFrame
 
    protected ImageViewer imageViewer;
 
-   protected int lowerNavLabelLimit = 20;
-   protected boolean lowerNavLabelText = true;
-
    protected TJHAbstractAction previousAction, upAction, nextAction,
     historyAction, historyForwardAction, historyBackAction,
     fontIncreaseAction, fontDecreaseAction, fontSelectAction,
     popupPreviousAction, popupUpAction, popupNextAction,
     popupHistoryBackAction, popupHistoryForwardAction;
 
-   protected LowerNavLabel previousLabel, upLabel, nextLabel;
+   protected HelpPageNavPanel navPanel;
    protected HelpLowerNavSettingsDialog lowerNavSettingsDialog;
-}
-
-class LowerNavLabel extends JLabel
-{
-   public LowerNavLabel(HelpFrame helpFrame, TJHAbstractAction action, int textPos, int hPos)
-   {
-      super((ImageIcon)action.getValue(Action.SMALL_ICON));
-
-      this.helpFrame = helpFrame;
-
-      setHorizontalTextPosition(textPos);
-      setHorizontalAlignment(hPos);
-
-      addMouseListener(new NavLabelMouseListener(action));
-
-      shortDesc = (String)action.getValue(Action.SHORT_DESCRIPTION);
-
-      if (shortDesc != null)
-      {
-         setToolTipText(shortDesc);
-      }
-   }
-
-   public void update()
-   {
-      setText(originalText);
-   }
-
-   @Override
-   public void setText(String text)
-   {
-      originalText = text;
-      String label = text;
-
-      if (helpFrame == null)
-      {
-      }
-      else if (helpFrame.isLowerNavLabelTextOn())
-      {
-         int limit = helpFrame.getLowerNavLabelLimit();
-
-         if (text.length() > limit)
-         {
-            int idx = text.lastIndexOf(' ', limit);
-
-            if (idx < 1)
-            {
-               idx = limit;
-            }
-
-            label = text.substring(0, idx)+"...";
-         }
-      }
-      else
-      {
-         label = "";
-      }
-
-      super.setText(label);
-
-      String desc = shortDesc;
-
-      if (text != null && !text.isEmpty())
-      {
-         desc += ": " + text;
-      }
-
-      setToolTipText(desc);
-   }
-
-   protected String originalText, shortDesc;
-   protected HelpFrame helpFrame;
-}
-
-class NavLabelMouseListener implements MouseListener
-{
-   public NavLabelMouseListener(TJHAbstractAction action)
-   {
-      this.action = action;
-   }
-
-   @Override
-   public void mouseClicked(MouseEvent e)
-   {
-      action.doAction();
-   }
-
-   @Override
-   public void mouseEntered(MouseEvent e)
-   {
-   }
-
-   @Override
-   public void mouseExited(MouseEvent e)
-   {
-   }
-
-   @Override
-   public void mousePressed(MouseEvent e)
-   {
-   }
-
-   @Override
-   public void mouseReleased(MouseEvent e)
-   {
-   }
-
-   TJHAbstractAction action;
 }

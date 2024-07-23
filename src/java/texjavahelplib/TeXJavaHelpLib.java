@@ -1725,9 +1725,9 @@ public class TeXJavaHelpLib
 
    public void notifyFontChange(HelpFontChangeEvent evt)
    {
-      if (listeners != null)
+      if (helpFontChangeListeners != null)
       {
-         for (HelpFontChangeListener listener : listeners)
+         for (HelpFontChangeListener listener : helpFontChangeListeners)
          {
             listener.fontChanged(evt);
 
@@ -1741,17 +1741,62 @@ public class TeXJavaHelpLib
 
    public void addHelpFontChangeListener(HelpFontChangeListener listener)
    {
-      if (listeners == null)
+      if (helpFontChangeListeners == null)
       {
-         listeners = new Vector<HelpFontChangeListener>();
+         helpFontChangeListeners = new Vector<HelpFontChangeListener>();
       }
 
-      listeners.add(listener);
+      helpFontChangeListeners.add(listener);
    }
 
    public HelpFontSettings getHelpFontSettings()
    {
       return helpFontSettings;
+   }
+
+   public int getDefaultLowerNavLabelLimit()
+   {
+      return helpLowerNavLabelLimit;
+   }
+
+   public boolean isDefaultLowerNavLabelTextOn()
+   {
+      return helpLowerNavLabelShowText;
+   }
+
+   public void setDefaultLowerNavSettings(boolean showText, int limit)
+   {
+      helpLowerNavLabelShowText = showText;
+      helpLowerNavLabelLimit = limit;
+   }
+
+   public void fireLowerNavSettingUpdate(LowerNavSettingsChangeEvent evt)
+   {
+      helpLowerNavLabelShowText = evt.isShowTextOn();
+      helpLowerNavLabelLimit = evt.getLimit();
+
+      if (lowerNavSettingsChangeListeners != null)
+      {
+         for (LowerNavSettingsChangeListener listener : lowerNavSettingsChangeListeners)
+         {
+            listener.lowerNavSettingsChange(evt);
+
+            if (evt.isConsumed())
+            {
+               break;
+            }
+         }
+      }
+   }
+
+   public void addLowerNavSettingsChangeListener(LowerNavSettingsChangeListener listener)
+   {
+      if (lowerNavSettingsChangeListeners == null)
+      {
+         lowerNavSettingsChangeListeners = new Vector<LowerNavSettingsChangeListener>();
+      }
+
+      lowerNavSettingsChangeListeners.add(listener);
    }
 
    public TJHAbstractAction createHelpAction()
@@ -2307,9 +2352,12 @@ public class TeXJavaHelpLib
 
    protected HashMap<String,Object> resourceProperties;
 
-   private Vector<HelpFontChangeListener> listeners; 
+   private Vector<HelpFontChangeListener> helpFontChangeListeners; 
+   private Vector<LowerNavSettingsChangeListener> lowerNavSettingsChangeListeners; 
 
    private HelpFontSettings helpFontSettings;
+   private boolean helpLowerNavLabelShowText = true;
+   private int helpLowerNavLabelLimit = 20;
 
    private Dimension helpWindowInitSize;
 
