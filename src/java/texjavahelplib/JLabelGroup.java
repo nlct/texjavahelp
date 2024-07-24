@@ -152,6 +152,11 @@ public class JLabelGroup extends Vector<JLabel>
       return widestLabel;
    }
 
+   public int getMaxWidth()
+   {
+      return maxWidth;
+   }
+
    private int maxWidth=0;
    private JLabel widestLabel;
    private boolean autoUpdate=true;
