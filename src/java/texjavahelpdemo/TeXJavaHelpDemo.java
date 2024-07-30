@@ -67,7 +67,7 @@ public class TeXJavaHelpDemo extends JFrame
          {
             debugMode = 1;
          }
-         else if (args[i].equals("nodebug"))
+         else if (args[i].equals("nodebug") || args[i].equals("no-debug"))
          {
             debugMode = 0;
          }

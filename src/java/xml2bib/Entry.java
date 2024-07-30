@@ -112,6 +112,16 @@ public class Entry
             fields = new HashMap<String,FieldValue>();
          }
 
+         if (field.equals("name") && !fields.containsKey("text"))
+         {
+            FieldValue name = fields.get(field);
+
+            if (name != null)
+            {
+               fields.put("text", name);
+            }
+         }
+
          if (!encode)
          {
             value = value.replaceAll("'([{}])'", "$1");
@@ -179,7 +189,7 @@ public class Entry
                val = encode(val);
             }
 
-            if (field.equals("name") && encap != null)
+            if (encap != null && (field.equals("name") || field.equals("text")))
             {
                out.format("  %s={%s}", field,
                   String.format("\\%s{%s}", encap, val));

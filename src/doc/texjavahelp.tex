@@ -252,6 +252,12 @@ Specifies the output directory. The switch may be omitted
 \switch{in} is also used or the output directory is specified after
 the input file.
 
+\switchdef{nodebug}
+Switch off debugging mode (default).
+
+\switchdef{no-debug}
+Synonym for \switch{nodebug}.
+
 \chapter{The \TeX\ Java Help Library (\filetext{texjavahelplib.jar})}
 \label{sec:texjavahelplib}
 
@@ -297,7 +303,9 @@ frame.
 \menudef{menu.help.about}
 
 The \menu{help.about} menu item shows the 
-\InlineMsgDef[TeX Java Help Demo]{about.title}
+\InlineMsgDef
+ %[TeX Java Help Demo]
+ {about.title}
 dialog with version details.
 
 \input{helpinterface}

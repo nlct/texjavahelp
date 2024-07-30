@@ -729,6 +729,7 @@
 \glsaddstoragekey{defaultvalue}{}{\optdefval}
 \glsaddstoragekey{initvalue}{}{\optinitval}
 \glsaddstoragekey{note}{}{\note}
+\glsaddstoragekey{defaultparams}{}{\defaultparams}
 
 \glsaddstoragekey{mnemonic}{}{\entrymnemonic}
 \glsaddstoragekey{tooltip}{}{\entrytooltip}
@@ -988,13 +989,35 @@
 % NB just use \dgls if name already encapsulated with \widgetfmt
 \newdglsfieldlike[textformat=widgetfmt]{text}{\widget}{\Widget}{\WIDGET}
 
-\newcommand{\msgparam}[1]{%
- \ifcsdef{msgparam@\romannumeral #1}%
-  {\csuse{msgparam@\romannumeral #1}}%
-  {\meta{param-#1}}%
+\ExplSyntaxOn
+
+\prop_new:N \l__texjavahelp_msgparam_prop
+\tl_new:N \l__texjavahelp_msgparam_tl
+
+\NewDocumentCommand \clearmsgparams { }
+ {
+   \prop_clear:N \l__texjavahelp_msgparam_prop
+ }
+
+\NewDocumentCommand \msgparam { m }
+{
+ \prop_get:NeNTF \l__texjavahelp_msgparam_prop
+   { \int_eval:n { #1 } }
+   \l__texjavahelp_msgparam_tl
+  { \l__texjavahelp_msgparam_tl }
+  { \meta {param-#1} }
 }
 
-\newcommand{\defmsgparam}[2]{\csdef{msgparam@\romannumeral #1}{#2}}
+\NewDocumentCommand \defmsgparam { m m }
+{
+ \prop_put:Nen \l__texjavahelp_msgparam_prop
+   { \int_eval:n { #1 } } { #2 }
+}
+\NewDocumentCommand \undefmsgparam { m }
+ {
+   \prop_remove:Ne \l__texjavahelp_msgparam_prop
+     { \int_eval:n { #1 } }
+ }
 
 \newcommand{\msgchoiceparam}[2]{%
  [\ldots]% TODO
@@ -1005,7 +1028,6 @@
 \newcommand{\msgellipsis}[1]{\ldots}
 \newcommand{\msgendcolon}[1]{}
 
-\ExplSyntaxOn
 % syntax: [param-0, param-1, ...] { label } [ insert ]
 \NewDocumentCommand \msg { O{} m O{} }
   { \__texjavahelp_msg:nnn { #1 } { message.#2 } { #3 } }
@@ -1030,7 +1052,14 @@
 \cs_new:Nn \__texjavahelp_msg:nnn
 {
   \group_begin:
-   \seq_set_from_clist:Nn \l__texjavahelp_msg_seq { #1 }
+   \tl_if_empty:nTF { #1 }
+    {
+      \exp_args:NNv \seq_set_from_clist:Nn \l__texjavahelp_msg_seq
+         { glo@\glsdetoklabel { #2 } @ defaultparams }
+    }
+    {
+      \seq_set_from_clist:Nn \l__texjavahelp_msg_seq { #1 }
+    }
    \seq_map_indexed_inline:Nn \l__texjavahelp_msg_seq
     {
       \defmsgparam { \int_eval:n { ##1 - \c_one_int } } { ##2 }
@@ -1042,7 +1071,14 @@
 \cs_new:Nn \__texjavahelp_inlineglsdef:nn
 {
   \group_begin:
-   \seq_set_from_clist:Nn \l__texjavahelp_msg_seq { #1 }
+   \tl_if_empty:nTF { #1 }
+    {
+      \exp_args:NNv \seq_set_from_clist:Nn \l__texjavahelp_msg_seq
+         { glo@\glsdetoklabel { #2 } @ defaultparams }
+    }
+    {
+      \seq_set_from_clist:Nn \l__texjavahelp_msg_seq { #1 }
+    }
    \seq_map_indexed_inline:Nn \l__texjavahelp_msg_seq
     {
       \defmsgparam { \int_eval:n { ##1 - \c_one_int } } { ##2 }
@@ -1668,6 +1704,17 @@
   \renewcommand{\glsxtralttreeInit}{\glsxtrAltTreeIndent=\parindent}
   \let\printunsrtglossaryentryprocesshook\filtermeasureterms
 }
+
+\renewcommand \glsxtrprenamehook [1]
+{
+   \clearmsgparams
+   \exp_args:NNv \seq_set_from_clist:Nn \l__texjavahelp_msg_seq
+     { glo@\glsdetoklabel { #1 } @ defaultparams }
+   \seq_map_indexed_inline:Nn \l__texjavahelp_msg_seq
+    {
+      \defmsgparam { \int_eval:n { ##1 - \c_one_int } } { ##2 }
+    }
+ }
 
 % This command prints a list of terms but is set up for childless entries
 \NewDocumentCommand \printmain { O{} }

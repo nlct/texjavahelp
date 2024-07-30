@@ -28,29 +28,22 @@ import com.dickimawbooks.texparserlib.latex.glossaries.GlsLabel;
 import com.dickimawbooks.texparserlib.latex.glossaries.GlossariesSty;
 import com.dickimawbooks.texparserlib.latex.latex3.PropertyCommand;
 
-public class InlineMsgDef extends AbstractGlsCommand
+public class SetDefaultMsgParams extends AbstractGlsCommand
 {
-   public InlineMsgDef(GlossariesSty sty)
+   public SetDefaultMsgParams(GlossariesSty sty)
    {
-      this(sty, "InlineMsgDef", "");
+      this(sty, "glsxtrprenamehook");
    }
 
-   public InlineMsgDef(GlossariesSty sty, String name, String prefix)
+   public SetDefaultMsgParams(GlossariesSty sty, String name)
    {
       super(name, sty);
-
-      if (prefix == null)
-      {
-         throw new NullPointerException();
-      }
-
-      setEntryLabelPrefix(prefix);
    }
 
    @Override
    public Object clone()
    {
-      return new InlineMsgDef(sty, getName(), getEntryLabelPrefix());
+      return new SetDefaultMsgParams(sty, getName());
    }
 
    @Override
@@ -79,26 +72,19 @@ public class InlineMsgDef extends AbstractGlsCommand
    {
       TeXParserListener listener = parser.getListener();
 
-      CsvList csvList = TeXParserUtils.popOptCsvList(parser, stack);
       GlsLabel glsLabel = popEntryLabel(parser, stack);
 
-      parser.startGroup();
+      PropertyCommand<Integer> propCs
+        = PropertyCommand.getPropertyCommand(
+          TeXJavaHelpSty.MSG_PARAM_PROP_NAME, parser, true);
 
-      if (csvList == null)
+      propCs.clear();
+
+      TeXObject val = glsLabel.getField("defaultparams");
+
+      if (val != null)
       {
-         TeXObject val = glsLabel.getField("defaultparams");
-
-         if (val != null)
-         {
-            csvList = CsvList.getList(parser, val);
-         }
-      }
-
-      if (csvList != null)
-      {
-         PropertyCommand<Integer> propCs
-           = PropertyCommand.getPropertyCommand(
-             TeXJavaHelpSty.MSG_PARAM_PROP_NAME, parser, true);
+         CsvList csvList = CsvList.getList(parser, val);
 
          for (int i = 0; i < csvList.size(); i++)
          {
@@ -107,15 +93,6 @@ public class InlineMsgDef extends AbstractGlsCommand
             propCs.put(Integer.valueOf(i), arg);
          }
       }
-
-      TeXObjectList expanded = listener.createStack();
-      expanded.add(listener.getControlSequence("inlineglsdef"));
-      expanded.add(glsLabel);
-
-      TeXParserUtils.process(expanded, parser, stack);
-
-      parser.endGroup();
-
    }
 
 }

@@ -24,14 +24,14 @@ import java.io.IOException;
 import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texparserlib.latex.latex3.PropertyCommand;
 
-public class DefMsgParam extends ControlSequence
+public class UndefMsgParam extends ControlSequence
 {
-   public DefMsgParam()
+   public UndefMsgParam()
    {
-      this("defmsgparam");
+      this("undefmsgparam");
    }
 
-   public DefMsgParam(String name)
+   public UndefMsgParam(String name)
    {
       super(name);
    }
@@ -39,7 +39,7 @@ public class DefMsgParam extends ControlSequence
    @Override
    public Object clone()
    {
-      return new DefMsgParam(getName());
+      return new UndefMsgParam(getName());
    }
 
    @Override
@@ -55,13 +55,12 @@ public class DefMsgParam extends ControlSequence
    {
       TeXParserListener listener = parser.getListener();
       int n = popInt(parser, stack);
-      TeXObject arg = popArg(parser, stack);
 
       PropertyCommand<Integer> propCs
         = PropertyCommand.getPropertyCommand(
              TeXJavaHelpSty.MSG_PARAM_PROP_NAME, parser, true);
 
-      propCs.put(Integer.valueOf(n), arg);
+      propCs.remove(Integer.valueOf(n));
    }
 
 }

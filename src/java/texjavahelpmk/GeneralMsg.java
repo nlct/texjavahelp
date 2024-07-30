@@ -23,31 +23,47 @@ import java.io.IOException;
 
 import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texparserlib.latex.CsvList;
-import com.dickimawbooks.texparserlib.primitives.RomanNumeral;
+import com.dickimawbooks.texparserlib.latex.glossaries.AbstractGlsCommand;
+import com.dickimawbooks.texparserlib.latex.glossaries.GlsLabel;
+import com.dickimawbooks.texparserlib.latex.glossaries.GlossariesSty;
+import com.dickimawbooks.texparserlib.latex.latex3.PropertyCommand;
 
-public class GeneralMsg extends ControlSequence
+public class GeneralMsg extends AbstractGlsCommand
 {
-   public GeneralMsg()
+   public GeneralMsg(GlossariesSty sty)
    {
-      this("generalmsg", "");
+      this(sty, "generalmsg", "");
    }
 
-   public GeneralMsg(String name, String prefix)
+   public GeneralMsg(GlossariesSty sty, String name, String prefix)
    {
-      super(name);
+      super(name, sty);
 
       if (prefix == null)
       {
          throw new NullPointerException();
       }
 
-      this.prefix = prefix;
+      setEntryLabelPrefix(prefix);
    }
 
    @Override
    public Object clone()
    {
-      return new GeneralMsg(getName(), prefix);
+      return new GeneralMsg(sty, getName(), getEntryLabelPrefix());
+   }
+
+   @Override
+   public boolean canExpand()
+   {
+      return false;
+   }
+
+   @Override
+   public TeXObjectList expandonce(TeXParser parser, TeXObjectList stack)
+     throws IOException
+   {
+      return null;
    }
 
    @Override
@@ -64,31 +80,38 @@ public class GeneralMsg extends ControlSequence
       TeXParserListener listener = parser.getListener();
 
       CsvList csvList = TeXParserUtils.popOptCsvList(parser, stack);
-      String label = popLabelString(parser, stack);
+      GlsLabel glsLabel = popEntryLabel(parser, stack);
       TeXObject optArg = popOptArg(parser, stack);
 
       parser.startGroup();
 
+      if (csvList == null)
+      {
+         TeXObject val = glsLabel.getField("defaultparams");
+
+         if (val != null)
+         {
+            csvList = CsvList.getList(parser, val);
+         }
+      }
+
       if (csvList != null)
       {
+         PropertyCommand<Integer> propCs
+           = PropertyCommand.getPropertyCommand(
+             TeXJavaHelpSty.MSG_PARAM_PROP_NAME, parser, true);
+
          for (int i = 0; i < csvList.size(); i++)
          {
             TeXObject arg = csvList.getValue(i, true);
 
-            if (arg instanceof TeXObjectList)
-            {
-               arg = (TeXObjectList)arg.clone();
-            }
-
-            String csname = "msgparam@"+RomanNumeral.romannumeral(i);
-
-            parser.putControlSequence(true, new GenericCommand(csname, null, arg));
+            propCs.put(Integer.valueOf(i), arg);
          }
       }
 
       TeXObjectList expanded = listener.createStack();
       expanded.add(listener.getControlSequence("gls"));
-      expanded.add(listener.createGroup(prefix+label));
+      expanded.add(glsLabel);
       expanded.add(listener.getOther('['));
 
       if (optArg != null)
@@ -104,5 +127,4 @@ public class GeneralMsg extends ControlSequence
 
    }
 
-   String prefix;
 }

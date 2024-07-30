@@ -24,14 +24,14 @@ import java.io.IOException;
 import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texparserlib.latex.latex3.PropertyCommand;
 
-public class DefMsgParam extends ControlSequence
+public class ClearMsgParams extends ControlSequence
 {
-   public DefMsgParam()
+   public ClearMsgParams()
    {
-      this("defmsgparam");
+      this("clearmsgparams");
    }
 
-   public DefMsgParam(String name)
+   public ClearMsgParams(String name)
    {
       super(name);
    }
@@ -39,7 +39,18 @@ public class DefMsgParam extends ControlSequence
    @Override
    public Object clone()
    {
-      return new DefMsgParam(getName());
+      return new ClearMsgParams(getName());
+   }
+
+   @Override
+   public void process(TeXParser parser, TeXObjectList stack)
+     throws IOException
+   {
+      PropertyCommand<Integer> propCs
+        = PropertyCommand.getPropertyCommand(
+             TeXJavaHelpSty.MSG_PARAM_PROP_NAME, parser, true);
+
+      propCs.clear();
    }
 
    @Override
@@ -48,20 +59,4 @@ public class DefMsgParam extends ControlSequence
    {
       process(parser, parser);
    }
-
-   @Override
-   public void process(TeXParser parser, TeXObjectList stack)
-     throws IOException
-   {
-      TeXParserListener listener = parser.getListener();
-      int n = popInt(parser, stack);
-      TeXObject arg = popArg(parser, stack);
-
-      PropertyCommand<Integer> propCs
-        = PropertyCommand.getPropertyCommand(
-             TeXJavaHelpSty.MSG_PARAM_PROP_NAME, parser, true);
-
-      propCs.put(Integer.valueOf(n), arg);
-   }
-
 }

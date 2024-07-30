@@ -36,6 +36,8 @@ import java.nio.file.Path;
 import java.awt.Dimension;
 
 import com.dickimawbooks.texparserlib.*;
+import com.dickimawbooks.texparserlib.latex.FloatBoxStyle;
+import com.dickimawbooks.texparserlib.latex.FrameBox;
 import com.dickimawbooks.texparserlib.latex.KeyValList;
 import com.dickimawbooks.texparserlib.latex.LaTeXSty;
 import com.dickimawbooks.texparserlib.latex.color.ColorSty;
@@ -128,6 +130,41 @@ public class TJHListener extends L2HConverter
 
       setImageExtensions(".png", ".PNG", ".jpg", ".JPG", ".jpeg", ".JPEG",
         ".gif", ".GIF", ".pdf", ".PDF", ".tex");
+   }
+
+   // HTMLDocument doesn't support float so add spacing
+   @Override
+   public void startFrameBox(FrameBox fbox)
+    throws IOException
+   {
+      super.startFrameBox(fbox);
+
+      if (!isHtml5())
+      {
+         FloatBoxStyle fs = fbox.getFloatStyle();
+
+         if (fs == FloatBoxStyle.RIGHT)
+         {
+            writeliteral("<span class=\"qquad\"> &nbsp; &nbsp; </span>");
+         }
+      }
+   }
+
+   @Override
+   public void endFrameBox(FrameBox fbox)
+    throws IOException
+   {
+      if (!isHtml5())
+      {
+         FloatBoxStyle fs = fbox.getFloatStyle();
+
+         if (fs == FloatBoxStyle.LEFT)
+         {
+            writeliteral("<span class=\"qquad\"> &nbsp; &nbsp; </span>");
+         }
+      }
+
+      super.endFrameBox(fbox);
    }
 
    public void setNavigationXmlFile(File file)

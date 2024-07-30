@@ -32,6 +32,9 @@ import java.util.Properties;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
 import java.text.MessageFormat;
 
 import java.awt.event.KeyEvent;
@@ -351,13 +354,7 @@ public class Xml2Bib
             Entry entry = null;
             String parent = prefix;
 
-            if (suffix.equals("mnemonic")
-              || suffix.equals("tooltip")
-              || suffix.equals("description")
-              || suffix.equals("keystroke")
-              || suffix.equals("defaultkeys")
-              || suffix.equals("plural")
-               )
+            if (KEY_SUFFIX_PATTERN.matcher(suffix).matches())
             {
                String fieldValue = (String)props.getProperty(key);
                key = prefix;
@@ -377,13 +374,19 @@ public class Xml2Bib
 
                if (entry == null)
                {
+                  entry = entries.get(key+".title");
+               }
+
+               if (entry == null)
+               {
                   String value = (String)props.getProperty(key);
                   entry = new Entry(this, key, value);
                   entries.put(key, entry);
                }
 
                boolean encode
-                  = !(key.startsWith("index.") || key.startsWith("manual."));
+                  = !(key.startsWith("index.") || key.startsWith("manual.")
+                       || TEX_SUFFIX_PATTERN.matcher(suffix).matches());
 
                if (suffix.equals("keystroke"))
                {
@@ -823,6 +826,11 @@ public class Xml2Bib
 
    private TeXJavaHelpLib helpLib;
    private TeXJavaHelpLibAppAdapter helpLibApp;
+
+   public static final Pattern KEY_SUFFIX_PATTERN
+     = Pattern.compile("mnemonic|tooltip|description|keystroke|defaultkeys|plural|symbol|user[1-6]|name|text|defaultparams");
+   public static final Pattern TEX_SUFFIX_PATTERN
+     = Pattern.compile("plural|text|name|symbol|user[1-6]|defaultparams|defaultkeys");
 
    public static final String NAME = "xml2bib";
 }

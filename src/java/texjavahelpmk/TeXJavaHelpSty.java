@@ -34,6 +34,8 @@ import com.dickimawbooks.texparserlib.html.StartElement;
 import com.dickimawbooks.texparserlib.html.EndElement;
 import com.dickimawbooks.texparserlib.html.HtmlTag;
 
+import com.dickimawbooks.texparserlib.latex.latex3.PropertyCommand;
+
 import com.dickimawbooks.texparserlib.latex.nlctdoc.UserGuideSty;
 import com.dickimawbooks.texparserlib.latex.nlctdoc.TaggedColourBox;
 import com.dickimawbooks.texparserlib.latex.nlctdoc.ColourBox;
@@ -307,22 +309,27 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new AtFirstOfOne("msgellipsis"));
       registerControlSequence(new AtGobble("msgendcolon"));
 
+      registerControlSequence(new PropertyCommand<Integer>(MSG_PARAM_PROP_NAME));
+
       registerControlSequence(new MsgParam());
       registerControlSequence(new DefMsgParam());
+      registerControlSequence(new UndefMsgParam());
+      registerControlSequence(new ClearMsgParams());
+      registerControlSequence(new SetDefaultMsgParams(glossariesSty));
       registerControlSequence(new AtNumberOfNumber("msgchoiceparamitem", 3, 3));
 
       // TODO
       registerControlSequence(new LaTeXGenericCommand(true, "msgchoiceparam",
        "mm", listener.createString("[\u2026]")));
 
-      registerControlSequence(new GeneralMsg());
-      registerControlSequence(new GeneralMsg("msg", "message."));
-      registerControlSequence(new GeneralMsg("warnmsg", "warning."));
-      registerControlSequence(new GeneralMsg("errmsg", "error."));
-      registerControlSequence(new GeneralMsg("syntaxmsg", "syntax."));
-      registerControlSequence(new GeneralMsg("manmsg", "manual."));
+      registerControlSequence(new GeneralMsg(glossariesSty));
+      registerControlSequence(new GeneralMsg(glossariesSty, "msg", "message."));
+      registerControlSequence(new GeneralMsg(glossariesSty, "warnmsg", "warning."));
+      registerControlSequence(new GeneralMsg(glossariesSty, "errmsg", "error."));
+      registerControlSequence(new GeneralMsg(glossariesSty, "syntaxmsg", "syntax."));
+      registerControlSequence(new GeneralMsg(glossariesSty, "manmsg", "manual."));
 
-      registerControlSequence(new InlineMsgDef());
+      registerControlSequence(new InlineMsgDef(glossariesSty));
 
       // dual prefix list
       def = listener.createString("action.,button.,menu.,widget.,help.,index.,");
@@ -679,4 +686,6 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       return env;
    }
+
+   public static final String MSG_PARAM_PROP_NAME = "l__texjavahelp_msgparam_prop";
 }

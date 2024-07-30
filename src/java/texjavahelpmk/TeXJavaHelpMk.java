@@ -420,7 +420,7 @@ public class TeXJavaHelpMk implements TeXApp
                }
             }
          }
-         else if (args[i].equals("--nodebug"))
+         else if (args[i].equals("--nodebug") || args[i].equals("--no-debug"))
          {
             debugMode = 0;
          }

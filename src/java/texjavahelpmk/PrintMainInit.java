@@ -46,12 +46,14 @@ public class PrintMainInit extends ControlSequence
    public void process(TeXParser parser, TeXObjectList stack)
      throws IOException
    {
+      TeXParserListener listener = parser.getListener();
+
       parser.putControlSequence(true, 
         new LaTeXGenericCommand(true, "printunsrtglossaryentryprocesshook",
          "m",
          TeXParserUtils.createStack(parser,
             new TeXCsRef("filterterms"),
-            TeXParserUtils.createGroup(parser, parser.getListener().getParam(1))
+            TeXParserUtils.createGroup(parser, listener.getParam(1))
         )));
    }
 

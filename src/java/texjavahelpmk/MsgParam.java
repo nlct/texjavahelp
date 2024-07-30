@@ -22,7 +22,7 @@ package com.dickimawbooks.texjavahelpmk;
 import java.io.IOException;
 
 import com.dickimawbooks.texparserlib.*;
-import com.dickimawbooks.texparserlib.primitives.RomanNumeral;
+import com.dickimawbooks.texparserlib.latex.latex3.PropertyCommand;
 
 public class MsgParam extends Command
 {
@@ -49,19 +49,35 @@ public class MsgParam extends Command
       TeXParserListener listener = parser.getListener();
       int n = popInt(parser, stack);
 
-      TeXObjectList expanded = listener.createStack();
+      TeXObjectList expanded = null;
 
-      ControlSequence cs = parser.getControlSequence(
-        "msgparam@"+RomanNumeral.romannumeral(n));
+      PropertyCommand<Integer> propCs
+        = PropertyCommand.getPropertyCommand(
+             TeXJavaHelpSty.MSG_PARAM_PROP_NAME, parser, false);
 
-      if (cs == null)
+      TeXObject obj = propCs.get(Integer.valueOf(n));
+
+      if (obj == null)
       {
+         expanded = listener.createStack();
          expanded.add(listener.getControlSequence("meta"));
-         expanded.add(listener.createGroup("param-"+n));
+         Group grp = listener.createGroup("param-"+n);
+         expanded.add(grp);
       }
       else
       {
-         expanded.add(cs);
+         obj = (TeXObject)obj.clone();
+
+         if (parser.isStack(obj))
+         {
+            expanded = (TeXObjectList)obj;
+         }
+         else
+         {
+            expanded = listener.createStack();
+
+            expanded.add(obj);
+         }
       }
 
       return expanded;
