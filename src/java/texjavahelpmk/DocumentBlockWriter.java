@@ -27,6 +27,7 @@ import java.text.BreakIterator;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+import com.dickimawbooks.texparserlib.TeXParser;
 import com.dickimawbooks.texparserlib.TeXParserUtils;
 import com.dickimawbooks.texparserlib.html.L2HConverter;
 import com.dickimawbooks.texparserlib.html.DocumentBlockType;
@@ -191,30 +192,58 @@ public class DocumentBlockWriter extends Writer
    @Override
    public void write(int c) throws IOException
    {
+      if (writerClosed && c > 0 && !Character.isWhitespace(c))
+      {
+         throw new IOException(
+          String.format("Writer closed. Can't write character 0x%x", c));
+      }
+
       buffer.append((char)c);
    }
 
    @Override
    public void write(char[] cbuff) throws IOException
    {
+      if (writerClosed && cbuff.length > 0)
+      {
+         throw new IOException("Writer closed. Can't write cbuff "+new String(cbuff));
+      }
+
       buffer.append(cbuff);
    }
 
    @Override
    public void write(char[] cbuff, int off, int len) throws IOException
    {
+      if (writerClosed && len > 0)
+      {
+         throw new IOException("Writer closed. Can't write cbuff "
+           +new String(cbuff, off, len));
+      }
+
       buffer.append(cbuff, off, len);
    }
 
    @Override
    public void write(String str) throws IOException
    {
+      if (writerClosed && !str.isEmpty())
+      {
+         throw new IOException("Writer closed. Can't write string " +str);
+      }
+
       buffer.append(str);
    }
 
    @Override
    public void write(String str, int off, int len) throws IOException
    {
+      if (writerClosed && len > 0)
+      {
+         throw new IOException("Writer closed. Can't write substring "
+           + str.substring(off, len));
+      }
+
       buffer.append(str, off, len);
    }
 
@@ -222,11 +251,18 @@ public class DocumentBlockWriter extends Writer
    public void flush() throws IOException
    {
       writeAndClear();
+
+      listener.getParser().debugMessage(TeXParser.DEBUG_IO,
+        "FLUSHING "+toString());
+
       writer.flush();
    }
 
    protected void writeAndClear() throws IOException
    {
+      listener.getParser().debugMessage(TeXParser.DEBUG_IO,
+        "WRITING "+toString());
+
       index += buffer.length();
 
       writer.write(buffer.toString());
@@ -237,11 +273,24 @@ public class DocumentBlockWriter extends Writer
    public void close() throws IOException
    {
       flush();
+
+      listener.getParser().debugMessage(TeXParser.DEBUG_IO,
+        "CLOSING "+toString());
+
       writer.close();
+
+      writerClosed = true;
    }
 
    public void setWriter(Writer writer)
+    throws IOException
    {
+      if (this.writer != null)
+      {
+         flush();
+      }
+
+      writerClosed = false;
       this.writer = writer;
       index = 0;
    }
@@ -259,10 +308,18 @@ public class DocumentBlockWriter extends Writer
       return index;
    }
 
+   @Override
+   public String toString()
+   {
+      return String.format("%s[writer=%s,closed=%s,index=%d,contextId=%d,buffer=%s]",
+       getClass().getSimpleName(), writer, writerClosed, index, contextId, buffer);
+   }
+
    protected Writer writer;
    protected int index = 0;
    protected StringBuilder buffer;
    protected TJHListener listener;
+   protected boolean writerClosed = false;
 
    protected int contextId = 0;
 
