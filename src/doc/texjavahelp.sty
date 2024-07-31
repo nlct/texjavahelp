@@ -1054,8 +1054,14 @@
   \group_begin:
    \tl_if_empty:nTF { #1 }
     {
-      \exp_args:NNv \seq_set_from_clist:Nn \l__texjavahelp_msg_seq
-         { glo@\glsdetoklabel { #2 } @ defaultparams }
+      \glsxtrifhasfield * { defaultparams } { #2 }
+      {
+         \exp_args:NNV \seq_set_from_clist:Nn \l__texjavahelp_msg_seq
+           \glscurrentfieldvalue
+      }
+      {
+        \seq_clear:N \l__texjavahelp_msg_seq
+      }
     }
     {
       \seq_set_from_clist:Nn \l__texjavahelp_msg_seq { #1 }
@@ -1073,8 +1079,14 @@
   \group_begin:
    \tl_if_empty:nTF { #1 }
     {
-      \exp_args:NNv \seq_set_from_clist:Nn \l__texjavahelp_msg_seq
-         { glo@\glsdetoklabel { #2 } @ defaultparams }
+      \glsxtrifhasfield * { defaultparams } { #2 }
+      {
+         \exp_args:NNV \seq_set_from_clist:Nn \l__texjavahelp_msg_seq
+           \glscurrentfieldvalue
+      }
+      {
+        \seq_clear:N \l__texjavahelp_msg_seq
+      }
     }
     {
       \seq_set_from_clist:Nn \l__texjavahelp_msg_seq { #1 }
@@ -1708,13 +1720,17 @@
 % requires glossaries-extra v1.54+
 \renewcommand \glsxtrprenamehook [1]
 {
-   \clearmsgparams
-   \exp_args:NNv \seq_set_from_clist:Nn \l__texjavahelp_msg_seq
-     { glo@\glsdetoklabel { #1 } @ defaultparams }
-   \seq_map_indexed_inline:Nn \l__texjavahelp_msg_seq
+  \clearmsgparams
+  \glsxtrifhasfield * { defaultparams } { #1 }
     {
-      \defmsgparam { \int_eval:n { ##1 - \c_one_int } } { ##2 }
+      \exp_args:NNV \seq_set_from_clist:Nn \l__texjavahelp_msg_seq
+        \glscurrentfieldvalue
+      \seq_map_indexed_inline:Nn \l__texjavahelp_msg_seq
+       {
+         \defmsgparam { \int_eval:n { ##1 - \c_one_int } } { ##2 }
+       }
     }
+    { }
  }
 
 % This command prints a list of terms but is set up for childless entries
