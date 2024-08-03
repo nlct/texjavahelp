@@ -228,6 +228,48 @@
 \newcommand{\TeXLive}{\TeX\ Live}
 \newcommand{\MikTeX}{Mik\TeX}
 
+\newrobustcmd*{\ctanpkg}[1]{\href{https://ctan.org/pkg/#1}{\nolinkurl{ctan.org/pkg/#1}}}
+\MFUexcl{\ctanpkg}
+
+\newrobustcmd*{\CTANpkg}[1]{%
+ \href{https://ctan.org/pkg/#1}{CTAN}%
+ \glsxtrdopostpunc{\footnote{\href{https://ctan.org/pkg/#1}{\nolinkurl{ctan.org/pkg/#1}}}}%
+}
+\MFUexcl{\CTANpkg}
+
+\newcommand*{\ctanmirrordocnofn}[2]{%
+ \href{http://mirrors.ctan.org/#1.pdf}{#2}%
+}
+
+\newrobustcmd*{\ctanmirrornofn}[2]{%
+ \href{http://mirrors.ctan.org/#1}{#2}%
+}
+\MFUexcl{\ctanmirrornofn}
+
+\newrobustcmd*{\ctanmirror}[2]{%
+ \href{http://mirrors.ctan.org/#1}{#2}%
+ \glsxtrdopostpunc{\footnote{\href{http://mirrors.ctan.org/#1}{\nolinkurl{mirrors.ctan.org/#1}}}}%
+}
+\MFUexcl{\ctanmirror}
+
+\newrobustcmd*{\ctanref}[2]{\href{https://ctan.org/#1}{#2}%
+ \glsxtrdopostpunc{\footnote{\href{https://ctan.org/#1}{\nolinkurl{ctan.org/#1}}}}%
+}
+\MFUexcl{\ctanref}
+
+\newrobustcmd*{\ctanpkgmirror}[2]{%
+ \href{http://mirrors.ctan.org/pkg/#1}{#2}%
+ \glsxtrdopostpunc{\footnote{\href{http://mirrors.ctan.org/pkg/#1}{\nolinkurl{mirrors.ctan.org/pkg/#1}}}}%
+}
+\MFUexcl{\ctanpkgmirror}
+
+\newrobustcmd*{\ctansupportmirror}[2]{%
+ \href{http://mirrors.ctan.org/support/#1}{#2}%
+ \glsxtrdopostpunc{\footnote{\href{http://mirrors.ctan.org/support/#1}{\nolinkurl{mirrors.ctan.org/support/#1}}}}%
+}
+\MFUexcl{\ctansupportmirror}
+
+
 % Cross-referencing
 
 \newcommand{\refslistsep}{, }

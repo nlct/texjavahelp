@@ -79,6 +79,7 @@ public class TeXJavaHelpSty extends UserGuideSty
       addDiscretionaryCommands();
       addCrossRefCommands();
       addFootnoteCommands();
+      addDocRefCommands();// NB not all supported by texjavahelp.sty
       addSymbolCommands();
       addTextCommands();
       addListCommands();
