@@ -48,7 +48,7 @@ import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLibAppAdapter;
 import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 
-public class TeXJavaHelpMk implements TeXApp
+public class TeXJavaHelpMk extends TeXAppAdapter
 {
    protected void initHelpLibrary() throws IOException
    {
@@ -256,11 +256,6 @@ public class TeXJavaHelpMk implements TeXApp
    public boolean isDebuggingOn()
    {
       return debugMode > 0;
-   }
-
-   @Override
-   public void progress(int percentage)
-   {
    }
 
    @Override
@@ -1300,73 +1295,6 @@ public class TeXJavaHelpMk implements TeXApp
            String.format("%s \"%s\" \"%s\"", app, inFile, outFile), exitCode));
       }
    }
-
-   @Override
-   public boolean isReadAccessAllowed(TeXPath path)
-   {
-      return isReadAccessAllowed(path.getFile());
-   }
-
-   @Override
-   public boolean isReadAccessAllowed(File file)
-   {
-      return file.canRead();
-   }
-
-   @Override
-   public boolean isWriteAccessAllowed(TeXPath path)
-   {
-      return isWriteAccessAllowed(path.getFile());
-   }
-
-   @Override
-   public boolean isWriteAccessAllowed(File file)
-   {
-      if (file.exists())
-      {
-         return file.canWrite();
-      }
-
-      File dir = file.getParentFile();
-
-      if (dir != null)
-      {
-         return dir.canWrite();
-      }
-
-      return (new File(System.getProperty("user.dir"))).canWrite();
-   }
-
-   @Override
-   public BufferedReader createBufferedReader(Path path,
-     Charset charset) throws IOException, SecurityException
-   {
-      try
-      {
-         return Files.newBufferedReader(path, charset);
-      }
-      catch (Throwable e)
-      {
-         return new BufferedReader(
-          new InputStreamReader(new FileInputStream(path.toFile()), charset));
-      }
-   }
-
-   @Override
-   public BufferedWriter createBufferedWriter(Path path,
-     Charset charset) throws IOException, SecurityException
-   {
-      try
-      {
-         return Files.newBufferedWriter(path, charset);
-      }
-      catch (Throwable e)
-      {
-         return new BufferedWriter(
-            new OutputStreamWriter(new FileOutputStream(path.toFile()), charset));
-      }
-   }
-
 
    @Override
    public Charset getDefaultCharset()
