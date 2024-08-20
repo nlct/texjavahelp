@@ -593,7 +593,10 @@ public class TeXJavaHelpMk implements TeXApp
 
       if (logFile != null)
       {
-         logWriter = new PrintWriter(logFile);
+         logWriter = new PrintWriter(
+           createBufferedWriter(logFile.toPath(), 
+             outCharset == null ? defaultCharset : outCharset));
+
          parser.setDebugMode(debugMode, logWriter);
       }
 
@@ -675,11 +678,13 @@ public class TeXJavaHelpMk implements TeXApp
 
          if (charset == null)
          {
-            writer = new PrintWriter(file);
+            writer = new PrintWriter(
+              createBufferedWriter(file.toPath(), defaultCharset));
          }
          else
          {
-            writer = new PrintWriter(file, charset.name());
+            writer = new PrintWriter(
+              createBufferedWriter(file.toPath(), charset));
          }
 
          writer.println("\\batchmode");
@@ -1333,6 +1338,37 @@ public class TeXJavaHelpMk implements TeXApp
    }
 
    @Override
+   public BufferedReader createBufferedReader(Path path,
+     Charset charset) throws IOException, SecurityException
+   {
+      try
+      {
+         return Files.newBufferedReader(path, charset);
+      }
+      catch (Throwable e)
+      {
+         return new BufferedReader(
+          new InputStreamReader(new FileInputStream(path.toFile()), charset));
+      }
+   }
+
+   @Override
+   public BufferedWriter createBufferedWriter(Path path,
+     Charset charset) throws IOException, SecurityException
+   {
+      try
+      {
+         return Files.newBufferedWriter(path, charset);
+      }
+      catch (Throwable e)
+      {
+         return new BufferedWriter(
+            new OutputStreamWriter(new FileOutputStream(path.toFile()), charset));
+      }
+   }
+
+
+   @Override
    public Charset getDefaultCharset()
    {
       return defaultCharset;
@@ -1346,7 +1382,7 @@ public class TeXJavaHelpMk implements TeXApp
 
       try
       {
-         in = Files.newBufferedReader(file.toPath(), getDefaultCharset());
+         in = createBufferedReader(file.toPath(), getDefaultCharset());
 
          int c = -1;
 

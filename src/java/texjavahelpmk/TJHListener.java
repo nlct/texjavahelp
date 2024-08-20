@@ -325,7 +325,7 @@ public class TJHListener extends L2HConverter
          Charset charset = getHtmlCharset();
 
          out = new PrintWriter(
-           Files.newBufferedWriter(indexXmlFile.toPath(), charset));
+           getTeXApp().createBufferedWriter(indexXmlFile.toPath(), charset));
 
          IndexItem.saveIndex(indexData, out, charset);
       }
