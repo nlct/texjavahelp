@@ -1243,7 +1243,7 @@ public class TeXJavaHelpMk implements TeXApp
      String[] outOptions, File outFile)
      throws IOException,InterruptedException
    {
-      convertimage(inPage, inOptions, inFile, outOptions, outFile, "convert");
+      convertimage(inPage, inOptions, inFile, outOptions, outFile, "magick");
    }
 
 
