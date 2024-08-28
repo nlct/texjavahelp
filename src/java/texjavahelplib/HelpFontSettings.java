@@ -397,6 +397,12 @@ public class HelpFontSettings
       return name;
    }
 
+   public static String getBodyFontRule(String fontName, int fontSize)
+   {
+      return getBodyFontRule(fontNameNeedsQuotes(fontName), fontName,
+       fontSize);
+   }
+
    public static String getBodyFontRule(boolean fontNameNeedsQuotes,
       String fontName, int fontSize)
    {
@@ -422,6 +428,11 @@ public class HelpFontSettings
       }
 
       return rule;
+   }
+
+   public static String getMonoFontRule(String fontName)
+   {
+      return getMonoFontRule(fontNameNeedsQuotes(fontName), fontName);
    }
 
    public static String getMonoFontRule(boolean fontNameNeedsQuotes,
