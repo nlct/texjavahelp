@@ -206,10 +206,16 @@ public class DocumentBlockWriter extends Writer
    {
       if (writerClosed && cbuff.length > 0)
       {
-         throw new IOException("Writer closed. Can't write cbuff "+new String(cbuff));
+         if (!TeXParserUtils.isBlank(cbuff))
+         {
+            throw new IOException("Writer closed. Can't write cbuff "
+              +new String(cbuff));
+         }
       }
-
-      buffer.append(cbuff);
+      else
+      {
+         buffer.append(cbuff);
+      }
    }
 
    @Override
@@ -217,22 +223,32 @@ public class DocumentBlockWriter extends Writer
    {
       if (writerClosed && len > 0)
       {
-         throw new IOException("Writer closed. Can't write cbuff "
-           +new String(cbuff, off, len));
+         if (!TeXParserUtils.isBlank(cbuff, off, len))
+         {
+            throw new IOException("Writer closed. Can't write cbuff "
+              +new String(cbuff, off, len));
+         }
       }
-
-      buffer.append(cbuff, off, len);
+      else
+      {
+         buffer.append(cbuff, off, len);
+      }
    }
 
    @Override
    public void write(String str) throws IOException
    {
-      if (writerClosed && !str.isEmpty())
+      if (writerClosed)
       {
-         throw new IOException("Writer closed. Can't write string " +str);
+         if (!TeXParserUtils.isBlank(str))
+         {
+            throw new IOException("Writer closed. Can't write string " +str);
+         }
       }
-
-      buffer.append(str);
+      else
+      {
+         buffer.append(str);
+      }
    }
 
    @Override
@@ -240,11 +256,16 @@ public class DocumentBlockWriter extends Writer
    {
       if (writerClosed && len > 0)
       {
-         throw new IOException("Writer closed. Can't write substring "
-           + str.substring(off, len));
+         if (!TeXParserUtils.isBlank(str, off, len))
+         {
+            throw new IOException("Writer closed. Can't write substring "
+              + str.substring(off, len));
+         }
       }
-
-      buffer.append(str, off, len);
+      else
+      {
+         buffer.append(str, off, len);
+      }
    }
 
    @Override
