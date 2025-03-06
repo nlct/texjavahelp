@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2024 Nicola L.C. Talbot
+    Copyright (C) 2025 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -17,6 +17,9 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package com.dickimawbooks.texjavahelplib;
+
+import java.text.MessageFormat;
+import java.text.BreakIterator;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -286,6 +289,164 @@ public class TeXJavaHelpLib
       String choiceLabel, int numChoices, Object... args)
    {
       return messages.getChoiceMessage(label, argIdx, choiceLabel, numChoices, args);
+   }
+
+   private void printSyntaxItem(String syntax, int syntaxLength, String description)
+   {
+      String desc = description.replaceAll(" *\\n", " ");
+
+      int descLength = desc.length();
+       
+      System.out.print("  ");
+
+      if (syntax != null)
+      {
+         if (syntaxLength <= 0)
+         {
+            syntaxLength = syntax.length();
+         }
+
+         System.out.print(syntax);
+      }
+      else
+      {
+         for (int i = 0; i < syntaxLength; i++)
+         {
+            System.out.print(' ');
+         }
+      }
+
+      int numSpaces = SYNTAX_ITEM_TAB - syntaxLength - 2;
+
+      if (numSpaces <= 0)
+      {
+         numSpaces = 2;
+      }
+
+      int indent = syntaxLength+2+numSpaces;
+
+      int width = SYNTAX_ITEM_LINEWIDTH-indent;
+
+      for (int i = 0; i < numSpaces; i++)
+      {
+         System.out.print(' ');
+      }
+
+      if (width >= descLength)
+      {
+         System.out.println(desc);
+      }
+      else
+      {
+         BreakIterator boundary = BreakIterator.getLineInstance();
+         boundary.setText(desc);
+
+         int start = boundary.first();
+         int n = 0;
+
+         int defWidth = SYNTAX_ITEM_LINEWIDTH - SYNTAX_ITEM_TAB;
+         numSpaces = SYNTAX_ITEM_TAB;
+
+         for (int end = boundary.next();
+            end != BreakIterator.DONE;
+            start = end, end = boundary.next())
+         {
+            int len = end-start;
+            n += len;
+
+            if (n >= width)
+            {
+               System.out.println();
+
+               for (int i = 0; i < numSpaces; i++)
+               {
+                  System.out.print(' ');
+               }
+
+               n = len;
+               width = defWidth;
+            }
+
+            System.out.print(desc.substring(start,end));
+         }
+
+         System.out.println();
+      }
+   }
+
+   public void printSyntaxItem(String syntax, String desc)
+   {
+      printSyntaxItem(syntax, 0, desc);
+   }
+
+   public void printSyntaxItem(int syntaxLength, String desc)
+   {
+      printSyntaxItem(null, syntaxLength, desc);
+   }
+
+   public void printWordWrapped(String message)
+   {
+      String desc = message.replaceAll(" *\\n", " ");
+
+      int descLength = desc.length();
+
+      if (descLength <= SYNTAX_ITEM_LINEWIDTH)
+      {
+         System.out.println(desc);
+      }
+      else
+      {
+         BreakIterator boundary = BreakIterator.getLineInstance();
+         boundary.setText(desc);
+         int start = boundary.first();
+         int n = 0;
+
+         for (int end = boundary.next();
+            end != BreakIterator.DONE;
+            start = end, end = boundary.next())
+         {
+            int len = end-start;
+            n += len;
+
+            if (n >= SYNTAX_ITEM_LINEWIDTH)
+            {
+               System.out.println();
+               n = len;
+            }
+
+            System.out.print(desc.substring(start,end));
+         }
+
+         System.out.println();
+      }
+   }
+
+   public void printSyntaxItem(String message)
+   {
+      String[] messageList = message.split("\n\t");
+      int syntaxLength = 0;
+
+      for (int i = 0 ; i < messageList.length; i++)
+      {
+         String[] split = messageList[i].split("\t", 2);
+
+         if (split.length == 2)
+         {
+            if (split[0].isEmpty())
+            {
+               printSyntaxItem(syntaxLength, messageList[i]);
+            }
+            else
+            {
+               syntaxLength = split[0].length();
+               printSyntaxItem(split[0], split[1]);
+            }
+         }
+         else
+         {
+            printWordWrapped(messageList[i]);
+         }
+      }
    }
 
    public void message(String message)
@@ -2381,6 +2542,9 @@ public class TeXJavaHelpLib
    public static final String MONO_CSS_CLASSES
     = ".code, .cmd, .cmdfmt, .csfmt, .csfmtfont, .csfmtcolourfont, .appfmt, .styfmt, .clsfmt, .envfmt, .optfmt, .csoptfmt, .styoptfmt, .clsoptfmt, .ctrfmt, .filefmt, .extfmt, .cbeg, .cend, .longargfmt, .shortargfmt, .qtt, .xmltagfmt, .varfmt, .terminal, .transcript, .filedef, .codebox, .badcodebox, .unicodebox, .compactcodebox, .sidebysidecode";
 
-   public static final String VERSION = "0.7a";
-   public static final String VERSION_DATE = "2024-12-17";
+   public static final int SYNTAX_ITEM_LINEWIDTH=78;
+   public static final int SYNTAX_ITEM_TAB=30;
+
+   public static final String VERSION = "0.8a";
+   public static final String VERSION_DATE = "2025-03-06";
 }
