@@ -1235,6 +1235,18 @@
 \newcommand{\filefmt}[1]{\texorpdfstring{\texttt{#1}}{#1}}
 \MFUblocker{\filefmt}
 
+% \metafilefmt{prefix}{val}{suffix} -> prefix<val>suffix
+\newcommand*{\metafilefmt}[3]{%
+  \filefmt{#1}\discretionary{}{}{}\meta{#2}\discretionary{}{}{}\filefmt{#3}%
+}
+
+% \metametafilefmt{prefix}{val1}{mid}{val2}{suffix} ->
+% prefix<val1>mid<val2>suffix
+\newcommand*{\metametafilefmt}[5]{%
+  \filefmt{#1}\discretionary{}{}{}\meta{#2}\discretionary{}{}{}\filefmt{#3}%
+  \discretionary{}{}{}\meta{#4}\discretionary{}{}{}\filefmt{#5}%
+}
+
 \newcommand{\styfmt}[1]{\texorpdfstring{\texttt{#1}}{#1}}
 \MFUblocker{\styfmt}
 
