@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-<comment>English language file for texjavahelpdemo</comment>
+<comment>English language file for texjavahelpdemo
+https://github.com/nlct/texjavahelp
+GPL-3.0
+Nicola Talbot
+</comment>
 
 <!-- Main Frame Widgets -->
 <entry key="label.demo">Demo Label (Introduction)</entry>

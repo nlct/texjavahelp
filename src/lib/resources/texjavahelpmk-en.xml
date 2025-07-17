@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-<comment>English language file for texjavahelpmk (in addition to texparserlib-en.xml)</comment>
+<comment>English language file for texjavahelpmk (in addition to texparserlib-en.xml)
+https://github.com/nlct/texjavahelp
+GPL-3.0
+Nicola Talbot
+</comment>
 
 <entry key="manual.no-search">
 I we you he she it they
