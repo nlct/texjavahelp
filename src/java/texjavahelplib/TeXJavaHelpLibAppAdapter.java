@@ -22,8 +22,15 @@ import java.net.URL;
 import java.text.MessageFormat;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 
 /**
  * Abstract class adapting TeXJavaHelpLibApp interface.
@@ -33,6 +40,11 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
    public void setHelpLib(TeXJavaHelpLib helpLib)
    {
       this.helpLib = helpLib;
+   }
+
+   public TeXJavaHelpLib getHelpLib()
+   {
+      return helpLib;
    }
 
    public abstract boolean isGUI();
@@ -189,6 +201,18 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
       }
    }
 
+   public int getMnemonicWithFallback(String label, int defVal)
+   {
+      int mnemonic = -1;
+
+      if (helpLib != null)
+      {
+         mnemonic = helpLib.getMnemonic(label);
+      }
+
+      return mnemonic < 0 ? defVal : mnemonic;
+   }
+
    public void stdOutMessage(String msg)
    {
       System.out.println(msg);
@@ -254,17 +278,38 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
          }
       }
 
+      if (warningTitle == null)
+      {
+         warningTitle = getMessageWithFallback("warning.title", "Warning");
+      }
+
       if (isGUI())
       {
-         JOptionPane.showMessageDialog(owner, msg,
-           getMessageWithFallback("warning.title", "Warning"),
-           JOptionPane.WARNING_MESSAGE);
+         showMessageDialog(owner, msg, warningTitle, JOptionPane.WARNING_MESSAGE);
+
+         if (e != null && isDebuggingOn())
+         {
+            e.printStackTrace();
+         }
       }
       else
       {
-         stdErrMessage(e, String.format("%s: %s",
-           getApplicationName(), msg));
+         stdErrMessage(e, String.format("%s: %s %s",
+           getApplicationName(), warningTitle, msg));
       }
+   }
+
+   protected void showMessageDialog(Component owner, String msg,
+     String title, int type)
+   {
+      if (errWarnMessageArea == null)
+      {
+         initStackTraceMessageArea();
+      }
+
+      errWarnMessageArea.setText(msg);
+
+      JOptionPane.showMessageDialog(owner, errWarnMessageAreaSP, title, type);
    }
 
    @Override
@@ -317,18 +362,28 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
          }
       }
 
+      if (errorTitle == null)
+      {
+          errorTitle = getMessageWithFallback("error.title", "Error");
+      }
+
       if (msg == null || msg.isEmpty())
       {
          // Not very helpful but better than being silent or
          // printing null!
-         msg = getMessageWithFallback("error.title", "Error");
+         msg = errorTitle;
       }
 
       if (isGUI())
       {
-         JOptionPane.showMessageDialog(owner, msg,
-           getMessageWithFallback("error.title", "Error"),
-           JOptionPane.ERROR_MESSAGE);
+         if (e != null)
+         {
+            displayStackTrace(owner, errorTitle, msg, e);
+         }
+         else
+         {
+            showMessageDialog(owner, msg, errorTitle, JOptionPane.ERROR_MESSAGE);
+         }
       }
       else
       {
@@ -336,6 +391,79 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
            getApplicationName(), msg));
       }
    }
+
+   public void internalError(Component owner, String msg, Throwable e)
+   {
+      if (msg == null && e != null)
+      {
+         msg = e.getMessage();
+
+         if (msg == null)
+         {
+            if (e.getCause() == null)
+            {
+               msg = e.toString();
+            }
+            else
+            {
+               msg = e.getCause().getMessage();
+            }
+         }
+      }
+
+      if (internalErrorTitle == null)
+      {
+          internalErrorTitle =
+             getMessageWithFallback("internal_error.title", "Internal Error");
+      }
+
+      if (msg == null || msg.isEmpty())
+      {
+         // Not very helpful but better than being silent or
+         // printing null!
+         msg = internalErrorTitle;
+      }
+
+      if (isGUI())
+      {
+         if (e != null)
+         {
+            displayStackTrace(owner, internalErrorTitle, msg, e);
+         }
+         else
+         {
+            if (okayOptionText == null)
+            {
+               okayOptionText = getMessageWithFallback("action.okay", "Okay");
+            }
+
+            if (crashExitOptionText == null)
+            {
+               crashExitOptionText = getMessageWithFallback(
+                  "action.quit_without_saving",
+                  "Quit Without Saving");
+            }
+
+            int result = JOptionPane.showOptionDialog(owner, msg,
+               internalErrorTitle,
+               JOptionPane.YES_NO_OPTION,
+               JOptionPane.ERROR_MESSAGE, null,
+               new String[] {okayOptionText, crashExitOptionText}, okayOptionText);
+
+            if (result == JOptionPane.NO_OPTION)
+            {
+               System.exit(fatalErrorExitCode);
+            }
+         }
+      }
+      else
+      {
+         stdErrMessage(e, String.format("%s: %s: %s",
+           getApplicationName(), internalErrorTitle, msg));
+         System.exit(fatalErrorExitCode);
+      }
+   }
+
 
    @Override
    public void debug(String message)
@@ -383,5 +511,134 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
       }
    }
 
+   /**
+    * Displays stack trace in a dialog box with the option for the
+    * user to continue or quit the application.
+    * @param parent the parent for the dialog box
+    * @param frameTitle the title for the dialog box
+    * @param e the exception with the required stack trace
+    */
+   public void displayStackTrace(Component parent,
+       String frameTitle, String message, Throwable e)
+   {
+      if (stackTracePane == null)
+      {
+         initStackTracePane();
+      }
+
+      errWarnMessageArea.setText(message);
+
+      StackTraceElement[] trace = e.getStackTrace();
+      StringBuilder stackTrace = new StringBuilder();
+
+      for (int i = 0, n=trace.length; i < n; i++)
+      {
+         stackTrace.append(String.format("%s%n", trace[i]));
+      }
+
+      if (e.getCause() != null)
+      {
+         appendStackTrace(e, stackTrace);
+      }
+
+      stackTraceDetails.setText(stackTrace.toString());
+
+      int result = JOptionPane.showOptionDialog(parent, stackTracePane,
+         frameTitle,
+         JOptionPane.YES_NO_OPTION,
+         JOptionPane.ERROR_MESSAGE, null,
+         new String[] {okayOptionText, crashExitOptionText}, okayOptionText);
+
+      if (result == JOptionPane.NO_OPTION)
+      {
+         System.exit(fatalErrorExitCode);
+      }
+   }
+
+   protected void appendStackTrace(Throwable e, StringBuilder stackTrace)
+   {
+      if (e != null)
+      {
+         StackTraceElement[] trace = e.getStackTrace();
+
+         stackTrace.append(String.format("%n%s%n", e));
+
+         for (int i = 0, n=trace.length; i < n; i++)
+         {
+            stackTrace.append(String.format("%s%n", trace[i]));
+         }
+
+         if (e.getCause() != null)
+         {
+            appendStackTrace(e.getCause(), stackTrace);
+         }
+      }
+   }
+
+   protected void initStackTraceMessageArea()
+   {
+      errWarnMessageArea = new JTextArea(20,50);
+      errWarnMessageArea.setEditable(false);
+      errWarnMessageArea.setLineWrap(true);
+      errWarnMessageArea.setWrapStyleWord(true);
+
+      errWarnMessageAreaSP = new JScrollPane(errWarnMessageArea);
+   }
+
+   protected void initStackTracePane()
+   {  
+      stackTracePane = new JTabbedPane();
+      String title = getMessageWithFallback("stacktrace.message", "Error Message");
+
+      if (errWarnMessageArea == null)
+      {
+         initStackTraceMessageArea();
+      }
+      
+      stackTracePane.addTab(title, null, errWarnMessageAreaSP, title);
+
+      JPanel p2 = new JPanel();
+      stackTraceDetails = new JTextArea(20,50);
+      stackTraceDetails.setEditable(false);
+
+      p2.add(new JScrollPane(stackTraceDetails), "Center");
+
+      JButton copyButton =
+         new JButton(getMessageWithFallback("action.copy", "Copy"));
+      copyButton.setMnemonic(
+        getMnemonicWithFallback("action.copy.mnemonic", (int)'C'));
+      copyButton.addActionListener(new ActionListener()
+       {
+          @Override
+          public void actionPerformed(ActionEvent evt)
+          {
+             stackTraceDetails.selectAll();
+             stackTraceDetails.copy();
+          }
+       });
+
+      p2.add(copyButton,"South");
+
+      title = getMessageWithFallback("stacktrace.details", "Details");
+      stackTracePane.addTab(title, null, p2, title);
+
+      if (okayOptionText == null)
+      {
+         okayOptionText = getMessageWithFallback("action.okay", "Okay");
+      }
+
+      if (crashExitOptionText == null)
+      {
+         crashExitOptionText = getMessageWithFallback("action.quit_without_saving",
+            "Quit Without Saving");
+      }
+   }
+
    protected TeXJavaHelpLib helpLib;
+
+   private JTabbedPane stackTracePane;
+   private JScrollPane errWarnMessageAreaSP;
+   private JTextArea errWarnMessageArea, stackTraceDetails;
+   private String okayOptionText, crashExitOptionText, errorTitle, internalErrorTitle, warningTitle;
+   protected int fatalErrorExitCode = 100;
 }
