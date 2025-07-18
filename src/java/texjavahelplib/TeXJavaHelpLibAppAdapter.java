@@ -304,13 +304,28 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
    {
       if (errWarnMessageArea == null)
       {
-         initStackTraceMessageArea();
+         initErrWarnMessageArea();
       }
 
       errWarnMessageArea.setText(msg);
 
       JOptionPane.showMessageDialog(owner, errWarnMessageAreaSP, title, type);
    }
+
+   protected int showConfirmDialog(Component owner, String msg,
+     String title, int options, int type)
+   {
+      if (errWarnMessageArea == null)
+      {
+         initErrWarnMessageArea();
+      }
+
+      errWarnMessageArea.setText(msg);
+
+      return JOptionPane.showConfirmDialog(owner, errWarnMessageAreaSP,
+        title, options, type);
+   }
+
 
    @Override
    public void error(String message)
@@ -464,6 +479,37 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
       }
    }
 
+   public void fatalError(String message, Throwable e, int exitCode)
+   {  
+      if (isGUI())
+      {
+         debug(e);
+
+         initStackTracePane();
+   
+         errWarnMessageArea.setText(message);
+   
+         StringBuilder builder = new StringBuilder();
+         appendStackTrace(e, builder);
+
+         stackTraceDetails.setText(builder.toString());
+   
+         JOptionPane.showMessageDialog(null,
+         stackTracePane,
+         getMessageWithFallback("error.fatal", "Fatal Error"),
+         JOptionPane.ERROR_MESSAGE);
+      }
+      else
+      {
+         stdErrMessage(e, String.format("%s: %s: %s",
+           getApplicationName(), 
+           getMessageWithFallback("error.fatal", "Fatal Error"),
+           message));
+      }
+
+      System.exit(exitCode);
+   }
+
 
    @Override
    public void debug(String message)
@@ -521,26 +567,12 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
    public void displayStackTrace(Component parent,
        String frameTitle, String message, Throwable e)
    {
-      if (stackTracePane == null)
-      {
-         initStackTracePane();
-      }
+      initStackTracePane();
 
       errWarnMessageArea.setText(message);
 
-      StackTraceElement[] trace = e.getStackTrace();
       StringBuilder stackTrace = new StringBuilder();
-
-      for (int i = 0, n=trace.length; i < n; i++)
-      {
-         stackTrace.append(String.format("%s%n", trace[i]));
-      }
-
-      if (e.getCause() != null)
-      {
-         appendStackTrace(e, stackTrace);
-      }
-
+      appendStackTrace(e, stackTrace);
       stackTraceDetails.setText(stackTrace.toString());
 
       int result = JOptionPane.showOptionDialog(parent, stackTracePane,
@@ -575,7 +607,7 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
       }
    }
 
-   protected void initStackTraceMessageArea()
+   protected void initErrWarnMessageArea()
    {
       errWarnMessageArea = new JTextArea(20,50);
       errWarnMessageArea.setEditable(false);
@@ -587,50 +619,53 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
 
    protected void initStackTracePane()
    {  
-      stackTracePane = new JTabbedPane();
-      String title = getMessageWithFallback("stacktrace.message", "Error Message");
-
-      if (errWarnMessageArea == null)
+      if (stackTracePane != null)
       {
-         initStackTraceMessageArea();
-      }
+         stackTracePane = new JTabbedPane();
+         String title = getMessageWithFallback("stacktrace.message", "Error Message");
+
+         if (errWarnMessageArea == null)
+         {
+            initErrWarnMessageArea();
+         }
       
-      stackTracePane.addTab(title, null, errWarnMessageAreaSP, title);
+         stackTracePane.addTab(title, null, errWarnMessageAreaSP, title);
 
-      JPanel p2 = new JPanel();
-      stackTraceDetails = new JTextArea(20,50);
-      stackTraceDetails.setEditable(false);
+         JPanel p2 = new JPanel();
+         stackTraceDetails = new JTextArea(20,50);
+         stackTraceDetails.setEditable(false);
 
-      p2.add(new JScrollPane(stackTraceDetails), "Center");
+         p2.add(new JScrollPane(stackTraceDetails), "Center");
 
-      JButton copyButton =
-         new JButton(getMessageWithFallback("action.copy", "Copy"));
-      copyButton.setMnemonic(
-        getMnemonicWithFallback("action.copy.mnemonic", (int)'C'));
-      copyButton.addActionListener(new ActionListener()
-       {
-          @Override
-          public void actionPerformed(ActionEvent evt)
+         JButton copyButton =
+            new JButton(getMessageWithFallback("action.copy", "Copy"));
+         copyButton.setMnemonic(
+           getMnemonicWithFallback("action.copy.mnemonic", (int)'C'));
+         copyButton.addActionListener(new ActionListener()
           {
-             stackTraceDetails.selectAll();
-             stackTraceDetails.copy();
-          }
-       });
+             @Override
+             public void actionPerformed(ActionEvent evt)
+             {
+                stackTraceDetails.selectAll();
+                stackTraceDetails.copy();
+             }
+          });
 
-      p2.add(copyButton,"South");
+         p2.add(copyButton,"South");
 
-      title = getMessageWithFallback("stacktrace.details", "Details");
-      stackTracePane.addTab(title, null, p2, title);
+         title = getMessageWithFallback("stacktrace.details", "Details");
+         stackTracePane.addTab(title, null, p2, title);
 
-      if (okayOptionText == null)
-      {
-         okayOptionText = getMessageWithFallback("action.okay", "Okay");
-      }
+         if (okayOptionText == null)
+         {
+            okayOptionText = getMessageWithFallback("action.okay", "Okay");
+         }
 
-      if (crashExitOptionText == null)
-      {
-         crashExitOptionText = getMessageWithFallback("action.quit_without_saving",
-            "Quit Without Saving");
+         if (crashExitOptionText == null)
+         {
+            crashExitOptionText = getMessageWithFallback("action.quit_without_saving",
+               "Quit Without Saving");
+         }
       }
    }
 
