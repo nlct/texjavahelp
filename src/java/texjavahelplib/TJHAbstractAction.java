@@ -168,6 +168,7 @@ public abstract class TJHAbstractAction extends AbstractAction
          if (text != null)
          {
             putValue(NAME, text);
+            displayName = text;
          }
       }
 
@@ -188,6 +189,11 @@ public abstract class TJHAbstractAction extends AbstractAction
          if (tooltip != null)
          {
             putValue(SHORT_DESCRIPTION, tooltip);
+
+            if (displayName == null)
+            {
+               displayName = tooltip;
+            }
          }
       }
 
@@ -223,11 +229,20 @@ public abstract class TJHAbstractAction extends AbstractAction
          }
       }
 
+      if (displayName == null)
+      {
+         displayName = (actionName == null ? childTag : actionName);
+      }
    }
 
    public void setToolTipText(String tooltip)
    {
       putValue(SHORT_DESCRIPTION, tooltip);
+   }
+
+   public String getDisplayName()
+   {
+      return displayName;
    }
 
    public abstract void doAction();
@@ -239,4 +254,5 @@ public abstract class TJHAbstractAction extends AbstractAction
    }
 
    protected TeXJavaHelpLib helpLib;
+   protected String displayName;
 }
