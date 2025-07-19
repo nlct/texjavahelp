@@ -51,6 +51,7 @@ has have</entry>
 </entry>
 <entry key="syntax.log">{0} &lt;file&gt;				Set log file.</entry>
 <entry key="syntax.nolog">{0}				Don''t log (default).</entry>
+<entry key="syntax.rmtmpdir">{0}				Remove temporary files on exit.</entry>
 <entry key="syntax.timeout">{0} &lt;n&gt;			Timeout processes after &lt;n&gt; milliseconds.</entry>
 <entry key="syntax.output.options">Output Options:</entry>
 <entry key="syntax.out">{0} (or {1}) &lt;directory&gt;	Save output in &lt;directory&gt;, 

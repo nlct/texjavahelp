@@ -669,7 +669,7 @@ public class TeXJavaHelpMk extends TeXAppAdapter
             tmpDir = Files.createTempDirectory(NAME).toFile();
          }
 
-         File file = new File(tmpDir, name+".tex");
+         File file = new File(tmpDir, tmpDir.getName()+".tex");
 
          if (charset == null)
          {
@@ -684,6 +684,34 @@ public class TeXJavaHelpMk extends TeXAppAdapter
 
          writer.println("\\batchmode");
          writer.println(preamble);
+
+         String[] grpaths = listener.getGraphicsPaths();
+
+         if (grpaths != null)
+         {
+            writer.print("\\graphicspath{");
+
+            Path basePath = inFile.getAbsoluteFile().getParentFile().toPath();
+            String basePathStr = basePath.toString();
+
+            if (File.separatorChar != '/')
+            {
+               basePathStr = basePathStr.replaceAll("/", File.separator);
+            }
+
+            if (!basePathStr.endsWith("/"))
+            {
+               basePathStr += "/";
+            }
+
+            for (int i = 0; i < grpaths.length; i++)
+            {
+               writer.format("{%s%s}", basePathStr, grpaths[i]);
+            }
+
+            writer.println("}");
+         }
+
          writer.println("\\begin{document}");
          writer.println(content);
          writer.println("\\end{document}");
@@ -712,10 +740,11 @@ public class TeXJavaHelpMk extends TeXAppAdapter
          if (isDebuggingOn())
          {
             helpLibApp.debug(getMessageWithFallback("message.running",
-              "Running {0}", String.format("%s \"%s\"", invoker, name)));
+              "Running {0}",
+               String.format("%s -jobname \"%s\" \"%s\"", invoker, name, file.getName())));
          }
          
-         ProcessBuilder pb = new ProcessBuilder(invoker, name);
+         ProcessBuilder pb = new ProcessBuilder(invoker, "-jobname", name, file.getName());
 
          pb.directory(tmpDir);
 
@@ -729,7 +758,8 @@ public class TeXJavaHelpMk extends TeXAppAdapter
          if (exitCode != 0)
          {
             throw new IOException(getMessage("error.app_failed",
-              String.format("%s \"%s\"", invoker, name), exitCode));
+              String.format("%s -jobname \"%s\" \"%s\"", invoker, name, file.getName()),
+              exitCode));
          }
 
          if (mimetype == null)
@@ -1438,6 +1468,7 @@ public class TeXJavaHelpMk extends TeXAppAdapter
       System.out.println(getMessage("syntax.debug-mode", "--debug-mode"));
       System.out.println(getMessage("syntax.log", "--log"));
       System.out.println(getMessage("syntax.nolog", "--nolog"));
+      System.out.println(getMessage("syntax.rmtmpdir", "--[no-]rm-tmp-dir"));
       System.out.println();
       System.out.println(getMessage("syntax.version", "--version", "-v"));
       System.out.println(getMessage("syntax.help", "--help", "-h"));

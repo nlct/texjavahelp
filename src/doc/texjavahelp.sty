@@ -2284,24 +2284,14 @@ halign upper=flush left,halign lower=justify,
 {
   \group_begin:
    \GlsXtrAppToDefaultGlsOpts { noindex }
+   \let\input@path\Ginput@path
    \file_parse_full_name:nNNN { #2 } 
      \l__texjavahelp_img_dir_tl
      \l__texjavahelp_img_name_tl
      \l__texjavahelp_img_ext_tl
    \file_if_exist:nTF { #2 .tex }
     {
-      \seq_put_right:NV \l_file_search_path_seq \l__texjavahelp_img_dir_tl
-      \IfValueTF { #1 }
-       {
-         \hbox_set:Nn \l__texjavahelp_img_box
-          { \file_input:n { #2 } }
-         \keys_set:nn { texjavahelp / img } { #1 }
-         \__texjavahelp_img_apply_resize:
-         \mbox { \box_use:N \l__texjavahelp_img_box }
-       }
-       {
-         \file_input:n { #2 }
-       }
+      \__texjavahelp_include_tex_img:nn { #1 } { #2 }
     }
     {
       \IfValueTF { #1 }
@@ -2310,6 +2300,22 @@ halign upper=flush left,halign lower=justify,
     }
   \group_end:
 }
+
+\cs_new:Nn \__texjavahelp_include_tex_img:nn
+ {
+   \seq_put_right:NV \l_file_search_path_seq \l__texjavahelp_img_dir_tl
+   \IfValueTF { #1 }
+    {
+      \hbox_set:Nn \l__texjavahelp_img_box
+       { \file_input:n { #2 } }
+      \keys_set:nn { texjavahelp / img } { #1 }
+      \__texjavahelp_img_apply_resize:
+      \mbox { \box_use:N \l__texjavahelp_img_box }
+    }
+    {
+      \file_input:n { #2 }
+    }
+ }
 \ExplSyntaxOff
 
 \newcommand{\texparserimgloadresources}[2][]{%
