@@ -254,7 +254,16 @@ public class MessageDialog extends JDialog
       buttonPanel.add(westPanel, "West");
       buttonPanel.add(eastPanel, "East");
 
-      westPanel.add(helpLib.createJButton("action", "copy", this));
+      //westPanel.add(helpLib.createJButton("action", "copy", this));
+      westPanel.add(new JButton(new TJHAbstractAction(helpLib, "action",
+      "copy", (Boolean)null, getRootPane(), Action.LARGE_ICON_KEY)
+      {
+         @Override
+         public void doAction()
+         {
+            copyContent();
+         }
+      }));
 
       JButton closeButton = helpLib.createCloseButton((JDialog)this);
       eastPanel.add(closeButton);
