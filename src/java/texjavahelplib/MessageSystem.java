@@ -288,6 +288,11 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
 
       if (fmt == null)
       {
+         if (fallbackFormat == null || fallbackFormat.isEmpty())
+         {
+            return fallbackFormat;
+         }
+
          fmt = new MessageFormat(fallbackFormat);
       }
 
