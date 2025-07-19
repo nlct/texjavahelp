@@ -2404,6 +2404,45 @@ public class TeXJavaHelpLib
    }
 
    /**
+    * Creates Okay button.
+    * Uses small icon if found.
+    * @param okayAction action
+    * @param comp the component to set up key map (may be null)
+    */
+   public JButton createOkayButton(final OkayAction okayAction, JComponent comp)
+   {
+      return createOkayButton(okayAction, comp, Action.LARGE_ICON_KEY);
+   }
+
+   /**
+    * Creates Okay button.
+    * @param okayAction action
+    * @param comp the component to set up key map (may be null)
+    */
+   public JButton createOkayButton(final OkayAction okayAction,
+     JComponent comp, String... omitKeys)
+   {
+      TJHAbstractAction action = new TJHAbstractAction(this, "action",
+         "okay", (Boolean)null, comp, omitKeys)
+         {
+            @Override
+            public void doAction()
+            {
+               okayAction.okay();
+            }
+         };
+
+      JButton btn = new JButton(action);
+
+      if (comp != null && comp instanceof JRootPane)
+      {
+         ((JRootPane)comp).setDefaultButton(btn);
+      }
+
+      return btn;
+   }
+
+   /**
     * Creates Okay button with action command "okay".
     * NB this doesn't set up any key map.
     * Uses small icon if found.
@@ -2464,6 +2503,39 @@ public class TeXJavaHelpLib
       }
 
       return btn;
+   }
+
+
+   /**
+    * Creates Apply button.
+    * Uses small icon if found.
+    * @param applyAction action
+    * @param comp the component to set up key map (may be null)
+    */
+   public JButton createApplyButton(final ApplyAction applyAction, JComponent comp)
+   {
+      return createApplyButton(applyAction, comp, Action.LARGE_ICON_KEY);
+   }
+
+   /**
+    * Creates Apply button.
+    * @param applyAction action
+    * @param comp the component to set up key map (may be null)
+    */
+   public JButton createApplyButton(final ApplyAction applyAction,
+     JComponent comp, String... omitKeys)
+   {
+      TJHAbstractAction action = new TJHAbstractAction(this, "action",
+         "apply", (Boolean)null, comp, omitKeys)
+         {
+            @Override
+            public void doAction()
+            {
+               applyAction.apply();
+            }
+         };
+
+      return new JButton(action);
    }
 
    /**
