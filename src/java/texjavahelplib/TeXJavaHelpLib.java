@@ -52,16 +52,19 @@ import java.awt.event.ActionEvent;
 import javax.imageio.ImageIO;
 
 import javax.swing.Action;
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.KeyStroke;
 
 import java.awt.event.KeyEvent;
@@ -2220,6 +2223,13 @@ public class TeXJavaHelpLib
       return createJLabel(tag, null);
    }
 
+   public JLabel createJLabel(JLabelGroup labelGrp, String tag, JComponent comp)
+   {
+      JLabel label = createJLabel(tag, comp);
+      labelGrp.add(label);
+      return label;
+   }
+
    public JLabel createJLabel(String tag, JComponent comp)
    {
       JLabel jlabel = new JLabel(getMessage(tag));
@@ -2251,6 +2261,98 @@ public class TeXJavaHelpLib
       }
 
       return jlabel;
+   }
+
+   /**
+    * Creates a check box menu item.
+    */
+   public JCheckBoxMenuItem createJCheckBoxMenuItem(String parentTag, String action,
+     boolean selected, ActionListener listener)
+   {
+      String tag = action == null ? parentTag : parentTag+"."+action;
+
+      JCheckBoxMenuItem item = new JCheckBoxMenuItem(getMessage(tag), selected);
+
+      int mnemonic = getMnemonic(tag+".mnemonic");
+
+      if (mnemonic > 0)
+      {
+         item.setMnemonic(mnemonic);
+      }
+
+      String tooltip = getMessageIfExists(tag+".tooltip");
+
+      if (tooltip != null)
+      {
+         item.setToolTipText(tooltip);
+      }
+
+      String desc = getMessageIfExists(tag+".description");
+
+      if (desc != null)
+      {
+         item.getAccessibleContext().setAccessibleDescription(desc);
+      }
+
+      if (listener != null)
+      {
+         item.setActionCommand(action);
+         item.addActionListener(listener);
+      }
+
+      return item;
+   }
+
+   /**
+    * Creates a radio button menu item.
+    */
+   public JRadioButtonMenuItem createJRadioButtonMenuItem(String parentTag, String action,
+     ActionListener listener, ButtonGroup bg)
+   {
+      return createJRadioButtonMenuItem(parentTag, action, false,
+       listener, bg);
+   }
+
+   public JRadioButtonMenuItem createJRadioButtonMenuItem(String parentTag, String action,
+     boolean selected, ActionListener listener, ButtonGroup bg)
+   {
+      String tag = action == null ? parentTag : parentTag+"."+action;
+
+      JRadioButtonMenuItem item = new JRadioButtonMenuItem(getMessage(tag), selected);
+
+      if (bg != null)
+      {
+         bg.add(item);
+      }
+
+      int mnemonic = getMnemonic(tag+".mnemonic");
+
+      if (mnemonic > 0)
+      {
+         item.setMnemonic(mnemonic);
+      }
+
+      String tooltip = getMessageIfExists(tag+".tooltip");
+
+      if (tooltip != null)
+      {
+         item.setToolTipText(tooltip);
+      }
+
+      String desc = getMessageIfExists(tag+".description");
+
+      if (desc != null)
+      {
+         item.getAccessibleContext().setAccessibleDescription(desc);
+      }
+
+      if (listener != null)
+      {
+         item.setActionCommand(action);
+         item.addActionListener(listener);
+      }
+
+      return item;
    }
 
    /**
