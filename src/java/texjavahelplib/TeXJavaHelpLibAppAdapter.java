@@ -619,7 +619,7 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
 
    protected void initStackTracePane()
    {  
-      if (stackTracePane != null)
+      if (stackTracePane == null)
       {
          stackTracePane = new JTabbedPane();
          String title = getMessageWithFallback("stacktrace.message", "Error Message");
