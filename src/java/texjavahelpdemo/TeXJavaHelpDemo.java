@@ -421,6 +421,8 @@ public class TeXJavaHelpDemo extends JFrame
       JPanel buttonPanel = new JPanel();
       sampleDialog.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
+      buttonPanel.add(helpLib.createCloseButton(sampleDialog));
+
       //String helpId = "sec:texjavahelplib";
       //String helpId = "sec:texjavahelpsty";
       String helpId = "sec:helpwindows";

@@ -65,6 +65,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 
 import java.awt.event.KeyEvent;
@@ -2402,26 +2403,278 @@ public class TeXJavaHelpLib
       return btn;
    }
 
+   /**
+    * Creates Okay button with action command "okay".
+    * NB this doesn't set up any key map.
+    * Uses small icon if found.
+    * @param listener if not null, listener is added to button
+    */
    public JButton createOkayButton(ActionListener listener)
    {
-      return createJButton("action", "okay", listener);
+      return createOkayButton(listener, true, false);
    }
 
+   /**
+    * Creates Okay button with action command "okay".
+    * NB this doesn't set up any key map.
+    * @param listener if not null, listener is added to button
+    * @param smallIcon if true use small icon if found
+    * @param omitTextIfIcon if true don't set text if icon is found
+    */
+   public JButton createOkayButton(ActionListener listener,  
+     boolean smallIcon, boolean omitTextIfIcon)
+   {
+      return createJButton("action", "okay", listener, smallIcon, omitTextIfIcon);
+   }
+
+   /**
+    * Creates Okay button.
+    * Sets up key mapping for the component if a keystroke is
+    * available. If the component is non-null the button will be set
+    * as it's default button.
+    * @param action the action to perform when this button is
+    * pressed
+    * @param comp the component to set up key map (may be null)
+    */
+   public JButton createOkayButton(Action action, JComponent comp)
+   {
+      return createOkayButton(action, comp, true, false);
+   }
+
+   /**
+    * Creates Okay button.
+    * Sets up key mapping for the component if a keystroke is
+    * available. If the component is non-null JRootPane the button will be set
+    * as it's default button.
+    * @param action the action to perform when this button is
+    * pressed
+    * @param comp the component to set up key map (may be null)
+    * @param smallIcon if true use small icon if found
+    * @param omitTextIfIcon if true don't set text if icon is found
+    */
+   public JButton createOkayButton(Action action, JComponent comp,  
+     boolean smallIcon, boolean omitTextIfIcon)
+   {
+      JButton btn = createJButton("action", "okay", action, comp, "okay",
+        smallIcon, omitTextIfIcon);
+
+      if (comp != null && comp instanceof JRootPane)
+      {
+         ((JRootPane)comp).setDefaultButton(btn);
+      }
+
+      return btn;
+   }
+
+   /**
+    * Creates Apply button with action command "apply".
+    * NB this doesn't set up any key map.
+    * Uses small icon if found.
+    * @param listener if not null, listener is added to button
+    */
    public JButton createApplyButton(ActionListener listener)
    {
-      return createJButton("action", "apply", listener);
+      return createApplyButton(listener, true, false);
    }
 
-   public JButton createCancelButton(ActionListener listener)
+   /**
+    * Creates Apply button with action command "apply".
+    * NB this doesn't set up any key map.
+    * Uses small icon if found.
+    * @param listener if not null, listener is added to button
+    * @param smallIcon if true use small icon if found
+    * @param omitTextIfIcon if true don't set text if icon is found
+    */
+   public JButton createApplyButton(ActionListener listener,
+     boolean smallIcon, boolean omitTextIfIcon)
    {
-      return createJButton("action", "cancel", listener);
+      return createJButton("action", "apply", listener,
+        smallIcon, omitTextIfIcon);
    }
 
+   /**
+    * Creates Cancel button using TJHAbstractAction that closes the
+    * given JFrame. Ignores large icon.
+    * @param frame the frame that the button should close
+    */
+   public JButton createCancelButton(JFrame frame)
+   {
+      return createCancelButton(frame, Action.LARGE_ICON_KEY);
+   }
+
+   /**
+    * Creates Cancel button using TJHAbstractAction that closes the
+    * given JFrame.
+    * @param frame the frame that the button should close
+    * @param omitKeys list of keys the action shouldn't set
+    */
+   public JButton createCancelButton(final JFrame frame, String... omitKeys)
+   {
+      TJHAbstractAction action = new TJHAbstractAction(this, "action",
+      "cancel", (Boolean)null, frame.getRootPane(), omitKeys)
+      {
+         @Override
+         public void doAction()
+         {
+            frame.setVisible(false);
+         }
+      };
+
+      return new JButton(action);
+   }
+
+   /**
+    * Creates Cancel button using TJHAbstractAction that closes the
+    * given JDialog. Ignores the large icon.
+    */
+   public JButton createCancelButton(JDialog dialog)
+   {
+      return createCancelButton(dialog, Action.LARGE_ICON_KEY);
+   }
+
+   /**
+    * Creates Cancel button using TJHAbstractAction that closes the
+    * given JDialog.
+    * @param dialog the dialog that the button should close
+    * @param omitKeys list of keys the action shouldn't set
+    */
+   public JButton createCancelButton(final JDialog dialog, String... omitKeys)
+   {
+      TJHAbstractAction action = new TJHAbstractAction(this, "action",
+      "cancel", (Boolean)null, dialog.getRootPane(), omitKeys)
+      {
+         @Override
+         public void doAction()
+         {
+            dialog.setVisible(false);
+         }
+      };
+
+      return new JButton(action);
+   }
+
+   /**
+    * Creates Cancel button with the given action.
+    * Sets up key mapping for the component if a keystroke is
+    * available. Uses small icon if found.
+    * @param action the action to perform when this button is
+    * pressed
+    * @param comp the component to set up key map (may be null)
+    */
+   public JButton createCancelButton(Action action, JComponent comp)
+   {
+      return createCancelButton(action, comp, true, false);
+   }
+
+   /**
+    * Creates Cancel button.
+    * Sets up key mapping for the component if a keystroke is
+    * available.
+    * @param action the action to perform when this button is
+    * pressed
+    * @param comp the component to set up key map (may be null)
+    * @param smallIcon if true use small icon if found
+    * @param omitTextIfIcon if true don't set text if icon is found
+    */
+   public JButton createCancelButton(Action action, JComponent comp,  
+     boolean smallIcon, boolean omitTextIfIcon)
+   {
+      return createJButton("action", "cancel", action, comp, "cancel",
+        smallIcon, omitTextIfIcon);
+   }
+
+   /**
+    * Creates Close button using TJHAbstractAction that closes the
+    * given JFrame. The new button will be set as the frame's
+    * default button. Ignores the large icon.
+    * @param frame the frame that the button should close
+    */
+   public JButton createCloseButton(JFrame frame)
+   {
+      return createCloseButton(frame, Action.LARGE_ICON_KEY);
+   }
+
+   /**
+    * Creates Close button using TJHAbstractAction that closes the
+    * given JFrame. The new button will be set as the frame's
+    * default button.
+    * @param frame the frame that the button should close
+    * @param omitKeys list of keys the action shouldn't set
+    */
+   public JButton createCloseButton(final JFrame frame, String... omitKeys)
+   {
+      TJHAbstractAction action = new TJHAbstractAction(this, "action",
+      "close", (Boolean)null, frame.getRootPane(), omitKeys)
+      {
+         @Override
+         public void doAction()
+         {
+            frame.setVisible(false);
+         }
+      };
+
+      JButton btn = new JButton(action);
+
+      frame.getRootPane().setDefaultButton(btn);
+
+      return btn;
+   }
+
+   /**
+    * Creates Close button using TJHAbstractAction that closes the
+    * given JDialog. The new button will be set as the dialog's
+    * default button. Ignores the large icon.
+    * @param dialog the dialog that the button should close
+    */
+   public JButton createCloseButton(JDialog dialog)
+   {
+      return createCloseButton(dialog, Action.LARGE_ICON_KEY);
+   }
+
+   /**
+    * Creates Close button using TJHAbstractAction that closes the
+    * given JDialog. The new button will be set as the dialog's
+    * default button.
+    * @param dialog the dialog that the button should close
+    * @param omitKeys list of keys the action shouldn't set
+    */
+   public JButton createCloseButton(final JDialog dialog, String... omitKeys)
+   {
+      TJHAbstractAction action = new TJHAbstractAction(this, "action",
+      "close", (Boolean)null, dialog.getRootPane(), omitKeys)
+      {
+         @Override
+         public void doAction()
+         {
+            dialog.setVisible(false);
+         }
+      };
+
+      JButton btn = new JButton(action);
+
+      dialog.getRootPane().setDefaultButton(btn);
+
+      return btn;
+   }
+
+   /**
+    * Creates Close button with action command "close".
+    * NB this doesn't set up any key map.
+    * Uses small icon if found.
+    * @param listener if not null, listener is added to button
+    */
    public JButton createCloseButton(ActionListener listener)
    {
-      return createJButton("action", "close", listener);
+      return createCloseButton(listener, true, false);
    }
 
+   /**
+    * Creates Close button with action command "close".
+    * NB this doesn't set up any key map.
+    * @param listener if not null, listener is added to button
+    * @param smallIcon if true use small icon if found
+    * @param omitTextIfIcon if true don't set text if icon is found
+    */
    public JButton createCloseButton(ActionListener listener,  
      boolean smallIcon, boolean omitTextIfIcon)
    {
@@ -2429,31 +2682,79 @@ public class TeXJavaHelpLib
         smallIcon, omitTextIfIcon);
    }
 
+   /**
+    * Creates Close button with action command "close".
+    * @param action the button action 
+    * @param comp if not null, sets the key mapping for the
+    * component
+    * @param smallIcon if true use small icon if found
+    * @param omitTextIfIcon if true don't set text if icon is found
+    */
+   public JButton createCloseButton(Action action, JComponent comp,  
+     boolean smallIcon, boolean omitTextIfIcon)
+   {
+      return createJButton("action", "close", action, comp, "close",
+        smallIcon, omitTextIfIcon);
+   }
+
+   /**
+    * Creates a labelled button. The text and mnemonic are obtained from the tag.
+    * @param tag the language tag
+    */
    public JButton createJButton(String tag)
    {
       return createJButton(tag, null, null);
    }
 
-   public JButton createJButton(String parentTag, String action,
+   /**
+    * Creates a labelled button. The text and mnemonic are obtained from the tag.
+    * The small icon will be used, if found.
+    * @param tag the language tag
+    * @param actionName if not null, the button's action command
+    * @param actionListener if not null, added to the button's 
+    * ActionListener list
+    */
+   public JButton createJButton(String parentTag, String actionName,
      ActionListener actionListener)
    {
-      return createJButton(parentTag, action, actionListener, action,
+      return createJButton(parentTag, actionName, actionListener, actionName,
         true, false);
    }
 
-   public JButton createJButton(String parentTag, String action,
+   /**
+    * Creates a labelled button. The text and mnemonic are obtained from the tag.
+    * The icon prefix is assumed to be the same as the action
+    * command.
+    * @param tag the language tag
+    * @param actionName if not null, the button's action command
+    * @param actionListener if not null, added to the button's 
+    * ActionListener list
+    * @param smallIcon if true use small icon if found
+    * @param omitTextIfIcon if true don't set text if icon is found
+    */
+   public JButton createJButton(String parentTag, String actionName,
      ActionListener actionListener,  
      boolean smallIcon, boolean omitTextIfIcon)
    {
-      return createJButton(parentTag, action, actionListener, action,
+      return createJButton(parentTag, actionName, actionListener, actionName,
         smallIcon, omitTextIfIcon);
    }
 
-   public JButton createJButton(String parentTag, String action,
+   /**
+    * Creates a labelled button. The text and mnemonic are obtained from the tag.
+    * @param tag the language tag
+    * @param actionName if not null, the button's action command
+    * @param actionListener if not null, added to the button's 
+    * ActionListener list
+    * @param iconPrefix the prefix used for the icon filename
+    * @param smallIcon if true use small icon if found
+    * @param omitTextIfIcon if true don't set text if icon is found
+    */
+   public JButton createJButton(String parentTag, String actionName,
      ActionListener actionListener, String iconPrefix, 
      boolean smallIcon, boolean omitTextIfIcon)
    {
-      String tag = action == null ? parentTag : parentTag+"."+action;
+      String tag = actionName == null ? parentTag : parentTag+"."+actionName;
 
       IconSet icSet = null;
 
@@ -2489,14 +2790,106 @@ public class TeXJavaHelpLib
          icSet.setButtonExtraIcons(button);
       }
 
-      if (action != null)
+      if (actionName != null)
       {
-         button.setActionCommand(action);
+         button.setActionCommand(actionName);
       }
 
       if (actionListener != null)
       {
          button.addActionListener(actionListener);
+      }
+
+      int mnemonic = getMnemonic(tag+".mnemonic");
+
+      if (mnemonic > 0)
+      {
+         button.setMnemonic(mnemonic);
+      }
+
+      if (tooltip != null)
+      {
+         button.setToolTipText(tooltip);
+      }
+
+      String desc = getMessageIfExists(tag+".description");
+
+      if (desc != null)
+      {
+         button.getAccessibleContext().setAccessibleDescription(desc);
+      }
+
+      return button;
+   }
+
+   /**
+    * Creates a labelled button. The text and mnemonic are obtained from the tag.
+    * @param tag the language tag
+    * @param actionName if not null, the button's action command
+    * @param action if not null, set as the button's action
+    * @param iconPrefix the prefix used for the icon filename
+    * @param smallIcon if true use small icon if found
+    * @param omitTextIfIcon if true don't set text if icon is found
+    */
+   public JButton createJButton(String parentTag, String actionName,
+     Action action, JComponent comp, String iconPrefix, 
+     boolean smallIcon, boolean omitTextIfIcon)
+   {
+      String tag = actionName == null ? parentTag : parentTag+"."+actionName;
+
+      IconSet icSet = null;
+
+      if (iconPrefix != null)
+      {
+         icSet = getHelpIconSet(iconPrefix, smallIcon);
+      }
+
+      JButton button;
+      String tooltip = getMessageIfExists(tag+".tooltip");
+
+      if (omitTextIfIcon && icSet != null)
+      {
+         button = new JButton(icSet.getDefaultIcon());
+         button.setMargin(new Insets(0, 0, 0, 0));
+
+         if (tooltip == null)
+         {
+            tooltip = getMessageIfExists(tag);
+         }
+      }
+      else if (icSet != null)
+      {
+         button = new JButton(getMessage(tag), icSet.getDefaultIcon());
+      }
+      else
+      {
+         button = new JButton(getMessage(tag));
+      }
+
+      if (icSet != null)
+      {
+         icSet.setButtonExtraIcons(button);
+      }
+
+      if (actionName != null)
+      {
+         button.setActionCommand(actionName);
+      }
+
+      if (action != null)
+      {
+         button.setAction(action);
+
+         if (comp != null)
+         {
+            KeyStroke keyStroke = getKeyStroke(tag);
+
+            if (keyStroke != null)
+            {
+               comp.getInputMap().put(keyStroke, actionName);
+               comp.getActionMap().put(actionName, action);
+            }
+         }
       }
 
       int mnemonic = getMnemonic(tag+".mnemonic");

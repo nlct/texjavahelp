@@ -569,7 +569,7 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
    {
       initStackTracePane();
 
-      errWarnMessageArea.setText(message);
+      stackTraceMessageArea.setText(message);
 
       StringBuilder stackTrace = new StringBuilder();
       appendStackTrace(e, stackTrace);
@@ -617,6 +617,16 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
       errWarnMessageAreaSP = new JScrollPane(errWarnMessageArea);
    }
 
+   protected void initStackTraceMessageArea()
+   {
+      stackTraceMessageArea = new JTextArea(20,50);
+      stackTraceMessageArea.setEditable(false);
+      stackTraceMessageArea.setLineWrap(true);
+      stackTraceMessageArea.setWrapStyleWord(true);
+
+      stackTraceMessageAreaSP = new JScrollPane(stackTraceMessageArea);
+   }
+
    protected void initStackTracePane()
    {  
       if (stackTracePane == null)
@@ -624,12 +634,12 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
          stackTracePane = new JTabbedPane();
          String title = getMessageWithFallback("stacktrace.message", "Error Message");
 
-         if (errWarnMessageArea == null)
+         if (stackTraceMessageArea == null)
          {
-            initErrWarnMessageArea();
+            initStackTraceMessageArea();
          }
       
-         stackTracePane.addTab(title, null, errWarnMessageAreaSP, title);
+         stackTracePane.addTab(title, null, stackTraceMessageAreaSP, title);
 
          JPanel p2 = new JPanel();
          stackTraceDetails = new JTextArea(20,50);
@@ -672,8 +682,8 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
    protected TeXJavaHelpLib helpLib;
 
    private JTabbedPane stackTracePane;
-   private JScrollPane errWarnMessageAreaSP;
-   private JTextArea errWarnMessageArea, stackTraceDetails;
+   private JScrollPane errWarnMessageAreaSP, stackTraceMessageAreaSP;
+   private JTextArea errWarnMessageArea, stackTraceMessageArea, stackTraceDetails;
    private String okayOptionText, crashExitOptionText, errorTitle, internalErrorTitle, warningTitle;
    protected int fatalErrorExitCode = 100;
 }

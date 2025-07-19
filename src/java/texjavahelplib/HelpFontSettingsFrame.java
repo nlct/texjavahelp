@@ -283,11 +283,11 @@ public class HelpFontSettingsFrame extends JFrame
       JPanel closeCancelPanel = new JPanel();
       btnPanel.add(closeCancelPanel, "West");
 
-      closeButton = helpLib.createCloseButton(this);
+      closeButton = helpLib.createCloseButton((JFrame)this);
       closeCancelPanel.add(closeButton);
       closeButton.setVisible(false);
 
-      cancelButton = helpLib.createCancelButton(this);
+      cancelButton = helpLib.createCancelButton((JFrame)this);
       closeCancelPanel.add(cancelButton);
 
       closeCancelPanel.add(
@@ -358,10 +358,6 @@ public class HelpFontSettingsFrame extends JFrame
       else if (action.equals("okay"))
       {
          apply();
-         setVisible(false);
-      }
-      else if (action.equals("cancel") || action.equals("close"))
-      {
          setVisible(false);
       }
       else

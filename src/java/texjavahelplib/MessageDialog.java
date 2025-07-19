@@ -256,8 +256,7 @@ public class MessageDialog extends JDialog
 
       westPanel.add(helpLib.createJButton("action", "copy", this));
 
-      JButton closeButton = helpLib.createCloseButton(this);
-      getRootPane().setDefaultButton(closeButton);
+      JButton closeButton = helpLib.createCloseButton((JDialog)this);
       eastPanel.add(closeButton);
 
       pack();
@@ -278,11 +277,7 @@ public class MessageDialog extends JDialog
    {
       String action = evt.getActionCommand();
 
-      if ("close".equals(action))
-      {
-         setVisible(false);
-      }
-      else if ("copy".equals(action))
+      if ("copy".equals(action))
       {
          copyContent();
       }
