@@ -182,6 +182,8 @@ public class Entry
 
             String val = fieldVal.getValue();
 
+            if (val == null) continue;
+
             out.println(",");
 
             if (fieldVal.encode)
@@ -211,6 +213,11 @@ public class Entry
 
    public static String encode(String str)
    {
+      if (str == null)
+      {
+         throw new NullPointerException();
+      }
+
       StringBuilder builder = new StringBuilder();
 
       int cp = -1;
