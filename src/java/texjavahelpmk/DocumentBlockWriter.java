@@ -240,7 +240,7 @@ public class DocumentBlockWriter extends Writer
    {
       if (writerClosed)
       {
-         if (!TeXParserUtils.isBlank(str))
+         if (!TeXParserUtils.isBlank(str) && !str.trim().equals("<p>"))
          {
             throw new IOException("Writer closed. Can't write string " +str);
          }
@@ -258,8 +258,13 @@ public class DocumentBlockWriter extends Writer
       {
          if (!TeXParserUtils.isBlank(str, off, len))
          {
-            throw new IOException("Writer closed. Can't write substring "
-              + str.substring(off, len));
+            String subStr = str.substring(off, len);
+
+            if (!subStr.trim().equals("<p>"))
+            {
+               throw new IOException("Writer closed. Can't write substring "
+                 + subStr);
+            }
          }
       }
       else
