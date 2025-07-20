@@ -128,8 +128,8 @@ public class TJHListener extends L2HConverter
              tag, locPrefString, tag));
       }
 
-      setImageExtensions(".png", ".PNG", ".jpg", ".JPG", ".jpeg", ".JPEG",
-        ".gif", ".GIF", ".pdf", ".PDF", ".tex");
+      // reduce default set of image extensions
+      setImageExtensions(".png", ".jpg", ".jpeg", ".pdf", ".tex");
    }
 
    // HTMLDocument doesn't support float so add spacing
