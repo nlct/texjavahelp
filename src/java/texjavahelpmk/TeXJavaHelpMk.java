@@ -647,7 +647,7 @@ public class TeXJavaHelpMk extends TeXAppAdapter
 
    public L2HImage createImage(TeXParser parser, String preamble,
     String content, String mimetype, TeXObject alt, String name,
-    boolean crop)
+    boolean crop, Path relPath)
    throws IOException,InterruptedException
    {
       L2HConverter listener = (L2HConverter)parser.getListener();
@@ -669,7 +669,7 @@ public class TeXJavaHelpMk extends TeXAppAdapter
             tmpDir = Files.createTempDirectory(NAME).toFile();
          }
 
-         File file = new File(tmpDir, tmpDir.getName()+".tex");
+         File file = new File(tmpDir, tmpDir.getName()+name+".tex");
 
          if (charset == null)
          {
@@ -794,9 +794,16 @@ public class TeXJavaHelpMk extends TeXAppAdapter
 
          Dimension imageDim = null;
 
+         Path outPath = outDir.toPath();
+
+         if (relPath != null)
+         {
+            outPath = outPath.resolve(relPath);
+         }
+
          if (mimetype.equals(L2HConverter.MIME_TYPE_PDF))
          {
-            destFile = (new File(outDir, name+".pdf"));
+            destFile = (new File(outPath.toFile(), name+".pdf"));
             copyFile(pdfFile, destFile);
          }
          else if (mimetype.equals(L2HConverter.MIME_TYPE_PNG))
@@ -805,7 +812,7 @@ public class TeXJavaHelpMk extends TeXAppAdapter
 
             imageDim = getImageFileDimensions(parser, pngFile, mimetype);
 
-            destFile = new File(outDir, pngFile.getName());
+            destFile = new File(outPath.toFile(), pngFile.getName());
             copyFile(pngFile, destFile);
          }
          else if (mimetype.equals(L2HConverter.MIME_TYPE_JPEG))
@@ -814,7 +821,7 @@ public class TeXJavaHelpMk extends TeXAppAdapter
 
             imageDim = getImageFileDimensions(parser, jpegFile, mimetype);
 
-            destFile = new File(outDir, jpegFile.getName());
+            destFile = new File(outPath.toFile(), jpegFile.getName());
             copyFile(jpegFile, destFile);
          }
          else
@@ -824,7 +831,7 @@ public class TeXJavaHelpMk extends TeXAppAdapter
 
             mimetype=L2HConverter.MIME_TYPE_PDF;
 
-            destFile = new File(outDir, name+".pdf");
+            destFile = new File(outPath.toFile(), name+".pdf");
             copyFile(pdfFile, destFile);
          }
 

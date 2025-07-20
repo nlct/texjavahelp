@@ -473,7 +473,7 @@ public class TJHListener extends L2HConverter
    @Override
    public L2HImage toImage(String preamble,
     String content, String mimeType, TeXObject alt, String name,
-    boolean crop)
+    boolean crop, Path relPath)
    throws IOException
    {
       if (getTeXJavaHelpMk().isConvertImagesOn())
@@ -481,7 +481,7 @@ public class TJHListener extends L2HConverter
          try
          {
             return getTeXJavaHelpMk().createImage(getParser(), preamble, 
-              content, mimeType, alt, name, crop);
+              content, mimeType, alt, name, crop, relPath);
          }
          catch (InterruptedException e)
          {
@@ -536,6 +536,34 @@ public class TJHListener extends L2HConverter
    {
       L2HImage image = null;
 
+      Path relPath = null;
+      Path parent = imagePath.getParent();
+
+      if (parent != null)
+      {
+         if (parent.isAbsolute())
+         {
+            try
+            {
+               if (getBasePath().isAbsolute())
+               {
+                  relPath = getBasePath().relativize(parent);
+               }
+               else
+               {
+                  relPath = getBasePath().toAbsolutePath().relativize(parent);
+               }
+            } 
+            catch (IllegalArgumentException e)
+            {// ignore
+            }
+         }
+         else
+         {
+            relPath = parent;
+         }
+      }
+
       if (MIME_TYPE_PDF.equals(type))
       {
          File pdfFile = imagePath.toFile();
@@ -565,9 +593,14 @@ public class TJHListener extends L2HConverter
          
          Dimension imageDim = getImageSize(pngFile, MIME_TYPE_PNG);
 
-         File outDir = getTeXJavaHelpMk().getOutDirectory();
+         Path outPath = getTeXJavaHelpMk().getOutDirectory().toPath();
+
+         if (relPath != null)
+         {
+            outPath = outPath.resolve(relPath);
+         }
             
-         Path destPath = (new File(outDir, name)).toPath();
+         Path destPath = (new File(outPath.toFile(), name)).toPath();
          
          Files.copy(pngPath, destPath);
 
@@ -580,7 +613,7 @@ public class TJHListener extends L2HConverter
             height = imageDim.height;
          }
 
-         image = new L2HImage(outDir.toPath().relativize(destPath),
+         image = new L2HImage(outPath.relativize(destPath),
           MIME_TYPE_PNG, width, height, name, alt);
       }
       else if (MIME_TYPE_TEX.equals(type))
@@ -618,9 +651,9 @@ public class TJHListener extends L2HConverter
          {
             name = name.substring(idx+1);
          }
-   
+
          image = toImage(getImagePreamble(),
-          content.toString(), MIME_TYPE_PNG, alt, name, true);
+          content.toString(), MIME_TYPE_PNG, alt, name, true, relPath);
       }
       else
       {
