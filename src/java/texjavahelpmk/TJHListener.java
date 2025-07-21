@@ -110,6 +110,7 @@ public class TJHListener extends L2HConverter
       addCssStyle(".spacekey { padding-left: 2ex; padding-right: 2ex; }");
       addCssStyle("div.valuesetting { margin-top: 10pt; }");
       addCssStyle(".subfigure { display: inline-block; padding: 5pt; }");
+      addCssStyle(".quadleft { padding-left: 1em; }");
 
       addCssStyle(TeXJavaHelpLib.KEYSTROKE_CSS);
       addCssStyle(TeXJavaHelpLib.MENU_CSS);

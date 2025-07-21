@@ -163,6 +163,17 @@ public class TeXJavaHelpSty extends UserGuideSty
            "manual.menu_separator_title", "menu separator"),
         true));
 
+      registerControlSequence(new GenericCommand(true,
+       "mnemonicsep", null, new TeXCsRef("menusep")));
+
+      registerControlSequence(new LaTeXGenericCommand(true,
+       "mnemonicitemref", "m", 
+         TeXParserUtils.createStack(listener, new TeXCsRef("mnemonic"),
+           TeXParserUtils.createGroup(listener, listener.getParam(1))
+         )));
+
+      registerControlSequence(new LeftQuadPar());
+
       registerControlSequence(new FloatFig());
 
       listener.newcounter("subfigure", null, "@alph");
@@ -252,6 +263,8 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new MenuTrail(glossariesSty));
       registerControlSequence(new MenuItemsStyle(glossariesSty));
 
+      registerControlSequence(new MnemonicTrail(glossariesSty));
+
       registerControlSequence(new DialogCs());
 
       registerControlSequence(
@@ -265,6 +278,12 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new Dglsfield("btn", glossariesSty,
          CaseChange.NO_CHANGE, "tooltip"));
+
+      registerControlSequence(new Dglsfield("accelerator", glossariesSty,
+         CaseChange.NO_CHANGE, "keystroke"));
+
+      registerControlSequence(new Dglsfield("mnemonic", glossariesSty,
+         CaseChange.NO_CHANGE, "mnemonic"));
 
       registerControlSequence(new Widget("menufmt", "menu"));
       registerControlSequence(new Widget("widgetfmt", "widget"));
@@ -608,7 +627,15 @@ public class TeXJavaHelpSty extends UserGuideSty
    public void processOption(String option, TeXObject value)
     throws IOException
    {
-      glossariesSty.processOption(option, value);
+      if (!(option.equals("fnsymleft")
+          ||option.equals("fnsymright")
+          ||option.equals("vref")
+          ||option.equals("novref")
+           )
+         )
+      {
+         glossariesSty.processOption(option, value);
+      }
    }
 
    @Override

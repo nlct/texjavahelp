@@ -2108,6 +2108,13 @@ transcript or log file or written to STDOUT or STDERR}}
  halign=flush left,fontupper=\ttfamily,before upper={\frenchspacing\obeylines}
 }
 
+\newcommand{\leftquadpar}[1]{%
+ \par
+ \parindent 1em
+ \hangindent 1em
+ #1\par
+}
+
 \newcommand{\code@cmd}[1]{\char`\\ #1}
 \newcommand{\cmd}[1]{\texttt{\code@cmd{#1}}}
 \newcommand{\code@cbeg}[1]{\cmd{begin}\marg{#1}}
