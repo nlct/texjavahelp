@@ -777,6 +777,34 @@
 \glsaddstoragekey{tooltip}{}{\entrytooltip}
 \glsaddstoragekey{keystroke}{}{\entrykeystroke}
 
+\newdglsfield{keystroke}{\accelerator}
+\newdglsfield{mnemonic}{\mnemonic}
+
+\NewDocumentCommand\mnemonictrail{m}{%
+  \glstexorpdfstring{\@mnemonictrail{#1}}{\entrymnemonic{#1}}%
+}
+
+\newcommand{\mnemonicsep}{\menusep}
+\newcommand{\mnemonicitemref}{\mnemonic}
+
+\newcommand\@mnemonictrail[1]{%
+  \glsdoifexists{#1}%
+  {%
+    \glsxtrifhasfield{parent}{#1}%
+    {%
+       \glsifcategory{\glscurrentfieldvalue}{menu}%
+       {%
+         \expandafter\@mnemonictrail\expandafter{\glscurrentfieldvalue}%
+         \mnemonicsep
+       }%
+       {}%
+    }%
+    {}%
+    \mnemonicitemref{#1}%
+  }%
+}
+
+
 % For icon-only buttons use the tooltip
 \newdglsfield{tooltip}{\btn}
   
