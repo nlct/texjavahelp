@@ -780,8 +780,8 @@
 \newdglsfield{keystroke}{\accelerator}
 \newdglsfield{mnemonic}{\mnemonic}
 
-\NewDocumentCommand\mnemonictrail{m}{%
-  \glstexorpdfstring{\@mnemonictrail{#1}}{\entrymnemonic{#1}}%
+\NewDocumentCommand\mnemonictrail{O{menu.}m}{%
+  \glstexorpdfstring{\@mnemonictrail{#1#2}}{\entrymnemonic{#1#2}}%
 }
 
 \newcommand{\mnemonicsep}{\menusep}
