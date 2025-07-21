@@ -3225,6 +3225,6 @@ public class TeXJavaHelpLib
    public static final int SYNTAX_ITEM_LINEWIDTH=78;
    public static final int SYNTAX_ITEM_TAB=30;
 
-   public static final String VERSION = "0.9a.20250720";
-   public static final String VERSION_DATE = "2025-07-20";
+   public static final String VERSION = "0.9a.20250721";
+   public static final String VERSION_DATE = "2025-07-21";
 }

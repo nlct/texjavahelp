@@ -499,13 +499,23 @@ public class Xml2Bib
 
       for (String s : split)
       {
-         String keyref = "manual.keystroke." + s.toLowerCase();
+         String name = s.toLowerCase();
+
+         if (name.equals("enter"))
+         {
+            name = "return";
+         }
+         else if (s.equals("control"))
+         {
+            name = "ctrl";
+         }
+
+         String keyref = "manual.keystroke." + name;
          String propVal = props.getProperty(keyref);
 
          if (propVal == null && !s.equals("_") && s.contains("_"))
          {
-            keyref = "manual.keystroke."
-                + s.replaceAll("_", "").toLowerCase();
+            keyref = "manual.keystroke." + name.replaceAll("_", "");
             propVal = props.getProperty(keyref);
          }
 
