@@ -41,7 +41,7 @@ Nicola Talbot
 
 <entry key="action.close">Close</entry>
 <entry key="action.close.mnemonic">C</entry>
-<entry key="action.close.keystroke">alt F4</entry>
+<entry key="action.close.keystroke">ENTER</entry>
 <entry key="action.close.defaultkeys">format=glsignore</entry>
 
 <entry key="action.copy">Copy</entry>
