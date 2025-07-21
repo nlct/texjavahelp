@@ -807,6 +807,7 @@
   }%
 }
 
+\newcommand*{\buttonfmt}[1]{\widgetfmt{#1}}
 
 % For icon-only buttons use the tooltip
 \newdglsfield{tooltip}{\btn}
@@ -924,8 +925,11 @@
      commondialog=index,
      widget=index,
      commonwidget=index,
+     button=index,
+     commonbutton=index,
      term=entry,
      commonterm=entry,
+     termplural=entry,
      commonabbreviation=abbreviation,
      message=index,
      error=index,
@@ -1026,6 +1030,17 @@
         [ entrytype->original =/menu/ & parent=\NULL ],
       name =[o] name + "\cs{postmenuname}"
         [ entrytype->original =/menu/ & parent=\NULL ],
+% terms
+      text = entrylabel->original
+        [ entrytype->original ="termplural" ],
+      plural = text + "s"
+        [ entrytype->original ="termplural" ],
+      name = plural
+        [ entrytype->original ="termplural" ],
+      category = "term"
+        [ entrytype->original ="termplural" ],
+      name = entrylabel->original
+        [ entrytype->original =/(common)?term/ & parent=\NULL ],
 % messages, errors and warnings
       type = "messages"
         [ entrytype->original = /message|error|warning|syntax/ ], 
@@ -1057,6 +1072,7 @@
 \glsxtraddlabelprefix{widget.}
 \glsxtraddlabelprefix{help.}
 \glsxtraddlabelprefix{index.}
+\glsxtraddlabelprefix{label.}
 \glsxtraddlabelprefix{}
 
 % NB just use \dgls if name already encapsulated with \widgetfmt
@@ -1503,6 +1519,11 @@
  \glsxtrglossentry{#1}%
 }
 
+\newrobustcmd*{\inlineglspluraldef}[1]{%
+ \glsadd[format=main]{#1}%
+ \glsxtrglossentryother{}{#1}{plural}%
+}
+
 \NewDocumentCommand\sectionentry{O{\section}om}{%
  #1{\glsxtrglossentry{#3}}%
  \IfValueTF{#2}{\label{#2}}{\label{sec:#3}}%
@@ -1896,6 +1917,7 @@
 \newcommand{\idxcountername}{\manualtext{idxcounter}{counter}}
 \newcommand{\idxvariablename}{\manualtext{idxvariable}{variable}}
 \newcommand{\idxmenuname}{\manualtext{idxmenu}{menu}}
+\newcommand{\idxbuttonname}{\manualtext{idxbutton}{button}}
 
 \newcommand{\nlctguideindexinitpostnamehooks}{%
   \glsdefpostname{abbreviation}{\abbrpostnamehook}%
@@ -1904,6 +1926,7 @@
   \glsdefpostname{environment}{ \idxenvname}%
   \glsdefpostname{counter}{ \idxcountername}%
   \glsdefpostname{variable}{ \idxvariablename}%
+  \glsdefpostname{button}{ \idxbuttonname}%
 }
 
 \NewDocumentCommand\printindex{O{}}{%

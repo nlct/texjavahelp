@@ -56,7 +56,9 @@ public class Entry
       this.xml2bib = xml2bib;
 
       put("name", value,
-        !(key.startsWith("index") || key.startsWith("manual")));
+        !(key.startsWith("index")
+       || key.startsWith("manual")
+       || key.startsWith("term")));
    }
 
    @Override
@@ -122,7 +124,7 @@ public class Entry
             }
          }
 
-         if (!encode)
+         if (!encode && value != null)
          {
             value = value.replaceAll("'([{}])'", "$1");
          }
@@ -154,7 +156,15 @@ public class Entry
       out.print("@");
       out.print(type.getBibType());
       out.print("{");
-      out.print(key);
+
+      if (key.startsWith("term."))
+      {
+         out.print(key.substring(5));
+      }
+      else
+      {
+         out.print(key);
+      }
 
       if (parent != null)
       {

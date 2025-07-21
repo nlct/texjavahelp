@@ -248,7 +248,7 @@ public class HelpDialog extends JDialog
       }
 
       navMenu.addSeparator();
-      navMenu.add(new TJHAbstractAction(helpLib, "action", "close")
+      navMenu.add(new TJHAbstractAction(helpLib, "button", "close")
         {
            @Override
            public void doAction()

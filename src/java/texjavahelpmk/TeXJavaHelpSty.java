@@ -42,6 +42,7 @@ import com.dickimawbooks.texparserlib.latex.nlctdoc.ColourBox;
 import com.dickimawbooks.texparserlib.latex.nlctdoc.IndexInitPostNameHooks;
 import com.dickimawbooks.texparserlib.latex.nlctdoc.AbbrPostNameHook;
 import com.dickimawbooks.texparserlib.latex.nlctdoc.ExampleEnv;
+import com.dickimawbooks.texparserlib.latex.nlctdoc.InlineGlsDef;
 
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 
@@ -288,6 +289,7 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new Widget("menufmt", "menu"));
       registerControlSequence(new Widget("widgetfmt", "widget"));
       registerControlSequence(new Widget("dialogfmt", "dialog"));
+      registerControlSequence(new Widget("buttonfmt", "button"));
       registerControlSequence(new WidgetKeyStroke("keystrokefmt"));
 
       registerControlSequence(new AtFirstOfOne("actualkey"));
@@ -351,8 +353,11 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new InlineMsgDef(glossariesSty));
 
+      registerControlSequence(new InlineGlsDef("inlineglspluraldef", "",
+        "plural", true, glossariesSty));
+
       // dual prefix list
-      def = listener.createString("action.,button.,menu.,widget.,help.,index.,");
+      def = listener.createString("action.,button.,menu.,widget.,help.,index.,label.,");
         def.add(listener.getControlSequence("empty"));
       registerControlSequence(new GenericCommand(true, "@glsxtr@labelprefixes",
        null, def));
@@ -456,7 +461,7 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(createLangCs("index", "Index"));
       registerControlSequence(createLangCs("summary", "Summary"));
       registerControlSequence(createLangCs("section", "section"));
-      registerControlSequence(createLangCs("seealso", "see also"));
+      registerControlSequence(createLangCs("seealsoname", "see also"));
 
       registerControlSequence(createLangCs("example", "example"));
       registerControlSequence(createLangCs("Examplename",
@@ -480,10 +485,15 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(createLangCs("idxcounter", "counter"));
       registerControlSequence(createLangCs("idxvariablename", "variable"));
       registerControlSequence(createLangCs("idxmenu", "menu"));
+      registerControlSequence(createLangCs("idxbutton", "button"));
 
       registerControlSequence(new GenericCommand(true, "postmenuname",
        null, TeXParserUtils.createStack(listener,
         listener.getSpace(), new TeXCsRef("idxmenuname"))));
+
+      registerControlSequence(new GenericCommand(true, "postbuttonname",
+       null, TeXParserUtils.createStack(listener,
+        listener.getSpace(), new TeXCsRef("idxbuttonname"))));
 
       registerControlSequence(createLangCs("warningtext",
         "manualtext", "warning", "Warning"));

@@ -385,7 +385,9 @@ public class Xml2Bib
                }
 
                boolean encode
-                  = !(key.startsWith("index.") || key.startsWith("manual.")
+                  = !(key.startsWith("index.")
+                       || key.startsWith("manual.")
+                       || key.startsWith("term.")
                        || TEX_SUFFIX_PATTERN.matcher(suffix).matches());
 
                if (suffix.equals("keystroke"))
@@ -838,7 +840,7 @@ public class Xml2Bib
    private TeXJavaHelpLibAppAdapter helpLibApp;
 
    public static final Pattern KEY_SUFFIX_PATTERN
-     = Pattern.compile("mnemonic|tooltip|description|keystroke|defaultkeys|plural|symbol|user[1-6]|name|text|defaultparams");
+     = Pattern.compile("mnemonic|tooltip|description|keystroke|defaultkeys|plural|symbol|user[1-6]|name|text|defaultparams|see(also)?|alias");
    public static final Pattern TEX_SUFFIX_PATTERN
      = Pattern.compile("plural|text|name|symbol|user[1-6]|defaultparams|defaultkeys");
 

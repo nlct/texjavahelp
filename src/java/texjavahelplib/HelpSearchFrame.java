@@ -224,7 +224,7 @@ public class HelpSearchFrame extends JFrame
       processComp.setVisible(false);
 
       searchM.add(new TJHAbstractAction(helpLib,
-        "action", "close")
+        "button", "close")
        {
           @Override
           public void doAction()

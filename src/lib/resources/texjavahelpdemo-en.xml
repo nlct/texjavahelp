@@ -10,9 +10,9 @@ Nicola Talbot
 <!-- Main Frame Widgets -->
 <entry key="label.demo">Demo Label (Introduction)</entry>
 
-<entry key="action.demohelp">Demo Help</entry>
-<entry key="action.demohelp.keystroke">F2</entry>
-<entry key="action.demohelp.mnemonic">D</entry>
+<entry key="button.demohelp">Demo Help</entry>
+<entry key="button.demohelp.keystroke">F2</entry>
+<entry key="button.demohelp.mnemonic">D</entry>
 
 <!-- Menus -->
 <entry key="menu.file">File</entry>

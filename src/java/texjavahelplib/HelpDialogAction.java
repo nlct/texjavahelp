@@ -33,8 +33,8 @@ public class HelpDialogAction extends TJHAbstractAction
    public HelpDialogAction(JDialog owner, NavigationNode pageNode,
       TeXJavaHelpLib helpLib, String... omitKeys)
    {
-      this(owner, pageNode, helpLib, "action", "help", "manual."+pageNode.getKey(), "help",
-       helpLib.getKeyStroke("action.help"), (Boolean)null, omitKeys);
+      this(owner, pageNode, helpLib, "button", "help", "manual."+pageNode.getKey(), "help",
+       helpLib.getKeyStroke("button.help"), (Boolean)null, omitKeys);
    }
 
    public HelpDialogAction(JDialog owner, NavigationNode pageNode,
@@ -74,8 +74,8 @@ public class HelpDialogAction extends TJHAbstractAction
    public HelpDialogAction(JFrame owner, NavigationNode pageNode,
       TeXJavaHelpLib helpLib, String... omitKeys)
    {
-      this(owner, pageNode, helpLib, "action", "help", "manual."+pageNode.getKey(), "help",
-       helpLib.getKeyStroke("action.help"), (Boolean)null, omitKeys);
+      this(owner, pageNode, helpLib, "button", "help", "manual."+pageNode.getKey(), "help",
+       helpLib.getKeyStroke("button.help"), (Boolean)null, omitKeys);
    }
 
    public HelpDialogAction(JFrame owner, NavigationNode pageNode,

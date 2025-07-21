@@ -23,6 +23,8 @@ public enum EntryType
    MENU("menu", "menufmt"),
    WIDGET("widget", "widgetfmt"),
    COMMON_WIDGET("commonwidget", "widgetfmt"),
+   BUTTON("button", "buttonfmt"),
+   COMMON_BUTTON("commonbutton", "buttonfmt"),
    WINDOW("dialog", "dialogfmt"),
    MESSAGE("message", null),
    ERROR("error", null),
@@ -30,6 +32,7 @@ public enum EntryType
    SYNTAX("syntax", null),
    SYMBOL("icon", "iconfmt"),
    KEYSTROKE("keystroke", null),
+   TERM("term", null),
    INDEX("index", null);
 
    EntryType(String type, String cmd)
@@ -51,7 +54,12 @@ public enum EntryType
             return MENU;
          }
 
-         if (prefix.equals("action"))
+         if (prefix.equals("term"))
+         {
+            return TERM;
+         }
+
+         if (prefix.equals("button"))
          {
             String str = key.substring(idx+1);
 
@@ -61,11 +69,11 @@ public enum EntryType
               ||str.equals("close")
                )
             {
-               return COMMON_WIDGET;
+               return COMMON_BUTTON;
             }
             else
             {
-               return WIDGET;
+               return BUTTON;
             }
          }
 

@@ -1984,20 +1984,20 @@ public class TeXJavaHelpLib
    {
       if (buttonDefaultIconSmall)
       {
-         return createHelpAction(helpID, "action", "help", "manual."+helpID, "help", 
-          getKeyStroke("action.help"), comp, Action.LARGE_ICON_KEY);
+         return createHelpAction(helpID, "button", "help", "manual."+helpID, "help", 
+          getKeyStroke("button.help"), comp, Action.LARGE_ICON_KEY);
       }
       else
       {
-         return createHelpAction(helpID, "action", "help", "manual."+helpID, "help", 
-          getKeyStroke("action.help"), comp);
+         return createHelpAction(helpID, "button", "help", "manual."+helpID, "help", 
+          getKeyStroke("button.help"), comp);
       }
    }
 
    public TJHAbstractAction createHelpAction(String helpID,
       KeyStroke keyStroke, JComponent comp, String... omitKeys)
    {
-      return createHelpAction(helpID, "action", "help", 
+      return createHelpAction(helpID, "button", "help", 
        "manual."+helpID, "help", keyStroke, comp, omitKeys);
    }
 
@@ -2032,8 +2032,8 @@ public class TeXJavaHelpLib
 
    public TJHAbstractAction createHelpAction(NavigationNode node, JComponent comp)
    {
-      return createHelpAction(node, "action", "help", "manual."+node.getKey(), "help", 
-       getKeyStroke("action.help"), comp);
+      return createHelpAction(node, "button", "help", "manual."+node.getKey(), "help", 
+       getKeyStroke("button.help"), comp);
    }
 
    public TJHAbstractAction createHelpAction(final NavigationNode node,
@@ -2501,7 +2501,7 @@ public class TeXJavaHelpLib
    public JButton createOkayButton(final OkayAction okayAction,
      JComponent comp, String... omitKeys)
    {
-      TJHAbstractAction action = new TJHAbstractAction(this, "action",
+      TJHAbstractAction action = new TJHAbstractAction(this, "button",
          "okay", (Boolean)null, comp, omitKeys)
          {
             @Override
@@ -2541,7 +2541,7 @@ public class TeXJavaHelpLib
    public JButton createOkayButton(ActionListener listener,  
      boolean smallIcon, boolean omitTextIfIcon)
    {
-      return createJButton("action", "okay", listener, smallIcon, omitTextIfIcon);
+      return createJButton("button", "okay", listener, smallIcon, omitTextIfIcon);
    }
 
    /**
@@ -2573,7 +2573,7 @@ public class TeXJavaHelpLib
    public JButton createOkayButton(Action action, JComponent comp,  
      boolean smallIcon, boolean omitTextIfIcon)
    {
-      JButton btn = createJButton("action", "okay", action, comp, "okay",
+      JButton btn = createJButton("button", "okay", action, comp, "okay",
         smallIcon, omitTextIfIcon);
 
       if (comp != null && comp instanceof JRootPane)
@@ -2610,7 +2610,7 @@ public class TeXJavaHelpLib
    public JButton createApplyButton(final ApplyAction applyAction,
      JComponent comp, String... omitKeys)
    {
-      TJHAbstractAction action = new TJHAbstractAction(this, "action",
+      TJHAbstractAction action = new TJHAbstractAction(this, "button",
          "apply", (Boolean)null, comp, omitKeys)
          {
             @Override
@@ -2643,7 +2643,7 @@ public class TeXJavaHelpLib
    public JButton createApplyButton(ActionListener listener,
      boolean smallIcon, boolean omitTextIfIcon)
    {
-      return createJButton("action", "apply", listener,
+      return createJButton("button", "apply", listener,
         smallIcon, omitTextIfIcon);
    }
 
@@ -2671,7 +2671,7 @@ public class TeXJavaHelpLib
     */
    public JButton createCancelButton(final JFrame frame, String... omitKeys)
    {
-      TJHAbstractAction action = new TJHAbstractAction(this, "action",
+      TJHAbstractAction action = new TJHAbstractAction(this, "button",
       "cancel", (Boolean)null, frame.getRootPane(), omitKeys)
       {
          @Override
@@ -2708,7 +2708,7 @@ public class TeXJavaHelpLib
     */
    public JButton createCancelButton(final JDialog dialog, String... omitKeys)
    {
-      TJHAbstractAction action = new TJHAbstractAction(this, "action",
+      TJHAbstractAction action = new TJHAbstractAction(this, "button",
       "cancel", (Boolean)null, dialog.getRootPane(), omitKeys)
       {
          @Override
@@ -2748,7 +2748,7 @@ public class TeXJavaHelpLib
    public JButton createCancelButton(Action action, JComponent comp,  
      boolean smallIcon, boolean omitTextIfIcon)
    {
-      return createJButton("action", "cancel", action, comp, "cancel",
+      return createJButton("button", "cancel", action, comp, "cancel",
         smallIcon, omitTextIfIcon);
    }
 
@@ -2779,7 +2779,7 @@ public class TeXJavaHelpLib
     */
    public JButton createCloseButton(final JFrame frame, String... omitKeys)
    {
-      TJHAbstractAction action = new TJHAbstractAction(this, "action",
+      TJHAbstractAction action = new TJHAbstractAction(this, "button",
       "close", (Boolean)null, frame.getRootPane(), omitKeys)
       {
          @Override
@@ -2823,7 +2823,7 @@ public class TeXJavaHelpLib
     */
    public JButton createCloseButton(final JDialog dialog, String... omitKeys)
    {
-      TJHAbstractAction action = new TJHAbstractAction(this, "action",
+      TJHAbstractAction action = new TJHAbstractAction(this, "button",
       "close", (Boolean)null, dialog.getRootPane(), omitKeys)
       {
          @Override
@@ -2860,7 +2860,7 @@ public class TeXJavaHelpLib
    public JButton createCloseButton(ActionListener listener,  
      boolean smallIcon, boolean omitTextIfIcon)
    {
-      return createJButton("action", "close", listener,
+      return createJButton("button", "close", listener,
         smallIcon, omitTextIfIcon);
    }
 
@@ -2875,7 +2875,7 @@ public class TeXJavaHelpLib
    public JButton createCloseButton(Action action, JComponent comp,  
      boolean smallIcon, boolean omitTextIfIcon)
    {
-      return createJButton("action", "close", action, comp, "close",
+      return createJButton("button", "close", action, comp, "close",
         smallIcon, omitTextIfIcon);
    }
 
