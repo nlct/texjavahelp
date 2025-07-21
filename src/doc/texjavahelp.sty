@@ -2,7 +2,7 @@
 % in the TeX Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{texjavahelp}[2024/03/16 v0.1a (NLCT)]
+\ProvidesPackage{texjavahelp}[2025/07/21 v0.2a (NLCT)]
 
 \RequirePackage{pifont}
 \RequirePackage{fontawesome}
@@ -26,6 +26,11 @@
  stylemods={tree,bookindex,topic},
  style=alttree
 }{glossaries-extra}
+
+\newcommand{\fnsymmark}[1]{\rlap{#1}}
+
+\DeclareOption{fnsymleft}{\renewcommand{\fnsymmark}[1]{\llap{#1}}}
+\DeclareOption{fnsymright}{\renewcommand{\fnsymmark}[1]{\rlap{#1}}}
 
 \newcommand{\nlct@ns@ref@cs}{\vref}
   
@@ -693,8 +698,6 @@
 {\catcode`\^^I12\relax
 \gdef\nlctliteraltabchar{^^I}
 }
-
-\newcommand{\fnsymmark}[1]{\llap{#1}}
 
 \newcommand{\asteriskmarker}{\textasteriskcentered}
 \newcommand{\daggermarker}{\textdagger}
