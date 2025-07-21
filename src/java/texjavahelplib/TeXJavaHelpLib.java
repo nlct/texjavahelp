@@ -1984,8 +1984,16 @@ public class TeXJavaHelpLib
 
    public TJHAbstractAction createHelpAction(String helpID, JComponent comp)
    {
-      return createHelpAction(helpID, "action", "help", "help", "help", 
-       getKeyStroke("action.help"), comp, Action.LARGE_ICON_KEY);
+      if (buttonDefaultIconSmall)
+      {
+         return createHelpAction(helpID, "action", "help", "help", "help", 
+          getKeyStroke("action.help"), comp, Action.LARGE_ICON_KEY);
+      }
+      else
+      {
+         return createHelpAction(helpID, "action", "help", "help", "help", 
+          getKeyStroke("action.help"), comp);
+      }
    }
 
    public TJHAbstractAction createHelpAction(String helpID,
@@ -2097,9 +2105,16 @@ public class TeXJavaHelpLib
 
    public JButton createHelpDialogButton(JDialog owner, NavigationNode node)
    {
-      // don't use large icon
-      return new JButton(
-        new HelpDialogAction(owner, node, this, Action.LARGE_ICON_KEY));
+      if (buttonDefaultIconSmall)
+      {
+         return new JButton(
+           new HelpDialogAction(owner, node, this, Action.LARGE_ICON_KEY));
+      }
+      else
+      {
+         return new JButton(
+           new HelpDialogAction(owner, node, this));
+      }
    }
 
    public JButton createHelpDialogButton(JFrame owner, String helpId)
@@ -2119,9 +2134,16 @@ public class TeXJavaHelpLib
    public JButton createHelpDialogButton(JFrame owner, NavigationNode node)
     throws IllegalArgumentException
    {
-      // don't use large icon
-      return new JButton(
-        new HelpDialogAction(owner, node, this, Action.LARGE_ICON_KEY));
+      if (buttonDefaultIconSmall)
+      {
+         return new JButton(
+           new HelpDialogAction(owner, node, this, Action.LARGE_ICON_KEY));
+      }
+      else
+      {
+         return new JButton(
+           new HelpDialogAction(owner, node, this));
+      }
    }
 
    public int getMnemonic(String label)
@@ -2357,13 +2379,58 @@ public class TeXJavaHelpLib
    }
 
    /**
+    * Sets the default behaviour for the smallIcon for methods that
+    * omit it. This value should be set before calling the
+    * applicable methods.
+    */
+   public void setDefaultButtonIconSmall(boolean on)
+   {
+      buttonDefaultIconSmall = on;
+   }
+
+   public boolean getDefaultButtonIconSmall()
+   {
+      return buttonDefaultIconSmall;
+   }
+
+   /**
+    * Sets the default behaviour for the omitTextIfIcon for methods that
+    * omit it. This value should be set before calling the
+    * applicable methods.
+    */
+   public void setDefaultButtonOmitTextIfIcon(boolean on)
+   {
+      buttonDefaultOmitTextIfIcon = on;
+   }
+
+   public boolean getDefaultButtonOmitTextIfIcon()
+   {
+      return buttonDefaultOmitTextIfIcon;
+   }
+
+   /**
+    * Sets the default small icon boolean setting for createToolBarButton(Action).
+    * This value should be set before calling the
+    * applicable methods.
+    */
+   public void setDefaultToolBarButtonIconSmall(boolean on)
+   {
+      toolbarButtonDefaultIconSmall = on;
+   }
+
+   public boolean getDefaultToolBarButtonIconSmall()
+   {
+      return toolbarButtonDefaultIconSmall;
+   }
+
+   /**
     * Creates a JButton from an action without showing text or
     * border. Note that this overrides any text specified by the
     * action.
     */
    public JButton createToolBarButton(Action action)
    {
-      return createToolBarButton(action, false);
+      return createToolBarButton(action, toolbarButtonDefaultIconSmall);
    }
 
    public JButton createToolBarButton(Action action, boolean onlySmallIcon)
@@ -2405,13 +2472,19 @@ public class TeXJavaHelpLib
 
    /**
     * Creates Okay button.
-    * Uses small icon if found.
     * @param okayAction action
     * @param comp the component to set up key map (may be null)
     */
    public JButton createOkayButton(final OkayAction okayAction, JComponent comp)
    {
-      return createOkayButton(okayAction, comp, Action.LARGE_ICON_KEY);
+      if (buttonDefaultIconSmall)
+      {
+         return createOkayButton(okayAction, comp, Action.LARGE_ICON_KEY);
+      }
+      else
+      {
+         return createOkayButton(okayAction, comp);
+      }
    }
 
    /**
@@ -2445,12 +2518,11 @@ public class TeXJavaHelpLib
    /**
     * Creates Okay button with action command "okay".
     * NB this doesn't set up any key map.
-    * Uses small icon if found.
     * @param listener if not null, listener is added to button
     */
    public JButton createOkayButton(ActionListener listener)
    {
-      return createOkayButton(listener, true, false);
+      return createOkayButton(listener, buttonDefaultIconSmall, buttonDefaultOmitTextIfIcon);
    }
 
    /**
@@ -2477,7 +2549,8 @@ public class TeXJavaHelpLib
     */
    public JButton createOkayButton(Action action, JComponent comp)
    {
-      return createOkayButton(action, comp, true, false);
+      return createOkayButton(action, comp, 
+        buttonDefaultIconSmall, buttonDefaultOmitTextIfIcon);
    }
 
    /**
@@ -2508,13 +2581,19 @@ public class TeXJavaHelpLib
 
    /**
     * Creates Apply button.
-    * Uses small icon if found.
     * @param applyAction action
     * @param comp the component to set up key map (may be null)
     */
    public JButton createApplyButton(final ApplyAction applyAction, JComponent comp)
    {
-      return createApplyButton(applyAction, comp, Action.LARGE_ICON_KEY);
+      if (buttonDefaultIconSmall)
+      {
+         return createApplyButton(applyAction, comp, Action.LARGE_ICON_KEY);
+      }
+      else
+      {
+         return createApplyButton(applyAction, comp);
+      }
    }
 
    /**
@@ -2541,18 +2620,16 @@ public class TeXJavaHelpLib
    /**
     * Creates Apply button with action command "apply".
     * NB this doesn't set up any key map.
-    * Uses small icon if found.
     * @param listener if not null, listener is added to button
     */
    public JButton createApplyButton(ActionListener listener)
    {
-      return createApplyButton(listener, true, false);
+      return createApplyButton(listener, buttonDefaultIconSmall, buttonDefaultOmitTextIfIcon);
    }
 
    /**
     * Creates Apply button with action command "apply".
     * NB this doesn't set up any key map.
-    * Uses small icon if found.
     * @param listener if not null, listener is added to button
     * @param smallIcon if true use small icon if found
     * @param omitTextIfIcon if true don't set text if icon is found
@@ -2571,7 +2648,13 @@ public class TeXJavaHelpLib
     */
    public JButton createCancelButton(JFrame frame)
    {
-      return createCancelButton(frame, Action.LARGE_ICON_KEY);
+      if (buttonDefaultIconSmall)
+      {
+         return createCancelButton(frame, Action.LARGE_ICON_KEY);
+      }
+      {
+         return createCancelButton(frame);
+      }
    }
 
    /**
@@ -2597,11 +2680,18 @@ public class TeXJavaHelpLib
 
    /**
     * Creates Cancel button using TJHAbstractAction that closes the
-    * given JDialog. Ignores the large icon.
+    * given JDialog.
     */
    public JButton createCancelButton(JDialog dialog)
    {
-      return createCancelButton(dialog, Action.LARGE_ICON_KEY);
+      if (buttonDefaultIconSmall)
+      {
+         return createCancelButton(dialog, Action.LARGE_ICON_KEY);
+      }
+      else
+      {
+         return createCancelButton(dialog);
+      }
    }
 
    /**
@@ -2628,14 +2718,15 @@ public class TeXJavaHelpLib
    /**
     * Creates Cancel button with the given action.
     * Sets up key mapping for the component if a keystroke is
-    * available. Uses small icon if found.
+    * available.
     * @param action the action to perform when this button is
     * pressed
     * @param comp the component to set up key map (may be null)
     */
    public JButton createCancelButton(Action action, JComponent comp)
    {
-      return createCancelButton(action, comp, true, false);
+      return createCancelButton(action, comp, 
+       buttonDefaultIconSmall, buttonDefaultOmitTextIfIcon);
    }
 
    /**
@@ -2663,7 +2754,14 @@ public class TeXJavaHelpLib
     */
    public JButton createCloseButton(JFrame frame)
    {
-      return createCloseButton(frame, Action.LARGE_ICON_KEY);
+      if (buttonDefaultIconSmall)
+      {
+         return createCloseButton(frame, Action.LARGE_ICON_KEY);
+      }
+      else
+      {
+         return createCloseButton(frame);
+      }
    }
 
    /**
@@ -2695,12 +2793,19 @@ public class TeXJavaHelpLib
    /**
     * Creates Close button using TJHAbstractAction that closes the
     * given JDialog. The new button will be set as the dialog's
-    * default button. Ignores the large icon.
+    * default button.
     * @param dialog the dialog that the button should close
     */
    public JButton createCloseButton(JDialog dialog)
    {
-      return createCloseButton(dialog, Action.LARGE_ICON_KEY);
+      if (buttonDefaultIconSmall)
+      {
+         return createCloseButton(dialog, Action.LARGE_ICON_KEY);
+      }
+      else
+      {
+         return createCloseButton(dialog);
+      }
    }
 
    /**
@@ -2732,12 +2837,11 @@ public class TeXJavaHelpLib
    /**
     * Creates Close button with action command "close".
     * NB this doesn't set up any key map.
-    * Uses small icon if found.
     * @param listener if not null, listener is added to button
     */
    public JButton createCloseButton(ActionListener listener)
    {
-      return createCloseButton(listener, true, false);
+      return createCloseButton(listener, buttonDefaultIconSmall, buttonDefaultOmitTextIfIcon);
    }
 
    /**
@@ -2780,7 +2884,6 @@ public class TeXJavaHelpLib
 
    /**
     * Creates a labelled button. The text and mnemonic are obtained from the tag.
-    * The small icon will be used, if found.
     * @param tag the language tag
     * @param actionName if not null, the button's action command
     * @param actionListener if not null, added to the button's 
@@ -2790,7 +2893,7 @@ public class TeXJavaHelpLib
      ActionListener actionListener)
    {
       return createJButton(parentTag, actionName, actionListener, actionName,
-        true, false);
+        buttonDefaultIconSmall, buttonDefaultOmitTextIfIcon);
    }
 
    /**
@@ -3048,6 +3151,10 @@ public class TeXJavaHelpLib
 
    protected Properties imageMap = null;
    protected String mappedSmallIconSuffix = "-small";
+
+   protected boolean buttonDefaultIconSmall = true;
+   protected boolean buttonDefaultOmitTextIfIcon = false;
+   protected boolean toolbarButtonDefaultIconSmall = false;
 
    public static final String HELP_LIB_ICON_PATH
    = "/com/dickimawbooks/texjavahelplib/icons/";
