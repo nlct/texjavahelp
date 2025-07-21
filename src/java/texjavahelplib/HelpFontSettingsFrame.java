@@ -48,7 +48,9 @@ public class HelpFontSettingsFrame extends JFrame
  implements ItemListener,
    HelpFontChangeListener,
    HyperlinkListener,
-   ActionListener
+   ActionListener,
+   OkayAction,
+   ApplyAction
 {
    public HelpFontSettingsFrame(final HelpFrame helpFrame)
    {
@@ -296,10 +298,9 @@ public class HelpFontSettingsFrame extends JFrame
       JPanel applyOkayPanel = new JPanel();
       btnPanel.add(applyOkayPanel, "East");
 
-      applyOkayPanel.add(helpLib.createApplyButton(this));
+      applyOkayPanel.add(helpLib.createApplyButton((ApplyAction)this, getRootPane()));
 
-      JButton okayButton = helpLib.createOkayButton(this);
-      getRootPane().setDefaultButton(okayButton);
+      JButton okayButton = helpLib.createOkayButton((OkayAction)this, getRootPane());
 
       applyOkayPanel.add(okayButton);
 
@@ -328,10 +329,21 @@ public class HelpFontSettingsFrame extends JFrame
       return jl;
    }
 
-   protected void apply()
+   @Override
+   public void apply()
    {
       helpFrame.getHelpLib().notifyFontChange(
        new HelpFontChangeEvent(this, sampleHelpFontSettings));
+
+      closeButton.setVisible(true);
+      cancelButton.setVisible(false);
+   }
+
+   @Override
+   public void okay()
+   {
+      apply();
+      setVisible(false);
    }
 
    @Override
@@ -348,17 +360,6 @@ public class HelpFontSettingsFrame extends JFrame
       else if (action.equals("choose_colour"))
       {
          chooseLinkColor();
-      }
-      else if (action.equals("apply"))
-      {
-         apply();
-         closeButton.setVisible(true);
-         cancelButton.setVisible(false);
-      }
-      else if (action.equals("okay"))
-      {
-         apply();
-         setVisible(false);
       }
       else
       {

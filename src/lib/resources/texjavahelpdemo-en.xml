@@ -10,6 +10,10 @@ Nicola Talbot
 <!-- Main Frame Widgets -->
 <entry key="label.demo">Demo Label (Introduction)</entry>
 
+<entry key="action.demohelp">Demo Help</entry>
+<entry key="action.demohelp.keystroke">F2</entry>
+<entry key="action.demohelp.mnemonic">D</entry>
+
 <!-- Menus -->
 <entry key="menu.file">File</entry>
 <entry key="menu.file.mnemonic">F</entry>
@@ -20,6 +24,9 @@ Nicola Talbot
 
 <entry key="menu.help.sampledialog">Sample Dialog...</entry>
 <entry key="menu.help.sampledialog.mnemonic">D</entry>
+
+<entry key="menu.help.sampleframe">Sample Frame...</entry>
+<entry key="menu.help.sampleframe.mnemonic">F</entry>
 
 <entry key="menu.help.about">About</entry>
 <entry key="menu.help.about.mnemonic">A</entry>
@@ -54,6 +61,11 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 
 <entry key="sampledialog.title">Sample Dialog</entry>
 <entry key="sampledialog.message">An example modal dialog box.</entry>
+
+<!-- Sample Frame -->
+
+<entry key="sampleframe.title">Sample Frame</entry>
+<entry key="sampleframe.message">An example frame.</entry>
 
 <!-- Application properties -->
 <entry key="properties.comment">Properties file for {0}</entry>

@@ -292,13 +292,17 @@ public class TeXJavaHelpDemo extends JFrame
       createSampleDialog();
       helpM.add(createJMenuItem("menu.help", "sampledialog"));
 
+      createSampleFrame();
+      helpM.add(createJMenuItem("menu.help", "sampleframe"));
+
       JPanel mainPanel = new JPanel(new FlowLayout());
 
       getContentPane().add(mainPanel, "Center");
 
       mainPanel.add(createJLabel("label.demo"));
       mainPanel.add(new JButton(
-        helpLib.createHelpAction("sec:intro", mainPanel)));
+        helpLib.createHelpAction("sec:intro", "action", "demohelp", "demohelp",
+             "help", helpLib.getKeyStroke("action.demohelp"), getRootPane())));
       mainPanel.add(new JTextField("sample"));
 
       Toolkit tk = Toolkit.getDefaultToolkit();
@@ -410,6 +414,7 @@ public class TeXJavaHelpDemo extends JFrame
 
    protected void createSampleDialog()
    {
+      //System.out.println("Creating Sample Dialog");
       sampleDialog = new JDialog(this, helpLib.getMessage("sampledialog.title"), true);
 
       sampleDialog.getContentPane().add(
@@ -439,6 +444,38 @@ public class TeXJavaHelpDemo extends JFrame
 
       sampleDialog.pack();
       sampleDialog.setLocationRelativeTo(null);
+   }
+
+   protected void createSampleFrame()
+   {
+      //System.out.println("Creating Sample Frame");
+      sampleFrame = new JFrame(helpLib.getMessage("sampleframe.title"));
+
+      sampleFrame.getContentPane().add(
+        helpLib.createJLabel("sampleframe.message"), BorderLayout.NORTH);
+
+      sampleFrame.getContentPane().add(new JTextField(12),
+        BorderLayout.CENTER);
+
+      JPanel buttonPanel = new JPanel();
+      sampleFrame.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+
+      buttonPanel.add(helpLib.createCloseButton(sampleFrame));
+
+      String helpId = "sec:helpwindows";
+
+      try
+      {
+         buttonPanel.add(
+          helpLib.createHelpDialogButton(sampleFrame, helpId));
+      }
+      catch (IllegalArgumentException e)
+      {
+         error(e);
+      }
+
+      sampleFrame.pack();
+      sampleFrame.setLocationRelativeTo(null);
    }
 
    public void setUI(String lookandfeel)
@@ -498,6 +535,10 @@ public class TeXJavaHelpDemo extends JFrame
       else if (action.equals("sampledialog"))
       {
          sampleDialog.setVisible(true);
+      }
+      else if (action.equals("sampleframe"))
+      {
+         sampleFrame.setVisible(true);
       }
       else if (action.equals("about"))
       {
@@ -697,6 +738,7 @@ public class TeXJavaHelpDemo extends JFrame
    private Properties properties;
 
    private JDialog sampleDialog, aboutDialog, licenseDialog;
+   private JFrame sampleFrame;
    private int debugMode = 1;
 
    public static final String APP_NAME = "TeX Java Help Demo";

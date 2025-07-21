@@ -26,6 +26,7 @@ import javax.swing.*;
  * Dialog for adjusting lower navigation panel settings.
  */
 public class HelpLowerNavSettingsDialog extends JDialog
+implements OkayAction
 {
    public HelpLowerNavSettingsDialog(Window owner, final HelpPageNavPanel navPanel)
    {
@@ -70,36 +71,14 @@ public class HelpLowerNavSettingsDialog extends JDialog
       JPanel buttonPanel = new JPanel();
       getContentPane().add(buttonPanel, "South");
 
-      TJHAbstractAction cancelAction
-         = new TJHAbstractAction(helpLib, "action", "cancel")
-       {
-         @Override
-         public void doAction()
-         {
-            setVisible(false);
-         }
-       };
-
-      buttonPanel.add(new JButton(cancelAction));
-
-      TJHAbstractAction okayAction = new TJHAbstractAction(helpLib, "action", "okay")
-       {
-         @Override
-         public void doAction()
-         {
-            okay();
-         }
-       };
-
-      JButton okayButton = new JButton(okayAction);
-      getRootPane().setDefaultButton(okayButton);
-
-      buttonPanel.add(okayButton);
+      buttonPanel.add(helpLib.createCancelButton(this));
+      buttonPanel.add(helpLib.createOkayButton((OkayAction)this, getRootPane()));
 
       pack();
    }
 
-   protected void okay()
+   @Override
+   public void okay()
    {
       TeXJavaHelpLib helpLib = navPanel.getHelpLib();
 
