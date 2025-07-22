@@ -28,9 +28,6 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
 import javax.swing.*;
 
 import javax.swing.event.HyperlinkListener;
@@ -45,7 +42,7 @@ import javax.swing.text.html.StyleSheet;
  * dialogs or similar.
  */
 public class MessageDialog extends JDialog
- implements HyperlinkListener,HelpFontChangeListener,ActionListener
+ implements HyperlinkListener,HelpFontChangeListener
 {
    /**
     * Creates a message dialog with the given HTML content that
@@ -254,6 +251,8 @@ public class MessageDialog extends JDialog
       buttonPanel.add(westPanel, "West");
       buttonPanel.add(eastPanel, "East");
 
+      // NB editor pane already supports Ctrl+A and Ctrl+C
+
       westPanel.add(new JButton(new TJHAbstractAction(helpLib,
       "button", "copy_all", "copy_all", "copy",
        helpLib.getKeyStroke("button.copy_all"),
@@ -263,7 +262,13 @@ public class MessageDialog extends JDialog
          @Override
          public void doAction()
          {
-            copyContent();
+            copyAllContent();
+
+            // Ensure editor pane has the focus as the selected text
+            // will be highlighted which gives visual feedback that
+            // the action has taken place.
+
+            editorPane.requestFocusInWindow();
          }
       }));
 
@@ -283,17 +288,18 @@ public class MessageDialog extends JDialog
       eastPanel.add(comp);
    }
 
-   @Override
-   public void actionPerformed(ActionEvent evt)
+   /**
+    * Selects all text and copies it to the clipboard.
+    */
+   public void copyAllContent()
    {
-      String action = evt.getActionCommand();
-
-      if ("copy".equals(action))
-      {
-         copyContent();
-      }
+      editorPane.selectAll();
+      editorPane.copy();
    }
 
+   /**
+    * Copies selected content or all content if nothing selected.
+    */
    public void copyContent()
    {
       int start = editorPane.getSelectionStart();
