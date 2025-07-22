@@ -254,8 +254,10 @@ public class MessageDialog extends JDialog
       buttonPanel.add(westPanel, "West");
       buttonPanel.add(eastPanel, "East");
 
-      westPanel.add(new JButton(new TJHAbstractAction(helpLib, "button",
-      "copy_all", (Boolean)null, getRootPane(),
+      westPanel.add(new JButton(new TJHAbstractAction(helpLib,
+      "button", "copy_all", "copy_all", "copy",
+       helpLib.getKeyStroke("button.copy_all"),
+       (Boolean)null, getRootPane(),
        helpLib.getDefaultButtonActionOmitKeys())
       {
          @Override
