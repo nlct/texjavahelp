@@ -295,7 +295,11 @@ public abstract class CLISyntaxParser
 
    }
 
-   protected void parseArgs()
+   /**
+    * Parse the arguments. Note that the queue must first be created
+    * with preparse().
+    */
+   public void parseArgs()
      throws InvalidSyntaxException
    {
       String arg;
