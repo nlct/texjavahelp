@@ -353,6 +353,47 @@ public class TeXJavaHelpMk extends TeXAppAdapter
          protected void parseArg(String arg)
          throws InvalidSyntaxException
          {
+            // if no option specified, assume --in or --out
+
+            if (inFile == null)
+            {
+               inFile = new File(arg);
+            }
+            else if (outDir == null)
+            {
+               outDir = new File(arg);
+            }
+            else
+            {
+               throw new InvalidSyntaxException(
+                 getMessage("error.syntax.only_one_inout"));
+            }
+         }
+
+         @Override
+         protected int argCount(String arg)
+         {
+            if (arg.equals("--log")
+             || arg.equals("--split")
+             || arg.equals("--head")
+             || arg.equals("--in") || arg.equals("-i")
+             || arg.equals("--output") || arg.equals("-o")
+             || arg.equals("--out-charset")
+             || arg.equals("--image-preamble")
+             || arg.equals("--debug")
+             || arg.equals("--debug-mode")
+               )
+            {
+               return 1;
+            }
+
+            return 0;
+         }
+
+         @Override
+         protected boolean parseArg(String arg, CLIArgValue[] returnVals)
+         throws InvalidSyntaxException
+         {
             if (arg.equals("--nolog"))
             {
                logFile = null;
@@ -397,57 +438,7 @@ public class TeXJavaHelpMk extends TeXAppAdapter
             {
                convertImages = true;
             }
-            else if (arg.startsWith("-"))
-            {
-               throw new InvalidSyntaxException(
-                  helpLib.getMessage("error.clisyntax.unknown.arg",
-                  arg, "--help"));
-            }
-            else
-            {
-               // if no option specified, assume --in or --out
-
-               if (inFile == null)
-               {
-                  inFile = new File(arg);
-               }
-               else if (outDir == null)
-               {
-                  outDir = new File(arg);
-               }
-               else
-               {
-                  throw new InvalidSyntaxException(
-                    getMessage("error.syntax.only_one_inout"));
-               }
-            }
-         }
-
-         @Override
-         protected int argCount(String arg)
-         {
-            if (arg.equals("--log")
-             || arg.equals("--split")
-             || arg.equals("--head")
-             || arg.equals("--in") || arg.equals("-i")
-             || arg.equals("--output") || arg.equals("-o")
-             || arg.equals("--out-charset")
-             || arg.equals("--image-preamble")
-             || arg.equals("--debug")
-             || arg.equals("--debug-mode")
-               )
-            {
-               return 1;
-            }
-
-            return 0;
-         }
-
-         @Override
-         protected boolean parseArg(String arg, CLIArgValue[] returnVals)
-         throws InvalidSyntaxException
-         {
-            if (isArg(arg, "--log", returnVals))
+            else if (isArg(arg, "--log", returnVals))
             {
                if (logFile != null)
                {

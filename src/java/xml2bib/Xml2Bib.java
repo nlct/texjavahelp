@@ -779,6 +779,13 @@ public class Xml2Bib
          protected void parseArg(String arg)
          throws InvalidSyntaxException
          {
+            inFileNames.add(arg);
+         }
+
+         @Override
+         protected boolean parseArg(String arg, CLIArgValue[] returnVals)
+         throws InvalidSyntaxException
+         {
             if (arg.equals("--provide-xml"))
             {
                copyXml = true;
@@ -793,24 +800,7 @@ public class Xml2Bib
             {
                copyXml = false;
             }
-            else if (arg.startsWith("-"))
-            {
-               throw new InvalidSyntaxException(
-                getMessage("error.syntax.unknown_option", arg));
-            }
-            else
-            {
-               // if no option specified, assume --in
-
-               inFileNames.add(arg);
-            }
-         }
-
-         @Override
-         protected boolean parseArg(String arg, CLIArgValue[] returnVals)
-         throws InvalidSyntaxException
-         {
-            if (isArg(arg, "--encapless-field", returnVals))
+            else if (isArg(arg, "--encapless-field", returnVals))
             {
                if (returnVals[0] == null)
                {
