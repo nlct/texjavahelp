@@ -167,6 +167,15 @@ public class TeXJavaHelpLib
       return helpsetLocale;
    }
 
+   /**
+    * Sets the help set locale. If this method is used, ensure
+    * this is done before search for the help system files.
+    */
+   public void setHelpSetLocale(HelpSetLocale hsLocale)
+   {
+      helpsetLocale = hsLocale;
+   }
+
    public HelpSetLocale getMessagesLocale()
    {
       return messages.getLocale();
@@ -3326,6 +3335,6 @@ public class TeXJavaHelpLib
    public static final String LICENSE_GPL3 = String.format(
    "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>%nThis is free software: you are free to change and redistribute it.%nThere is NO WARRANTY, to the extent permitted by law.");
 
-   public static final String VERSION = "0.9a.20250721";
-   public static final String VERSION_DATE = "2025-07-21";
+   public static final String VERSION = "0.9a.20250722";
+   public static final String VERSION_DATE = "2025-07-22";
 }
