@@ -712,6 +712,46 @@ public class Xml2Bib
          }
 
          @Override
+         public boolean setDebugOption(String option, Integer value)
+         throws InvalidSyntaxException
+         {
+            debugMode = true;
+
+            return true;
+         }
+
+         @Override
+         protected boolean preparseCheckArg()
+         throws InvalidSyntaxException
+         {
+            if (super.preparseCheckArg())
+            {
+               return true;
+            }
+
+            if (originalArgList[preparseIndex].equals("--verbose"))
+            {
+               verboseLevel = 1;
+            }
+            else if (originalArgList[preparseIndex].equals("--noverbose"))
+            {
+               verboseLevel = 0;
+            }
+            else if (originalArgList[preparseIndex].equals("--nodebug")
+                   || originalArgList[preparseIndex].equals("--no-debug")
+                    )
+            {
+               debugMode = false;
+            }
+            else
+            {
+               return false;
+            }
+
+            return true;
+         }
+
+         @Override
          protected void help()
          {
             syntax();
@@ -739,19 +779,7 @@ public class Xml2Bib
          protected void parseArg(String arg)
          throws InvalidSyntaxException
          {
-            if (arg.equals("--debug"))
-            {
-               debugMode = true;
-            }
-            else if (arg.equals("--nodebug"))
-            {
-               debugMode = false;
-            }
-            else if (arg.equals("--verbose"))
-            {
-               verboseLevel = 1;
-            }
-            else if (arg.equals("--provide-xml"))
+            if (arg.equals("--provide-xml"))
             {
                copyXml = true;
                replaceXml = false;
@@ -765,7 +793,7 @@ public class Xml2Bib
             {
                copyXml = false;
             }
-            else if (arg.charAt(0) == '-')
+            else if (arg.startsWith("-"))
             {
                throw new InvalidSyntaxException(
                 getMessage("error.syntax.unknown_option", arg));
@@ -857,7 +885,7 @@ public class Xml2Bib
          }
       };
 
-      cliParser.parseArgs();
+      cliParser.process();
 
       if (inFileNames.isEmpty())
       {

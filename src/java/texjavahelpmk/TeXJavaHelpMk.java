@@ -46,6 +46,8 @@ import com.dickimawbooks.texparserlib.latex2latex.LaTeXPreambleListener;
 
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLibAppAdapter;
+import com.dickimawbooks.texjavahelplib.CLISyntaxParser;
+import com.dickimawbooks.texjavahelplib.CLIArgValue;
 import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 
 public class TeXJavaHelpMk extends TeXAppAdapter
@@ -273,257 +275,240 @@ public class TeXJavaHelpMk extends TeXAppAdapter
 
    private void parseArgs(String[] args) throws InvalidSyntaxException
    {
-      for (int i = 0; i < args.length; i++)
+      CLISyntaxParser cliParser = new CLISyntaxParser(helpLib, args, "-h", "-v")
       {
-         if (args[i].equals("--version") || args[i].equals("-v"))
+         @Override
+         public boolean setDebugOption(String option, Integer value)
+         throws InvalidSyntaxException
          {
-            version();
-            System.exit(0);
+            debugMode = value.intValue();
+
+            return true;
          }
-         else if (args[i].equals("--help") || args[i].equals("-h"))
+
+         @Override
+         public boolean setDebugModeOption(String option, String strValue)
+         throws InvalidSyntaxException
          {
-            help();
-            System.exit(0);
+            setCLIDebugModeOption(option, strValue);
+            return true;
          }
-         else if (args[i].equals("--log"))
+
+         @Override
+         protected boolean preparseCheckArg()
+         throws InvalidSyntaxException
          {
-            if (logFile != null)
+            if (super.preparseCheckArg())
             {
-               throw new InvalidSyntaxException(
-                 getMessage("error.syntax.only_one", args[i]));
+               return true;
             }
 
-            i++;
-
-            if (i == args.length)
+            if (originalArgList[preparseIndex].equals("--verbose"))
             {
-               throw new InvalidSyntaxException(
-                 getMessage("error.syntax.missing_filename", args[i-1]));
+               verboseLevel = 1;
             }
-
-            logFile = new File(args[i]);
-         }
-         else if (args[i].equals("--nolog"))
-         {
-            logFile = null;
-         }
-         else if (args[i].equals("--nomathjax"))
-         {
-            mathJax = false;
-         }
-         else if (args[i].equals("--mathjax"))
-         {
-            mathJax = true;
-         }
-         else if (args[i].equals("--noentities"))
-         {
-            useHtmlEntities = false;
-         }
-         else if (args[i].equals("--entities"))
-         {
-            useHtmlEntities = true;
-         }
-         else if (args[i].equals("--split"))
-         {
-            i++;
-
-            if (i == args.length)
+            else if (originalArgList[preparseIndex].equals("--noverbose"))
             {
-               throw new InvalidSyntaxException(
-                 getMessage("error.syntax.missing_value", args[i-1]));
+               verboseLevel = 0;
             }
-
-            try
+            else if (originalArgList[preparseIndex].equals("--nodebug")
+                   || originalArgList[preparseIndex].equals("--no-debug")
+                    )
             {
-               splitLevel = Integer.parseInt(args[i]);
-            }
-            catch (NumberFormatException e)
-            {
-               throw new InvalidSyntaxException(
-                 getMessage("error.syntax.number_expected", args[i-1], args[i]), e);
-            }
-         }
-         else if (args[i].equals("--prefix-split"))
-         {
-           splitUseBaseNamePrefix = true;
-         }
-         else if (args[i].equals("--noprefix-split"))
-         {
-           splitUseBaseNamePrefix = false;
-         }
-         else if (args[i].equals("--head"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getMessage("error.syntax.missing_filename", args[i-1]));
-            }
-
-            extraHead = args[i];
-         }
-         else if (args[i].equals("--debug"))
-         {
-            debugMode = Integer.MAX_VALUE;
-
-            if (i < args.length - 1)
-            {
-               try
-               {
-                  int val = Integer.parseInt(args[i+1]);
-
-                  if (val >= 0)
-                  {
-                     debugMode = val;
-                     i++;
-                  }
-               }
-               catch (NumberFormatException e)
-               {
-               }
-            }
-         }
-         else if (args[i].equals("--debug-mode"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getMessage("error.syntax.missing_mode", args[i-1]));
-            }
-
-            try
-            {
-               int val = Integer.parseInt(args[i]);
-
-               if (val >= 0)
-               {
-                  debugMode = val;
-               }
-            }
-            catch (NumberFormatException e)
-            {
-               try
-               {
-                  debugMode = TeXParser.getDebugLevelFromModeList(args[i].split(","));
-               }
-               catch (TeXSyntaxException e2)
-               {
-                  throw new InvalidSyntaxException(e2.getMessage(this), e2);
-               }
-            }
-         }
-         else if (args[i].equals("--nodebug") || args[i].equals("--no-debug"))
-         {
-            debugMode = 0;
-         }
-         else if (args[i].equals("--in") || args[i].equals("-i"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getMessage("error.syntax.missing_input",
-                   args[i-1]));
-            }
-
-            if (inFile != null)
-            {
-               throw new InvalidSyntaxException(
-                 getMessage("error.syntax.only_one_input"));
-            }
-
-            inFile = new File(args[i]);
-         }
-         else if (args[i].equals("--output") || args[i].equals("-o"))
-         {
-            if (outDir != null)
-            {
-               throw new InvalidSyntaxException(
-                 getMessage("error.syntax.only_one", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getMessage("error.syntax.missing_filename", args[i-1]));
-            }
-
-            outDir = new File(args[i]);
-
-         }
-         else if (args[i].equals("--out-charset"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getMessage("error.syntax.missing_input",
-                   args[i-1]));
-            }
-
-            outCharset = Charset.forName(args[i]);
-         }
-         else if (args[i].equals("--no-rm-tmp-dir"))
-         {
-            deleteTempDirOnExit = false;
-         }
-         else if (args[i].equals("--rm-tmp-dir"))
-         {
-            deleteTempDirOnExit = true;
-         }
-         else if (args[i].equals("--no-convert-images"))
-         {
-            convertImages = false;
-         }
-         else if (args[i].equals("--convert-images"))
-         {
-            convertImages = true;
-         }
-         else if (args[i].equals("image-preamble"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getMessage("error.syntax.missing_input",
-                   args[i-1]));
-            }
-
-            imagePreambleFile = new File(args[i]);
-         }
-         else if (args[i].charAt(0) == '-')
-         {
-            throw new InvalidSyntaxException(
-             getMessage("error.syntax.unknown_option", args[i]));
-         }
-         else
-         {
-            // if no option specified, assume --in or --out
-
-            if (inFile == null)
-            {
-               inFile = new File(args[i]);
-            }
-            else if (outDir == null)
-            {
-               outDir = new File(args[i]);
+               debugMode = 0;
             }
             else
             {
-               throw new InvalidSyntaxException(
-                 getMessage("error.syntax.only_one_inout"));
+               return false;
             }
 
+            return true;
          }
-      }
+
+         @Override
+         protected void help()
+         {
+            syntax();
+            System.exit(0);
+         }
+
+
+         @Override
+         protected void version()
+         {
+            System.out.println(getHelpLib().getAboutInfo(false,
+              TeXJavaHelpLib.VERSION,
+              TeXJavaHelpLib.VERSION_DATE,
+              String.format(
+               "Copyright (C) %s Nicola L. C. Talbot (%s)",
+                TeXJavaHelpLib.VERSION_DATE.substring(0, 4),
+                getHelpLib().getInfoUrl(false, "www.dickimaw-books.com")),
+               TeXJavaHelpLib.LICENSE_GPL3,
+               true, null
+            ));
+
+            System.exit(0);
+         }
+
+         protected void parseArg(String arg)
+         throws InvalidSyntaxException
+         {
+            if (arg.equals("--nolog"))
+            {
+               logFile = null;
+            }
+            else if (arg.equals("--nomathjax"))
+            {
+               mathJax = false;
+            }
+            else if (arg.equals("--mathjax"))
+            {
+               mathJax = true;
+            }
+            else if (arg.equals("--noentities"))
+            {
+               useHtmlEntities = false;
+            }
+            else if (arg.equals("--entities"))
+            {
+               useHtmlEntities = true;
+            }
+            else if (arg.equals("--prefix-split"))
+            {
+              splitUseBaseNamePrefix = true;
+            }
+            else if (arg.equals("--noprefix-split"))
+            {
+              splitUseBaseNamePrefix = false;
+            }
+            else if (arg.equals("--no-rm-tmp-dir"))
+            {
+               deleteTempDirOnExit = false;
+            }
+            else if (arg.equals("--rm-tmp-dir"))
+            {
+               deleteTempDirOnExit = true;
+            }
+            else if (arg.equals("--no-convert-images"))
+            {
+               convertImages = false;
+            }
+            else if (arg.equals("--convert-images"))
+            {
+               convertImages = true;
+            }
+            else if (arg.startsWith("-"))
+            {
+               throw new InvalidSyntaxException(
+                  helpLib.getMessage("error.clisyntax.unknown.arg",
+                  arg, "--help"));
+            }
+            else
+            {
+               // if no option specified, assume --in or --out
+
+               if (inFile == null)
+               {
+                  inFile = new File(arg);
+               }
+               else if (outDir == null)
+               {
+                  outDir = new File(arg);
+               }
+               else
+               {
+                  throw new InvalidSyntaxException(
+                    getMessage("error.syntax.only_one_inout"));
+               }
+            }
+         }
+
+         @Override
+         protected int argCount(String arg)
+         {
+            if (arg.equals("--log")
+             || arg.equals("--split")
+             || arg.equals("--head")
+             || arg.equals("--in") || arg.equals("-i")
+             || arg.equals("--output") || arg.equals("-o")
+             || arg.equals("--out-charset")
+             || arg.equals("--image-preamble")
+             || arg.equals("--debug")
+             || arg.equals("--debug-mode")
+               )
+            {
+               return 1;
+            }
+
+            return 0;
+         }
+
+         @Override
+         protected boolean parseArg(String arg, CLIArgValue[] returnVals)
+         throws InvalidSyntaxException
+         {
+            if (isArg(arg, "--log", returnVals))
+            {
+               if (logFile != null)
+               {
+                  throw new InvalidSyntaxException(
+                    getMessage("error.syntax.only_one", arg));
+               }
+
+               if (returnVals[0] == null)
+               {
+                  throw new InvalidSyntaxException(
+                     getMessage("error.clisyntax.missing.value", arg));
+               }
+
+               logFile = new File(returnVals[0].toString());
+            }
+            else if (isIntArg(arg, "--split", returnVals))
+            {
+               splitLevel = returnVals[0].intValue();
+            }
+            else if (isArg(arg, "--head", returnVals))
+            {
+               extraHead = returnVals[0].toString();
+            }
+            else if (isArg(arg, "--in", "-i", returnVals))
+            {
+               if (inFile != null)
+               {
+                  throw new InvalidSyntaxException(
+                    getMessage("error.syntax.only_one_input"));
+               }
+
+               inFile = new File(returnVals[0].toString());
+            }
+            else if (isArg(arg, "--output", "-o", returnVals))
+            {
+               if (outDir != null)
+               {
+                  throw new InvalidSyntaxException(
+                    getMessage("error.syntax.only_one", arg));
+               }
+
+               outDir = new File(returnVals[0].toString());
+            }
+            else if (isArg(arg, "--out-charset", returnVals))
+            {
+               outCharset = Charset.forName(returnVals[0].toString());
+            }
+            else if (isArg(arg, "--image-preamble", returnVals))
+            {
+               imagePreambleFile = new File(returnVals[0].toString());
+            }
+            else
+            {
+               return false;
+            }
+
+            return true;
+         }
+      };
+
+      cliParser.process();
 
       if (inFile == null)
       {
@@ -535,6 +520,31 @@ public class TeXJavaHelpMk extends TeXAppAdapter
       {
          throw new InvalidSyntaxException(
             getMessage("error.syntax.missing_out"));
+      }
+   }
+
+   protected void setCLIDebugModeOption(String option, String strValue)
+   throws InvalidSyntaxException
+   {
+      try
+      {
+         int val = Integer.parseInt(strValue);
+
+         if (val >= 0)
+         {
+            debugMode = val;
+         }
+      }
+      catch (NumberFormatException e)
+      {
+         try
+         {
+            debugMode = TeXParser.getDebugLevelFromModeList(strValue.split(","));
+         }
+         catch (TeXSyntaxException e2)
+         {
+            throw new InvalidSyntaxException(e2.getMessage(this), e2);
+         }
       }
    }
 
@@ -1459,9 +1469,9 @@ public class TeXJavaHelpMk extends TeXAppAdapter
    }
 
 
-   public void help()
+   public void syntax()
    {
-      version();
+      versionInfo();
       System.out.println();
       System.out.println(getMessage("syntax.title"));
       System.out.println();
@@ -1495,7 +1505,7 @@ public class TeXJavaHelpMk extends TeXAppAdapter
         "https://github.com/nlct/texjavahelp"));
    }
 
-   public void version()
+   public void versionInfo()
    {
       if (!shownVersion)
       {

@@ -25,21 +25,25 @@ import java.util.ArrayDeque;
 public abstract class CLISyntaxParser
 {
    public CLISyntaxParser(TeXJavaHelpLib helpLib, String[] args)
-   throws InvalidSyntaxException
    {
       this(helpLib, args, null, null);
    }
 
    public CLISyntaxParser(TeXJavaHelpLib helpLib, String[] args,
     String shortHelpSwitch, String shortVersionSwitch)
-   throws InvalidSyntaxException
    {
       this.helpLib = helpLib;
       deque = new ArrayDeque<String>(args.length);
       originalArgList = args;
       this.shortHelp = shortHelpSwitch;
       this.shortVersion = shortVersionSwitch;
+   }
+
+   public void process()
+   throws InvalidSyntaxException
+   {
       preparse();
+      parseArgs();
    }
 
    public TeXJavaHelpLib getHelpLib()
@@ -78,6 +82,9 @@ public abstract class CLISyntaxParser
 
    /**
     * Parse command line argument that starts with "-" if recognised.
+    * @param arg option name including leading hyphen(s)
+    * @param returnVals scratch variable for storing the
+    * argument values (by methods such as isArg(), isIntArg() or isListArg())
     * @return true if recognised switch
     * @throws InvalidSyntaxException if the argument is a valid
     * switch but has been used incorrectly
@@ -92,6 +99,42 @@ public abstract class CLISyntaxParser
    public boolean optionsWereFound()
    {
       return argsFound;
+   }
+
+   /**
+    * This method is called in preprocessor if the argument is
+    * "--debug". Default implementation returns false.
+    * Override this method to enable the switch. This option needs
+    * to be processed first to ensure debugging is available for
+    * other option actions. Designed for switch that may optionally
+    * be followed by an integer.
+    * @param option the option name ("--debug")
+    * @param value the option value or null if argCount returns 0
+    * or if the argument count is 1 but the value isn't an integer
+    * @return true if argument is supported
+    */
+   public boolean setDebugOption(String option, Integer value)
+   throws InvalidSyntaxException
+   {
+      return false;
+   }
+
+   /**
+    * This method is called in preprocessor if the argument is
+    * "--debug-mode". Default implementation returns false.
+    * Override this method and ensure that argCount() returns 1
+    * to enable the switch. This option needs
+    * to be processed first to ensure debugging is available for
+    * other option actions. Designed for switch that must be
+    * followed by a string identifier.
+    * @param option the option name ("--debug-mode")
+    * @param value the option value (not null)
+    * @return true if argument is supported
+    */
+   public boolean setDebugModeOption(String option, String value)
+   throws InvalidSyntaxException
+   {
+      return false;
    }
 
    /**
@@ -122,11 +165,86 @@ public abstract class CLISyntaxParser
          // version() will typically exit but in case it doesn't:
          return true;
       }
+      else if (originalArgList[preparseIndex].equals("--debug"))
+      {
+         String option = originalArgList[preparseIndex];
+         Integer value = null;
+
+         if (argCount(option) == 1)
+         {
+            if (preparseIndex < originalArgList.length - 1)
+            {
+               try
+               {
+                  value = Integer.valueOf(originalArgList[preparseIndex+1]);
+                  preparseIndex++;
+               }
+               catch (NumberFormatException e)
+               {
+                  value = null;
+               }
+            }
+         }
+
+         return setDebugOption(option, value);
+      }
+      else if (originalArgList[preparseIndex].startsWith("--debug="))
+      {
+         String[] split = originalArgList[preparseIndex].split("=", 2);
+         String option = split[0];
+         Integer value = null;
+
+         if (argCount(option) == 1)
+         {
+            try
+            {
+               value = Integer.valueOf(split[1]);
+               preparseIndex++;
+            }
+            catch (NumberFormatException e)
+            {
+               value = null;
+            }
+         }
+
+         return setDebugOption(option, value);
+      }
+      else if (originalArgList[preparseIndex].equals("--debug-mode"))
+      {
+         // similar to the above by the argument should be a string
+
+         String option = originalArgList[preparseIndex];
+
+         if (argCount(option) == 1)
+         {
+            if (preparseIndex < originalArgList.length - 1)
+            {
+               preparseIndex++;
+
+               return setDebugModeOption(option, originalArgList[preparseIndex]);
+            }
+            else
+            {
+               throw new InvalidSyntaxException(helpLib.getMessage(
+                 "error.clisyntax.missing.value", option));
+            }
+         }
+      }
+      else if (originalArgList[preparseIndex].startsWith("--debug-mode="))
+      {
+         String[] split = originalArgList[preparseIndex].split("=", 2);
+         String option = split[0];
+
+         if (argCount(option) == 1)
+         {
+            return setDebugModeOption(option, split[1]);
+         }
+      }
 
       return false;
    }
 
-   protected void preparse()
+   public void preparse()
    throws InvalidSyntaxException
    {
       for (preparseIndex = 0;
@@ -177,7 +295,7 @@ public abstract class CLISyntaxParser
 
    }
 
-   public void parseArgs()
+   protected void parseArgs()
      throws InvalidSyntaxException
    {
       String arg;
@@ -187,6 +305,13 @@ public abstract class CLISyntaxParser
       {
          if (arg.startsWith("-"))
          {
+            // reset
+
+            for (int i = 0; i < returnVals.length; i++)
+            {
+               returnVals[i] = null;
+            }
+
             if (!parseArg(arg, returnVals))
             {
                throw new InvalidSyntaxException(
