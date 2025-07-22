@@ -224,7 +224,7 @@ public class Xml2Bib
    {
       if (!shownVersion)
       {
-         System.out.println(getMessageWithFallback("about.version",
+         System.out.println(getMessageWithFallback("about.version_date",
            "{0} version {1} ({2})", getApplicationName(), 
            TeXJavaHelpLib.VERSION, TeXJavaHelpLib.VERSION_DATE));
          shownVersion = true;
