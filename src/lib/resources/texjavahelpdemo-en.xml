@@ -40,19 +40,6 @@ Nicola Talbot
 <entry key="about.title">About {0}</entry>
 <entry key="about.defaultparams">\meta'{'name'}'</entry>
 
-<entry key="about.acknowledgements"></entry>
-
-<entry key="about.legal">License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.</entry>
-
-<entry key="about.licence">Licence</entry>
-
-<entry key="about.translated_by">Translated by {0}</entry>
-<entry key="about.translator_info"></entry>
-
-<entry key="about.version">{0} {1} ({2})</entry>
-
 <!-- License Dialog -->
 
 <entry key="license.title">License</entry>

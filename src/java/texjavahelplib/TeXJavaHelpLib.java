@@ -580,6 +580,133 @@ public class TeXJavaHelpLib
       return applicationName;
    }
 
+   public String getAboutInfo(boolean html,
+     String version, String date,
+     String copyright, String legalText,
+     boolean incTeXParser, String trailer)
+   {
+      String par = html ? "<p>" : String.format("%n%n");
+      String nl = html ? "<br>" : String.format("%n");
+
+      StringBuilder builder = new StringBuilder();
+
+      if (date == null)
+      {
+         builder.append(
+           getMessageWithFallback(
+            "about.version",
+            "{0} ({1})",
+            getApplicationName(), version));
+      }
+      else
+      {
+         builder.append(
+           getMessageWithFallback(
+            "about.version_date",
+            "{0} {1} ({2})",
+            getApplicationName(), version, date));
+      }
+
+      if (copyright != null)
+      {
+         builder.append(nl);
+         builder.append(copyright);
+      }
+
+      if (legalText != null)
+      {
+         if (html)
+         {
+            legalText = encodeHTML(legalText, false).replaceAll("\r?\n", nl);
+         }
+
+         builder.append(nl);
+         builder.append(legalText);
+      }
+
+      String translator = getMessageIfExists("about.translator_info");
+
+      if (translator != null && !translator.isEmpty())
+      {
+         builder.append(par);
+
+         if (html)
+         {
+            translator = encodeHTML(translator, false);
+         }
+
+         builder.append(translator);
+      }
+
+      String ack = getMessageIfExists("about.acknowledgements");
+
+      if (ack != null && !ack.isEmpty())
+      {
+         builder.append(par);
+
+         if (html)
+         {
+            ack = encodeHTML(ack, false);
+         }
+
+         builder.append(ack);
+      }
+
+      builder.append(par);
+      builder.append(getMessageWithFallback("about.library.version",
+        "Bundled with {0} version {1} ({2})",
+        "texjavahelplib.jar",
+        TeXJavaHelpLib.VERSION, TeXJavaHelpLib.VERSION_DATE));
+      builder.append(nl);
+
+      builder.append(getInfoUrl(html, "https://github.com/nlct/texjavahelplib"));
+
+      if (incTeXParser)
+      {
+         builder.append(par);
+         builder.append(getMessageWithFallback("about.library.version",
+           "Bundled with {0} version {1} ({2})",
+           "texparserlib.jar",
+            TeXParser.VERSION, TeXParser.VERSION_DATE));
+         builder.append(nl);
+         builder.append(getInfoUrl(html, "https://github.com/nlct/texparser"));
+      }
+
+      if (trailer != null)
+      {
+         if (html)
+         {
+            trailer = encodeHTML(trailer, false).replaceAll("\r?\n", nl);
+         }
+
+         builder.append(nl);
+         builder.append(trailer);
+      }
+
+      return builder.toString();
+   }
+
+   public String getInfoUrl(boolean html, String url)
+   {
+      if (html)
+      {
+         String href = url;
+
+         if (!url.startsWith("http"))
+         {
+            href = "https://"+url;
+         }
+
+         return String.format("<a href=\"%s\">%s</a>",
+           encodeAttributeValue(href, true),
+           encodeHTML(url, false));
+      }
+      else
+      {
+         return url;
+      }
+   }
+
    public void setTeXJavaHelpLibApp(TeXJavaHelpLibApp application)
    {
       this.application = application;
@@ -1982,16 +2109,8 @@ public class TeXJavaHelpLib
 
    public TJHAbstractAction createHelpAction(String helpID, JComponent comp)
    {
-      if (buttonDefaultIconSmall)
-      {
-         return createHelpAction(helpID, "button", "help", "manual."+helpID, "help", 
-          getKeyStroke("button.help"), comp, Action.LARGE_ICON_KEY);
-      }
-      else
-      {
-         return createHelpAction(helpID, "button", "help", "manual."+helpID, "help", 
-          getKeyStroke("button.help"), comp);
-      }
+      return createHelpAction(helpID, "button", "help", "manual."+helpID, "help", 
+       getKeyStroke("button.help"), comp, getDefaultButtonActionOmitKeys());
    }
 
    public TJHAbstractAction createHelpAction(String helpID,
@@ -2075,14 +2194,7 @@ public class TeXJavaHelpLib
 
    public HelpDialogAction createHelpDialogAction(JDialog owner, NavigationNode node)
    {
-      if (buttonDefaultIconSmall)
-      {
-         return new HelpDialogAction(owner, node, this, Action.LARGE_ICON_KEY);
-      }
-      else
-      {
-         return new HelpDialogAction(owner, node, this);
-      }
+      return new HelpDialogAction(owner, node, this, getDefaultButtonActionOmitKeys());
    }
 
    public HelpDialogAction createHelpDialogAction(JFrame owner, String helpId)
@@ -2101,14 +2213,7 @@ public class TeXJavaHelpLib
 
    public HelpDialogAction createHelpDialogAction(JFrame owner, NavigationNode node)
    {
-      if (buttonDefaultIconSmall)
-      {
-         return new HelpDialogAction(owner, node, this, Action.LARGE_ICON_KEY);
-      }
-      else
-      {
-         return new HelpDialogAction(owner, node, this);
-      }
+      return new HelpDialogAction(owner, node, this, getDefaultButtonActionOmitKeys());
    }
 
    public JButton createHelpDialogButton(JDialog owner, String helpId)
@@ -2384,6 +2489,37 @@ public class TeXJavaHelpLib
       return item;
    }
 
+   public String[] getDefaultButtonActionOmitKeys()
+   {
+      if (buttonDefaultOmitKeys == null)
+      {
+         if (buttonDefaultIconSmall)
+         {
+            if (buttonDefaultOmitTextIfIcon)
+            {
+               buttonDefaultOmitKeys =new String[]
+                { 
+                  Action.LARGE_ICON_KEY ,
+                  Action.NAME
+                } ;
+            }
+            else
+            {
+               buttonDefaultOmitKeys = new String[]
+                { 
+                  Action.LARGE_ICON_KEY 
+                } ;
+            }
+         }
+         else
+         {
+            buttonDefaultOmitKeys = new String[] { };
+         }
+      }
+
+      return buttonDefaultOmitKeys;
+   }
+
    /**
     * Sets the default behaviour for the smallIcon for methods that
     * omit it. This value should be set before calling the
@@ -2392,6 +2528,7 @@ public class TeXJavaHelpLib
    public void setDefaultButtonIconSmall(boolean on)
    {
       buttonDefaultIconSmall = on;
+      buttonDefaultOmitKeys = null;
    }
 
    public boolean getDefaultButtonIconSmall()
@@ -2407,6 +2544,7 @@ public class TeXJavaHelpLib
    public void setDefaultButtonOmitTextIfIcon(boolean on)
    {
       buttonDefaultOmitTextIfIcon = on;
+      buttonDefaultOmitKeys = null;
    }
 
    public boolean getDefaultButtonOmitTextIfIcon()
@@ -2483,14 +2621,7 @@ public class TeXJavaHelpLib
     */
    public JButton createOkayButton(final OkayAction okayAction, JComponent comp)
    {
-      if (buttonDefaultIconSmall)
-      {
-         return createOkayButton(okayAction, comp, Action.LARGE_ICON_KEY);
-      }
-      else
-      {
-         return createOkayButton(okayAction, comp);
-      }
+      return createOkayButton(okayAction, comp, getDefaultButtonActionOmitKeys());
    }
 
    /**
@@ -2592,14 +2723,7 @@ public class TeXJavaHelpLib
     */
    public JButton createApplyButton(final ApplyAction applyAction, JComponent comp)
    {
-      if (buttonDefaultIconSmall)
-      {
-         return createApplyButton(applyAction, comp, Action.LARGE_ICON_KEY);
-      }
-      else
-      {
-         return createApplyButton(applyAction, comp);
-      }
+      return createApplyButton(applyAction, comp, getDefaultButtonActionOmitKeys());
    }
 
    /**
@@ -2654,13 +2778,7 @@ public class TeXJavaHelpLib
     */
    public JButton createCancelButton(JFrame frame)
    {
-      if (buttonDefaultIconSmall)
-      {
-         return createCancelButton(frame, Action.LARGE_ICON_KEY);
-      }
-      {
-         return createCancelButton(frame);
-      }
+      return createCancelButton(frame, getDefaultButtonActionOmitKeys());
    }
 
    /**
@@ -2690,14 +2808,7 @@ public class TeXJavaHelpLib
     */
    public JButton createCancelButton(JDialog dialog)
    {
-      if (buttonDefaultIconSmall)
-      {
-         return createCancelButton(dialog, Action.LARGE_ICON_KEY);
-      }
-      else
-      {
-         return createCancelButton(dialog);
-      }
+      return createCancelButton(dialog, getDefaultButtonActionOmitKeys());
    }
 
    /**
@@ -2760,14 +2871,7 @@ public class TeXJavaHelpLib
     */
    public JButton createCloseButton(JFrame frame)
    {
-      if (buttonDefaultIconSmall)
-      {
-         return createCloseButton(frame, Action.LARGE_ICON_KEY);
-      }
-      else
-      {
-         return createCloseButton(frame);
-      }
+      return createCloseButton(frame, getDefaultButtonActionOmitKeys());
    }
 
    /**
@@ -2804,14 +2908,7 @@ public class TeXJavaHelpLib
     */
    public JButton createCloseButton(JDialog dialog)
    {
-      if (buttonDefaultIconSmall)
-      {
-         return createCloseButton(dialog, Action.LARGE_ICON_KEY);
-      }
-      else
-      {
-         return createCloseButton(dialog);
-      }
+      return createCloseButton(dialog, getDefaultButtonActionOmitKeys());
    }
 
    /**
@@ -3161,6 +3258,7 @@ public class TeXJavaHelpLib
    protected boolean buttonDefaultIconSmall = true;
    protected boolean buttonDefaultOmitTextIfIcon = false;
    protected boolean toolbarButtonDefaultIconSmall = false;
+   protected String[] buttonDefaultOmitKeys;
 
    public static final String HELP_LIB_ICON_PATH
    = "/com/dickimawbooks/texjavahelplib/icons/";
@@ -3224,6 +3322,9 @@ public class TeXJavaHelpLib
 
    public static final int SYNTAX_ITEM_LINEWIDTH=78;
    public static final int SYNTAX_ITEM_TAB=30;
+
+   public static final String LICENSE_GPL3 = String.format(
+   "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>%nThis is free software: you are free to change and redistribute it.%nThere is NO WARRANTY, to the extent permitted by law.");
 
    public static final String VERSION = "0.9a.20250721";
    public static final String VERSION_DATE = "2025-07-21";

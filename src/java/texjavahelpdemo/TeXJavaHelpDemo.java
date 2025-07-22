@@ -314,102 +314,13 @@ public class TeXJavaHelpDemo extends JFrame
 
    public String getAppInfo(boolean html)
    {
-      String par = html ? "<p>" : String.format("%n%n");
-      String nl = html ? "<br>" : String.format("%n");
-
-      StringBuilder builder = new StringBuilder();
-
-      builder.append(
-        helpLib.getMessage("about.version", APP_NAME, APP_VERSION, APP_DATE)
-      );
-
-      builder.append(nl);
-
-      builder.append(String.format(
+      return helpLib.getAboutInfo(html, APP_VERSION, APP_DATE,
+       String.format(
         "Copyright (C) %s Nicola L. C. Talbot (%s)",
-        COPYRIGHT_YEAR, getInfoUrl(html, "www.dickimaw-books.com")));
-
-      builder.append(nl);
-
-      String legalText = getMessageIfExists("about.legal");
-
-      if (legalText != null)
-      {
-         if (html)
-         {
-            legalText = TeXJavaHelpLib.encodeHTML(legalText, false).replaceAll("\n", nl);
-         }
-
-         builder.append(legalText);
-      }
-
-      String translator = helpLib.getMessageIfExists("about.translator_info");
-
-      if (translator != null && !translator.isEmpty())
-      {
-         builder.append(par);
-
-         if (html)
-         {
-            translator = TeXJavaHelpLib.encodeHTML(translator, false);
-         }
-
-         builder.append(translator);
-      }
-
-      String ack = helpLib.getMessageIfExists("about.acknowledgements");
-
-      if (ack != null && !ack.isEmpty())
-      {
-         builder.append(par);
-
-         if (html)
-         {
-            ack = TeXJavaHelpLib.encodeHTML(ack, false);
-         }
-
-         builder.append(ack);
-      }
-
-      builder.append(par);
-      builder.append(getMessageWithFallback("about.library.version",
-        "Bundled with {0} version {1} ({2})",
-        "texjavahelplib.jar", TeXJavaHelpLib.VERSION, TeXJavaHelpLib.VERSION_DATE));
-      builder.append(nl);
-
-      builder.append(getInfoUrl(html, "https://github.com/nlct/texjavahelplib"));
-
-/*
-      builder.append(par);
-      builder.append(getMessageWithFallback("about.library.version",
-        "Bundled with {0} version {1} ({2})",
-        "texparserlib.jar", TeXParser.VERSION, TeXParser.VERSION_DATE));
-      builder.append(nl);
-      builder.append(getInfoUrl(html, "https://github.com/nlct/texparser"));
-*/
-
-      return builder.toString();
-   }
-
-   public String getInfoUrl(boolean html, String url)
-   {
-      if (html)
-      {
-         String href = url;
-
-         if (!url.startsWith("http"))
-         {
-            href = "https://"+url;
-         }
-
-         return String.format("<a href=\"%s\">%s</a>",
-           TeXJavaHelpLib.encodeAttributeValue(href, true),
-           TeXJavaHelpLib.encodeHTML(url, false));
-      }
-      else
-      {
-         return url;
-      }
+        COPYRIGHT_YEAR, helpLib.getInfoUrl(html, "www.dickimaw-books.com")),
+        TeXJavaHelpLib.LICENSE_GPL3,
+        true, null
+      );
    }
 
    protected void createSampleDialog()
