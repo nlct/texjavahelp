@@ -1501,7 +1501,7 @@ public class TeXJavaHelpMk extends TeXAppAdapter
       System.out.println(getMessage("syntax.mathjax", "--[no]mathjax"));
       System.out.println(getMessage("syntax.entities", "--entities"));
       System.out.println();
-      System.out.println(getMessage("syntax.bugreport",
+      System.out.println(getMessage("clisyntax.bugreport",
         "https://github.com/nlct/texjavahelp"));
    }
 

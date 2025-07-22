@@ -22,8 +22,6 @@ Nicola Talbot
 <entry key="syntax.encapless-field">{0} &lt;field&gt;	Copy original name value to the given field if that field is not set and the name field value is automatically encapsulated.</entry>
 <entry key="syntax.debug">{0}	Enable on debug mode.</entry>
 <entry key="syntax.out.charset">{0} &lt;charset&gt;	Set the character encoding to &lt;charset&gt; for the output file.</entry>
-<entry key="syntax.bugreport">Report bugs to: {0}</entry>
-<entry key="syntax.homepage">{0} home page: {1}</entry>
 
 <!-- Syntax error messages -->
 <entry key="error.syntax">Syntax error: {0}</entry>

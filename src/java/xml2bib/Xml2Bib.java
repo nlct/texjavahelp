@@ -216,7 +216,7 @@ public class Xml2Bib
 
       System.out.println();
 
-      System.out.println(getMessage("syntax.bugreport",
+      System.out.println(getMessage("clisyntax.bugreport",
         "https://github.com/nlct/texjavahelp"));
    }
 
