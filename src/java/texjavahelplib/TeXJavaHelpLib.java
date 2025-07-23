@@ -290,7 +290,14 @@ public class TeXJavaHelpLib
 
       if (msg == null)
       {
-         warning("Can't find message for label: "+label);
+         try
+         {
+            throw new IllegalArgumentException("Can't find message for label: "+label);
+         }
+         catch (IllegalArgumentException e)
+         {
+            warning(e.getMessage(), e);
+         }
 
          return label;
       }
@@ -2206,6 +2213,11 @@ public class TeXJavaHelpLib
       return new HelpDialogAction(owner, node, this, getDefaultButtonActionOmitKeys());
    }
 
+   public HelpDialogAction createHelpDialogAction(JDialog owner, TargetRef ref)
+   {
+      return new HelpDialogAction(owner, ref, this, getDefaultButtonActionOmitKeys());
+   }
+
    public HelpDialogAction createHelpDialogAction(JFrame owner, String helpId)
     throws IllegalArgumentException
    {
@@ -2225,6 +2237,11 @@ public class TeXJavaHelpLib
       return new HelpDialogAction(owner, node, this, getDefaultButtonActionOmitKeys());
    }
 
+   public HelpDialogAction createHelpDialogAction(JFrame owner, TargetRef ref)
+   {
+      return new HelpDialogAction(owner, ref, this, getDefaultButtonActionOmitKeys());
+   }
+
    public JButton createHelpDialogButton(JDialog owner, String helpId)
     throws IllegalArgumentException
    {
@@ -2232,8 +2249,17 @@ public class TeXJavaHelpLib
 
       if (node == null)
       {
-         throw new IllegalArgumentException(
-            getMessage("error.node_id_not_found", helpId));
+         TargetRef ref = targetMap.get(helpId);
+
+         if (ref == null)
+         {
+            throw new IllegalArgumentException(
+               getMessage("error.node_id_not_found", helpId));
+         }
+         else
+         {
+            return createHelpDialogButton(owner, ref);
+         }
       }
 
       return createHelpDialogButton(owner, node);
@@ -2242,6 +2268,11 @@ public class TeXJavaHelpLib
    public JButton createHelpDialogButton(JDialog owner, NavigationNode node)
    {
       return new JButton(createHelpDialogAction(owner, node));
+   }
+
+   public JButton createHelpDialogButton(JDialog owner, TargetRef ref)
+   {
+      return new JButton(createHelpDialogAction(owner, ref));
    }
 
    /**
@@ -2254,8 +2285,17 @@ public class TeXJavaHelpLib
 
       if (node == null)
       {
-         throw new IllegalArgumentException(
-            getMessage("error.node_id_not_found", helpId));
+         TargetRef ref = targetMap.get(helpId);
+
+         if (ref == null)
+         {
+            throw new IllegalArgumentException(
+               getMessage("error.node_id_not_found", helpId));
+         }
+         else
+         {
+            return createHelpDialogButton(owner, ref);
+         }
       }
 
       return createHelpDialogButton(owner, node);
@@ -2264,6 +2304,11 @@ public class TeXJavaHelpLib
    public JButton createHelpDialogButton(JFrame owner, NavigationNode node)
    {
       return new JButton(createHelpDialogAction(owner, node));
+   }
+
+   public JButton createHelpDialogButton(JFrame owner, TargetRef ref)
+   {
+      return new JButton(createHelpDialogAction(owner, ref));
    }
 
    public int getMnemonic(String label)
@@ -3335,6 +3380,6 @@ public class TeXJavaHelpLib
    public static final String LICENSE_GPL3 = String.format(
    "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>%nThis is free software: you are free to change and redistribute it.%nThere is NO WARRANTY, to the extent permitted by law.");
 
-   public static final String VERSION = "0.9a.20250722";
-   public static final String VERSION_DATE = "2025-07-22";
+   public static final String VERSION = "0.9a.20250723";
+   public static final String VERSION_DATE = "2025-07-23";
 }

@@ -37,6 +37,14 @@ public class HelpDialogAction extends TJHAbstractAction
        helpLib.getKeyStroke("button.help"), (Boolean)null, omitKeys);
    }
 
+   public HelpDialogAction(JDialog owner, TargetRef targetRef,
+      TeXJavaHelpLib helpLib, String... omitKeys)
+   {
+      this(owner, targetRef.getNode(), helpLib, "button", "help",
+       "manual."+targetRef.getNode().getKey(), "help",
+       helpLib.getKeyStroke("button.help"), (Boolean)null, targetRef, omitKeys);
+   }
+
    public HelpDialogAction(JDialog owner, NavigationNode pageNode,
      TeXJavaHelpLib helpLib, String parentTag, String action,
      Boolean selectedState, String... omitKeys)
@@ -59,16 +67,32 @@ public class HelpDialogAction extends TJHAbstractAction
      String parentTag, String childTag, String actionName, String iconPrefix,
      KeyStroke keyStroke, Boolean selectedState, String... omitKeys)
    {
+      this(owner, pageNode, helpLib, parentTag, childTag, actionName, 
+        iconPrefix, keyStroke, selectedState, (TargetRef)null, omitKeys);
+   }
+
+   public HelpDialogAction(JDialog owner, NavigationNode pageNode,
+     TeXJavaHelpLib helpLib,
+     String parentTag, String childTag, String actionName, String iconPrefix,
+     KeyStroke keyStroke, Boolean selectedState, TargetRef targetRef,
+     String... omitKeys)
+   {
       super(helpLib, parentTag, childTag, actionName, iconPrefix, keyStroke,
         selectedState, owner.getRootPane(), omitKeys);
 
       if (pageNode == null)
       {
-         throw new NullPointerException();
+         if (targetRef == null)
+         {
+            throw new NullPointerException();
+         }
+
+         pageNode = targetRef.getNode();
       }
 
       this.owner = owner;
       this.pageNode = pageNode;
+      this.targetRef = targetRef;
    }
 
    public HelpDialogAction(JFrame owner, NavigationNode pageNode,
@@ -78,6 +102,14 @@ public class HelpDialogAction extends TJHAbstractAction
        helpLib.getKeyStroke("button.help"), (Boolean)null, omitKeys);
    }
 
+   public HelpDialogAction(JFrame owner, TargetRef targetRef,
+      TeXJavaHelpLib helpLib, String... omitKeys)
+   {
+      this(owner, targetRef.getNode(), helpLib, "button", "help", 
+      "manual."+targetRef.getNode().getKey(), "help",
+       helpLib.getKeyStroke("button.help"), (Boolean)null, targetRef, omitKeys);
+   }
+
    public HelpDialogAction(JFrame owner, NavigationNode pageNode,
      TeXJavaHelpLib helpLib, String parentTag, String action,
      Boolean selectedState, String... omitKeys)
@@ -100,16 +132,32 @@ public class HelpDialogAction extends TJHAbstractAction
      String parentTag, String childTag, String actionName, String iconPrefix,
      KeyStroke keyStroke, Boolean selectedState, String... omitKeys)
    {
+      this(owner, pageNode, helpLib, parentTag, childTag, actionName, 
+        iconPrefix, keyStroke, selectedState, (TargetRef)null, omitKeys);
+   }
+
+   public HelpDialogAction(JFrame owner, NavigationNode pageNode,
+     TeXJavaHelpLib helpLib,
+     String parentTag, String childTag, String actionName, String iconPrefix,
+     KeyStroke keyStroke, Boolean selectedState, TargetRef targetRef,
+     String... omitKeys)
+   {
       super(helpLib, parentTag, childTag, actionName, iconPrefix, keyStroke,
         selectedState, owner.getRootPane(), omitKeys);
 
       if (pageNode == null)
       {
-         throw new NullPointerException();
+         if (targetRef == null)
+         {
+            throw new NullPointerException();
+         }
+
+         pageNode = targetRef.getNode();
       }
 
       this.owner = owner;
       this.pageNode = pageNode;
+      this.targetRef = targetRef;
    }
 
    @Override
@@ -121,11 +169,22 @@ public class HelpDialogAction extends TJHAbstractAction
          {
             if (owner instanceof Dialog)
             {
-               helpDialog = new HelpDialog(helpLib, pageNode, (Dialog)owner);
+               if (targetRef == null)
+               {
+                  helpDialog = new HelpDialog(helpLib, pageNode, (Dialog)owner);
+               }
+               else
+               {
+                  helpDialog = new HelpDialog(helpLib, targetRef, (Dialog)owner);
+               }
+            }
+            else if (targetRef == null)
+            {
+               helpDialog = new HelpDialog(helpLib, pageNode, (Frame)owner);
             }
             else
             {
-               helpDialog = new HelpDialog(helpLib, pageNode, (Frame)owner);
+               helpDialog = new HelpDialog(helpLib, targetRef, (Frame)owner);
             }
 
             helpDialog.setLocationRelativeTo(owner);
@@ -160,5 +219,6 @@ public class HelpDialogAction extends TJHAbstractAction
 
    private Window owner;
    private NavigationNode pageNode;
+   private TargetRef targetRef;
    private HelpDialog helpDialog;
 }

@@ -453,6 +453,16 @@ public class HelpFrame extends JFrame
       helpPage.setPage(node);
    }
 
+   public void setPage(TargetRef targetRef) throws IOException
+   {
+      helpPage.setPage(targetRef);
+
+      if (!isVisible())
+      {
+         setVisible(true);
+      }
+   }
+
    public void setPage(String nodeId, String ref) throws IOException
    {
       helpPage.setPage(nodeId, ref);

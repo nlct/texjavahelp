@@ -49,11 +49,27 @@ public class HelpDialog extends JDialog
    }
 
    public HelpDialog(TeXJavaHelpLib helpLib,
+      TargetRef targetRef, Dialog owner)
+   throws IOException
+   {
+      this(helpLib, targetRef.getNode(), owner,
+       targetRef.getNode().getTitle(), false, targetRef);
+   }
+
+   public HelpDialog(TeXJavaHelpLib helpLib,
       NavigationNode pageNode,
       Dialog owner, boolean modal)
    throws IOException
    {
-      this(helpLib, pageNode, owner, pageNode.getTitle(), modal);
+      this(helpLib, pageNode, owner, pageNode.getTitle(), modal, (TargetRef)null);
+   }
+
+   public HelpDialog(TeXJavaHelpLib helpLib,
+      NavigationNode pageNode,
+      Dialog owner, boolean modal, TargetRef targetRef)
+   throws IOException
+   {
+      this(helpLib, pageNode, owner, pageNode.getTitle(), modal, targetRef);
    }
 
    public HelpDialog(TeXJavaHelpLib helpLib,
@@ -61,9 +77,18 @@ public class HelpDialog extends JDialog
       Dialog owner, String title, boolean modal)
    throws IOException
    {
+      this(helpLib, pageNode, owner, title, modal, (TargetRef)null);
+   }
+
+   public HelpDialog(TeXJavaHelpLib helpLib,
+      NavigationNode pageNode,
+      Dialog owner, String title, boolean modal, TargetRef targetRef)
+   throws IOException
+   {
       super(owner, title, modal);
       this.helpLib = helpLib;
       this.pageNode = pageNode;
+      this.pageTargetRef = targetRef;
 
       updateAndCloseHelpFrame = modal
          || owner.getModalityType() != Dialog.ModalityType.MODELESS;
@@ -77,7 +102,16 @@ public class HelpDialog extends JDialog
       NavigationNode pageNode, Frame owner)
    throws IOException
    {
-      this(helpLib, pageNode, owner, pageNode.getTitle(), false);
+      this(helpLib, pageNode, owner, pageNode.getTitle(), false, (TargetRef)null);
+   }
+
+   public HelpDialog(TeXJavaHelpLib helpLib,
+      TargetRef targetRef, Frame owner)
+   throws IOException
+   {
+      this(helpLib, targetRef.getNode(), owner,
+       targetRef.getNode().getTitle(), false,
+       targetRef);
    }
 
    public HelpDialog(TeXJavaHelpLib helpLib,
@@ -85,17 +119,18 @@ public class HelpDialog extends JDialog
       Frame owner, boolean modal)
    throws IOException
    {
-      this(helpLib, pageNode, owner, pageNode.getTitle(), modal);
+      this(helpLib, pageNode, owner, pageNode.getTitle(), modal, (TargetRef)null);
    }
 
    public HelpDialog(TeXJavaHelpLib helpLib,
       NavigationNode pageNode,
-      Frame owner, String title, boolean modal)
+      Frame owner, String title, boolean modal, TargetRef targetRef)
    throws IOException
    {
       super(owner, title, modal);
       this.helpLib = helpLib;
       this.pageNode = pageNode;
+      this.pageTargetRef = targetRef;
       updateAndCloseHelpFrame = modal;
 
       init();
@@ -257,6 +292,11 @@ public class HelpDialog extends JDialog
            }
         });
 
+      if (pageTargetRef != null)
+      {
+         setPage(pageTargetRef);
+      }
+
       updateNavWidgets();
 
       setSize(helpLib.getHelpWindowInitialSize());
@@ -283,6 +323,7 @@ public class HelpDialog extends JDialog
          try
          {
             // Add this page to the main help frame's history
+
             helpFrame.setPage(getCurrentNode());
          }
          catch (IOException e)
@@ -320,7 +361,15 @@ public class HelpDialog extends JDialog
    {
       try
       {
-         helpPage.setPage(pageNode);
+         if (pageTargetRef == null)
+         {
+            helpPage.setPage(pageNode);
+         }
+         else
+         {
+            helpPage.setPage(pageNode, pageTargetRef.getRef());
+         }
+
          updateNavWidgets();
       }
       catch (IOException e)
@@ -387,6 +436,26 @@ public class HelpDialog extends JDialog
             if (updateAndCloseHelpFrame)
             {
                helpLib.getHelpFrame().setPage(node);
+            }
+         }
+      }
+      catch (IOException e)
+      {
+         helpLib.debug(e);
+      }
+   }
+
+   public void setPage(TargetRef targetRef) throws IOException
+   {
+      try
+      {
+         if (isInNavigationTree(targetRef.getNode()))
+         {
+            helpPage.setPage(targetRef);
+
+            if (updateAndCloseHelpFrame)
+            {
+               helpLib.getHelpFrame().setPage(targetRef);
             }
          }
       }
@@ -557,6 +626,7 @@ public class HelpDialog extends JDialog
    protected HelpPage helpPage;
    protected TeXJavaHelpLib helpLib;
    protected NavigationNode pageNode;
+   protected TargetRef pageTargetRef;
    protected TJHAbstractAction resetAction,
      historyBackAction, historyForwardAction,
      popupResetAction, popupHistoryBackAction, popupHistoryForwardAction;

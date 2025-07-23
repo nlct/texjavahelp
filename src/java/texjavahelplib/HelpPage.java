@@ -280,30 +280,40 @@ public class HelpPage extends TJHEditorPane
 
       if (node != null)
       {
-         updateCurrentNode(node, ref);
-
-         URL url = node.getURL();
-
-         if (ref != null && !ref.isEmpty())
-         {
-            try
-            {
-               URI uri = url.toURI();
-
-               uri = new URI(uri.getScheme(), uri.getUserInfo(),
-                uri.getHost(), uri.getPort(),
-                uri.getPath(), uri.getQuery(), ref);
-
-               url = uri.toURL();
-            }
-            catch (URISyntaxException e)
-            {
-               helpLib.debug(e);
-            }
-         }
-
-         setPage(url);
+         setPage(node, ref);
       }
+   }
+
+   public void setPage(TargetRef targetRef) throws IOException
+   {
+      setPage(targetRef.getNode(), targetRef.getRef());
+   }
+
+   public void setPage(NavigationNode node, String ref) throws IOException
+   {
+      updateCurrentNode(node, ref);
+
+      URL url = node.getURL();
+
+      if (ref != null && !ref.isEmpty())
+      {
+         try
+         {
+            URI uri = url.toURI();
+
+            uri = new URI(uri.getScheme(), uri.getUserInfo(),
+             uri.getHost(), uri.getPort(),
+             uri.getPath(), uri.getQuery(), ref);
+
+            url = uri.toURL();
+         }
+         catch (URISyntaxException e)
+         {
+            helpLib.debug(e);
+         }
+      }
+
+      setPage(url);
    }
 
    protected void pageChanged(PropertyChangeEvent evt)
