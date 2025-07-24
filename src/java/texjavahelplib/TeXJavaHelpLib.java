@@ -2108,7 +2108,8 @@ public class TeXJavaHelpLib
    public TJHAbstractAction createHelpAction()
    {
       return new TJHAbstractAction(this,
-        "menu.help", "manual", getKeyStroke("menu.help.manual"))
+        "menu.help", "manual", getKeyStroke("menu.help.manual"),
+         getDefaultButtonActionOmitKeys())
         {
            @Override
            public void doAction()
@@ -2551,7 +2552,7 @@ public class TeXJavaHelpLib
          {
             if (buttonDefaultOmitTextIfIcon)
             {
-               buttonDefaultOmitKeys =new String[]
+               buttonDefaultOmitKeys = new String[]
                 { 
                   Action.LARGE_ICON_KEY ,
                   Action.NAME
@@ -2564,6 +2565,13 @@ public class TeXJavaHelpLib
                   Action.LARGE_ICON_KEY 
                 } ;
             }
+         }
+         else if (buttonDefaultOmitTextIfIcon)
+         {
+            buttonDefaultOmitKeys = new String[]
+             { 
+               Action.NAME
+             } ;
          }
          else
          {
@@ -2713,7 +2721,8 @@ public class TeXJavaHelpLib
     */
    public JButton createOkayButton(ActionListener listener)
    {
-      return createOkayButton(listener, buttonDefaultIconSmall, buttonDefaultOmitTextIfIcon);
+      return createOkayButton(listener, buttonDefaultIconSmall,
+        buttonDefaultOmitTextIfIcon);
    }
 
    /**
@@ -2808,7 +2817,8 @@ public class TeXJavaHelpLib
     */
    public JButton createApplyButton(ActionListener listener)
    {
-      return createApplyButton(listener, buttonDefaultIconSmall, buttonDefaultOmitTextIfIcon);
+      return createApplyButton(listener, buttonDefaultIconSmall,
+        buttonDefaultOmitTextIfIcon);
    }
 
    /**
