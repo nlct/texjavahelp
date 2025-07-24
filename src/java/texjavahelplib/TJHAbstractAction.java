@@ -21,7 +21,7 @@ package com.dickimawbooks.texjavahelplib;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.KeyStroke;
 import javax.swing.JComponent;
 
@@ -208,25 +208,35 @@ public abstract class TJHAbstractAction extends AbstractAction
          }
       }
 
-      ImageIcon ic;
+      Icon ic;
 
       if (setLargeIcon)
       {
-         ic = helpLib.getHelpIcon(iconPrefix, false);
+         largeIconSet = helpLib.getHelpIconSet(iconPrefix, false);
 
-         if (ic != null)
+         if (largeIconSet != null)
          {
-            putValue(LARGE_ICON_KEY, ic);
+            ic = largeIconSet.getDefaultIcon();
+
+            if (ic != null)
+            {
+               putValue(LARGE_ICON_KEY, ic);
+            }
          }
       }
 
       if (setSmallIcon)
       {
-         ic = helpLib.getHelpIcon(iconPrefix, true);
+         smallIconSet = helpLib.getHelpIconSet(iconPrefix, true);
 
-         if (ic != null)
+         if (smallIconSet != null)
          {
-            putValue(SMALL_ICON, ic);
+            ic = smallIconSet.getDefaultIcon();
+
+            if (ic != null)
+            {
+               putValue(SMALL_ICON, ic);
+            }
          }
       }
 
@@ -254,6 +264,27 @@ public abstract class TJHAbstractAction extends AbstractAction
       doAction();
    }
 
+   public IconSet getIconSet()
+   {
+      if (largeIconSet == null)
+      {
+         return smallIconSet;
+      }
+
+      return largeIconSet;
+   }
+
+   public IconSet getLargeIconSet()
+   {
+      return largeIconSet;
+   }
+
+   public IconSet getSmallIconSet()
+   {
+      return smallIconSet;
+   }
+
    protected TeXJavaHelpLib helpLib;
    protected String displayName;
+   protected IconSet largeIconSet, smallIconSet;
 }
