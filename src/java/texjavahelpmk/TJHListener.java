@@ -133,6 +133,17 @@ public class TJHListener extends L2HConverter
       setImageExtensions(".png", ".jpg", ".jpeg", ".pdf", ".tex");
    }
 
+   public void parseAux(String prefix, File auxFile) throws IOException
+   {
+      super.parseAux(prefix, auxFile);
+
+      if (getAuxData() == null)
+      {
+         throw new TeXSyntaxException(getParser(),
+           getTeXJavaHelpMk().getMessage("error.no_aux_data"));
+      }
+   }
+
    // HTMLDocument doesn't support float so add spacing
    @Override
    public void startFrameBox(FrameBox fbox)

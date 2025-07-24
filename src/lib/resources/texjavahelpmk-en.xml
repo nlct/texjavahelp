@@ -74,6 +74,7 @@ has have</entry>
 <entry key="error.exec_failed">Failed to execute: {0}</entry>
 <entry key="error.app_failed">{0} failed with exit code {1}</entry>
 <entry key="error.interrupted">Process interrupted</entry>
+<entry key="error.no_aux_data">No aux data found! The document must be fully compiled first to ensure all auxiliary files are present.</entry>
 
 <entry key="error.exists">{0} already exists</entry>
 <entry key="error.bksl_in_kpsewhich">Unexpected \ found in kpsewhich({0}). A command may not have been properly expanded.</entry>
