@@ -202,17 +202,17 @@ public class IconSet
 
       if (pressedIcon != null)
       {
-         setPressedIcon(pressedIcon);
+         button.setPressedIcon(pressedIcon);
       }
 
       if (disabledIcon != null)
       {
-         setDisabledIcon(disabledIcon);
+         button.setDisabledIcon(disabledIcon);
       }
 
       if (disabledSelectedIcon != null)
       {
-         setDisabledSelectedIcon(disabledSelectedIcon);
+         button.setDisabledSelectedIcon(disabledSelectedIcon);
       }
    }
 
