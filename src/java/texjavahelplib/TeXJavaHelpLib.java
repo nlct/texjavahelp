@@ -2105,10 +2105,34 @@ public class TeXJavaHelpLib
       lowerNavSettingsChangeListeners.add(listener);
    }
 
-   public TJHAbstractAction createHelpAction()
+   /**
+    * Action to open the main help window. Designed for the
+    * "menu.help.manual" menu item with the "manual" icon prefix.
+    */
+   public TJHAbstractAction createHelpManualAction()
    {
       return new TJHAbstractAction(this,
         "menu.help", "manual", getKeyStroke("menu.help.manual"),
+         getDefaultButtonActionOmitKeys())
+        {
+           @Override
+           public void doAction()
+           {
+              helpLib.openHelp();
+           }
+        };
+   }
+
+   /**
+    * Action to open the main help window. Designed for the
+    * "menu.help.manual" menu item with the given icon prefix.
+    */
+   public TJHAbstractAction createHelpManualAction(String iconPrefix)
+   {
+      return new TJHAbstractAction(this,
+        "menu.help", "manual", "manual", iconPrefix,
+         getKeyStroke("menu.help.manual"),
+         (Boolean)null, (JComponent)null,
          getDefaultButtonActionOmitKeys())
         {
            @Override

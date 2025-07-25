@@ -257,7 +257,7 @@ public class TeXJavaHelpDemo extends JFrame
       JMenu helpM = createJMenu("menu.help");
       mBar.add(helpM);
 
-      TJHAbstractAction manualAction = helpLib.createHelpAction();
+      TJHAbstractAction manualAction = helpLib.createHelpManualAction();
 
       helpM.add(new JMenuItem(manualAction));
       toolbar.add(manualAction);
