@@ -19,6 +19,7 @@
 package com.dickimawbooks.texjavahelplib;
 
 import java.io.IOException;
+import java.io.FileNotFoundException;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -423,6 +424,30 @@ public class HelpDialog extends JDialog
    {
       NavigationNode currentNode = helpPage.getCurrentNode();
       setPage(currentNode.getNextNode());
+   }
+
+   public void setPage(String ref) throws IOException
+   {
+      NavigationNode node = helpLib.getNavigationNodeById(ref);
+
+      if (node == null)
+      {
+         TargetRef targetRef = helpLib.getTargetRef(ref);
+
+         if (targetRef == null)
+         {
+            throw new FileNotFoundException(helpLib.getMessage(
+               "error.node_id_not_found", ref));
+         }
+         else
+         {
+            setPage(targetRef);
+         }
+      }
+      else
+      {
+         setPage(node);
+      }
    }
 
    public void setPage(NavigationNode node)
