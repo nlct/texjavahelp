@@ -162,14 +162,14 @@ public abstract class TJHAbstractAction extends AbstractAction
 
       String tag = parentTag == null ? childTag : parentTag+"."+childTag;
 
+      defaultName = helpLib.getMessageIfExists(tag);
+
       if (setName)
       {
-         String text = helpLib.getMessageIfExists(tag);
-
-         if (text != null)
+         if (defaultName != null)
          {
-            putValue(NAME, text);
-            displayName = text;
+            putValue(NAME, defaultName);
+            displayName = defaultName;
          }
       }
 
@@ -256,6 +256,11 @@ public abstract class TJHAbstractAction extends AbstractAction
       return displayName;
    }
 
+   public String getDefaultName()
+   {
+      return defaultName;
+   }
+
    public abstract void doAction();
 
    @Override
@@ -285,6 +290,6 @@ public abstract class TJHAbstractAction extends AbstractAction
    }
 
    protected TeXJavaHelpLib helpLib;
-   protected String displayName;
+   protected String displayName, defaultName;
    protected IconSet largeIconSet, smallIconSet;
 }
