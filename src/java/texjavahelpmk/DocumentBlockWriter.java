@@ -33,6 +33,7 @@ import com.dickimawbooks.texparserlib.html.L2HConverter;
 import com.dickimawbooks.texparserlib.html.DocumentBlockType;
 import com.dickimawbooks.texparserlib.html.DocumentBlockTypeListener;
 import com.dickimawbooks.texparserlib.html.DocumentBlockTypeEvent;
+import com.dickimawbooks.texparserlib.html.DivisionNode;
 
 import com.dickimawbooks.texjavahelplib.SearchItem;
 
@@ -179,12 +180,17 @@ public class DocumentBlockWriter extends Writer
 
          if (listener.isValidSearchWord(word))
          {
-            SearchItem item = new SearchItem(word, 
-             contextOffset+idx1, contextOffset+idx2,
-             listener.getCurrentNode().getId(),
-             contextId);
+            DivisionNode node = listener.getCurrentNode();
 
-            listener.addSearchItem(item, context);
+            if (node != null)
+            {
+                SearchItem item = new SearchItem(word, 
+                 contextOffset+idx1, contextOffset+idx2,
+                 node.getId(),
+                 contextId);
+
+                listener.addSearchItem(item, context);
+            }
          }
       }
    }
