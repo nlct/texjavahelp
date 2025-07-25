@@ -1943,7 +1943,7 @@ public class TeXJavaHelpLib
    }
 
    public void openHelp(NavigationNode node)
-    throws UnknownNodeException,IOException,HelpSetNotInitialisedException
+    throws IOException,HelpSetNotInitialisedException
    {
       if (helpFrame == null)
       {
@@ -1953,6 +1953,20 @@ public class TeXJavaHelpLib
       }
 
       helpFrame.setPage(node);
+      openHelp();
+   }
+
+   public void openHelp(TargetRef ref)
+    throws IOException,HelpSetNotInitialisedException
+   {
+      if (helpFrame == null)
+      {
+         throw new HelpSetNotInitialisedException(
+           getMessageWithFallback(
+           "error.no_helpset", "Helpset has not been initialised"));
+      }
+
+      helpFrame.setPage(ref);
       openHelp();
    }
 
