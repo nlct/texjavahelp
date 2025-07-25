@@ -1992,6 +1992,13 @@ public class TeXJavaHelpLib
       return keyStroke;
    }
 
+   public String getIconPrefix(String property, String fallback)
+   {
+      String value = getMessageIfExists(property+".iconimage");
+
+      return value == null ? fallback : value;
+   }
+
    public void setFontProperty(String propertyName, Font font)
    {
       if (resourceProperties == null)
@@ -2171,7 +2178,8 @@ public class TeXJavaHelpLib
 
    public TJHAbstractAction createHelpAction(String helpID, JComponent comp)
    {
-      return createHelpAction(helpID, "button", "help", "manual."+helpID, "help", 
+      return createHelpAction(helpID, "button", "help", "manual."+helpID,
+       getIconPrefix("button.help", "help"), 
        getKeyStroke("button.help"), comp, getDefaultButtonActionOmitKeys());
    }
 
@@ -2179,7 +2187,9 @@ public class TeXJavaHelpLib
       KeyStroke keyStroke, JComponent comp, String... omitKeys)
    {
       return createHelpAction(helpID, "button", "help", 
-       "manual."+helpID, "help", keyStroke, comp, omitKeys);
+       "manual."+helpID, 
+       getIconPrefix("button.help", "help"), 
+       keyStroke, comp, omitKeys);
    }
 
    public TJHAbstractAction createHelpAction(String helpID,
@@ -2213,7 +2223,8 @@ public class TeXJavaHelpLib
 
    public TJHAbstractAction createHelpAction(NavigationNode node, JComponent comp)
    {
-      return createHelpAction(node, "button", "help", "manual."+node.getKey(), "help", 
+      return createHelpAction(node, "button", "help", "manual."+node.getKey(),
+       getIconPrefix("button.help", "help"), 
        getKeyStroke("button.help"), comp);
    }
 
@@ -2812,7 +2823,8 @@ public class TeXJavaHelpLib
    public JButton createOkayButton(Action action, JComponent comp,  
      boolean smallIcon, boolean omitTextIfIcon)
    {
-      JButton btn = createJButton("button", "okay", action, comp, "okay",
+      JButton btn = createJButton("button", "okay", action, comp, 
+        getIconPrefix("button.okay", "okay"), 
         smallIcon, omitTextIfIcon);
 
       if (comp != null && comp instanceof JRootPane)
@@ -2968,7 +2980,8 @@ public class TeXJavaHelpLib
    public JButton createCancelButton(Action action, JComponent comp,  
      boolean smallIcon, boolean omitTextIfIcon)
    {
-      return createJButton("button", "cancel", action, comp, "cancel",
+      return createJButton("button", "cancel", action, comp, 
+        getIconPrefix("button.cancel", "cancel"), 
         smallIcon, omitTextIfIcon);
    }
 
@@ -3081,7 +3094,8 @@ public class TeXJavaHelpLib
    public JButton createCloseButton(Action action, JComponent comp,  
      boolean smallIcon, boolean omitTextIfIcon)
    {
-      return createJButton("button", "close", action, comp, "close",
+      return createJButton("button", "close", action, comp,
+        getIconPrefix("button.close", "close"), 
         smallIcon, omitTextIfIcon);
    }
 

@@ -288,6 +288,13 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new Dglsfield("mnemonic", glossariesSty,
          CaseChange.NO_CHANGE, "mnemonic"));
 
+      glossariesSty.addField("iconimage");
+
+      registerControlSequence(
+         new GlsEntryField("entryiconimage", "iconimage", glossariesSty));
+
+      registerControlSequence(new TextualContentCommand("menuiconsep", " "));
+
       registerControlSequence(new Widget("menufmt", "menu"));
       registerControlSequence(new Widget("widgetfmt", "widget"));
       registerControlSequence(new Widget("dialogfmt", "dialog"));
@@ -583,6 +590,9 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(createLangCs("transcriptdesc",
         "manualdesc", "transcript", "text in a transcript or log file or written to STDOUT or STDERR"));
 
+      registerControlSequence(new IncludeImg());
+      registerControlSequence(new IncludeImg("includetimg", "topalign"));
+
    }
 
    protected ControlSequence createLangCs(String tag, String defText)
@@ -654,9 +664,6 @@ public class TeXJavaHelpSty extends UserGuideSty
    protected void postOptions(TeXObjectList stack) throws IOException
    {
       super.postOptions(stack);
-
-      registerControlSequence(new AssignedControlSequence(
-        "includeimg", getParser().getControlSequence("includegraphics")));
 
       TeXParserListener listener = getListener();
 

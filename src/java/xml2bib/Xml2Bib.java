@@ -927,7 +927,7 @@ public class Xml2Bib
    private TeXJavaHelpLibAppAdapter helpLibApp;
 
    public static final Pattern KEY_SUFFIX_PATTERN
-     = Pattern.compile("mnemonic|tooltip|description|keystroke|defaultkeys|plural|symbol|user[1-6]|name|text|defaultparams|see(also)?|alias");
+     = Pattern.compile("mnemonic|tooltip|description|keystroke|defaultkeys|plural|symbol|user[1-6]|name|text|defaultparams|see(also)?|alias|iconimage");
    public static final Pattern TEX_SUFFIX_PATTERN
      = Pattern.compile("plural|text|name|symbol|user[1-6]|defaultparams|defaultkeys");
 

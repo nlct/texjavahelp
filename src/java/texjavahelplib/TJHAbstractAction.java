@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2024 Nicola L.C. Talbot
+    Copyright (C) 2024-2025 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -75,8 +75,13 @@ public abstract class TJHAbstractAction extends AbstractAction
      KeyStroke keyStroke, Boolean selectedState, JComponent comp,
      String... omitKeys)
    {
-      this(helpLib, parentTag, action, action, action, keyStroke,
-         selectedState, comp, omitKeys);
+      this(helpLib, parentTag, action, action, 
+        helpLib.getIconPrefix(
+         action == null ? parentTag : parentTag+"."+action,
+         action
+        ),
+        keyStroke,
+        selectedState, comp, omitKeys);
    }
 
    public TJHAbstractAction(TeXJavaHelpLib helpLib,

@@ -55,6 +55,21 @@ public class MenuDef extends StandaloneDef
    }
 
    @Override
+   protected void addPreEntryName(TeXObjectList list, GlsLabel glslabel, TeXParser parser)        
+   {  
+      TeXObject imgName = glslabel.getField("iconimage");
+
+      if (imgName != null)
+      {
+         list.add(parser.getListener().getControlSequence("includeimg"));
+         Group grp = parser.getListener().createGroup();
+         grp.add(imgName, true);
+         list.add(grp);
+         list.add(parser.getListener().getControlSequence("menuiconsep"));
+      }
+   }
+
+   @Override
    protected void addEntryName(TeXObjectList list, GlsLabel glslabel, TeXParser parser)
    {
       if (parentEntry != null)

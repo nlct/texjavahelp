@@ -793,6 +793,7 @@
 \glsaddstoragekey{mnemonic}{}{\entrymnemonic}
 \glsaddstoragekey{tooltip}{}{\entrytooltip}
 \glsaddstoragekey{keystroke}{}{\entrykeystroke}
+\glsaddstoragekey{iconimage}{}{\entryiconimage}
 
 \newdglsfield{keystroke}{\accelerator}
 \newdglsfield{mnemonic}{\mnemonic}
@@ -1473,9 +1474,17 @@
  \end{pinnedbox}% 
 }
 
+\newcommand{\menuiconsep}{\space}
+
 \NewDocumentCommand\menudef{sO{}mO{}}{%
  \begin{settingsbox}[title={\icon{novaluesetting}},#2]%
  \glsadd[format=main]{#3}%
+ \glsxtrifhasfield{iconimage}{#3}%
+ {%
+   \includeimg{\glscurrentfieldvalue}%
+   \menuiconsep
+ }
+ {}%
  \IfBooleanF{#1}%
  {
    \glsxtrifhasfield{parent}{#3}%
@@ -2354,6 +2363,15 @@ halign upper=flush left,halign lower=justify,
 \tl_new:N \l__texjavahelp_img_dir_tl
 \tl_new:N \l__texjavahelp_img_name_tl
 \tl_new:N \l__texjavahelp_img_ext_tl
+
+\NewDocumentCommand \includetimg { o m }
+{
+  \vtop
+  {
+    \vskip \c_zero_skip 
+    \hbox{ \includeimg [ #1 ] { #2 } }
+  }
+}
 
 \NewDocumentCommand \includeimg { o m }
 {
