@@ -2143,6 +2143,27 @@ public class TeXJavaHelpLib
         };
    }
 
+   /**
+    * Action to open the main help window. Designed for the
+    * "menu.help.manual" menu item with the given icon set.
+    */
+   public TJHAbstractAction createHelpManualAction(
+       IconSet largeIconSet, IconSet smallIconSet)
+   {
+      return new TJHAbstractAction(this,
+        "menu.help", "manual", "manual", largeIconSet, smallIconSet,
+         getKeyStroke("menu.help.manual"),
+         (Boolean)null, (JComponent)null,
+         getDefaultButtonActionOmitKeys())
+        {
+           @Override
+           public void doAction()
+           {
+              helpLib.openHelp();
+           }
+        };
+   }
+
    public TJHAbstractAction createHelpAction(String helpID)
    {
       return createHelpAction(helpID, (JComponent)null);

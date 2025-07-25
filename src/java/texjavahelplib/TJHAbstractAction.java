@@ -246,6 +246,166 @@ public abstract class TJHAbstractAction extends AbstractAction
       }
    }
 
+   public TJHAbstractAction(TeXJavaHelpLib helpLib,
+     String parentTag, String childTag, String actionName,
+     IconSet largeIconSet, IconSet smallIconSet,
+     KeyStroke keyStroke, Boolean selectedState, JComponent comp,
+     String... omitKeys)
+   {
+      super();
+
+      this.helpLib = helpLib;
+      this.largeIconSet = largeIconSet;
+      this.smallIconSet = smallIconSet;
+
+      boolean setCommand = true;
+      boolean setAccelerator = true;
+      boolean setSelected = true;
+      boolean setName = true;
+      boolean setMnemonic = true;
+      boolean setShortDesc = true;
+      boolean setLongDesc = true;
+      boolean setLargeIcon = (largeIconSet != null);
+      boolean setSmallIcon = (smallIconSet != null);
+
+      for (String key : omitKeys)
+      {
+         if (key.equals(ACTION_COMMAND_KEY))
+         {
+            setCommand = false;
+         }
+         else if (key.equals(ACCELERATOR_KEY))
+         {
+            setAccelerator = false;
+         }
+         else if (key.equals(SELECTED_KEY))
+         {
+            setSelected = false;
+         }
+         else if (key.equals(NAME))
+         {
+            setName = false;
+         }
+         else if (key.equals(MNEMONIC_KEY))
+         {
+            setMnemonic = false;
+         }
+         else if (key.equals(SHORT_DESCRIPTION))
+         {
+            setShortDesc = false;
+         }
+         else if (key.equals(LONG_DESCRIPTION))
+         {
+            setLongDesc = false;
+         }
+         else if (key.equals(LARGE_ICON_KEY))
+         {
+            setLargeIcon = false;
+         }
+         else if (key.equals(SMALL_ICON))
+         {
+            setSmallIcon = false;
+         }
+      }
+
+      if (setCommand && actionName != null)
+      {
+         putValue(ACTION_COMMAND_KEY, actionName);
+      }
+
+      if (setAccelerator && keyStroke != null)
+      {
+         putValue(ACCELERATOR_KEY, keyStroke);
+
+         if (actionName != null && comp != null)
+         {
+            comp.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+                .put(keyStroke, actionName);
+            comp.getActionMap().put(actionName, this);
+         }
+      }
+
+      if (setSelected && selectedState != null)
+      {
+         putValue(SELECTED_KEY, selectedState);
+      }
+
+      String tag = parentTag == null ? childTag : parentTag+"."+childTag;
+
+      defaultName = helpLib.getMessageIfExists(tag);
+
+      if (setName)
+      {
+         if (defaultName != null)
+         {
+            putValue(NAME, defaultName);
+            displayName = defaultName;
+         }
+      }
+
+      if (setMnemonic)
+      {
+         int mnemonic = helpLib.getMnemonic(tag+".mnemonic");
+
+         if (mnemonic > 0)
+         {
+            putValue(MNEMONIC_KEY, Integer.valueOf(mnemonic));
+         }
+      }
+
+      if (setShortDesc)
+      {
+         String tooltip = helpLib.getMessageIfExists(tag+".tooltip");
+
+         if (tooltip != null)
+         {
+            putValue(SHORT_DESCRIPTION, tooltip);
+
+            if (displayName == null)
+            {
+               displayName = tooltip;
+            }
+         }
+      }
+
+      if (setLongDesc)
+      {
+         String desc = helpLib.getMessageIfExists(tag+".description");
+
+         if (desc != null)
+         {
+            putValue(LONG_DESCRIPTION, desc);
+         }
+      }
+
+      Icon ic;
+
+      if (setLargeIcon)
+      {
+         ic = largeIconSet.getDefaultIcon();
+
+         if (ic != null)
+         {
+            putValue(LARGE_ICON_KEY, ic);
+         }
+      }
+
+      if (setSmallIcon)
+      {
+         ic = smallIconSet.getDefaultIcon();
+
+         if (ic != null)
+         {
+            putValue(SMALL_ICON, ic);
+         }
+      }
+
+      if (displayName == null)
+      {
+         displayName = (actionName == null ? childTag : actionName);
+      }
+   }
+
    public void setToolTipText(String tooltip)
    {
       putValue(SHORT_DESCRIPTION, tooltip);
