@@ -175,6 +175,8 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new LeftQuadPar());
 
+      registerControlSequence(new FloatTable());
+
       registerControlSequence(new FloatFig());
 
       listener.newcounter("subfigure", null, "@alph");

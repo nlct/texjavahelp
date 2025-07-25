@@ -541,6 +541,20 @@
   \subfigurecap { #3 }
 }
 
+% \FloatTable[pos]{label}{content}[lot]{caption}
+\NewDocumentCommand\FloatTable{ommom}{%
+ \IfValueTF{#1}%
+  {\begin{table}[#1]}%
+  {\begin{table}}%
+ \IfValueTF{#4}%
+ {\caption[#4]{#5}}%
+ {\caption{#5}}%
+ \label{#2}%
+ \centering
+ #3%
+ \end{table}%
+}
+
 \ExplSyntaxOff
 
 \newcommand{\codepar}{\par\mbox{}\par}
