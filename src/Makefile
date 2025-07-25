@@ -35,10 +35,10 @@ lib/resources/helpset/index.xml	: lib/texjavahelpmk.jar doc/texjavahelp.pdf
 doc/texjavahelp.pdf	: doc/texjavahelplib.bib doc/texjavahelp.tex doc/helpinterface.tex doc/texjavahelp.sty doc/texjavahelp.bib doc/images/*.tex doc/images/*.png
 	$(arara) -d doc texjavahelp
 
-doc/texjavahelplib.bib	: lib/xml2bib.jar \
+doc/texjavahelplib.bib	: lib/tjhxml2bib.jar \
 			lib/resources/texjavahelplib-en.xml \
 			lib/resources/texjavahelpdemo-en.xml
-	bin/xml2bib \
+	bin/tjhxml2bib \
 		lib/resources/texjavahelplib-en.xml \
 		lib/resources/texjavahelpdemo-en.xml \
 		-o doc/texjavahelplib.bib
@@ -78,10 +78,10 @@ classes/com/dickimawbooks/texjavahelplib/TeXJavaHelpLib.class	: classes/com/dick
 classes/com/dickimawbooks/texjavahelplib	:
 	mkdir -p classes/com/dickimawbooks/texjavahelplib
 
-lib/xml2bib.jar	: java/xml2bib/Manifest.txt \
+lib/tjhxml2bib.jar	: java/xml2bib/Manifest.txt \
 	classes/com/dickimawbooks/xml2bib/Xml2Bib.class
 	cd classes; \
-	jar cmf ../java/xml2bib/Manifest.txt ../lib/xml2bib.jar \
+	jar cmf ../java/xml2bib/Manifest.txt ../lib/tjhxml2bib.jar \
 	com/dickimawbooks/xml2bib/*.class
 
 classes/com/dickimawbooks/xml2bib/Xml2Bib.class	: classes/com/dickimawbooks/xml2bib \
@@ -106,4 +106,6 @@ clean	:
 	\rm -f doc/*.pdf
 	\rm -f lib/texjavahelplib.jar
 	\rm -f lib/texjavahelpmk.jar
+	\rm -f lib/tjhxml2bib.jar
+	\rm -f lib/texjavahelpdemo.jar
 	\rm -rf lib/resources/helpset

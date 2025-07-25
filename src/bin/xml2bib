@@ -1,5 +1,0 @@
-#!/bin/sh
-
-bindir=`dirname $0`
-java -jar "$bindir/../lib/xml2bib.jar" $@
-
