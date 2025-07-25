@@ -214,6 +214,11 @@ public class TJHListener extends L2HConverter
    protected void writeNavigationXmlFile()
      throws IOException
    {
+      if (divisionData == null)
+      {
+         throw new TeXSyntaxException(getParser(), "error.no_division_data");
+      }
+
       DivisionInfo divInfo = divisionData.firstElement();
       DivisionNode divNode = (DivisionNode)divInfo.getSpecial();
 
@@ -369,20 +374,27 @@ public class TJHListener extends L2HConverter
 
       IndexItem item = indexData.get(anchorName);
 
-      if (item == null)
+      if (currentNode == null)
       {
-         item = createIndexItem(anchorName, anchorName, currentNode.getFile().getName());
-
-         indexData.put(anchorName, item);
+         getParser().warningMessage("error.no_current_node");
       }
       else
       {
-         if (item.getTarget() == null)
+         if (item == null)
          {
-            item.setTarget(anchorName);
-         }
+            item = createIndexItem(anchorName, anchorName, currentNode.getFile().getName());
 
-         item.setFileName(currentNode.getFile().getName());
+            indexData.put(anchorName, item);
+         }
+         else
+         {
+            if (item.getTarget() == null)
+            {
+               item.setTarget(anchorName);
+            }
+
+            item.setFileName(currentNode.getFile().getName());
+         }
       }
 
       if (!text.isEmpty())
