@@ -30,9 +30,15 @@ import javax.swing.event.ChangeListener;
 
 public class IconSet
 {
-   public IconSet(Icon defaultIcon)
+   public IconSet(String base, Icon defaultIcon)
    {
+      this.base = base;
       this.defaultIcon = defaultIcon;
+   }
+
+   public String getBase()
+   {
+      return base;
    }
 
    public Icon getDefaultIcon()
@@ -219,12 +225,13 @@ public class IconSet
    public String toString()
    {
       return String.format(
-        "%s[default=%s,selected=%s,pressed=%s,rollover=%s,rolloverSelected=%s,disabled=%s,disabledSelected=%s]",
-        getClass().getSimpleName(), defaultIcon, selectedIcon,
+        "%s[base=%s,default=%s,selected=%s,pressed=%s,rollover=%s,rolloverSelected=%s,disabled=%s,disabledSelected=%s]",
+        getClass().getSimpleName(), base, defaultIcon, selectedIcon,
         pressedIcon, rolloverIcon, rolloverSelectedIcon,
         disabledIcon, disabledSelectedIcon);
    }
 
+   protected String base;
    protected Icon defaultIcon, selectedIcon,
     rolloverIcon, rolloverSelectedIcon,
     pressedIcon, disabledIcon, disabledSelectedIcon;

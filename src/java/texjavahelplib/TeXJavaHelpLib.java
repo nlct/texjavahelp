@@ -941,7 +941,7 @@ public class TeXJavaHelpLib
 
       if (ic == null) return null;
 
-      IconSet icSet = new IconSet(ic);
+      IconSet icSet = new IconSet(base, ic);
 
       ic = getHelpIcon(base+"_pressed", suffix);
 
@@ -1066,7 +1066,7 @@ public class TeXJavaHelpLib
 
       if (mapped != null)
       {
-         icSet = new IconSet(new ImageIcon(mapped));
+         icSet = new IconSet(base, new ImageIcon(mapped));
 
          mapped = getMappedImageLocation(mappedBase+"_selected");
 
@@ -1130,7 +1130,7 @@ public class TeXJavaHelpLib
 
          if (url != null)
          {
-            icSet = new IconSet(new ImageIcon(url));
+            icSet = new IconSet(base, new ImageIcon(url));
 
             url = getClass().getResource(basename + "_selected" + suffix);
 
@@ -1252,7 +1252,7 @@ public class TeXJavaHelpLib
 
       if (mapped != null)
       {
-         icSet = new IconSet(new ImageIcon(mapped));
+         icSet = new IconSet(base, new ImageIcon(mapped));
 
          mapped = getMappedImageLocation(base+"_selected");
 
@@ -1316,7 +1316,7 @@ public class TeXJavaHelpLib
 
          if (url != null)
          {
-            icSet = new IconSet(new ImageIcon(url));
+            icSet = new IconSet(base, new ImageIcon(url));
 
             url = getClass().getResource(basename + "_selected" + suffix);
 
@@ -3390,6 +3390,6 @@ public class TeXJavaHelpLib
    public static final String LICENSE_GPL3 = String.format(
    "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>%nThis is free software: you are free to change and redistribute it.%nThere is NO WARRANTY, to the extent permitted by law.");
 
-   public static final String VERSION = "0.9a.20250724";
-   public static final String VERSION_DATE = "2025-07-24";
+   public static final String VERSION = "0.9a.20250725";
+   public static final String VERSION_DATE = "2025-07-25";
 }

@@ -70,7 +70,7 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
 
       if (ic != null)
       {
-         icSet = new IconSet(ic);
+         icSet = new IconSet(base, ic);
 
          ic = getSmallIcon(base+"_pressed", extensions);
 
@@ -132,7 +132,7 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
 
       if (ic != null)
       {
-         icSet = new IconSet(ic);
+         icSet = new IconSet(base, ic);
 
          ic = getLargeIcon(base+"_pressed", extensions);
 
