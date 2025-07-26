@@ -33,7 +33,7 @@ public class IconStartPar extends ControlSequence
 {
    public IconStartPar()
    {
-      this("IconStartPar", "iconstartpar");
+      this("iconstartpar", "iconstartpar");
    }
 
    public IconStartPar(String name, String cssClass)
