@@ -60,7 +60,7 @@ public class IconStartPar extends ControlSequence
    {
       TJHListener listener = (TJHListener)parser.getListener();
 
-      KeyValList options = TeXParserUtils.popKeyValList(parser, stack);
+      KeyValList options = TeXParserUtils.popOptKeyValList(parser, stack);
       String[] fileList = popLabelString(parser, stack).split(" *, *");
 
       boolean addAlt = true;
