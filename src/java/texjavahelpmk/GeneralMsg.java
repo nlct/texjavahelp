@@ -32,10 +32,16 @@ public class GeneralMsg extends AbstractGlsCommand
 {
    public GeneralMsg(GlossariesSty sty)
    {
-      this(sty, "generalmsg", "");
+      this(sty, "generalmsg", "", CaseChange.NO_CHANGE, false);
    }
 
    public GeneralMsg(GlossariesSty sty, String name, String prefix)
+   {
+      this(sty, name, prefix, CaseChange.NO_CHANGE, false);
+   }
+
+   public GeneralMsg(GlossariesSty sty, String name, String prefix,
+     CaseChange caseChange, boolean isPlural)
    {
       super(name, sty);
 
@@ -45,12 +51,16 @@ public class GeneralMsg extends AbstractGlsCommand
       }
 
       setEntryLabelPrefix(prefix);
+
+      this.caseChange = caseChange;
+      this.isPlural = isPlural;
    }
 
    @Override
    public Object clone()
    {
-      return new GeneralMsg(sty, getName(), getEntryLabelPrefix());
+      return new GeneralMsg(sty, getName(), getEntryLabelPrefix(),
+       caseChange, isPlural);
    }
 
    @Override
@@ -109,8 +119,25 @@ public class GeneralMsg extends AbstractGlsCommand
          }
       }
 
+      String glsCsName = "gls";
+
+      switch (caseChange)
+      {
+         case SENTENCE:
+            glsCsName = "Gls";
+         break;
+         case TO_UPPER:
+            glsCsName = "GLS";
+         break;
+      }
+
+      if (isPlural)
+      {
+         glsCsName += "pl";
+      }
+
       TeXObjectList expanded = listener.createStack();
-      expanded.add(listener.getControlSequence("gls"));
+      expanded.add(listener.getControlSequence(glsCsName));
       expanded.add(glsLabel);
       expanded.add(listener.getOther('['));
 
@@ -127,4 +154,6 @@ public class GeneralMsg extends AbstractGlsCommand
 
    }
 
+   CaseChange caseChange;
+   boolean isPlural = false;
 }

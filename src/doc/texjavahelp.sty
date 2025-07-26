@@ -2,7 +2,7 @@
 % in the TeX Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{texjavahelp}[2025/07/21 v0.2a (NLCT)]
+\ProvidesPackage{texjavahelp}[2025/07/26 v0.2a (NLCT)]
 
 \RequirePackage{pifont}
 \RequirePackage{fontawesome}
@@ -541,6 +541,8 @@
   \subfigurecap { #3 }
 }
 
+\newcommand{\posttablecaption}{\medskip}
+
 % \FloatTable[pos]{label}{content}[lot]{caption}
 \NewDocumentCommand\FloatTable{ommom}{%
  \IfValueTF{#1}%
@@ -550,6 +552,7 @@
  {\caption[#4]{#5}}%
  {\caption{#5}}%
  \label{#2}%
+ \posttablecaption
  \centering
  #3%
  \end{table}%
@@ -776,6 +779,13 @@
 \newrobustcmd{\fnsymtext}[2]{\tablefntext{\fnsymmarker{#1}}{#2}}
 
 \newcommand{\settabcolsep}[1]{\setlength{\tabcolsep}{#1}}
+
+\newcommand{\deflist@item}[1]{\item[]#1}
+\newenvironment{itemdesc}{\par\nobreak\ignorespaces}{\ignorespacesafterend}
+
+\newenvironment{deflist}
+ {\begin{description}\let\itemtitle\deflist@item}
+ {\end{description}\ignorespacesafterend}
 
 % Glossary information
 
@@ -1141,8 +1151,16 @@
   { \__texjavahelp_msg:nnn { #1 } { error.#2 } { #3 } }
 \NewDocumentCommand \syntaxmsg { O{} m O{} }
   { \__texjavahelp_msg:nnn { #1 } { syntax.#2 } { #3 } }
+
 \NewDocumentCommand \manmsg { O{} m O{} }
   { \__texjavahelp_msg:nnn { #1 } { manual.#2 } { #3 } }
+\NewDocumentCommand \Manmsg { O{} m O{} }
+  { \__texjavahelp_Msg:nnn { #1 } { manual.#2 } { #3 } }
+\NewDocumentCommand \manmsgpl { O{} m O{} }
+  { \__texjavahelp_msgpl:nnn { #1 } { manual.#2 } { #3 } }
+\NewDocumentCommand \Manmsgpl { O{} m O{} }
+  { \__texjavahelp_Msgpl:nnn { #1 } { manual.#2 } { #3 } }
+
 \NewDocumentCommand \generalmsg { O{} m O{} }
   { \__texjavahelp_msg:nnn { #1 } { #2 } { #3 } }
 
@@ -1153,7 +1171,7 @@
 
 \seq_new:N \l__texjavahelp_msg_seq
 
-\cs_new:Nn \__texjavahelp_msg:nnn
+\cs_new:Nn \__texjavahelp_msg:nnnN
 {
   \group_begin:
    \tl_if_empty:nTF { #1 }
@@ -1174,8 +1192,28 @@
     {
       \defmsgparam { \int_eval:n { ##1 - \c_one_int } } { ##2 }
     }
-   \gls{#2}[#3]%
+   #4 { #2 } [ #3 ]
   \group_end:
+}
+
+\cs_new:Nn \__texjavahelp_msg:nnn
+{
+  \__texjavahelp_msg:nnnN { #1 } { #2 } { #3 } \gls 
+}
+
+\cs_new:Nn \__texjavahelp_msgpl:nnn
+{
+  \__texjavahelp_msg:nnnN { #1 } { #2 } { #3 } \glspl 
+}
+
+\cs_new:Nn \__texjavahelp_Msg:nnn
+{
+  \__texjavahelp_msg:nnnN { #1 } { #2 } { #3 } \Gls 
+}
+
+\cs_new:Nn \__texjavahelp_Msgpl:nnn
+{
+  \__texjavahelp_msg:nnnN { #1 } { #2 } { #3 } \Glspl 
 }
 
 \cs_new:Nn \__texjavahelp_inlineglsdef:nn
@@ -2410,6 +2448,26 @@ halign upper=flush left,halign lower=justify,
     }
  }
 \ExplSyntaxOff
+
+\newlength\iconheight
+\newlength\iconwidth
+\newsavebox\iconsbox
+\newcommand{\iconstartpar}[1][-3]{%
+  \def\@iconstartpar@hangafter{#1}%
+  \@iconstartpar
+}
+
+\newcommand{\@iconstartpar}[2][]{%
+  \par\vspace{\baselineskip}%
+  \sbox{\iconsbox}{\@for\this@icon:=#2\do{\includegraphics[#1]{\this@icon}}}%
+  \settoheight{\iconheight}{\usebox{\iconsbox}}%
+  \settowidth{\iconwidth}{\usebox{\iconsbox}}
+  \advance\iconheight by -0.5\baselineskip
+  \advance\iconwidth by 10pt\relax
+  \hangindent=\iconwidth
+  \hangafter=\@iconstartpar@hangafter\relax
+  \noindent\makebox[0pt][l]{\hspace*{-\iconwidth}\smash{\raisebox{-\iconheight}{\usebox{\iconsbox}}}}%
+}
 
 \newcommand{\texparserimgloadresources}[2][]{%
   \ifnum\glsxtrresourcecount=0\relax

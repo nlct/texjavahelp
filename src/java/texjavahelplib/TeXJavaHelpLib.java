@@ -3463,6 +3463,6 @@ public class TeXJavaHelpLib
    public static final String LICENSE_GPL3 = String.format(
    "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>%nThis is free software: you are free to change and redistribute it.%nThere is NO WARRANTY, to the extent permitted by law.");
 
-   public static final String VERSION = "0.9a.20250725";
-   public static final String VERSION_DATE = "2025-07-25";
+   public static final String VERSION = "0.9a.20250726";
+   public static final String VERSION_DATE = "2025-07-26";
 }

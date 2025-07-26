@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2024 Nicola L.C. Talbot
+    Copyright (C) 2024-2025 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -175,7 +175,10 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new LeftQuadPar());
 
+      registerControlSequence(new IconStartPar());
+
       registerControlSequence(new FloatTable());
+      registerControlSequence(new GenericCommand("posttablecaption"));
 
       registerControlSequence(new FloatFig());
 
@@ -358,7 +361,14 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new GeneralMsg(glossariesSty, "warnmsg", "warning."));
       registerControlSequence(new GeneralMsg(glossariesSty, "errmsg", "error."));
       registerControlSequence(new GeneralMsg(glossariesSty, "syntaxmsg", "syntax."));
+
       registerControlSequence(new GeneralMsg(glossariesSty, "manmsg", "manual."));
+      registerControlSequence(new GeneralMsg(glossariesSty, "Manmsg", "manual.",
+        CaseChange.SENTENCE, false));
+      registerControlSequence(new GeneralMsg(glossariesSty, "manmsgpl", "manual.",
+        CaseChange.NO_CHANGE, true));
+      registerControlSequence(new GeneralMsg(glossariesSty, "Manmsgpl", "manual.",
+        CaseChange.SENTENCE, true));
 
       registerControlSequence(new InlineMsgDef(glossariesSty));
 
