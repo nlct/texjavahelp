@@ -1487,6 +1487,7 @@
  \let\glsxtrpostnameapplication\postclihook
  \glsxtrglossentry{app.#2}%
  \end{terminal}% 
+ \ignorespaces
 }
 
 \newcommand{\postswitchhook}{%
@@ -1502,6 +1503,7 @@
  \let\glsxtrpostnameswitch\postswitchhook
  \glsxtrglossentry{switch.#2}%
  \end{pinnedbox}% 
+ \ignorespaces
 }
 
 \NewDocumentCommand\widgetdef{O{}mO{}}{%
@@ -1516,6 +1518,7 @@
  \glsxtrglossentry{#2}%
  \hfill #3%
  \end{pinnedbox}% 
+ \ignorespaces
 }
 
 \newcommand{\menuiconsep}{\space}
@@ -1553,6 +1556,7 @@
  \glsxtrglossentry{#3}%
  \hfill \glsxtrusefield{#3}{keystroke}#4%
  \end{settingsbox}% 
+ \ignorespaces
 }
 
 \NewDocumentCommand\pkgdef{O{}m}{%
@@ -1562,6 +1566,7 @@
  \glsxtrifhasfield{syntax}{#2}{\oarg{\glscurrentfieldvalue}}{}%
  \marg{\glsxtrglossentry{pkg.#2}}%
  \end{codebox}% 
+ \ignorespaces
 }
 
 \NewDocumentCommand\clsdef{O{}m}{%
@@ -1571,6 +1576,7 @@
  \glsxtrifhasfield{syntax}{#2}{\oarg{\glscurrentfieldvalue}}{}%
  \marg{\glsxtrglossentry{cls.#2}}%
  \end{codebox}% 
+ \ignorespaces
 }
 
 \NewDocumentCommand\cmddef{O{}m}{%
@@ -1579,6 +1585,7 @@
  \glsxtrglossentry{#2}%
  \glsxtrifhasfield{syntax}{#2}{\glscurrentfieldvalue}{}%
  \end{codebox}% 
+ \ignorespaces
 }
 
 \newcommand{\postoptionhook}{%
@@ -1591,6 +1598,7 @@
  \let\glsxtrpostnameoption\postoptionhook
  \glsxtrglossentry{opt.#2}%
  \end{compactcodebox}% 
+ \ignorespaces
 }
 
 \newrobustcmd*{\inlineglsdef}[1]{%
