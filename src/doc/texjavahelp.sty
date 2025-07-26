@@ -1507,6 +1507,12 @@
 \NewDocumentCommand\widgetdef{O{}mO{}}{%
  \begin{pinnedbox}[#1]%
  \glsadd[format=main]{#2}%
+ \glsxtrifhasfield{iconimage}{#2}%
+ {%
+   \includeimg{\glscurrentfieldvalue}%
+   \menuiconsep
+ }
+ {}%
  \glsxtrglossentry{#2}%
  \hfill #3%
  \end{pinnedbox}% 
