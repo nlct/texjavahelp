@@ -108,9 +108,27 @@ public class MenuDef extends StandaloneDef
       {
          TaggedColourBox taggedBox = (TaggedColourBox)outerBox;
 
+         String iconname = "novaluesetting";
+
+         TeXObject initValObj = glslabel.getField("initvalue");
+
+         if (initValObj != null)
+         {
+            String initVal = initValObj.toString(parser).trim();
+
+            if (initVal.equals("true"))
+            {
+               iconname = "toggleonsetting";
+            }
+            else if (initVal.equals("false"))
+            {
+               iconname = "toggleoffsetting";
+            }
+         }
+
          TeXObjectList title = parser.getListener().createStack();
          title.add(parser.getListener().getControlSequence("icon"));
-         title.add(parser.getListener().createGroup("novaluesetting"));
+         title.add(parser.getListener().createGroup(iconname));
          taggedBox.setTitle(title);
       }
 

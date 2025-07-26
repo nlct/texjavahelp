@@ -1520,8 +1520,20 @@
 
 \newcommand{\menuiconsep}{\space}
 
+\newcommand{\@menuicon@}{\icon{novaluesetting}}
+\newcommand{\@menuicon@true}{\icon{toggleonsetting}}
+\newcommand{\@menuicon@false}{\icon{toggleoffsetting}}
+
 \NewDocumentCommand\menudef{sO{}mO{}}{%
- \begin{settingsbox}[title={\icon{novaluesetting}},#2]%
+ \renewcommand{\@menuicon@}{\icon{novaluesetting}}%
+ \glsxtrifhasfield*{initvalue}{#3}%
+ {%
+   \ifcsdef{@menuicon@\glscurrentfieldvalue}%
+   {\letcs\@menuicon@{@menuicon@\glscurrentfieldvalue}}%
+   {}%
+ }%
+ {}%
+ \begin{settingsbox}[title={\@menuicon@},#2]%
  \glsadd[format=main]{#3}%
  \glsxtrifhasfield{iconimage}{#3}%
  {%

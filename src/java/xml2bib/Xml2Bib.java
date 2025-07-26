@@ -927,9 +927,9 @@ public class Xml2Bib
    private TeXJavaHelpLibAppAdapter helpLibApp;
 
    public static final Pattern KEY_SUFFIX_PATTERN
-     = Pattern.compile("mnemonic|tooltip|description|keystroke|defaultkeys|plural|symbol|user[1-6]|name|text|defaultparams|see(also)?|alias|iconimage");
+     = Pattern.compile("mnemonic|tooltip|description|keystroke|defaultkeys|plural|symbol|user[1-6]|name|text|defaultparams|syntax|initvalue|defaultvalue|see(also)?|alias|iconimage");
    public static final Pattern TEX_SUFFIX_PATTERN
-     = Pattern.compile("plural|text|name|symbol|user[1-6]|defaultparams|defaultkeys");
+     = Pattern.compile("plural|text|name|symbol|user[1-6]|defaultparams|defaultkeys|syntax|initvalue|defaultvalue");
 
    public static final String NAME = "xml2bib";
 }
