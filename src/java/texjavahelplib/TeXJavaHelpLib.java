@@ -1871,13 +1871,23 @@ public class TeXJavaHelpLib
    }
 
    public NavigationNode getIndexNode()
+    throws HelpSetNotInitialisedException
    {
       return getNavigationNodeById("docindex");
    }
 
    public NavigationNode getNavigationNodeById(String id)
+    throws HelpSetNotInitialisedException
    {
-      return navigationTree == null ? null : navigationTree.getNodeById(id);
+      if (navigationTree == null)
+      {
+         throw new HelpSetNotInitialisedException(getMessageWithFallback(
+           "error.no_navtree_with_id",
+           "No node matching ID {0}: navigation tree has not been created",
+           id));
+      }
+
+      return navigationTree.getNodeById(id);
    }
 
    public SearchData getSearchData()
@@ -2266,14 +2276,22 @@ public class TeXJavaHelpLib
    }
 
    public HelpDialogAction createHelpDialogAction(JDialog owner, String helpId)
-    throws IllegalArgumentException
+    throws IllegalArgumentException,
+           HelpSetNotInitialisedException
    {
       NavigationNode node = getNavigationNodeById(helpId);
 
       if (node == null)
       {
-         throw new IllegalArgumentException(
-            getMessage("error.node_id_not_found", helpId));
+         TargetRef ref = getTargetRef(helpId);
+
+         if (ref == null)
+         {
+            throw new IllegalArgumentException(
+               getMessage("error.node_id_not_found", helpId));
+         }
+
+         return createHelpDialogAction(owner, ref);
       }
 
       return createHelpDialogAction(owner, node);
@@ -2289,15 +2307,61 @@ public class TeXJavaHelpLib
       return new HelpDialogAction(owner, ref, this, getDefaultButtonActionOmitKeys());
    }
 
-   public HelpDialogAction createHelpDialogAction(JFrame owner, String helpId)
-    throws IllegalArgumentException
+   public HelpDialogAction createHelpDialogAction(JDialog owner, String helpId,
+      IconSet largeIconSet, IconSet smallIconSet)
+    throws IllegalArgumentException,
+           HelpSetNotInitialisedException
    {
       NavigationNode node = getNavigationNodeById(helpId);
 
       if (node == null)
       {
-         throw new IllegalArgumentException(
-            getMessage("error.node_id_not_found", helpId));
+         TargetRef ref = getTargetRef(helpId);
+
+         if (ref == null)
+         {
+            throw new IllegalArgumentException(
+               getMessage("error.node_id_not_found", helpId));
+         }
+
+         return createHelpDialogAction(owner, ref, largeIconSet, smallIconSet);
+      }
+
+      return createHelpDialogAction(owner, node, largeIconSet, smallIconSet);
+   }
+
+   public HelpDialogAction createHelpDialogAction(JDialog owner,
+      NavigationNode node, IconSet largeIconSet, IconSet smallIconSet)
+   {
+      return new HelpDialogAction(owner, node,
+        largeIconSet, smallIconSet,
+        this, getDefaultButtonActionOmitKeys());
+   }
+
+   public HelpDialogAction createHelpDialogAction(JDialog owner, 
+      TargetRef ref, IconSet largeIconSet, IconSet smallIconSet)
+   {
+      return new HelpDialogAction(owner, ref, largeIconSet, smallIconSet,
+       this, getDefaultButtonActionOmitKeys());
+   }
+
+   public HelpDialogAction createHelpDialogAction(JFrame owner, String helpId)
+    throws IllegalArgumentException,
+           HelpSetNotInitialisedException
+   {
+      NavigationNode node = getNavigationNodeById(helpId);
+
+      if (node == null)
+      {
+         TargetRef ref = getTargetRef(helpId);
+
+         if (ref == null)
+         {
+            throw new IllegalArgumentException(
+               getMessage("error.node_id_not_found", helpId));
+         }
+
+         return createHelpDialogAction(owner, ref);
       }
 
       return createHelpDialogAction(owner, node);
@@ -2313,8 +2377,48 @@ public class TeXJavaHelpLib
       return new HelpDialogAction(owner, ref, this, getDefaultButtonActionOmitKeys());
    }
 
+   public HelpDialogAction createHelpDialogAction(JFrame owner, String helpId,
+     IconSet largeIconSet, IconSet smallIconSet)
+    throws IllegalArgumentException,
+           HelpSetNotInitialisedException
+   {
+      NavigationNode node = getNavigationNodeById(helpId);
+
+      if (node == null)
+      {
+         TargetRef ref = getTargetRef(helpId);
+
+         if (ref == null)
+         {
+            throw new IllegalArgumentException(
+               getMessage("error.node_id_not_found", helpId));
+         }
+
+         return createHelpDialogAction(owner, ref, largeIconSet, smallIconSet);
+      }
+
+      return createHelpDialogAction(owner, node, largeIconSet, smallIconSet);
+   }
+
+   public HelpDialogAction createHelpDialogAction(JFrame owner,
+     NavigationNode node,
+     IconSet largeIconSet, IconSet smallIconSet)
+   {
+      return new HelpDialogAction(owner, node, largeIconSet, smallIconSet,
+         this, getDefaultButtonActionOmitKeys());
+   }
+
+   public HelpDialogAction createHelpDialogAction(JFrame owner,
+     TargetRef ref,
+     IconSet largeIconSet, IconSet smallIconSet)
+   {
+      return new HelpDialogAction(owner, ref, largeIconSet, smallIconSet,
+         this, getDefaultButtonActionOmitKeys());
+   }
+
    public JButton createHelpDialogButton(JDialog owner, String helpId)
-    throws IllegalArgumentException
+    throws IllegalArgumentException,
+           HelpSetNotInitialisedException
    {
       NavigationNode node = getNavigationNodeById(helpId);
 
@@ -2350,7 +2454,8 @@ public class TeXJavaHelpLib
     * For secondary frames that behave like modeless dialogs.
     */
    public JButton createHelpDialogButton(JFrame owner, String helpId)
-    throws IllegalArgumentException
+    throws IllegalArgumentException,
+           HelpSetNotInitialisedException
    {
       NavigationNode node = getNavigationNodeById(helpId);
 

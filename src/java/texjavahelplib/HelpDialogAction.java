@@ -95,6 +95,77 @@ public class HelpDialogAction extends TJHAbstractAction
       this.targetRef = targetRef;
    }
 
+   public HelpDialogAction(JDialog owner, NavigationNode pageNode,
+      IconSet largeIconSet, IconSet smallIconSet,
+      TeXJavaHelpLib helpLib, String... omitKeys)
+   {
+      this(owner, pageNode, 
+       largeIconSet, smallIconSet,
+       helpLib, "button", "help", "manual."+pageNode.getKey(), 
+       helpLib.getKeyStroke("button.help"), (Boolean)null,
+       (TargetRef)null, omitKeys);
+   }
+
+   public HelpDialogAction(JDialog owner, TargetRef targetRef,
+      IconSet largeIconSet, IconSet smallIconSet,
+      TeXJavaHelpLib helpLib, String... omitKeys)
+   {
+      this(owner, targetRef.getNode(),
+       largeIconSet, smallIconSet,
+        helpLib, "button", "help",
+       "manual."+targetRef.getNode().getKey(), 
+       helpLib.getKeyStroke("button.help"), (Boolean)null, targetRef, omitKeys);
+   }
+
+   public HelpDialogAction(JDialog owner, NavigationNode pageNode,
+      IconSet largeIconSet, IconSet smallIconSet,
+     TeXJavaHelpLib helpLib, String parentTag, String action,
+     Boolean selectedState, String... omitKeys)
+   {
+      this(owner, pageNode, 
+       largeIconSet, smallIconSet,
+       helpLib, parentTag, action, action,  
+       helpLib.getKeyStroke(action == null ? parentTag : parentTag+"."+action),
+       selectedState, (TargetRef)null, omitKeys);
+   }
+
+   public HelpDialogAction(JDialog owner, NavigationNode pageNode,
+      IconSet largeIconSet, IconSet smallIconSet,
+     TeXJavaHelpLib helpLib, String parentTag, String action,
+     KeyStroke keyStroke, String... omitKeys)
+   {
+      this(owner, pageNode, 
+        largeIconSet, smallIconSet,
+        helpLib, parentTag, action, action, 
+        keyStroke, (Boolean)null, (TargetRef)null, omitKeys);
+   }
+
+   public HelpDialogAction(JDialog owner, NavigationNode pageNode,
+     IconSet largeIconSet, IconSet smallIconSet,
+     TeXJavaHelpLib helpLib,
+     String parentTag, String childTag, String actionName, 
+     KeyStroke keyStroke, Boolean selectedState, TargetRef targetRef,
+     String... omitKeys)
+   {
+      super(helpLib, parentTag, childTag, actionName, 
+            largeIconSet, smallIconSet,
+           keyStroke, selectedState, owner.getRootPane(), omitKeys);
+
+      if (pageNode == null)
+      {
+         if (targetRef == null)
+         {
+            throw new NullPointerException();
+         }
+
+         pageNode = targetRef.getNode();
+      }
+
+      this.owner = owner;
+      this.pageNode = pageNode;
+      this.targetRef = targetRef;
+   }
+
    public HelpDialogAction(JFrame owner, NavigationNode pageNode,
       TeXJavaHelpLib helpLib, String... omitKeys)
    {
@@ -144,6 +215,77 @@ public class HelpDialogAction extends TJHAbstractAction
    {
       super(helpLib, parentTag, childTag, actionName, iconPrefix, keyStroke,
         selectedState, owner.getRootPane(), omitKeys);
+
+      if (pageNode == null)
+      {
+         if (targetRef == null)
+         {
+            throw new NullPointerException();
+         }
+
+         pageNode = targetRef.getNode();
+      }
+
+      this.owner = owner;
+      this.pageNode = pageNode;
+      this.targetRef = targetRef;
+   }
+
+   public HelpDialogAction(JFrame owner, NavigationNode pageNode,
+      IconSet largeIconSet, IconSet smallIconSet,
+      TeXJavaHelpLib helpLib, String... omitKeys)
+   {
+      this(owner, pageNode, 
+       largeIconSet, smallIconSet,
+       helpLib, "button", "help", "manual."+pageNode.getKey(), 
+       helpLib.getKeyStroke("button.help"),
+       (Boolean)null, (TargetRef)null, omitKeys);
+   }
+
+   public HelpDialogAction(JFrame owner, TargetRef targetRef,
+      IconSet largeIconSet, IconSet smallIconSet,
+      TeXJavaHelpLib helpLib, String... omitKeys)
+   {
+      this(owner, targetRef.getNode(), 
+       largeIconSet, smallIconSet,
+       helpLib, "button", "help", 
+       "manual."+targetRef.getNode().getKey(), 
+       helpLib.getKeyStroke("button.help"), (Boolean)null, targetRef, omitKeys);
+   }
+
+   public HelpDialogAction(JFrame owner, NavigationNode pageNode,
+      IconSet largeIconSet, IconSet smallIconSet,
+     TeXJavaHelpLib helpLib, String parentTag, String action,
+     Boolean selectedState, String... omitKeys)
+   {
+      this(owner, pageNode, 
+       largeIconSet, smallIconSet,
+       helpLib, parentTag, action, action,  
+       helpLib.getKeyStroke(action == null ? parentTag : parentTag+"."+action),
+       selectedState, (TargetRef)null, omitKeys);
+   }
+
+   public HelpDialogAction(JFrame owner, NavigationNode pageNode,
+      IconSet largeIconSet, IconSet smallIconSet,
+     TeXJavaHelpLib helpLib, String parentTag, String action,
+     KeyStroke keyStroke, String... omitKeys)
+   {
+      this(owner, pageNode, 
+        largeIconSet, smallIconSet,
+        helpLib, parentTag, action, action, 
+        keyStroke, (Boolean)null, (TargetRef)null, omitKeys);
+   }
+
+   public HelpDialogAction(JFrame owner, NavigationNode pageNode,
+     IconSet largeIconSet, IconSet smallIconSet,
+     TeXJavaHelpLib helpLib,
+     String parentTag, String childTag, String actionName, 
+     KeyStroke keyStroke, Boolean selectedState, TargetRef targetRef,
+     String... omitKeys)
+   {
+      super(helpLib, parentTag, childTag, actionName, 
+        largeIconSet, smallIconSet,
+        keyStroke, selectedState, owner.getRootPane(), omitKeys);
 
       if (pageNode == null)
       {
