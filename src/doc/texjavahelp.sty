@@ -1393,13 +1393,13 @@
 \newcommand\pdflongswitch{\string-\string-}
 
 \newcommand*{\longargfmt}[1]{%
- \texorpdfstring{\texttt{\longswitch #1}}{\pdflongswitch#1}%
+ \texorpdfstring{\texttt{\longswitch\nolinebreak #1}}{\pdflongswitch#1}%
 }
 \MFUblocker{\longargfmt}
 
 \newcommand{\shortswitch}{\string-}
 
-\newcommand*{\shortargfmt}[1]{\texorpdfstring{\texttt{\shortswitch#1}}{\string-#1}}
+\newcommand*{\shortargfmt}[1]{\texorpdfstring{\texttt{\shortswitch\nolinebreak #1}}{\string-#1}}
 \MFUblocker{\shortargfmt}
 
 % \defsemanticcmd[colour]{cs}{font-cs}{prefix}
