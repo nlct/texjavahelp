@@ -1307,22 +1307,22 @@
 \glsxtrnewgls{manual.keystroke.}{\keyref}
 \newcommand{\actualkey}[1]{#1}
 
-\newcommand{\keydescref}[1]{%
- \keyref{#1}%
- \ifglshasdesc{manual.keystroke.#1}%
- { \glslowercase{\glsentrydesc{manual.keystroke.#1}}}{}%
+\newcommand{\keydescref}[2][]{%
+ \gls[textformat=keys,#1]{manual.keystroke.#2}%
+ \ifglshasdesc{manual.keystroke.#2}%
+ { \glslowercase{\glsentrydesc{manual.keystroke.#2}}}{}%
 }
 
-\newcommand{\desckeyref}[1]{%
- \ifglshasdesc{manual.keystroke.#1}%
-  {\glslowercase{\glsentrydesc{manual.keystroke.#1}} }{}%
- \keyref{#1}%
+\newcommand{\desckeyref}[2][]{%
+ \ifglshasdesc{manual.keystroke.#2}%
+  {\glslowercase{\glsentrydesc{manual.keystroke.#2}} }{}%
+ \gls[textformat=keys,#1]{manual.keystroke.#2}%
 }
 
-\newcommand{\Desckeyref}[1]{%
- \ifglshasdesc{manual.keystroke.#1}%
-  {\Glsentrydesc{manual.keystroke.#1} }{}%
- \keyref{#1}%
+\newcommand{\Desckeyref}[2][]{%
+ \ifglshasdesc{manual.keystroke.#2}%
+  {\Glsentrydesc{manual.keystroke.#2} }{}%
+ \gls[textformat=keys,#1]{manual.keystroke.#2}%
 }
 
 \newcommand{\keysep}{+}
