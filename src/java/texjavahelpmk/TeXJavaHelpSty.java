@@ -310,6 +310,12 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new KeyRef(glossariesSty));
 
+      registerControlSequence(new KeyDescRef(glossariesSty));
+      registerControlSequence(new KeyDescRef("desckeyref",
+         CaseChange.TO_LOWER, false, glossariesSty));
+      registerControlSequence(new KeyDescRef("Desckeyref",
+         CaseChange.SENTENCE, false, glossariesSty));
+
       registerControlSequence(new AtGobble("menubookmark"));
       registerControlSequence(new GenericCommand(true,
        "menuitemsbetweenskip", null, new TeXCsRef("medskip")));

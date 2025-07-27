@@ -1307,6 +1307,24 @@
 \glsxtrnewgls{manual.keystroke.}{\keyref}
 \newcommand{\actualkey}[1]{#1}
 
+\newcommand{\keydescref}[1]{%
+ \keyref{#1}%
+ \ifglshasdesc{manual.keystroke.#1}%
+ { \glslowercase{\glsentrydesc{manual.keystroke.#1}}}{}%
+}
+
+\newcommand{\desckeyref}[1]{%
+ \ifglshasdesc{manual.keystroke.#1}%
+  {\glslowercase{\glsentrydesc{manual.keystroke.#1}} }{}%
+ \keyref{#1}%
+}
+
+\newcommand{\Desckeyref}[1]{%
+ \ifglshasdesc{manual.keystroke.#1}%
+  {\Glsentrydesc{manual.keystroke.#1} }{}%
+ \keyref{#1}%
+}
+
 \newcommand{\keysep}{+}
 
 \ExplSyntaxOn
