@@ -542,12 +542,12 @@ public class Xml2Bib
             name = "ctrl";
          }
 
-         String keyref = "manual.keystroke." + name;
+         String keyref = KEYREF_PREFIX + name;
          String propVal = props.getProperty(keyref);
 
          if (propVal == null && !s.equals("_") && s.contains("_"))
          {
-            keyref = "manual.keystroke." + name.replaceAll("_", "");
+            keyref = KEYREF_PREFIX + name.replaceAll("_", "");
             propVal = props.getProperty(keyref);
          }
 
@@ -559,7 +559,16 @@ public class Xml2Bib
          if (propVal != null)
          {
             builder.append("\\keyref{");
-            builder.append(keyref);
+
+            if (keyref.startsWith(KEYREF_PREFIX))
+            {
+               builder.append(keyref, KEYREF_PREFIX.length(), keyref.length());
+            }
+            else
+            {
+               builder.append(keyref);
+            }
+
             builder.append("}");
          }
          else if (!(s.equals("typed")
@@ -931,5 +940,7 @@ public class Xml2Bib
    public static final Pattern TEX_SUFFIX_PATTERN
      = Pattern.compile("plural|text|name|symbol|user[1-6]|defaultparams|defaultkeys|syntax|initvalue|defaultvalue");
 
-   public static final String NAME = "xml2bib";
+   public static final String NAME = "tjhxml2bib";
+
+   public static final String KEYREF_PREFIX = "manual.keystroke.";
 }
