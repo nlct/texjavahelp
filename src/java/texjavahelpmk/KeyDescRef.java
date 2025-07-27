@@ -58,6 +58,8 @@ public class KeyDescRef extends AbstractGlsCommand
    {
       TeXParserListener listener = parser.getListener();
 
+      KeyValList options = popKeyValList(parser, stack);
+
       GlsLabel glslabel = popEntryLabel(parser, stack);
 
       TeXObjectList expanded = parser.getListener().createStack();
@@ -98,7 +100,20 @@ public class KeyDescRef extends AbstractGlsCommand
          expanded.add(listener.getSpace());
       }
 
+      if (options == null)
+      {
+         options = new KeyValList();
+      }
+
+      if (!options.containsKey("textformat"))
+      {
+         options.put("textformat", listener.createString("keys"));
+      }
+
       expanded.add(listener.getControlSequence("gls"));
+      expanded.add(listener.getOther('['));
+      expanded.add(options);
+      expanded.add(listener.getOther(']'));
       expanded.add(TeXParserUtils.createGroup(listener, glslabel));
 
       if (keyFirst && desc != null)
