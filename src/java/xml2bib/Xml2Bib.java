@@ -205,6 +205,8 @@ public class Xml2Bib
 
       helpLib.printSyntaxItem(getMessage("syntax.encapless-field", "--encapless-field"));
 
+      helpLib.printSyntaxItem(getMessage("syntax.auto-trim", "--[no]auto-trim"));
+
       System.out.println();
 
       helpLib.printSyntaxItem(getMessage("syntax.debug", "--[no]debug"));
@@ -320,6 +322,11 @@ public class Xml2Bib
    public String getNoEncapField()
    {
       return noEncapField;
+   }
+
+   public boolean isAutoTrimOn()
+   {
+      return autoTrim;
    }
 
    protected void run() throws IOException
@@ -809,6 +816,14 @@ public class Xml2Bib
             {
                copyXml = false;
             }
+            else if (arg.equals("--auto-trim"))
+            {
+               autoTrim = true;
+            }
+            else if (arg.equals("--noauto-trim"))
+            {
+               autoTrim = false;
+            }
             else if (isArg(arg, "--encapless-field", returnVals))
             {
                if (returnVals[0] == null)
@@ -931,6 +946,7 @@ public class Xml2Bib
    protected int verboseLevel = 0;
    protected boolean copyXml = false, replaceXml = false;
    protected String noEncapField=null;// field to save non-encapsulated value
+   protected boolean autoTrim = true;
 
    private TeXJavaHelpLib helpLib;
    private TeXJavaHelpLibAppAdapter helpLibApp;

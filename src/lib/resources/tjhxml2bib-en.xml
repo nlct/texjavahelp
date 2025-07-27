@@ -20,6 +20,7 @@ Nicola Talbot
 <entry key="syntax.provide-xml">{0}	Copy XML source files from {1}''s resource directory if missing.</entry>
 <entry key="syntax.copy-overwrite-xml">{0}	Copy XML source files from {1}''s resource directory if missing or if {1}''s file is newer.</entry>
 <entry key="syntax.encapless-field">{0} &lt;field&gt;	Copy original name value to the given field if that field is not set and the name field value is automatically encapsulated.</entry>
+<entry key="syntax.auto-trim">{0}	Automatically trim field values.</entry>
 <entry key="syntax.debug">{0}	Enable on debug mode.</entry>
 <entry key="syntax.out.charset">{0} &lt;charset&gt;	Set the character encoding to &lt;charset&gt; for the output file.</entry>
 

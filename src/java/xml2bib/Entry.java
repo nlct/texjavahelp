@@ -103,6 +103,11 @@ public class Entry
 
    public void put(String field, String value, boolean encode)
    {
+      if (xml2bib.isAutoTrimOn() && value != null)
+      {
+         value = value.trim();
+      }
+
       if (field.equals("parent"))
       {
          setParent(value);
@@ -337,7 +342,7 @@ public class Entry
             builder.append("\\msgellipsis{...}");
             i += 2;
          }
-         else if (cp == ':' && i == str.length() - 1)
+         else if (cp == ':')
          {
             builder.append("\\msgendcolon{:}");
          }
