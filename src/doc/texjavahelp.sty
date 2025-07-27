@@ -2504,9 +2504,20 @@ halign upper=flush left,halign lower=justify,
   \@iconstartpar
 }
 
+\newcommand{\iconstartparsep}{\,}
+
 \newcommand{\@iconstartpar}[2][]{%
   \par\vspace{\baselineskip}%
-  \sbox{\iconsbox}{\@for\this@icon:=#2\do{\includegraphics[#1]{\this@icon}}}%
+  \def\@iconstartparsep{}%
+  \sbox{\iconsbox}%
+   {%
+    \@for\this@icon:=#2\do
+    {%
+      \@iconstartparsep
+      \includegraphics[#1]{\this@icon}%
+      \let\@iconstartparsep\iconstartparsep
+    }%
+   }%
   \settoheight{\iconheight}{\usebox{\iconsbox}}%
   \settowidth{\iconwidth}{\usebox{\iconsbox}}
   \advance\iconheight by -0.5\baselineskip

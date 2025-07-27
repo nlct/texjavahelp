@@ -176,6 +176,8 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new LeftQuadPar());
 
       registerControlSequence(new IconStartPar());
+      registerControlSequence(
+       new TextualContentCommand("iconstartparsep", "\u2009"));
 
       registerControlSequence(new FloatTable());
       registerControlSequence(new GenericCommand("posttablecaption"));

@@ -90,8 +90,15 @@ public class IconStartPar extends ControlSequence
 
       expanded.add(elem);
 
+      ControlSequence sep = listener.getControlSequence("iconstartparsep");
+
       for (int i = 0; i < fileList.length; i++)
       {
+         if (i > 0)
+         {
+            expanded.add(sep);
+         }
+
          if (addAlt)
          {
             options.put("alt", 
