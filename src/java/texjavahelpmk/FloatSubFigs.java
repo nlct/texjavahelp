@@ -123,6 +123,8 @@ public class FloatSubFigs extends ControlSequence
       {
          TeXObject obj = csvList.getValue(i, true);
 
+         if (obj.isEmpty()) continue;
+
          expanded.add(listener.getControlSequence("SubFigureContent"));
 
          if (parser.isStack(obj))
