@@ -58,7 +58,7 @@ public class KeyDescRef extends AbstractGlsCommand
    {
       TeXParserListener listener = parser.getListener();
 
-      KeyValList options = popKeyValList(parser, stack);
+      KeyValList options = popOptKeyValList(stack);
 
       GlsLabel glslabel = popEntryLabel(parser, stack);
 
