@@ -521,6 +521,8 @@
  \end{figure}%
 }
 
+\newcommand{\postsubfigcap}{\tabularnewline\strut}
+
 % \SubFigureContent{label}{image}[hyp cap]{sub-cap}
 \NewDocumentCommand \SubFigureContent { m m o m }
 {
@@ -528,6 +530,7 @@
   { #2 }
   \tabularnewline
   \__texjavahelp_subfigcap:nnn { #1 } { #3 } { #4 }
+  \postsubfigcap
   \end{tabular}
 }
 

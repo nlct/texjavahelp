@@ -190,6 +190,11 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new SubFigureContent());
       registerControlSequence(new SubFigRef());
 
+      // Not used but define here to prevent error if it needs to be
+      // redefined for the PDF.
+
+      registerControlSequence(new GenericCommand("postsubfigcap"));
+
       registerControlSequence(new LaTeXGenericCommand(true,
        "subfigurefmt", "m", TeXParserUtils.createStack(listener,
          listener.getOther('('), listener.getParam(1),
