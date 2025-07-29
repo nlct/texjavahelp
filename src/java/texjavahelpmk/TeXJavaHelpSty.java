@@ -220,6 +220,7 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new SeeAlsoRefs());
       registerControlSequence(new TextualContentCommand("multiseealsosep", ":"));
+      registerControlSequence(new TextualContentCommand("singleseealsosep", " "));
 
       registerControlSequence(new FilterTerms(glossariesSty));
       registerControlSequence(new PrintMainInit());

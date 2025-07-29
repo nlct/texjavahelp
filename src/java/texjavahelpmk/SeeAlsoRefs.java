@@ -88,8 +88,8 @@ public class SeeAlsoRefs extends ControlSequence
       }
       else if (labels.length == 1)
       {
-         expanded.add(listener.getSpace());
-         expanded.add(listener.getControlSequence("ref"));
+         expanded.add(listener.getControlSequence("singleseealsosep"));
+         expanded.add(listener.getControlSequence("sectionref"));
          expanded.add(listener.createGroup(labels[0]));
          expanded.add(listener.getSpace());
          expanded.add(listener.getControlSequence("nameref"));
