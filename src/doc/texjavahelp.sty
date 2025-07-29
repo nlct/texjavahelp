@@ -2,7 +2,7 @@
 % in the TeX Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{texjavahelp}[2025/07/26 v0.2a (NLCT)]
+\ProvidesPackage{texjavahelp}[2025/07/29 v0.2a (NLCT)]
 
 \RequirePackage{pifont}
 \RequirePackage{fontawesome}
@@ -68,9 +68,24 @@
  \EndAccSupp{}%
 }
 
+\newcommand{\@backspacesym}{\ensuremath{\longleftarrow}}
+
+\ifdef\tiBackspaceOutline
+{
+  \renewcommand{\@backspacesym}{\tiBackspaceOutline}
+}
+{
+  \ifdef\faBackspace
+  {
+    \renewcommand{\@backspacesym}{\faBackspace}
+  }
+  {
+  }
+}
+
 \newrobustcmd{\backspacekeysym}{%
  \BeginAccSupp{method=hex,unicode,ActualText=232B}%
- \textmd{\faBackspace}%
+ \textmd{\@backspacesym}%
  \EndAccSupp{}%
 }
 
