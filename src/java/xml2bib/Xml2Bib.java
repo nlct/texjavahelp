@@ -679,6 +679,9 @@ public class Xml2Bib
                   case KeyEvent.VK_UNDERSCORE:
                     s = "_";
                     break;
+                  case KeyEvent.VK_CONTEXT_MENU:
+                    s = "\\contextmenusym ";
+                    break;
                }
             }
 
