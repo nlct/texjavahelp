@@ -154,7 +154,7 @@ public abstract class TJHAbstractAction extends AbstractAction
 
          if (actionName != null && comp != null)
          {
-            comp.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+            comp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
                 .put(keyStroke, actionName);
             comp.getActionMap().put(actionName, this);
          }
