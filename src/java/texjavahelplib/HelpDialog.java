@@ -295,7 +295,7 @@ public class HelpDialog extends JDialog
 
       if (pageTargetRef != null)
       {
-         setPage(pageTargetRef);
+         setPage(pageTargetRef, false);
       }
 
       updateNavWidgets();
@@ -452,13 +452,18 @@ public class HelpDialog extends JDialog
 
    public void setPage(NavigationNode node)
    {
+      setPage(node, updateAndCloseHelpFrame);
+   }
+
+   public void setPage(NavigationNode node, boolean updateHelpFrame)
+   {
       try
       {
          if (isInNavigationTree(node))
          {
             helpPage.setPage(node);
 
-            if (updateAndCloseHelpFrame)
+            if (updateHelpFrame)
             {
                helpLib.getHelpFrame().setPage(node);
             }
@@ -472,13 +477,19 @@ public class HelpDialog extends JDialog
 
    public void setPage(TargetRef targetRef) throws IOException
    {
+      setPage(targetRef, updateAndCloseHelpFrame);
+   }
+
+   public void setPage(TargetRef targetRef, boolean updateHelpFrame)
+   throws IOException
+   {
       try
       {
          if (isInNavigationTree(targetRef.getNode()))
          {
             helpPage.setPage(targetRef);
 
-            if (updateAndCloseHelpFrame)
+            if (updateHelpFrame)
             {
                helpLib.getHelpFrame().setPage(targetRef);
             }
