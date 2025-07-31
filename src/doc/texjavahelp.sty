@@ -873,12 +873,23 @@
 \newignoredglossary{messages}
 \newignoredglossary{keystrokes}
 
+% Identify primary locations:
+
+\renewcommand\GlsXtrDefaultResourceOptions{
+ selection=recorded and deps and see,
+ primary-location-formats=main,
+ save-primary-locations=retain,
+ primary-loc-counters=match,
+ loc-counters={chapter,section,subsection,subsubsection,page,figure,table,wrglossary},
+ save-loclist=false,
+ save-child-count
+}
+
 % punctuation and icon characters are best dealt with in a separate resource set
 
 \newcommand{\TeXJavaHelpSymbolResourceOptions}{
   group={glssymbols},
   sort=letter-case,
-  selection=recorded and deps and see,
   match = {entrytype=symbol}, match-action=filter ,
   entry-type-aliases = 
    {
@@ -890,7 +901,6 @@
    {
      \TeXJavaHelpPuncAssignFields
    },
-  save-child-count,
   symbol-sort-fallback=name,
 }
 
@@ -927,7 +937,6 @@
 \newcommand{\TeXJavaHelpExtraAssignFields}{}
 
 \newcommand{\TeXJavaHelpGlsSelection}{
-  selection=recorded and deps and see,
   action=provide,
   match-action=add,
   match-op=or,
@@ -1105,7 +1114,6 @@
         [ entrytype->original = /common(.*)/ ] ,
       category = entrytype -> original 
    },
-   save-child-count,
    symbol-sort-fallback=name,
 }
 
@@ -1519,7 +1527,7 @@
   {\space\glscurrentfieldvalue}{}%
 }
 
-\newcommand{\main}[1]{\textbf{#1}}
+\newcommand{\main}[1]{\hyperbf{#1}}
 
 \NewDocumentCommand\appdef{O{}m}{%
  \begin{terminal}[#1]%
@@ -1646,9 +1654,19 @@
  \glsxtrglossentry{#1}%
 }
 
+\newrobustcmd*{\Inlineglsdef}[1]{%
+ \glsadd[format=main]{#1}%
+ \Glsxtrglossentry{#1}%
+}
+
 \newrobustcmd*{\inlineglspluraldef}[1]{%
  \glsadd[format=main]{#1}%
  \glsxtrglossentryother{}{#1}{plural}%
+}
+
+\newrobustcmd*{\Inlineglspluraldef}[1]{%
+ \glsadd[format=main]{#1}%
+ \Glsxtrglossentryother{}{#1}{plural}%
 }
 
 \NewDocumentCommand\sectionentry{O{\section}om}{%
