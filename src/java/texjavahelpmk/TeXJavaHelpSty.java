@@ -386,8 +386,14 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new InlineMsgDef(glossariesSty));
 
+      registerControlSequence(new InlineGlsDef("Inlineglsdef", "",
+        null, true, CaseChange.SENTENCE, glossariesSty));
+
       registerControlSequence(new InlineGlsDef("inlineglspluraldef", "",
         "plural", true, glossariesSty));
+
+      registerControlSequence(new InlineGlsDef("Inlineglspluraldef", "",
+        "plural", true, CaseChange.SENTENCE, glossariesSty));
 
       // dual prefix list
       def = listener.createString("action.,button.,menu.,widget.,help.,index.,label.,");
