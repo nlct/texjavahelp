@@ -647,6 +647,7 @@ public class TeXJavaHelpSty extends UserGuideSty
    protected void preOptions(TeXObjectList stack) throws IOException
    {
       getListener().requirepackage(null, "graphicx", false, stack);
+      getListener().requirepackage(null, "textcomp", false, stack);
       getListener().requirepackage(null, "twemojis", false, stack);
       getListener().requirepackage(null, "fontawesome", false, stack);
       getListener().requirepackage(null, "hyperref", false, stack);
