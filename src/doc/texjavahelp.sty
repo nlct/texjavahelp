@@ -27,6 +27,69 @@
  style=alttree
 }{glossaries-extra}
 
+\providecommand{\jdroutline}[3]{#3}
+
+\newcommand{\nlct@def@outline}{}
+\newcommand{\nlct@enable@outline}{}
+
+\newcommand{\nlct@enable@outline@pdftex}{%
+ \input{pdf-trans}%
+ \renewcommand*{\jdroutline}[3]{%
+   \setbox\@tempboxa\hbox{##3}%
+   \boxgs{##1}{}\copy\@tempboxa
+ }
+}
+
+\newcommand{\nlct@enable@outline@luatex}{%
+ \RequirePackage{luatex85}%
+ \input{pdf-trans}%
+ \renewcommand*{\jdroutline}[3]{%
+   \setbox\@tempboxa\hbox{##3}%
+   \boxgs{##1}{}\copy\@tempboxa
+ }
+}
+
+\newcommand{\nlct@enable@outline@pst}{%
+ \usepackage{pst-char}%
+ \renewcommand*{\jdroutline}[3]{%
+   \begin{pspicture}(0,0)
+   \pscharpath[##2]{##3}
+   \end{pspicture}%
+ }%
+}
+
+\ExplSyntaxOn
+\sys_if_engine_luatex:TF
+ {
+   \let
+     \nlct@enable@outline 
+     \nlct@enable@outline@luatex
+ }
+ {
+   \sys_if_engine_pdftex:TF
+    {
+      \let
+        \nlct@enable@outline 
+        \nlct@enable@outline@pdftex
+    }
+    {
+      \let
+        \nlct@enable@outline 
+        \nlct@enable@outline@pst
+    }
+ }
+\ExplSyntaxOff
+
+\DeclareOption{jdroutline}{%
+ \renewcommand{\nlct@def@outline}{%
+   \nlct@enable@outline
+ }%
+}
+
+\DeclareOption{nojdroutline}{%
+ \renewcommand{\nlct@def@outline}{}%
+}
+
 \newcommand{\fnsymmark}[1]{\rlap{#1}}
 
 \DeclareOption{fnsymleft}{\renewcommand{\fnsymmark}[1]{\llap{#1}}}
@@ -203,6 +266,7 @@
 \ProcessOptions
 
 \nlct@definesymbols
+\nlct@def@outline
 
 \PassOptionsToPackage{hidelinks}{hyperref}
 \RequirePackage{hyperref}
