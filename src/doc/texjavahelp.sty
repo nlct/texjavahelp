@@ -523,19 +523,65 @@
    \group_end:
  }
 
+\seq_new:N \l__texjavahelp_subfigs_seq
+\tl_new:N \l__texjavahelp_subfig_tl
+
 % \FloatSubFigs[pos]{label}{list}[lof]{caption}
-\NewDocumentCommand\FloatSubFigs{ommom}{%
- \IfValueTF{#1}%
-  {\begin{figure}[#1]}%
-  {\begin{figure}}%
+% \FloatSubFigs*[pos]{label}{list}[lof]{caption}
+% Starred form puts first sub-image on a line of its own
+\NewDocumentCommand\FloatSubFigs{sommom}{%
+ \IfValueTF { #2 }
+  { \begin{figure} [ #2 ] }
+  { \begin{figure} }
+ \seq_set_from_clist:Nn \l__texjavahelp_subfigs_seq { #4 }
  \setcounter {subfigure} {0}
  \centering
- ~ \clist_map_inline:nn { #3 } { \SubFigureContent ##1 ~ }
- \IfValueTF{#4}%
-  {\caption[#4]{#5}}%
-  {\caption{#5}}%
- \label{#2}%
- \end{figure}%
+  \IfBooleanT { #1 }
+   {
+     \c_space_tl
+     \seq_pop:NN
+       \l__texjavahelp_subfigs_seq
+       \l__texjavahelp_subfig_tl
+     \__texjavahelp_subfig_item:N
+        \l__texjavahelp_subfig_tl
+     \linebreak
+   }
+  \c_space_tl
+  \seq_map_function:NN
+    \l__texjavahelp_subfigs_seq
+    \__texjavahelp_subfig_item:n
+ \IfValueTF { #5 }
+  { \caption [ #5 ] { #6 } }
+  { \caption { #6 } }
+ \label { #3 }
+ \end{figure}
+}
+
+\cs_new:Nn \__texjavahelp_subfig_item:N
+{
+  \exp_args:NV \__texjavahelp_subfig_item:n #1
+}
+
+\cs_new:Nn \__texjavahelp_subfig_item:n
+{
+   \int_compare:nNnTF
+      { \tl_count:n { #1 } } { < } { 3 }
+    {
+      \PackageError
+        { texjavahelp }
+        {
+           Insufficient ~ sub-figure ~ parameters: ~
+           \tl_to_str:n { #1 }
+        }
+        {
+           Expected ~ 3 ~ required ~ parameters ~ but ~ found ~
+           \tl_count:n { #1 }
+        }
+    }
+    {
+      \SubFigureContent #1
+    }
+  \c_space_tl
 }
 
 \newcommand{\postsubfigcap}{\tabularnewline\strut}

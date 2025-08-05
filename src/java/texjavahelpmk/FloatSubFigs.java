@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2024 Nicola L.C. Talbot
+    Copyright (C) 2024-2025 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -61,6 +61,8 @@ public class FloatSubFigs extends ControlSequence
 
       listener.setcounter("subfigure", UserNumber.ZERO);
 
+      boolean isStar = (popModifier(parser, stack, '*') == '*');
+
       popOptArg(parser, stack);
       String label = popLabelString(parser, stack);
       CsvList csvList = TeXParserUtils.popCsvList(parser, stack);
@@ -118,6 +120,7 @@ public class FloatSubFigs extends ControlSequence
       }
 
       listener.provideLabel(label, labelText);
+      boolean addLineBreak = isStar;
 
       for (int i = 0; i < csvList.size(); i++)
       {
@@ -134,6 +137,12 @@ public class FloatSubFigs extends ControlSequence
          else
          {
             expanded.add(obj);
+         }
+
+         if (addLineBreak)
+         {
+            expanded.add(listener.getControlSequence("newline"));
+            addLineBreak = false;
          }
       }
 
