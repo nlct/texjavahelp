@@ -61,7 +61,7 @@ public class MenuDef extends StandaloneDef
 
       if (imgName != null)
       {
-         list.add(parser.getListener().getControlSequence("includeimg"));
+         list.add(parser.getListener().getControlSequence("includegraphics"));
          Group grp = parser.getListener().createGroup();
          grp.add(imgName, true);
          list.add(grp);
