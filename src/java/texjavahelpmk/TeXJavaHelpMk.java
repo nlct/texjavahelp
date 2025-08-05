@@ -406,6 +406,14 @@ public class TeXJavaHelpMk extends TeXAppAdapter
             {
                mathJax = true;
             }
+            else if (arg.equals("--nosupport-unicode-script"))
+            {
+               useUnicodeSubSupScript = false;
+            }
+            else if (arg.equals("--support-unicode-script"))
+            {
+               useUnicodeSubSupScript = true;
+            }
             else if (arg.equals("--noentities"))
             {
                useHtmlEntities = false;
@@ -562,6 +570,11 @@ public class TeXJavaHelpMk extends TeXAppAdapter
    public boolean isUseMathJaxOn()
    {
       return mathJax;
+   }
+
+   public boolean isUseUnicodeSuperSubScriptsOn()
+   {
+      return useUnicodeSubSupScript;
    }
 
    public boolean isParsePackagesOn()
@@ -1490,6 +1503,8 @@ public class TeXJavaHelpMk extends TeXAppAdapter
       System.out.println();
       System.out.println(getMessage("syntax.head", "--head"));
       System.out.println(getMessage("syntax.mathjax", "--[no]mathjax"));
+      System.out.println(getMessage("syntax.support-unicode-script",
+         "--[no]support-unicode-script"));
       System.out.println(getMessage("syntax.entities", "--entities"));
       System.out.println();
       System.out.println(getMessage("clisyntax.bugreport",
@@ -1587,6 +1602,7 @@ public class TeXJavaHelpMk extends TeXAppAdapter
 
    private boolean useHtmlEntities = false;
    private boolean mathJax = false;
+   private boolean useUnicodeSubSupScript = false;
 
    private File inFile, outDir;
    private int splitLevel=8;

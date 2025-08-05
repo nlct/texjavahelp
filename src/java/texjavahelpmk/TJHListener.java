@@ -78,6 +78,7 @@ public class TJHListener extends L2HConverter
 
       // NB this will need to be off for search to work properly
       setUseEntities(app.isUseHtmlEntitiesOn());
+      setSupportUnicodeScript(app.isUseUnicodeSuperSubScriptsOn());
 
       enableLinkBox(false);
       enableToTopLink(false);
