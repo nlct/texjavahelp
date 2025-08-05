@@ -76,7 +76,7 @@ has have</entry>
 <entry key="error.interrupted">Process interrupted</entry>
 <entry key="error.no_aux_data">No aux data found! The document must be fully compiled first to ensure all auxiliary files are present.</entry>
 <entry key="error.no_current_node">No current node. The auxiliary files may be missing or not up-to-date.</entry>
-<entry key="error.no_division_data">No division data. The auxiliary files may be missing or not up-to-date.</entry>
+<entry key="error.no_division_data">No division data. The auxiliary files may be missing or not up-to-date or sectioning units may be missing a label.</entry>
 
 <entry key="error.exists">{0} already exists</entry>
 <entry key="error.bksl_in_kpsewhich">Unexpected \ found in kpsewhich({0}). A command may not have been properly expanded.</entry>
