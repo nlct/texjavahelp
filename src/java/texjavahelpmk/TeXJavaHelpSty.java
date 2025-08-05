@@ -252,9 +252,6 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(gcs);
 
 
-      registerControlSequence(new Dgls("menuitem", CaseChange.NO_CHANGE, glossariesSty));
-
-
       KeyValList defOpts = new KeyValList();
       defOpts.put("textformat", listener.createString("widgetfmt"));
 
@@ -274,6 +271,7 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(widgetCs);
 
       registerControlSequence(new MenuCs(glossariesSty));
+      registerControlSequence(new MenuItemCs(glossariesSty));
       registerControlSequence(new MenuTrail(glossariesSty));
       registerControlSequence(new MenuItemsStyle(glossariesSty));
 

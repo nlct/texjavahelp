@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2024 Nicola L.C. Talbot
+    Copyright (C) 2025 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -24,20 +24,21 @@ import java.io.IOException;
 import com.dickimawbooks.texparserlib.*;
 
 import com.dickimawbooks.texparserlib.latex.KeyValList;
+import com.dickimawbooks.texparserlib.latex.AtGobble;
 
 import com.dickimawbooks.texparserlib.latex.glossaries.GlossariesSty;
 import com.dickimawbooks.texparserlib.latex.glossaries.AbstractGlsCommand;
 import com.dickimawbooks.texparserlib.latex.glossaries.GlsLabel;
 import com.dickimawbooks.texparserlib.latex.glossaries.GlossaryEntry;
 
-public class MenuCs extends AbstractGlsCommand
+public class MenuItemCs extends AbstractGlsCommand
 {
-   public MenuCs(GlossariesSty sty)
+   public MenuItemCs(GlossariesSty sty)
    {
-      this("menu", sty);
+      this("menuitem", sty);
    }
 
-   public MenuCs(String name, GlossariesSty sty)
+   public MenuItemCs(String name, GlossariesSty sty)
    {
       super(name, sty);
    }
@@ -45,11 +46,31 @@ public class MenuCs extends AbstractGlsCommand
    @Override
    public Object clone()
    {
-      return new MenuCs(getName(), sty);
+      return new MenuItemCs(getName(), sty);
+   }
+
+   @Override
+   public boolean canExpand()
+   {
+      return false;
    }
 
    @Override
    public TeXObjectList expandonce(TeXParser parser, TeXObjectList stack)
+     throws IOException
+   {
+      return null;
+   }
+
+   @Override
+   public void process(TeXParser parser)
+     throws IOException
+   {
+      process(parser, parser);
+   }
+
+   @Override
+   public void process(TeXParser parser, TeXObjectList stack)
      throws IOException
    {
       TeXParserListener listener = parser.getListener();
@@ -79,12 +100,13 @@ public class MenuCs extends AbstractGlsCommand
 
       GlsLabel glslabel = popEntryLabel(parser, stack);
 
+      parser.startGroup();
+
+      parser.putControlSequence(true, new AtGobble("msgellipsis"));
+
       TeXObjectList expanded = listener.createStack();
 
-      expanded.add(listener.getControlSequence("menutrail"));
-      expanded.add(TeXParserUtils.createGroup(listener, glslabel));
-
-      expanded.add(listener.getControlSequence("glsadd"));
+      expanded.add(listener.getControlSequence("gls"));
       expanded.add(listener.getOther('['));
 
       expanded.add(options);
@@ -92,7 +114,9 @@ public class MenuCs extends AbstractGlsCommand
       expanded.add(listener.getOther(']'));
       expanded.add(TeXParserUtils.createGroup(listener, glslabel));
 
-      return expanded;
+      TeXParserUtils.process(expanded, parser, stack);
+
+      parser.endGroup();
    }
 
 }

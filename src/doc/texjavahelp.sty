@@ -2,7 +2,7 @@
 % in the TeX Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{texjavahelp}[2025/08/04 v0.2a (NLCT)]
+\ProvidesPackage{texjavahelp}[2025/08/05 v0.3a (NLCT)]
 
 \RequirePackage{pifont}
 \RequirePackage{fontawesome}
@@ -1280,8 +1280,20 @@
 
 \newcommand*{\menufmt}[1]{\widgetfmt{#1}}
 
+% Just the name but discard any trailing ellipsis
+% Use \gls etc for the name with any trailing ellipsis
+\NewDocumentCommand\menuitem{sO{}O{menu.}m}{%
+ {%
+   \let\msgellipsis\@gobble
+   \IfBooleanTF{#1}%
+    {\gls[format=glsignore,#2]{#3#4}}%
+    {\gls[#2]{#3#4}}%
+ }%
+}
+
 \newcommand*{\menusep}{\,\discretionary{}{}{}\ding{220}\,\discretionary{}{}{}}
 
+% Include hierarchical menu trail
 \NewDocumentCommand\menu{sO{}O{menu.}m}{%
   \menutrail{#3#4}%
   \IfBooleanTF{#1}%
@@ -1311,8 +1323,6 @@
 }
 
 \newcommand{\menuitemref}[1]{\glshyperlink{#1}}
-
-\newcommand{\menuitem}{\dgls}
 
 % \menutrailfmt{Parent Text,Child Text}
 \newrobustcmd*{\menutrailfmt}[1]{%
