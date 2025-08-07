@@ -22,6 +22,7 @@ package com.dickimawbooks.texjavahelpmk;
 import java.io.IOException;
 
 import com.dickimawbooks.texparserlib.*;
+import com.dickimawbooks.texparserlib.latex.CsvList;
 import com.dickimawbooks.texparserlib.html.StartElement;
 import com.dickimawbooks.texparserlib.html.EndElement;
 
@@ -56,7 +57,8 @@ public class SeeAlsoRefs extends ControlSequence
    {
       TJHListener listener = (TJHListener)parser.getListener();
 
-      String[] labels = popLabelString(parser, stack).trim().split(" *, *");
+      CsvList labelList = TeXParserUtils.popCsvList(parser, stack);
+      labelList.stripEmpty(true);
 
       TeXObjectList expanded = listener.createStack();
 
@@ -68,13 +70,17 @@ public class SeeAlsoRefs extends ControlSequence
       expanded.add(listener.getControlSequence("MFUsentencecase"));
       expanded.add(listener.getControlSequence("seealsoname"));
 
-      if (labels.length > 1)
+      if (labelList.size() > 1)
       {
          expanded.add(listener.getControlSequence("multiseealsosep"));
          expanded.add(new StartElement("ul"));
 
-         for (String label : labels)
+         for (int i = 0; i < labelList.size(); i++)
          {
+            TeXObject val = labelList.getValue(i);
+
+            String label = parser.expandToString(val, stack);
+
             expanded.add(new StartElement("li"));
             expanded.add(listener.getControlSequence("ref"));
             expanded.add(listener.createGroup(label));
@@ -86,14 +92,17 @@ public class SeeAlsoRefs extends ControlSequence
 
          expanded.add(new EndElement("ul"));
       }
-      else if (labels.length == 1)
+      else if (!labelList.isEmpty())
       {
+         TeXObject val = labelList.getValue(0);
+         String label = parser.expandToString(val, stack);
+
          expanded.add(listener.getControlSequence("singleseealsosep"));
          expanded.add(listener.getControlSequence("sectionref"));
-         expanded.add(listener.createGroup(labels[0]));
+         expanded.add(listener.createGroup(label));
          expanded.add(listener.getSpace());
          expanded.add(listener.getControlSequence("nameref"));
-         expanded.add(listener.createGroup(labels[0]));
+         expanded.add(listener.createGroup(label));
          expanded.add(listener.getOther('.'));
       }
 
