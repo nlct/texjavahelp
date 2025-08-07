@@ -144,6 +144,10 @@ public class FloatSubFigs extends ControlSequence
             expanded.add(listener.getControlSequence("newline"));
             addLineBreak = false;
          }
+         else
+         {
+            expanded.add(listener.getSpace());
+         }
       }
 
       expanded.add(listener.newHtml5StartElement("figcaption", "div", true, true));
