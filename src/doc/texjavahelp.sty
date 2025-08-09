@@ -2,7 +2,7 @@
 % in the TeX Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{texjavahelp}[2025/08/05 v0.3a (NLCT)]
+\ProvidesPackage{texjavahelp}[2025/08/09 v0.3a (NLCT)]
 
 \RequirePackage{pifont}
 \RequirePackage{fontawesome}
@@ -1677,7 +1677,15 @@
 }
 
 \NewDocumentCommand\widgetdef{O{}mO{}}{%
- \begin{pinnedbox}[#1]%
+ \renewcommand{\@menuicon@}{\icon{valuesetting}}%
+ \glsxtrifhasfield*{initvalue}{#2}%
+ {%
+   \ifcsdef{@menuicon@\glscurrentfieldvalue}%
+   {\letcs\@menuicon@{@menuicon@\glscurrentfieldvalue}}%
+   {}%
+ }%
+ {}%
+ \begin{settingsbox}[title={\@menuicon@},#1]%
  \glsadd[format=main]{#2}%
  \glsxtrifhasfield{iconimage}{#2}%
  {%
@@ -1687,7 +1695,7 @@
  {}%
  \glsxtrglossentry{#2}%
  \hfill #3%
- \end{pinnedbox}% 
+ \end{settingsbox}% 
  \ignorespaces
 }
 
@@ -1695,7 +1703,9 @@
 
 \newcommand{\@menuicon@}{\icon{novaluesetting}}
 \newcommand{\@menuicon@true}{\icon{toggleonsetting}}
+\newcommand{\@menuicon@on}{\icon{toggleonsetting}}
 \newcommand{\@menuicon@false}{\icon{toggleoffsetting}}
+\newcommand{\@menuicon@off}{\icon{toggleoffsetting}}
 
 \NewDocumentCommand\menudef{sO{}mO{}}{%
  \renewcommand{\@menuicon@}{\icon{novaluesetting}}%

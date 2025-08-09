@@ -116,11 +116,11 @@ public class MenuDef extends StandaloneDef
          {
             String initVal = initValObj.toString(parser).trim();
 
-            if (initVal.equals("true"))
+            if (initVal.equals("true") || initVal.equals("on"))
             {
                iconname = "toggleonsetting";
             }
-            else if (initVal.equals("false"))
+            else if (initVal.equals("false") || initVal.equals("off"))
             {
                iconname = "toggleoffsetting";
             }

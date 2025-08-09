@@ -26,6 +26,7 @@ import com.dickimawbooks.texparserlib.latex.*;
 
 import com.dickimawbooks.texparserlib.latex.glossaries.*;
 import com.dickimawbooks.texparserlib.latex.nlctdoc.StandaloneDef;
+import com.dickimawbooks.texparserlib.latex.nlctdoc.TaggedColourBox;
 
 public class WidgetDef extends StandaloneDef
 {
@@ -52,6 +53,34 @@ public class WidgetDef extends StandaloneDef
    throws IOException
    {
       note = popOptArg(parser, stack);
+
+      if (outerBox instanceof TaggedColourBox)
+      {
+         TaggedColourBox taggedBox = (TaggedColourBox)outerBox;
+
+         String iconname = "valuesetting";
+
+         TeXObject initValObj = glslabel.getField("initvalue");
+
+         if (initValObj != null)
+         {
+            String initVal = initValObj.toString(parser).trim();
+
+            if (initVal.equals("true") || initVal.equals("on"))
+            {
+               iconname = "toggleonsetting";
+            }
+            else if (initVal.equals("false") || initVal.equals("off"))
+            {
+               iconname = "toggleoffsetting";
+            }
+         }
+
+         TeXObjectList title = parser.getListener().createStack();
+         title.add(parser.getListener().getControlSequence("icon"));
+         title.add(parser.getListener().createGroup(iconname));
+         taggedBox.setTitle(title);
+      }
    }
 
    protected TeXObject getNote(GlsLabel glslabel, TeXParser parser)
