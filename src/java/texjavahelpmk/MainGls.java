@@ -49,35 +49,55 @@ public class MainGls extends AbstractGlsCommand
    }
 
    @Override
+   public boolean canExpand()
+   {
+      return false;
+   }
+
+   @Override
    public TeXObjectList expandonce(TeXParser parser, TeXObjectList stack)
+     throws IOException
+   {
+      return null;
+   }
+
+   @Override
+   public void process(TeXParser parser)
+     throws IOException
+   {
+      process(parser, parser);
+   }
+
+   @Override
+   public void process(TeXParser parser, TeXObjectList stack)
      throws IOException
    {
       TeXParserListener listener = parser.getListener();
 
       KeyValList options = TeXParserUtils.popOptKeyValList(parser, stack);
 
-      if (options == null)
-      {
-         options = new KeyValList();
-      }
-
       GlsLabel glslabel = popEntryLabel(parser, stack);
 
       TeXObjectList expanded = listener.createStack();
 
       expanded.add(listener.getControlSequence("mainglsadd"));
-      expanded.add(TeXParserUtils.createGroup(listener, glslabel));
+      expanded.add(glslabel);
       expanded.add(listener.createGroup("term"));
 
+      TeXParserUtils.process(expanded, parser, stack);
+
       expanded.add(listener.getControlSequence("gls"));
-      expanded.add(listener.getOther('['));
 
-      expanded.add(options);
+      if (options != null)
+      {
+         expanded.add(listener.getOther('['));
+         expanded.add(options);
+         expanded.add(listener.getOther(']'));
+      }
 
-      expanded.add(listener.getOther(']'));
-      expanded.add(TeXParserUtils.createGroup(listener, glslabel));
+      expanded.add(glslabel);
 
-      return expanded;
+      TeXParserUtils.process(expanded, parser, stack);
    }
 
 }
