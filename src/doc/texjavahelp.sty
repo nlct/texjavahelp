@@ -675,20 +675,155 @@
 
 \newcommand{\posttablecaption}{\medskip}
 
-% \FloatTable[pos]{label}{content}[lot]{caption}
-\NewDocumentCommand\FloatTable{ommom}{%
- \IfValueTF{#1}%
-  {\begin{table}[#1]}%
-  {\begin{table}}%
- \IfValueTF{#4}%
- {\caption[#4]{#5}}%
- {\caption{#5}}%
- \label{#2}%
+% \FloatTable[pos]{label}[LaTeX only pre-content]{content}[lot]{caption}
+\NewDocumentCommand \FloatTable { o m O{} m o m }
+{
+ \IfValueTF { #1 }
+  { \begin{table} [ #1 ] }
+  { \begin{table} }
+ \IfValueTF { #5 }
+ { \caption [ #5 ] { #6 } }
+ { \caption { #6 } }
+ \label { #2 }
  \posttablecaption
  \centering
- #3%
- \end{table}%
+ #3 #4
+ \end{table}
 }
+
+\tl_new:N \__texjavahelp_pre_tl
+\tl_new:N \__texjavahelp_post_tl
+
+\NewDocumentCommand\continuedfmt { m } { \emph { #1 } }
+
+\newcommand\ContinuedNextPageBox [ 1 ]
+ {
+   \multicolumn
+     { \LT@cols }
+     { r }
+     { \emph { #1 } }
+ }
+
+\newcommand{\continuedname}{\manmsg{longtable_continued}}
+\newcommand{\continuednextpage}{\manmsg{longtable_continued_next_page}}
+
+\newcommand\postlongtablecaption{\strut}
+
+% \NoFloatLongTable[h-align]{label}[LaTeX only pre-content]{specs}{header row}{content}[lot]{caption}
+\NewDocumentCommand \NoFloatLongTable { o m o m m m o m }
+{
+  \tl_clear:N \__texjavahelp_pre_tl
+  \tl_clear:N \__texjavahelp_post_tl
+  \IfValueT { #3 }
+   {
+     \tl_set:Nn \__texjavahelp_pre_tl
+      { 
+        \group_begin:
+         #3
+      }
+     \tl_set:Nn  \__texjavahelp_post_tl { \group_end: }
+   }
+  \tl_put_right:Nn \__texjavahelp_pre_tl 
+   {
+     \begin { longtable }
+   }
+  \IfValueT { #1 }
+   {
+     \tl_put_right:Nn \__texjavahelp_pre_tl { [ #1 ] }
+   }
+  \tl_put_right:Nn \__texjavahelp_pre_tl
+   {
+     { #4 }
+     \caption
+   }
+  \IfValueT { #7 }
+   {
+     \tl_put_right:Nn \__texjavahelp_pre_tl { [ #7 ] }
+   }
+  \tl_put_right:Nn \__texjavahelp_pre_tl
+    { 
+      { #8 }
+      \label { #2 }
+      \tabularnewline
+    }
+  \tl_if_empty:NF \postlongtablecaption
+    {
+     \tl_put_right:NV \__texjavahelp_pre_tl
+         \postlongtablecaption
+     \tl_put_right:Nn \__texjavahelp_pre_tl
+       { 
+         \tabularnewline
+       }
+    }
+  \tl_put_right:Nn \__texjavahelp_pre_tl
+    { 
+      #5
+      \tabularnewline
+      \endfirsthead
+      \caption [ ]
+    }
+  \IfValueTF { #7 }
+   {
+     \tl_put_right:Nn \__texjavahelp_pre_tl
+      { 
+        {
+          #7
+          \c_space_tl
+          \continuedfmt { \continuedname }
+        }
+      }
+   }
+   {
+     \tl_put_right:Nn \__texjavahelp_pre_tl
+      { 
+        {
+          #8
+          \c_space_tl
+          \continuedfmt { \continuedname }
+        }
+      }
+   }
+  \tl_if_empty:NF \postlongtablecaption
+    {
+     \tl_put_right:Nn \__texjavahelp_pre_tl
+       { 
+         \tabularnewline
+       }
+     \tl_put_right:NV \__texjavahelp_pre_tl
+       \postlongtablecaption
+    }
+  \tl_put_right:Nn \__texjavahelp_pre_tl
+    { 
+      \tabularnewline
+      #5
+      \tabularnewline
+      \endhead
+    }
+  \tl_if_empty:NF \continuednextpage
+   {
+     \tl_put_right:No \__texjavahelp_pre_tl
+      {
+        \ContinuedNextPageBox
+         { \continuednextpage }
+      } 
+     \tl_put_right:Nn \__texjavahelp_pre_tl
+      {
+        \tabularnewline
+        \endfoot
+        \tabularnewline
+        \endlastfoot
+      } 
+   }
+  \tl_put_left:Nn \__texjavahelp_post_tl 
+   {
+     \end { longtable }
+   }
+  \__texjavahelp_pre_tl
+  #6
+  \__texjavahelp_post_tl
+}
+
+\newcommand{\tablecellstack}[1]{\shortstack{#1}}
 
 \ExplSyntaxOff
 

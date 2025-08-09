@@ -181,6 +181,9 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new FloatTable());
       registerControlSequence(new GenericCommand("posttablecaption"));
+      registerControlSequence(new TableCellStack());
+      registerControlSequence(new NoFloatLongTable());
+      registerControlSequence(new GenericCommand("postlongtablecaption"));
 
       registerControlSequence(new FloatFig());
 

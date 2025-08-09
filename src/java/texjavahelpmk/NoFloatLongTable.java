@@ -25,18 +25,19 @@ import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texparserlib.html.StartElement;
 import com.dickimawbooks.texparserlib.html.EndElement;
 
-/** Analogous to FloatFig but for tables.
- * This is more for consistency as the label is usually placed at
- * the top.
+/** 
+ * Analogous to FloatTable.
+ * Long table in PDF but don't need to worry about page breaking
+ * with HTML.
  */
-public class FloatTable extends ControlSequence
+public class NoFloatLongTable extends ControlSequence
 {
-   public FloatTable()
+   public NoFloatLongTable()
    {
-      this("FloatTable");
+      this("NoFloatLongTable");
    }
 
-   public FloatTable(String name)
+   public NoFloatLongTable(String name)
    {
       super(name);
    }
@@ -44,7 +45,7 @@ public class FloatTable extends ControlSequence
    @Override
    public Object clone()
    {
-      return new FloatTable(getName());
+      return new NoFloatLongTable(getName());
    }
 
    @Override
@@ -60,9 +61,12 @@ public class FloatTable extends ControlSequence
    {
       TJHListener listener = (TJHListener)parser.getListener();
 
-      popOptArg(parser, stack);
+
+      popOptArg(parser, stack); // ignore
       String label = popLabelString(parser, stack);
       popOptArg(parser, stack);// LaTeX only so ignore
+      TeXObject specs = popArg(parser, stack);
+      TeXObject header = popArg(parser, stack);
       TeXObject content = popArg(parser, stack);
       TeXObject lot = popOptArg(parser, stack);
       TeXObject caption = popArg(parser, stack);
@@ -133,8 +137,23 @@ public class FloatTable extends ControlSequence
 
       expanded.add(new EndElement("div", true, true));// caption div
 
-      expanded.add(listener.getControlSequence("posttablecaption"));
+      expanded.add(listener.getControlSequence("postlongtablecaption"));
+
+      expanded.add(listener.getControlSequence("begin"));
+      expanded.add(listener.createGroup("tabular"));
+
+      Group grp = listener.createGroup();
+      expanded.add(grp);
+      grp.add(specs, true);
+
+      expanded.add(header, true);
+
+      expanded.add(listener.getControlSequence("tabularnewline"));
+
       expanded.add(content, true);
+
+      expanded.add(listener.getControlSequence("end"));
+      expanded.add(listener.createGroup("tabular"));
 
       expanded.add(new EndElement("div", true, true));// table div
 
