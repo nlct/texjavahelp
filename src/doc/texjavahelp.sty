@@ -15,6 +15,29 @@
 \RequirePackage{accsupp}
 \RequirePackage{tikz}
 
+\newcommand*{\texjavahelp@doifkoma}[1]{\texjavahelp@ifkoma{#1}{}}
+\newcommand*{\texjavahelp@ifkoma}[2]{#2}
+
+\@ifclassloaded{scrreprt}{\let\texjavahelp@ifkoma\@firstoftwo}
+{
+ \@ifclassloaded{scrartcl}{\let\texjavahelp@ifkoma\@firstoftwo}
+ {
+  \@ifclassloaded{scrbook}
+   {\let\texjavahelp@ifkoma\@firstoftwo}
+   {
+     \@ifclassloaded{scrreport}
+      {\let\texjavahelp@ifkoma\@firstoftwo}
+      {
+        \@ifclassloaded{scrarticle}
+         {\let\texjavahelp@ifkoma\@firstoftwo}
+         {
+         }
+      }
+   }
+ }
+}
+
+
 \PassOptionsToPackage{breakable,skins,listings}{tcolorbox}
 \RequirePackage{tcolorbox}
 
@@ -1129,6 +1152,47 @@
  save-child-count
 }
 
+\newcommand\bibglslocationgroupsep{; }
+
+\newcommand{\chapterprefixsingle}{\S}
+\newcommand{\chapterprefixmulti}{\S\S}
+
+\newcommand{\sectionprefixsingle}{\S}
+\newcommand{\sectionprefixmulti}{\S\S}
+
+\newcommand{\subsectionprefixsingle}{\S}
+\newcommand{\subsectionprefixmulti}{\S\S}
+
+\newcommand{\subsubsectionprefixsingle}{\S}
+\newcommand{\subsubsectionprefixmulti}{\S\S}
+
+\newcommand{\paragraphprefixsingle}{\S}
+\newcommand{\paragraphprefixmulti}{\S\S}
+
+\newcommand{\subparagraphprefixsingle}{\S}
+\newcommand{\subparagraphprefixmulti}{\S\S}
+
+\newcommand{\figureprefixsingle}{\Figurename~}
+\newcommand{\figureprefixmulti}{\Figuresname~}
+
+\newcommand{\tableprefixsingle}{\Tablename~}
+\newcommand{\tableprefixmulti}{\Tablesname~}
+
+\ExplSyntaxOn
+
+\newcommand\bibglslocationgroup[3]{
+  \int_compare:nNnTF { #1 } = { \c_one_int }
+   {
+     \cs_if_exist_use:c { #2 prefixsingle }
+   }
+   {
+     \cs_if_exist_use:c { #2 prefixmulti }
+   }
+  #3
+}
+
+\ExplSyntaxOff
+
 % punctuation and icon characters are best dealt with in a separate resource set
 
 \newcommand{\TeXJavaHelpSymbolResourceOptions}{
@@ -1783,6 +1847,62 @@
 
 \newcommand{\main}[1]{\hyperbf{#1}}
 
+\newcommand*{\setcounterlevels}[2]{%
+ \def\currentcounterlevel{#1}%
+ \def\currentcounter{#2}%
+}
+
+\ifdef\chapter
+{
+  \texjavahelp@ifkoma
+   {
+      \AddtoDoHook{heading/preinit/chapter}{\setcounterlevels{0}{chapter}}
+   }
+   {
+     \preto\chapter{\setcounterlevels{0}{chapter}}
+   }
+  \setcounterlevels{0}{chapter}
+}
+{
+  \setcounterlevels{1}{section}
+} 
+
+\texjavahelp@ifkoma
+ { 
+   \AddtoDoHook{heading/preinit/part}{\setcounterlevels{-1}{part}}
+   \AddtoDoHook{heading/preinit/section}{\setcounterlevels{1}{section}}
+   \AddtoDoHook{heading/preinit/subsection}{\setcounterlevels{2}{subsection}}
+   \AddtoDoHook{heading/preinit/subsubsection}{\setcounterlevels{3}{subsubsection}}
+   \AddtoDoHook{heading/preinit/paragraph}{\setcounterlevels{4}{paragraph}}
+   \AddtoDoHook{heading/preinit/subparagraph}{\setcounterlevels{4}{subparagraph}}
+ }
+ {
+  \preto\part{\setcounterlevels{-1}{part}}
+  \preto\section{\setcounterlevels{1}{section}}
+  \preto\subsection{\setcounterlevels{2}{subsection}}
+  \preto\subsubsection{\setcounterlevels{3}{subsubsection}}
+  \preto\paragraph{\setcounterlevels{4}{paragraph}}
+  \preto\subparagraph{\setcounterlevels{4}{subparagraph}}
+ }
+
+\newcommand*{\mainglsadd}[3][]{%
+ \glsxtrifhasfield{alias}{#2}%
+ {\glsadd[#1]{#2}}%
+ {%
+   \ifstrempty{#3}%
+   {\def\mainglsaddcounter{}}%
+   {%
+     \ifcsdef{#3counter}%
+     {\letcs\mainglsaddcounter{#3counter}}%
+     {\let\mainglsaddcounter\currentcounter}%
+   }%
+   \ifdefempty\mainglsaddcounter{}{\glsadd[counter=\mainglsaddcounter,format=main]{#2}}%
+   \glsadd[format=main,#1]{#2}%
+ }%
+}
+
+\NewDocumentCommand\maingls{O{}m}{\mainglsadd{#2}{term}\gls[noindex,#1]{#2}}
+
 \NewDocumentCommand\appdef{O{}m}{%
  \begin{terminal}[#1]%
  \glsadd[format=main]{app.#2}%
@@ -2230,6 +2350,9 @@
   \dim_zero:N \glsxtrtreetopindent
   \renewcommand{\glsxtralttreeInit}{\glsxtrAltTreeIndent=\parindent}
   \let\printunsrtglossaryentryprocesshook\filtermeasureterms
+  \renewcommand*{\GlsXtrLocationField}{primarylocations}%
+  \def\wrglossaryprefixsingle{p.~}%
+  \def\wrglossaryprefixmulti{pp. }%
 }
 
 % requires glossaries-extra v1.54+
@@ -2253,7 +2376,7 @@
 {
   \group_begin:
     \printmaininit
-    \printunsrtglossary[label=glossary,nogroupskip,nonumberlist,style=alttree,#1]%
+    \printunsrtglossary[label=glossary,nogroupskip,style=alttree,#1]%
   \group_end:
 }
 

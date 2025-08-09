@@ -280,6 +280,8 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new MnemonicTrail(glossariesSty));
 
+      registerControlSequence(new MainGls(glossariesSty));
+
       registerControlSequence(new DialogCs());
 
       registerControlSequence(
