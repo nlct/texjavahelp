@@ -53,34 +53,6 @@ public class WidgetDef extends StandaloneDef
    throws IOException
    {
       note = popOptArg(parser, stack);
-
-      if (outerBox instanceof TaggedColourBox)
-      {
-         TaggedColourBox taggedBox = (TaggedColourBox)outerBox;
-
-         String iconname = "valuesetting";
-
-         TeXObject initValObj = glslabel.getField("initvalue");
-
-         if (initValObj != null)
-         {
-            String initVal = initValObj.toString(parser).trim();
-
-            if (initVal.equals("true") || initVal.equals("on"))
-            {
-               iconname = "toggleonsetting";
-            }
-            else if (initVal.equals("false") || initVal.equals("off"))
-            {
-               iconname = "toggleoffsetting";
-            }
-         }
-
-         TeXObjectList title = parser.getListener().createStack();
-         title.add(parser.getListener().getControlSequence("icon"));
-         title.add(parser.getListener().createGroup(iconname));
-         taggedBox.setTitle(title);
-      }
    }
 
    protected TeXObject getNote(GlsLabel glslabel, TeXParser parser)
@@ -88,6 +60,34 @@ public class WidgetDef extends StandaloneDef
       return note;
    }
 
+   @Override
+   protected TeXObject getRightBoxContent(GlsLabel glslabel, TeXParser parser)
+   throws IOException
+   {
+      TeXObjectList list = null;
+
+      TeXObject val = glslabel.getEntry().get("initvalue");
+
+      if (val != null)
+      {
+         String strVal = val.toString(parser);
+
+         if (strVal.equals("on") || strVal.equals("off"))
+         {
+            list = parser.getListener().createString("\uD83D\uDD18");
+         }
+         else if (strVal.equals("true"))
+         {
+            list = parser.getListener().createString("\u2611");
+         }
+         else if (strVal.equals("false"))
+         {
+            list = parser.getListener().createString("\u2610");
+         }
+      }
+
+      return list;
+   }
    @Override
    protected void addPreEntryName(TeXObjectList list, GlsLabel glslabel, TeXParser parser)        
    {  
