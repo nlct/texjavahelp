@@ -707,7 +707,9 @@
 \newcommand{\continuedname}{\manmsg{longtable_continued}}
 \newcommand{\continuednextpage}{\manmsg{longtable_continued_next_page}}
 
-\newcommand\postlongtablecaption{\strut}
+\newcommand\postlongtablecaption{
+ [ \medskipamount ]
+}
 
 % \NoFloatLongTable[h-align]{label}[LaTeX only pre-content]{specs}{header row}{content}[lot]{caption}
 \NewDocumentCommand \NoFloatLongTable { o m o m m m o m }
@@ -750,10 +752,6 @@
     {
      \tl_put_right:NV \__texjavahelp_pre_tl
          \postlongtablecaption
-     \tl_put_right:Nn \__texjavahelp_pre_tl
-       { 
-         \tabularnewline
-       }
     }
   \tl_put_right:Nn \__texjavahelp_pre_tl
     { 
@@ -783,18 +781,17 @@
         }
       }
    }
+  \tl_put_right:Nn \__texjavahelp_pre_tl
+   { 
+     \tabularnewline
+   }
   \tl_if_empty:NF \postlongtablecaption
     {
-     \tl_put_right:Nn \__texjavahelp_pre_tl
-       { 
-         \tabularnewline
-       }
      \tl_put_right:NV \__texjavahelp_pre_tl
        \postlongtablecaption
     }
   \tl_put_right:Nn \__texjavahelp_pre_tl
     { 
-      \tabularnewline
       #5
       \tabularnewline
       \endhead
