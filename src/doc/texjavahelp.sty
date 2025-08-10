@@ -2053,6 +2053,16 @@
  \Glsxtrglossentryother{}{#1}{plural}%
 }
 
+\newrobustcmd*{\inlineglstextdef}[1]{%
+ \glsadd[format=main]{#1}%
+ \glsxtrglossentryother{}{#1}{text}%
+}
+
+\newrobustcmd*{\Inlineglstextdef}[1]{%
+ \glsadd[format=main]{#1}%
+ \Glsxtrglossentryother{}{#1}{text}%
+}
+
 \NewDocumentCommand\sectionentry{O{\section}om}{%
  #1{\glsxtrglossentry{#3}}%
  \IfValueTF{#2}{\label{#2}}{\label{sec:#3}}%
