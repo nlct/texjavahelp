@@ -18,6 +18,8 @@
 */
 package com.dickimawbooks.texjavahelplib;
 
+import java.io.*;
+import java.nio.file.*;
 import java.net.URL;
 import java.text.MessageFormat;
 
@@ -220,14 +222,21 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
 
    public void stdErrMessage(Throwable e, String msg)
    {
-      if (msg != null)
+      if (logMessages)
       {
-         System.err.println(msg);
+         writeLogMessage(e, msg);
       }
-
-      if (e != null)
+      else
       {
-         e.printStackTrace();
+         if (msg != null)
+         {
+            System.err.println(msg);
+         }
+
+         if (e != null)
+         {
+            e.printStackTrace();
+         }
       }
    }
 
@@ -283,7 +292,11 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
          warningTitle = getMessageWithFallback("warning.title", "Warning");
       }
 
-      if (isGUI())
+      if (logMessages)
+      {
+         writeLogMessage(warningTitle, e, msg);
+      }
+      else if (isGUI())
       {
          showMessageDialog(owner, msg, warningTitle, JOptionPane.WARNING_MESSAGE);
 
@@ -389,7 +402,11 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
          msg = errorTitle;
       }
 
-      if (isGUI())
+      if (logMessages)
+      {
+         writeLogMessage(errorTitle, e, msg);
+      }
+      else if (isGUI())
       {
          if (e != null)
          {
@@ -439,7 +456,11 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
          msg = internalErrorTitle;
       }
 
-      if (isGUI())
+      if (logMessages)
+      {
+         writeLogMessage(internalErrorTitle, e, msg);
+      }
+      else if (isGUI())
       {
          if (e != null)
          {
@@ -459,14 +480,41 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
                   "Quit Without Saving");
             }
 
-            int result = JOptionPane.showOptionDialog(owner, msg,
-               internalErrorTitle,
-               JOptionPane.YES_NO_OPTION,
-               JOptionPane.ERROR_MESSAGE, null,
-               new String[] {okayOptionText, crashExitOptionText}, okayOptionText);
+            int result;
 
-            if (result == JOptionPane.NO_OPTION)
+            if (logFile == null)
             {
+               result = JOptionPane.showOptionDialog(owner, msg,
+                  internalErrorTitle,
+                  JOptionPane.YES_NO_OPTION,
+                  JOptionPane.ERROR_MESSAGE, null,
+                  new String[] {okayOptionText, crashExitOptionText},
+                  okayOptionText);
+            }
+            else
+            {
+               if (logOptionText == null)
+               {
+                  logOptionText = getMessageWithFallback(
+                   "action.log_errors", "Log Errors");
+               }
+
+               result = JOptionPane.showOptionDialog(owner, msg,
+                  internalErrorTitle,
+                  JOptionPane.YES_NO_CANCEL_OPTION,
+                  JOptionPane.ERROR_MESSAGE, null,
+                  new String[] {okayOptionText, crashExitOptionText, logOptionText},
+                  okayOptionText);
+            }
+
+            if (result == JOptionPane.CANCEL_OPTION)
+            {
+               logMessages = true;
+               writeLogMessage(internalErrorTitle, e, msg);
+            }
+            else if (result == JOptionPane.NO_OPTION)
+            {
+               closeLogWriter();
                System.exit(fatalErrorExitCode);
             }
          }
@@ -481,7 +529,13 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
 
    public void fatalError(String message, Throwable e, int exitCode)
    {  
-      if (isGUI())
+      String fatalErrorTitle = getMessageWithFallback("error.fatal", "Fatal Error");
+
+      if (logMessages)
+      {
+         writeLogMessage(fatalErrorTitle, e, message);
+      }
+      else if (isGUI())
       {
          debug(e);
 
@@ -496,17 +550,18 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
    
          JOptionPane.showMessageDialog(null,
          stackTracePane,
-         getMessageWithFallback("error.fatal", "Fatal Error"),
+         fatalErrorTitle,
          JOptionPane.ERROR_MESSAGE);
       }
       else
       {
          stdErrMessage(e, String.format("%s: %s: %s",
            getApplicationName(), 
-           getMessageWithFallback("error.fatal", "Fatal Error"),
+           fatalErrorTitle,
            message));
       }
 
+      closeLogWriter();
       System.exit(exitCode);
    }
 
@@ -546,7 +601,11 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
    {
       if (isDebuggingOn())
       {
-         if (e == null)
+         if (logMessages)
+         {
+            writeLogMessage("Debug", e, msg);
+         }
+         else if (e == null)
          {
             stdOutMessage(msg);
          }
@@ -575,14 +634,40 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
       appendStackTrace(e, stackTrace);
       stackTraceDetails.setText(stackTrace.toString());
 
-      int result = JOptionPane.showOptionDialog(parent, stackTracePane,
-         frameTitle,
-         JOptionPane.YES_NO_OPTION,
-         JOptionPane.ERROR_MESSAGE, null,
-         new String[] {okayOptionText, crashExitOptionText}, okayOptionText);
+      int result;
 
-      if (result == JOptionPane.NO_OPTION)
+      if (logFile == null)
       {
+         result = JOptionPane.showOptionDialog(parent, stackTracePane,
+            frameTitle,
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.ERROR_MESSAGE, null,
+            new String[] {okayOptionText, crashExitOptionText}, okayOptionText);
+      }
+      else
+      {
+         if (logOptionText == null)
+         {
+            logOptionText = getMessageWithFallback(
+             "action.log_errors", "Log Errors");
+         }
+
+         result = JOptionPane.showOptionDialog(parent, stackTracePane,
+            frameTitle,
+            JOptionPane.YES_NO_CANCEL_OPTION,
+            JOptionPane.ERROR_MESSAGE, null,
+            new String[] {okayOptionText, crashExitOptionText, logOptionText},
+             okayOptionText);
+      }
+
+      if (result == JOptionPane.CANCEL_OPTION)
+      {
+         logMessages = true;
+         writeLogMessage(frameTitle, e, message);
+      }
+      else if (result == JOptionPane.NO_OPTION)
+      {
+         closeLogWriter();
          System.exit(fatalErrorExitCode);
       }
    }
@@ -679,11 +764,115 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
       }
    }
 
+   public void setLogFile(File file)
+   {
+      if (logWriter != null)
+      {
+         logWriter.close();
+         logWriter = null;
+      }
+
+      logFile = file;
+   }
+
+   public void writeLogMessage(String msg)
+   {
+      writeLogMessage(null, msg);
+   }
+
+   public void writeLogMessage(Exception e)
+   {
+      writeLogMessage(e, null);
+   }
+
+   public void writeLogMessage(Throwable e, String msg)
+   {
+      writeLogMessage(null, e, msg);
+   }
+
+   public void writeLogMessage(String tag, Throwable e, String msg)
+   {
+      if (tag != null)
+      {
+         if (msg == null)
+         {
+            msg = tag;
+         }
+         else
+         {
+            msg = String.format("%s: %s", tag, msg);
+         }
+      }
+
+      if (logFile == null)
+      {
+         if (msg != null)
+         {
+            System.err.println(msg);
+         }
+
+         if (e != null)
+         {
+            e.printStackTrace();
+         }
+      }
+      else
+      {
+         try
+         {
+            if (logWriter == null)
+            {
+               logWriter = new PrintWriter(Files.newBufferedWriter(logFile.toPath()));
+            }
+
+            if (msg != null)
+            {
+               logWriter.println(msg);
+            }
+
+            if (e != null)
+            {
+               e.printStackTrace(logWriter);
+            }
+         }
+         catch (IOException ioe)
+         {
+            if (msg != null)
+            {
+               System.err.println(msg);
+            }
+
+            if (e != null)
+            {
+               e.printStackTrace();
+            }
+
+            ioe.printStackTrace();
+         }
+      }
+   }
+
+   public void closeLogWriter()
+   {
+      if (logWriter != null)
+      {
+         logWriter.close();
+         logWriter = null;
+      }
+
+      logMessages = false;
+   }
+
    protected TeXJavaHelpLib helpLib;
 
    private JTabbedPane stackTracePane;
    private JScrollPane errWarnMessageAreaSP, stackTraceMessageAreaSP;
    private JTextArea errWarnMessageArea, stackTraceMessageArea, stackTraceDetails;
-   private String okayOptionText, crashExitOptionText, errorTitle, internalErrorTitle, warningTitle;
+   private String okayOptionText, crashExitOptionText, logOptionText,
+     errorTitle, internalErrorTitle, warningTitle;
    protected int fatalErrorExitCode = 100;
+
+   protected PrintWriter logWriter;
+   protected File logFile;
+   protected boolean logMessages=false;
 }
