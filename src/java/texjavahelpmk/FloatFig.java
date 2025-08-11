@@ -56,14 +56,22 @@ public class FloatFig extends ControlSequence
    public void process(TeXParser parser, TeXObjectList stack)
      throws IOException
    {
-      TJHListener listener = (TJHListener)parser.getListener();
-
       popOptArg(parser, stack);
       String label = popLabelString(parser, stack);
       popOptArg(parser, stack);// ignore
       TeXObject content = popArg(parser, stack);
       TeXObject lof = popOptArg(parser, stack);
       TeXObject caption = popArg(parser, stack);
+
+      addFig(label, content, lof, caption, parser, stack);
+   }
+
+    protected void addFig(String label, TeXObject content,
+     TeXObject lof, TeXObject caption,
+     TeXParser parser, TeXObjectList stack)
+     throws IOException
+    {
+      TJHListener listener = (TJHListener)parser.getListener();
 
       TeXObjectList expanded = listener.createStack();
 

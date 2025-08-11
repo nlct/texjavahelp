@@ -186,6 +186,7 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new GenericCommand("postlongtablecaption"));
 
       registerControlSequence(new FloatFig());
+      registerControlSequence(new FloatSideBySideFigs());
 
       listener.newcounter("subfigure", null, "@alph");
 

@@ -549,6 +549,12 @@
 }
 \MFUaddmap{\figuresref}{\Figuresref}
 
+\newcounter{subfigure}
+\renewcommand{\thesubfigure}{\alph{subfigure}}
+\NewDocumentCommand\subfigurefmt{m}{(\emph{#1})}
+\newcommand{\subfigurelabel}{\subfigurefmt{\thesubfigure}}
+\newcommand{\subfigurecap}[1]{\subfigurelabel\space #1}
+
 % \FloatFig[pos]{label}[LaTeX only pre content]{content}[lof]{caption}
 \NewDocumentCommand\FloatFig{omO{}mom}{%
  \IfValueTF{#1}%
@@ -563,13 +569,53 @@
  \end{figure}%
 }
 
-\newcounter{subfigure}
-\renewcommand{\thesubfigure}{\alph{subfigure}}
-\NewDocumentCommand\subfigurefmt{m}{(\emph{#1})}
-\newcommand{\subfigurelabel}{\subfigurefmt{\thesubfigure}}
-\newcommand{\subfigurecap}[1]{\subfigurelabel\space #1}
-
 \ExplSyntaxOn
+
+\dim_new:N \l__texjavahelp_sidebyside_dim
+\dim_new:N \l__texjavahelp_sidebyside_sep_dim
+\dim_set:Nn \l__texjavahelp_sidebyside_sep_dim { 10pt }
+\newcommand{\floatsidebysidevalign}{c}
+
+% \FloatSideBySideFigs[pos][LaTeX only pre both]
+%{label1}[LaTeX only pre content1]{content1}[lof1]{caption1}
+%{label2}[LaTeX only pre content2]{content2}[lof2]{caption2}
+\NewDocumentCommand \FloatSideBySideFigs { O{} O{} m O{} m o m }
+{
+ \tl_if_empty:nTF { #1 }
+  { \begin{figure} }
+  { \begin{figure} [ #1 ] }
+ \centering
+ #2
+ \dim_set:Nn \l__texjavahelp_sidebyside_dim
+  {
+    0.5 \textwidth
+    - \l__texjavahelp_sidebyside_sep_dim
+  }
+ \exp_args:NnNV
+   \begin {minipage} [ \floatsidebysidevalign ] { \l__texjavahelp_sidebyside_dim }
+ \centering
+ #4 #5
+ \IfValueTF{#6}
+ {\caption[#6]{#7}}
+ {\caption{#7}}
+ \label{#3}
+ \end {minipage}
+ \hfill
+ \@nextFloatSideBySideFigs
+}
+
+\NewDocumentCommand\@nextFloatSideBySideFigs{mO{}mom}{
+ \exp_args:NnNV
+   \begin {minipage} [ \floatsidebysidevalign ] { \l__texjavahelp_sidebyside_dim }
+ \centering
+ #2 #3
+ \IfValueTF{#4}
+ {\caption[#4]{#5}}
+ {\caption{#5}}
+ \label{#1}
+ \end {minipage}
+ \end{figure}
+}
 
 % since the main figure caption occurs at the end, the figure
 % counter will be incremented after the subfigure counter
