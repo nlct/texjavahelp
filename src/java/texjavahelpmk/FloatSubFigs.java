@@ -65,6 +65,7 @@ public class FloatSubFigs extends ControlSequence
 
       popOptArg(parser, stack);
       String label = popLabelString(parser, stack);
+      popOptArg(parser, stack);// ignore
       CsvList csvList = TeXParserUtils.popCsvList(parser, stack);
       TeXObject lof = popOptArg(parser, stack);
       TeXObject caption = popArg(parser, stack);
