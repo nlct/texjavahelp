@@ -1999,7 +1999,7 @@
  \begin{codebox}[#1]%
  \glsadd[format=main]{pkg.#2}%
  \cmd{usepackage}%
- \glsxtrifhasfield{syntax}{#2}{\oarg{\glscurrentfieldvalue}}{}%
+ \glsxtrifhasfield{syntax}{pkg.#2}{\oarg{\glscurrentfieldvalue}}{}%
  \marg{\glsxtrglossentry{pkg.#2}}%
  \end{codebox}% 
  \ignorespaces
@@ -2009,7 +2009,7 @@
  \begin{codebox}[#1]%
  \cmd{documentclass}%
  \glsadd[format=main]{cls.#2}%
- \glsxtrifhasfield{syntax}{#2}{\oarg{\glscurrentfieldvalue}}{}%
+ \glsxtrifhasfield{syntax}{cls.#2}{\oarg{\glscurrentfieldvalue}}{}%
  \marg{\glsxtrglossentry{cls.#2}}%
  \end{codebox}% 
  \ignorespaces
