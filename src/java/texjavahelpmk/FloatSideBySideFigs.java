@@ -63,6 +63,8 @@ public class FloatSideBySideFigs extends FloatFig
       TeXObject lof1 = popOptArg(parser, stack);
       TeXObject caption1 = popArg(parser, stack);
 
+      TeXObject between = popOptArg(parser, stack);
+
       String label2 = popLabelString(parser, stack);
       popOptArg(parser, stack);// ignore
       TeXObject content2 = popArg(parser, stack);
@@ -70,6 +72,12 @@ public class FloatSideBySideFigs extends FloatFig
       TeXObject caption2 = popArg(parser, stack);
 
       addFig(label1, content1, lof1, caption1, parser, stack);
+
+      if (between != null)
+      {
+         TeXParserUtils.process(between, parser, stack);
+      }
+
       addFig(label2, content2, lof2, caption2, parser, stack);
     }
 

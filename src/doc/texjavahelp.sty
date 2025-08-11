@@ -578,9 +578,11 @@
 
 % \FloatSideBySideFigs[pos][LaTeX only pre both]
 %{label1}[LaTeX only pre content1]{content1}[lof1]{caption1}
+%[LaTeX pre-figure content/HTML between figures]
 %{label2}[LaTeX only pre content2]{content2}[lof2]{caption2}
-\NewDocumentCommand \FloatSideBySideFigs { O{} O{} m O{} m o m }
+\NewDocumentCommand \FloatSideBySideFigs { O{} O{} m O{} m o m O{} }
 {
+ #8
  \tl_if_empty:nTF { #1 }
   { \begin{figure} }
   { \begin{figure} [ #1 ] }
