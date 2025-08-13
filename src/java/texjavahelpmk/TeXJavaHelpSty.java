@@ -171,7 +171,7 @@ public class TeXJavaHelpSty extends UserGuideSty
        "mnemonicitemref", "m", 
          TeXParserUtils.createStack(listener, 
          new TeXCsRef("keys"), 
-         TeXParserUtils.createGroup(listener, new TeXCsRef("mnemonic"),
+         TeXParserUtils.createGroup(listener, new TeXCsRef("mnemonicref"),
            TeXParserUtils.createGroup(listener, listener.getParam(1))
          ))));
 
@@ -307,7 +307,7 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new IfComponent(glossariesSty));
       registerControlSequence(new Mnemonic());
-      registerControlSequence(new CheckPremnemonic());
+      registerControlSequence(new CheckPremnemonic(glossariesSty));
 
       registerControlSequence(new GenericCommand(true,
        "premnemonic", null, TeXParserUtils.createGroup(listener,

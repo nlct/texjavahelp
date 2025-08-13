@@ -294,7 +294,7 @@
 \PassOptionsToPackage{hidelinks}{hyperref}
 \RequirePackage{hyperref}
 
-\RequirePackage{glossaries-extra}
+\RequirePackage{glossaries-extra}[2025/08/13]
 
 % Title page information
 
@@ -1163,15 +1163,15 @@
  }%
 }
 
-\newcommand\checkpremnemonic{%
- \ifcomponent{\glslabel}%
+\newcommand\checkpremnemonic[1]{%
+ \ifcomponent{#1}%
  {%
   \premnemonic
  }%
  {%
-   \glsifcategory{\glslabel}{menu}%
+   \glsifcategory{#1}{menu}%
    {%
-    \ifglshasparent{\glslabel}{}{\premnemonic}%
+    \ifglshasparent{#1}{}{\premnemonic}%
    }%
    {}%
  }%
@@ -1179,7 +1179,7 @@
 
 \NewDocumentCommand\mnemonic{m}{%
  {%
-   \appto\glslinkpostsetkeys{\checkpremnemonic}%
+   \renewcommand\predglsfieldhook[1]{\checkpremnemonic{##1}}%
    \mnemonicref[textformat=keys]{#1}%
  }%
 }

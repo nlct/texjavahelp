@@ -22,23 +22,26 @@ package com.dickimawbooks.texjavahelpmk;
 import java.io.IOException;
 
 import com.dickimawbooks.texparserlib.*;
+import com.dickimawbooks.texparserlib.latex.glossaries.AbstractGlsCommand;
+import com.dickimawbooks.texparserlib.latex.glossaries.GlossariesSty;
+import com.dickimawbooks.texparserlib.latex.glossaries.GlsLabel;
 
-public class CheckPremnemonic extends Command
+public class CheckPremnemonic extends AbstractGlsCommand
 {
-   public CheckPremnemonic()
+   public CheckPremnemonic(GlossariesSty sty)
    {
-      this("checkpremnemonic");
+      this("checkpremnemonic", sty);
    }
 
-   public CheckPremnemonic(String name)
+   public CheckPremnemonic(String name, GlossariesSty sty)
    {
-      super(name);
+      super(name, sty);
    }
 
    @Override
    public Object clone()
    {
-      return new CheckPremnemonic(getName());
+      return new CheckPremnemonic(getName(), getSty());
    }
 
    @Override
@@ -47,7 +50,7 @@ public class CheckPremnemonic extends Command
    {
       TeXParserListener listener = parser.getListener();
 
-      ControlSequence glslabel = listener.getControlSequence("glslabel");
+      GlsLabel glslabel = popEntryLabel(parser, stack);
 
       TeXObjectList expanded = listener.createStack();
 

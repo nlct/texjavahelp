@@ -91,6 +91,10 @@ public class MnemonicTrail extends AbstractGlsCommand
             expanded.push(listener.getControlSequence("mnemonicsep"));
             pushEntry(expanded, parentEntry, parser, stack);
          }
+         else if (parentEntry == null)
+         {
+            expanded.push(listener.getControlSequence("premnemonic"));
+         }
       }
    }
 }

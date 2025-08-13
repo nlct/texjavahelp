@@ -23,6 +23,7 @@ import java.io.IOException;
 
 import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texparserlib.latex.KeyValList;
+import com.dickimawbooks.texparserlib.latex.LaTeXGenericCommand;
 
 public class Mnemonic extends ControlSequence
 {
@@ -59,11 +60,13 @@ public class Mnemonic extends ControlSequence
 
       parser.startGroup();
 
-      TeXObjectList expanded = listener.createStack();
+      parser.putControlSequence(true,
+       new LaTeXGenericCommand(true, "predglsfieldhook", "m",
+        TeXParserUtils.createStack(listener,
+        new TeXCsRef("checkpremnemonic"),
+        TeXParserUtils.createGroup(listener, listener.getParam(1)))));
 
-      expanded.add(listener.getControlSequence("appto"));
-      expanded.add(listener.getControlSequence("glslinkpostsetkeys"));
-      expanded.add(listener.getControlSequence("checkpremnemonic"));
+      TeXObjectList expanded = listener.createStack();
 
       expanded.add(listener.getControlSequence("mnemonicref"));
       expanded.add(listener.getOther('['));
