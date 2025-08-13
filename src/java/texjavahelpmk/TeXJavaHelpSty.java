@@ -169,9 +169,11 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new LaTeXGenericCommand(true,
        "mnemonicitemref", "m", 
-         TeXParserUtils.createStack(listener, new TeXCsRef("mnemonic"),
+         TeXParserUtils.createStack(listener, 
+         new TeXCsRef("keys"), 
+         TeXParserUtils.createGroup(listener, new TeXCsRef("mnemonic"),
            TeXParserUtils.createGroup(listener, listener.getParam(1))
-         )));
+         ))));
 
       registerControlSequence(new LeftQuadPar());
 
@@ -300,8 +302,20 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new Dglsfield("accelerator", glossariesSty,
          CaseChange.NO_CHANGE, "keystroke"));
 
-      registerControlSequence(new Dglsfield("mnemonic", glossariesSty,
+      registerControlSequence(new Dglsfield("mnemonicref", glossariesSty,
          CaseChange.NO_CHANGE, "mnemonic"));
+
+      registerControlSequence(new IfComponent(glossariesSty));
+      registerControlSequence(new Mnemonic());
+      registerControlSequence(new CheckPremnemonic());
+
+      registerControlSequence(new GenericCommand(true,
+       "premnemonic", null, TeXParserUtils.createGroup(listener,
+         new TeXCsRef("keys"),
+         TeXParserUtils.createGroup(listener,
+          new TeXCsRef("glsentrytext"), listener.createGroup("manual.keystroke.alt")),
+         new TeXCsRef("keysep")
+        )));
 
       glossariesSty.addField("iconimage");
 

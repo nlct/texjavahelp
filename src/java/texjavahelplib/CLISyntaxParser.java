@@ -186,7 +186,7 @@ public abstract class CLISyntaxParser
             }
          }
 
-         return setDebugOption(option, value);
+         return setDebugOption(option, value == null ? Integer.MAX_VALUE : value);
       }
       else if (originalArgList[preparseIndex].startsWith("--debug="))
       {

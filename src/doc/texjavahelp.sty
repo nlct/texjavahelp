@@ -1145,14 +1145,51 @@
 \glsaddstoragekey{iconimage}{}{\entryiconimage}
 
 \newdglsfield{keystroke}{\accelerator}
-\newdglsfield{mnemonic}{\mnemonic}
+\newdglsfield{mnemonic}{\mnemonicref}
+
+\newcommand{\premnemonic}{{\keys{\keyref{alt}}\keysep}}
+
+\newcommand{\ifcomponent}[3]{%
+ \glsifcategory{#1}{button}%
+ {#2}%
+ {%
+   \glsifcategory{#1}{widget}%
+   {#2}%
+   {%
+     \glsifcategory{#1}{dialog}%
+     {#2}%
+     {#3}%
+   }%
+ }%
+}
+
+\newcommand\checkpremnemonic{%
+ \ifcomponent{\glslabel}%
+ {%
+  \premnemonic
+ }%
+ {%
+   \glsifcategory{\glslabel}{menu}%
+   {%
+    \ifglshasparent{\glslabel}{}{\premnemonic}%
+   }%
+   {}%
+ }%
+}
+
+\NewDocumentCommand\mnemonic{m}{%
+ {%
+   \appto\glslinkpostsetkeys{\checkpremnemonic}%
+   \mnemonicref[textformat=keys]{#1}%
+ }%
+}
 
 \NewDocumentCommand\mnemonictrail{O{menu.}m}{%
   \glstexorpdfstring{\@mnemonictrail{#1#2}}{\entrymnemonic{#1#2}}%
 }
 
 \newcommand{\mnemonicsep}{\menusep}
-\newcommand{\mnemonicitemref}{\mnemonic}
+\newcommand{\mnemonicitemref}[1]{\keys{\mnemonicref{#1}}}
 
 \newcommand\@mnemonictrail[1]{%
   \glsdoifexists{#1}%
@@ -1166,7 +1203,9 @@
        }%
        {}%
     }%
-    {}%
+    {%
+      \premnemonic
+    }%
     \mnemonicitemref{#1}%
   }%
 }
