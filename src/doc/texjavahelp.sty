@@ -2710,6 +2710,15 @@ transcript or log file or written to STDOUT or STDERR}}
  colframe=teal,colback=teal!5!white,
  enhanced,attach boxed title to top right={yshift=\boxtitleshift},#1}
 
+% \tjhnewtitledbox{envname}{title}{colour-name}
+\NewDocumentCommand{\tjhnewtitledbox}{mmm}{%
+  \newtcolorbox{#1}[1][]{breakable,title={#2},
+   before upper={\parindent12pt\noindent},
+   coltitle=#3,colbacktitle=#3!20!white,
+   colframe=#3,colback=#3!5!white,
+   enhanced,attach boxed title to top right={yshift=\boxtitleshift},##1}%
+}
+
 % NB These boxes aren't set up for verbatim
 
 \definecolor{defbackground}{rgb}{1,1,0.75}

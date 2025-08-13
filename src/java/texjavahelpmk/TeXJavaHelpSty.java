@@ -87,6 +87,8 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       addBasicBoxCommands();
 
+      registerControlSequence(new TJHNewTitledBox(this));
+
       addStandaloneDefCommands();
       registerControlSequence(new WidgetDef(pinnedBox, rightBox, noteBox, glossariesSty));
       registerControlSequence(new MenuDef(settingsBox, rightBox, noteBox, glossariesSty));
