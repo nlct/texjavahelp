@@ -56,17 +56,24 @@ public class TJHNewTitledBox extends ControlSequence
    {
       TJHListener listener = (TJHListener)parser.getListener();
 
+      popOptArg(parser, stack); // ignore
       String envname = popLabelString(parser, stack);
       TeXObject title = popArg(parser, stack);
       String colour = popLabelString(parser, stack).trim();
 
-      Color frameCol = sty.getColorSty().getColor(parser, "named", colour);
+      Color frameCol =null;
+      Color bg = null;
 
-      int r = Math.max(240, (frameCol.getRed()+765)/4);
-      int g = Math.max(240, (frameCol.getGreen()+765)/4);
-      int b = Math.max(240, (frameCol.getBlue()+765)/4);
+      if (!colour.isEmpty())
+      {
+         frameCol = sty.getColorSty().getColor(parser, "named", colour);
 
-      Color bg = new Color(r, g, b);
+         int r = Math.max(240, (frameCol.getRed()+765)/4);
+         int g = Math.max(240, (frameCol.getGreen()+765)/4);
+         int b = Math.max(240, (frameCol.getBlue()+765)/4);
+
+         bg = new Color(r, g, b);
+      }
 
       sty.addTaggedColourBox(envname, false, (TeXFontText)null,
         (Color)null, bg, frameCol, title);

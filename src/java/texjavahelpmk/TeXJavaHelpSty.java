@@ -461,6 +461,8 @@ public class TeXJavaHelpSty extends UserGuideSty
        new TeXObject[] {new HtmlTag("<span class=\"qquad\">&nbsp; &nbsp; </span>")}));
 
       registerControlSequence(new AtNumberOfNumber("jdroutline", 3, 3));
+
+      registerControlSequence(new NumberedDec());
    }
 
    protected void addLangCommands()

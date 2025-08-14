@@ -113,6 +113,8 @@ public class TJHListener extends L2HConverter
       addCssStyle(".subfigure { display: inline-block; padding: 5pt; }");
       addCssStyle(".quadleft { padding-left: 1em; }");
       addCssStyle(".topalign { vertical-align: top; }");
+      addCssStyle(".numbered .displaylist { padding-left: 0pt; margin-left: 0pt; }");
+      addCssStyle(".numbered .displaylist .displaylist { padding-left: 10pt; margin-left: 10pt; }");
       addCssStyle("div.iconstartpar { float: left; padding-right: 1em;  }");
 
       addCssStyle(TeXJavaHelpLib.KEYSTROKE_CSS);

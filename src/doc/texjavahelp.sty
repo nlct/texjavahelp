@@ -2,7 +2,7 @@
 % in the TeX Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{texjavahelp}[2025/08/11 v0.3a (NLCT)]
+\ProvidesPackage{texjavahelp}[2025/08/13 v0.3a (NLCT)]
 
 \RequirePackage{pifont}
 \RequirePackage{fontawesome}
@@ -2710,13 +2710,21 @@ transcript or log file or written to STDOUT or STDERR}}
  colframe=teal,colback=teal!5!white,
  enhanced,attach boxed title to top right={yshift=\boxtitleshift},#1}
 
-% \tjhnewtitledbox{envname}{title}{colour-name}
-\NewDocumentCommand{\tjhnewtitledbox}{mmm}{%
-  \newtcolorbox{#1}[1][]{breakable,title={#2},
-   before upper={\parindent12pt\noindent},
-   coltitle=#3,colbacktitle=#3!20!white,
-   colframe=#3,colback=#3!5!white,
-   enhanced,attach boxed title to top right={yshift=\boxtitleshift},##1}%
+% \tjhnewtitledbox[extra options]{envname}{title}{colour-name}
+\NewDocumentCommand{\tjhnewtitledbox}{O{}mmm}{%
+  \ifstrempty{#4}
+  {%
+    \newtcolorbox{#2}[1][]{breakable,title={#3},
+     before upper={\parindent12pt\noindent},
+     enhanced,attach boxed title to top right={yshift=\boxtitleshift},#1,##1}%
+  }%
+  {%
+    \newtcolorbox{#2}[1][]{breakable,title={#3},
+     before upper={\parindent12pt\noindent},
+     coltitle=#4,colbacktitle=#4!20!white,
+     colframe=#4,colback=#4!5!white,
+     enhanced,attach boxed title to top right={yshift=\boxtitleshift},#1,##1}%
+  }%
 }
 
 % NB These boxes aren't set up for verbatim
@@ -3079,5 +3087,20 @@ halign upper=flush left,halign lower=justify,
 }
 
 \providecommand\TeXParserLibToImage[2][]{#2}
+
+\newenvironment{numbered}%
+{%
+ \leftmargini=1em\relax
+ \def\theenumi{\@arabic\c@enumi}%
+ \def\theenumii{\theenumi.\@arabic\c@enumii}%
+ \def\theenumiii{\theenumii.\@arabic\c@enumiii}%
+ \def\theenumiv{\theenumiii.\@arabic\c@enumiv}%
+ \def\labelenumi{\theenumi.}%
+ \def\labelenumii{\theenumii.}%
+ \def\labelenumiii{\theenumiii.}%
+ \def\labelenumiv{\theenumiv.}%
+ \begin{enumerate}%
+}%
+{\end{enumerate}}
 
 \endinput
