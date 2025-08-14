@@ -2,7 +2,7 @@
 % in the TeX Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{texjavahelp}[2025/08/13 v0.3a (NLCT)]
+\ProvidesPackage{texjavahelp}[2025/08/14 v0.3a (NLCT)]
 
 \RequirePackage{pifont}
 \RequirePackage{fontawesome}
@@ -316,6 +316,9 @@
  }
  \date{\nlct@v@version}
 }
+
+\newcommand{\thedocversion}{\nlct@version}
+\newcommand{\thedocdate}{\nlct@date}
 
 \renewcommand{\title}[1]{\gdef\@title{#1}\hypersetup{pdftitle={\text_purify:n{#1}}}}
 
