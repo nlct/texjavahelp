@@ -43,6 +43,7 @@ import com.dickimawbooks.texparserlib.latex.nlctdoc.IndexInitPostNameHooks;
 import com.dickimawbooks.texparserlib.latex.nlctdoc.AbbrPostNameHook;
 import com.dickimawbooks.texparserlib.latex.nlctdoc.ExampleEnv;
 import com.dickimawbooks.texparserlib.latex.nlctdoc.InlineGlsDef;
+import com.dickimawbooks.texparserlib.latex.nlctdoc.VersionDate;
 
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 
@@ -66,6 +67,11 @@ public class TeXJavaHelpSty extends UserGuideSty
    public void addDefinitions()
    {
       TJHListener listener = (TJHListener)getListener();
+
+      registerControlSequence(new VersionDate());
+      registerControlSequence(new AtFirstOfOne("hologoRobust"));
+      registerControlSequence(new GenericCommand(true,
+        "visiblespace", null, new TeXCsRef("textvisiblespace")));
 
       addCssStyles();
       addSemanticCommands();
@@ -463,6 +469,12 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new AtNumberOfNumber("jdroutline", 3, 3));
 
       registerControlSequence(new NumberedDec());
+
+      registerControlSequence(new GenericCommand(true, "thedocversion", null,
+        TeXParserUtils.createStack(listener, new TeXCsRef("nlct@version"))));
+
+      registerControlSequence(new GenericCommand(true, "thedocdate", null,
+        TeXParserUtils.createStack(listener, new TeXCsRef("nlct@date"))));
    }
 
    protected void addLangCommands()
