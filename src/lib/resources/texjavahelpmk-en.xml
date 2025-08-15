@@ -27,12 +27,12 @@ has have</entry>
 <entry key="syntax.title">Syntax:</entry>
 <entry key="syntax.opt_in">{0} [&lt;option&gt;]+ &lt;TeX file&gt; &lt;out-dir&gt;</entry>
 <entry key="syntax.general">General Options:</entry>
-<entry key="syntax.in">{0} (or {1}) &lt;TeX file&gt;		Parse &lt;TeX file&gt;.</entry>
-<entry key="syntax.version">{0} (or {1})		Print version and exit.</entry>
-<entry key="syntax.help">{0} (or {1})			Print this help message and exit.</entry>
-<entry key="syntax.debug">{0} [&lt;level&gt;]			Switch on debug mode.</entry>
-<entry key="syntax.nodebug">{0}			Switch off debug mode. (Default.)</entry>
-<entry key="syntax.debug-mode">{0} &lt;value&gt;			Debug verbosity. The value may be an integer or a comma-separated list of keywords:
+<entry key="syntax.in">{0} (or {1}) &lt;TeX file&gt;	Parse &lt;TeX file&gt;.</entry>
+<entry key="syntax.version">{0} (or {1})	Print version and exit.</entry>
+<entry key="syntax.help">{0} (or {1})	Print this help message and exit.</entry>
+<entry key="syntax.debug">{0} [&lt;level&gt;]	Switch on debug mode.</entry>
+<entry key="syntax.nodebug">{0}	Switch off debug mode. (Default.)</entry>
+<entry key="syntax.debug-mode">{0} &lt;value&gt;	Debug verbosity. The value may be an integer or a comma-separated list of keywords:
 	all	Extremely verbose!
 	io	I/O operations
 	popped	Object popped from a stack
@@ -41,7 +41,7 @@ has have</entry>
 	expansion	Whenever an object is expanded
 	expansion-list	Whenever a list is expanded
 	expansion-once	Whenever an object is expanded once
-	expansion-once-list Whenever a list is expanded once
+	expansion-once-list	Whenever a list is expanded once
 	process		Whenever an object is processed
 	process-stack	Whenever a stack is processed
 	cs		Control sequence
@@ -49,19 +49,18 @@ has have</entry>
 	catcode	Whenever a category code changes
 	read	Whenever a codepoint is read from a file
 </entry>
-<entry key="syntax.log">{0} &lt;file&gt;				Set log file.</entry>
-<entry key="syntax.nolog">{0}				Don''t log (default).</entry>
-<entry key="syntax.rmtmpdir">{0}				Remove temporary files on exit.</entry>
-<entry key="syntax.timeout">{0} &lt;n&gt;			Timeout processes after &lt;n&gt; milliseconds.</entry>
+<entry key="syntax.log">{0} &lt;file&gt;	Set log file.</entry>
+<entry key="syntax.nolog">{0}	Don''t log (default).</entry>
+<entry key="syntax.rmtmpdir">{0}	Remove temporary files on exit.</entry>
+<entry key="syntax.timeout">{0} &lt;n&gt;	Timeout processes after &lt;n&gt; milliseconds.</entry>
 <entry key="syntax.output.options">Output Options:</entry>
-<entry key="syntax.out">{0} (or {1}) &lt;directory&gt;	Save output in &lt;directory&gt;, 
-				which must not already exist.</entry>
-<entry key="syntax.out.charset">{0} &lt;charset&gt;			Set the character encoding to &lt;charset&gt; for the output files.</entry>
+<entry key="syntax.out">{0} (or {1}) &lt;directory&gt;	Save output in &lt;directory&gt;, which must not already exist.</entry>
+<entry key="syntax.out.charset">{0} &lt;charset&gt;	Set the character encoding to &lt;charset&gt; for the output files.</entry>
 <entry key="syntax.html.options">HTML Options:</entry>
-<entry key="syntax.head">{0} &lt;html&gt;			Add &lt;head&gt; code to HTML header.</entry>
-<entry key="syntax.mathjax">{0} 			Use MathJax.</entry>
+<entry key="syntax.head">{0} &lt;html&gt;	Add &lt;head&gt; code to HTML header.</entry>
+<entry key="syntax.mathjax">{0}	Use MathJax.</entry>
 <entry key="syntax.support-unicode-script">{0}	Use Unicode superscripts or subscripts where available.</entry>
-<entry key="syntax.entities">{0} 			Use HTML entities for non-ASCII characters.</entry>
+<entry key="syntax.entities">{0}	Use HTML entities for non-ASCII characters.</entry>
 
 <!--  Error messages -->
 
