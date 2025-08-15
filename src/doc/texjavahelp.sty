@@ -2572,8 +2572,17 @@
   \glsdefpostname{widget}{\idxwidgetpostnamehook}%
 }
 
-\renewcommand*{\glsseeitemformat}[1]{%
- \ifglshasshort{#1}{\glsfmttext{#1}}{\glsxtrhiername{#1}}%
+\ifdef\glsxtrseeitemformat
+{
+  \renewcommand*{\glsseeitemformat}[1]{%
+   \glsxtrseeitemformat{#1}%
+  }
+}
+{
+  \renewcommand*{\glsseeitemformat}[1]{%
+   \ifglshasparent{#1}{\glsxtrhiername{#1}}%
+   {\ifglshasshort{#1}{\glsfmttext{#1}}{\glsfmtname{#1}}}%
+  }
 }
 
 
