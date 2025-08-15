@@ -417,9 +417,9 @@ public class Xml2Bib
 
       HashMap<String,Entry> entries = new HashMap<String,Entry>();
 
-      processEntries(titleList, props, entries);
       processEntries(indexList, props, entries);
       processEntries(menuList, props, entries);
+      processEntries(titleList, props, entries);
       processEntries(otherList, props, entries);
       processEntries(fieldList, props, entries);
 
