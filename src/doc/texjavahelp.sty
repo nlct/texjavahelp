@@ -2572,6 +2572,11 @@
   \glsdefpostname{widget}{\idxwidgetpostnamehook}%
 }
 
+\renewcommand*{\glsseeitemformat}[1]{%
+ \ifglshasshort{#1}{\glsfmttext{#1}}{\glsxtrhiername{#1}}%
+}
+
+
 \NewDocumentCommand\printindex{O{}}{%
   {%
     \nlctguideindexinitpostnamehooks
