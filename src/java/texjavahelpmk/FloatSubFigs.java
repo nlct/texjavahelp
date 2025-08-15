@@ -59,6 +59,10 @@ public class FloatSubFigs extends ControlSequence
    {
       TJHListener listener = (TJHListener)parser.getListener();
 
+      parser.startGroup();
+
+      parser.putControlSequence(true, new TextualContentCommand("glscounter", "figure"));
+
       listener.setcounter("subfigure", UserNumber.ZERO);
 
       boolean isStar = (popModifier(parser, stack, '*') == '*');
@@ -164,6 +168,8 @@ public class FloatSubFigs extends ControlSequence
       expanded.add(listener.newHtml5EndElement("figure", "div", true, true));
 
       TeXParserUtils.process(expanded, parser, stack);
+
+      parser.endGroup();
    }
 
 }

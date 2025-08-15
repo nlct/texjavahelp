@@ -71,6 +71,10 @@ public class FloatFig extends ControlSequence
      TeXParser parser, TeXObjectList stack)
      throws IOException
     {
+      parser.startGroup();
+
+      parser.putControlSequence(true, new TextualContentCommand("glscounter", "figure"));
+
       TJHListener listener = (TJHListener)parser.getListener();
 
       TeXObjectList expanded = listener.createStack();
@@ -142,6 +146,8 @@ public class FloatFig extends ControlSequence
       expanded.add(listener.newHtml5EndElement("figure", "div", true, true));
 
       TeXParserUtils.process(expanded, parser, stack);
+
+      parser.endGroup();
    }
 
 }

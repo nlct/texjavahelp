@@ -60,6 +60,10 @@ public class FloatTable extends ControlSequence
    {
       TJHListener listener = (TJHListener)parser.getListener();
 
+      parser.startGroup();
+
+      parser.putControlSequence(true, new TextualContentCommand("glscounter", "table"));
+
       popOptArg(parser, stack);
       String label = popLabelString(parser, stack);
       popOptArg(parser, stack);// LaTeX only so ignore
@@ -139,6 +143,8 @@ public class FloatTable extends ControlSequence
       expanded.add(new EndElement("div", true, true));// table div
 
       TeXParserUtils.process(expanded, parser, stack);
+
+      parser.endGroup();
    }
 
 }

@@ -789,9 +789,13 @@
  [ \medskipamount ]
 }
 
+\tl_new:N \l__texjavahelp_counter_tl
+
 % \NoFloatLongTable[h-align]{label}[LaTeX only pre-content]{specs}{header row}{content}[lot]{caption}
 \NewDocumentCommand \NoFloatLongTable { o m o m m m o m }
 {
+  \let \l__texjavahelp_counter_tl \glscounter
+  \renewcommand \glscounter { table }  
   \tl_clear:N \__texjavahelp_pre_tl
   \tl_clear:N \__texjavahelp_post_tl
   \IfValueT { #3 }
@@ -896,6 +900,7 @@
   \__texjavahelp_pre_tl
   #6
   \__texjavahelp_post_tl
+  \let \glscounter \l__texjavahelp_counter_tl
 }
 
 \newcommand{\tablecellstack}[1]{\shortstack{#1}}
