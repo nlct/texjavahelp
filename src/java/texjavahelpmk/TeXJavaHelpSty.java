@@ -244,7 +244,7 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new ListEntryDescendentsInit());
       registerControlSequence(new ListMenuItems(glossariesSty));
       registerControlSequence(new PrintHelpIndex(glossariesSty));
-      registerControlSequence(new IndexInitPostNameHooks());
+      registerControlSequence(new IndexInitPostNameHooks(this));
       registerControlSequence(new AbbrPostNameHook(glossariesSty));
       registerControlSequence(new PostSwitchHook(glossariesSty));
       registerControlSequence(new PostMenuHook(glossariesSty));
@@ -575,6 +575,8 @@ public class TeXJavaHelpSty extends UserGuideSty
        null, TeXParserUtils.createStack(listener,
         listener.getSpace(), new TeXCsRef("idxbuttonname"))));
 
+      registerControlSequence(new IdxWidgetPostNameHook(glossariesSty));
+
       registerControlSequence(createLangCs("warningtext",
         "manualtext", "warning", "Warning"));
       registerControlSequence(createLangCs("warningdesc",
@@ -804,6 +806,17 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(env);
 
       return env;
+   }
+
+   @Override
+   public void initIndexPostNameHooks()
+   {
+      super.initIndexPostNameHooks();
+
+      getParser().putControlSequence(true,
+        new GenericCommand(true, "glsxtrpostnamewidget", null,
+         TeXParserUtils.createStack(listener,
+          listener.getSpace(), new TeXCsRef("idxwidgetpostnamehook"))));
    }
 
    public static final String MSG_PARAM_PROP_NAME = "l__texjavahelp_msgparam_prop";

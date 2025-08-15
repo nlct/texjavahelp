@@ -2555,6 +2555,12 @@
 \newcommand{\idxmenuname}{\manualtext{idxmenu}{menu}}
 \newcommand{\idxbuttonname}{\manualtext{idxbutton}{button}}
 
+\newcommand\idxwidgetpostnamehook{%
+  \glsxtrifhasfield{keystroke}{\glscurrententrylabel}%
+  { {\footnotesize \glscurrentfieldvalue}}%
+  {}%
+}
+
 \newcommand{\nlctguideindexinitpostnamehooks}{%
   \glsdefpostname{abbreviation}{\abbrpostnamehook}%
   \glsdefpostname{package}{ \idxpackagename}%
@@ -2563,6 +2569,7 @@
   \glsdefpostname{counter}{ \idxcountername}%
   \glsdefpostname{variable}{ \idxvariablename}%
   \glsdefpostname{button}{ \idxbuttonname}%
+  \glsdefpostname{widget}{\idxwidgetpostnamehook}%
 }
 
 \NewDocumentCommand\printindex{O{}}{%
