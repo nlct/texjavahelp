@@ -373,12 +373,84 @@ public class Xml2Bib
          }
       }
 
-      HashMap<String,Entry> entries = new HashMap<String,Entry>();
+      Vector<String> titleList = new Vector<String>();
+      Vector<String> indexList = new Vector<String>();
+      Vector<String> menuList = new Vector<String>();
+      Vector<String> otherList = new Vector<String>();
+      Vector<String> fieldList = new Vector<String>();
 
       for (Enumeration en = props.propertyNames(); en.hasMoreElements(); )
       {
          String key = (String)en.nextElement();
 
+         int idx = key.lastIndexOf('.');
+
+         if (key.endsWith(".title"))
+         {
+            titleList.add(key);
+         }
+         else if (idx > -1
+               && KEY_SUFFIX_PATTERN.matcher(key.substring(idx+1)).matches())
+         {
+            fieldList.add(key);
+         }
+         else if (key.startsWith("index.")
+               || key.startsWith("manual.")
+               || key.startsWith("term.")
+                 )
+         {
+            indexList.add(key);
+         }
+         else if (key.startsWith("menu."))
+         {
+            menuList.add(key);
+         }
+         else
+         {
+            otherList.add(key);
+         }
+      }
+
+      titleList.sort(null);
+      indexList.sort(null);
+      otherList.sort(null);
+
+      HashMap<String,Entry> entries = new HashMap<String,Entry>();
+
+      processEntries(titleList, props, entries);
+      processEntries(indexList, props, entries);
+      processEntries(menuList, props, entries);
+      processEntries(otherList, props, entries);
+      processEntries(fieldList, props, entries);
+
+      try
+      {
+         out = new PrintWriter(Files.newBufferedWriter(outFile.toPath(), outCharset));
+
+         out.print("% Encoding: ");
+         out.println(outCharset.name());
+
+         for (String key : entries.keySet())
+         {
+            Entry entry = entries.get(key);
+            entry.write(out);
+         }
+      }
+      finally
+      {
+         if (out != null)
+         {
+            out.close();
+            out = null;
+         }
+      }
+   }
+
+   protected void processEntries(Vector<String> keyList, Properties props,
+    HashMap<String,Entry> entries)
+   {
+      for (String key : keyList)
+      {
          if (entries.containsKey(key)) continue;
 
          int idx = key.lastIndexOf('.');
@@ -507,27 +579,6 @@ public class Xml2Bib
          }
       }
 
-      try
-      {
-         out = new PrintWriter(Files.newBufferedWriter(outFile.toPath(), outCharset));
-
-         out.print("% Encoding: ");
-         out.println(outCharset.name());
-
-         for (String key : entries.keySet())
-         {
-            Entry entry = entries.get(key);
-            entry.write(out);
-         }
-      }
-      finally
-      {
-         if (out != null)
-         {
-            out.close();
-            out = null;
-         }
-      }
    }
 
    protected String getKeyStrokeValue(String fieldValue, Properties props)
