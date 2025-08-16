@@ -98,7 +98,7 @@ classes/com/dickimawbooks/xml2bib	:
 ../unstable/texjavahelp.zip	: lib/texjavahelplib.jar \
 	lib/texjavahelpmk.jar \
 	lib/tjhxml2bib.jar \
-	doc/texjavahelp.sty
+	doc/texjavahelp.sty ../LICENSE ../README.md
 	mkdir -p ../unstable/texjavahelp
 	rsync -rvC --delete lib/resources ../unstable/texjavahelp/lib/
 	cp lib/*.jar ../unstable/texjavahelp/lib/
