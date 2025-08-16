@@ -95,6 +95,25 @@ classes/com/dickimawbooks/xml2bib/Xml2Bib.class	: classes/com/dickimawbooks/xml2
 classes/com/dickimawbooks/xml2bib	:
 	mkdir -p classes/com/dickimawbooks/xml2bib
 
+../unstable/texjavahelp.zip	: lib/texjavahelplib.jar \
+	lib/texjavahelpmk.jar \
+	lib/tjhxml2bib.jar \
+	doc/texjavahelp.sty
+	mkdir -p ../unstable/texjavahelp
+	rsync -rvC --delete lib/resources ../unstable/texjavahelp/lib/
+	cp lib/*.jar ../unstable/texjavahelp/lib/
+	cp lib/*.html ../unstable/texjavahelp/lib/
+	rsync -rvC --delete bin/ ../unstable/texjavahelp/bin/
+	mkdir -p ../unstable/texjavahelp/doc
+	cp doc/texjavahelp.sty ../unstable/texjavahelp/doc/
+	cp doc/*.tex ../unstable/texjavahelp/doc/
+	cp doc/*.pdf ../unstable/texjavahelp/doc/
+	cp doc/texjavahelp.bib ../unstable/texjavahelp/doc/
+	cp -r doc/images ../unstable/texjavahelp/doc/
+	cp ../LICENSE ../unstable/texjavahelp
+	cp ../README.md ../unstable/texjavahelp
+	cd ../unstable ; zip -r texjavahelp.zip texjavahelp
+
 clean	:
 	\rm -rf classes
 	\rm -f doc/*.glstex
