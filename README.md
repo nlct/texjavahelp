@@ -34,3 +34,11 @@ The helpset files can then be created with:
 ```bash
 texjavahelpmk doc/texjavahelp.tex lib/resources/helpset
 ```
+
+Since texjavahelpmk only has a limited knowledge of LaTeX commands
+and packages, it's best to minimise the number of packages used.
+The user-level commands and environments provided by `texjavahelp.sty` are
+recognised but as `JEditorPane` only has limited CSS support, some
+effects from the PDF can't be replicated in the HTML files.
+
+Home: https://github.com/nlct/texjavahelp
