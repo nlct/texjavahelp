@@ -253,8 +253,8 @@ public class IndexItem implements Comparable<IndexItem>
               item.messageSystem.getHelpLib().error(
                item.messageSystem.getMessageWithFallback(
                 "error.index_item_file_not_exists",
-                "Index item filename ''{0}'' doesn''t exist in ''{1}''",
-                item.filename, dir));
+                "Index item filename ''{0}'' for key ''{1}'' doesn''t exist",
+                item.filename, item.key));
             }
          }
       }
