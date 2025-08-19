@@ -19,6 +19,7 @@
 package com.dickimawbooks.texjavahelplib;
 
 import java.util.ArrayDeque;
+import java.text.MessageFormat;
 
 // adapted from com.dickimawbooks.bib2gls.common.BibGlsTeXApp
 
@@ -49,6 +50,36 @@ public abstract class CLISyntaxParser
    public TeXJavaHelpLib getHelpLib()
    {
       return helpLib;
+   }
+
+   public void setHelpLib(TeXJavaHelpLib helpLib)
+   {
+      this.helpLib = helpLib;
+   }
+
+   public String getMessageWithFallback(String label,
+       String fallbackFormat, Object... params)
+   {
+      if (helpLib == null)
+      {
+         if (fallbackFormat == null)
+         {
+            return label;
+         }
+
+         if (fallbackFormat.isEmpty())
+         {
+            return fallbackFormat;
+         }
+
+         MessageFormat fmt = new MessageFormat(fallbackFormat);
+
+         return fmt.format(params);
+      }
+      else
+      {
+         return helpLib.getMessageWithFallback(label, fallbackFormat, params);
+      }
    }
 
    /**
@@ -82,6 +113,8 @@ public abstract class CLISyntaxParser
 
    /**
     * Parse command line argument that starts with "-" if recognised.
+    * Note that if the helpSet wasn't initialised straight way it
+    * must be set before the parsing is done.
     * @param arg option name including leading hyphen(s)
     * @param returnVals scratch variable for storing the
     * argument values (by methods such as isArg(), isIntArg() or isListArg())
@@ -225,8 +258,9 @@ public abstract class CLISyntaxParser
             }
             else
             {
-               throw new InvalidSyntaxException(helpLib.getMessage(
-                 "error.clisyntax.missing.value", option));
+               throw new InvalidSyntaxException(getMessageWithFallback(
+                 "error.clisyntax.missing.value",
+                 "Missing value for: {0}", option));
             }
          }
       }
@@ -319,7 +353,8 @@ public abstract class CLISyntaxParser
             if (!parseArg(arg, returnVals))
             {
                throw new InvalidSyntaxException(
-                  helpLib.getMessage("error.clisyntax.unknown.arg",
+                  getMessageWithFallback("error.clisyntax.unknown.arg",
+                  "Unknown option: {0} (Use {1} for help.)",
                   arg, "--help"));
             }
          }
