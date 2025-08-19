@@ -349,7 +349,7 @@ public class TJHListener extends L2HConverter
          out = new PrintWriter(
            getTeXApp().createBufferedWriter(indexXmlFile.toPath(), charset));
 
-         IndexItem.saveIndex(indexData, out, charset);
+         IndexItem.saveIndex(indexData, out, charset, getTeXJavaHelpMk().getOutDirectory());
       }
       finally
       {

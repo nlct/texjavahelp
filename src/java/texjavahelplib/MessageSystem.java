@@ -366,6 +366,11 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
       return hsLocale;
    }
 
+   public TeXJavaHelpLib getHelpLib()
+   {
+      return helpLib;
+   }
+
    protected TeXJavaHelpLib helpLib;
    protected HelpSetLocale hsLocale;
    protected String tagPrefix;

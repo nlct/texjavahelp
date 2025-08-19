@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.InputStream;
+import java.io.File;
 
 import java.net.URL;
 
@@ -218,6 +219,13 @@ public class IndexItem implements Comparable<IndexItem>
        PrintWriter out, Charset charset)
      throws IOException
    {
+      saveIndex(indexData, out, charset, null);
+   }
+
+   public static void saveIndex(HashMap<String,IndexItem> indexData,
+       PrintWriter out, Charset charset, File dir)
+     throws IOException
+   {
       out.print("<?xml version=\"1.0\" encoding=\"");
       out.print(charset.name());
       out.println("\" standalone=\"no\"?>");
@@ -227,7 +235,28 @@ public class IndexItem implements Comparable<IndexItem>
       for (String mapKey : indexData.keySet())
       {
          IndexItem item = indexData.get(mapKey);
-         item.save(out);
+
+         if (dir == null || item.filename == null)
+         {
+            item.save(out);
+         }
+         else
+         {
+            File file = new File(dir, item.filename);
+
+            if (file.exists())
+            {
+               item.save(out);
+            }
+            else
+            {
+              item.messageSystem.getHelpLib().error(
+               item.messageSystem.getMessageWithFallback(
+                "error.index_item_file_not_exists",
+                "Index item filename ''{0}'' doesn''t exist in ''{1}''",
+                item.filename, dir));
+            }
+         }
       }
 
       out.println("</index>");
