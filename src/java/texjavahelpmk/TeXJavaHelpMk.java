@@ -93,10 +93,58 @@ public class TeXJavaHelpMk extends TeXAppAdapter
 
              super.error(owner, msg, e);
           }
+
+          @Override
+          public int getExitCode(Throwable e, boolean isFatal)
+          {
+             if (e instanceof TeXSyntaxException)
+             {
+                return EXIT_TEX_PARSER;
+             }
+             else
+             {
+                return super.getExitCode(e, isFatal);
+             }
+          }
        };
       helpLib = new TeXJavaHelpLib(helpLibApp);
       helpLibApp.setHelpLib(helpLib);
       helpLib.getMessageSystem().loadDictionary("texparserlib");
+   }
+
+   public int getExitCode()
+   {
+      return helpLibApp == null ? exitCode : helpLibApp.getExitCode();
+   }
+
+   public void setExitCode(int code)
+   {
+      if (helpLibApp != null)
+      {
+         helpLibApp.setExitCode(code);
+      }
+
+      exitCode = code;
+   }
+
+   public int getExitCode(Throwable e, boolean isFatal)
+   {
+      if (helpLibApp != null)
+      {
+         return helpLibApp.getExitCode(e, isFatal);
+      }
+      else if (e instanceof InvalidSyntaxException)
+      {
+         return TeXJavaHelpLibAppAdapter.EXIT_SYNTAX;
+      }
+      else if (e instanceof IOException)
+      {
+         return TeXJavaHelpLibAppAdapter.EXIT_IO;
+      }
+      else
+      {
+         return TeXJavaHelpLibAppAdapter.EXIT_OTHER;
+      }
    }
 
    public TeXJavaHelpLib getHelpLib()
@@ -190,6 +238,7 @@ public class TeXJavaHelpMk extends TeXAppAdapter
       else
       {
          logAndStdErrMessage(e, msg);
+         setExitCode(getExitCode(e, false));
       }
    }
 
@@ -767,13 +816,15 @@ public class TeXJavaHelpMk extends TeXAppAdapter
               dir.getAbsolutePath(), File.pathSeparatorChar));
 
          Process process = pb.start();
-         int exitCode = process.waitFor();
+         int processExitCode = process.waitFor();
 
-         if (exitCode != 0)
+         if (processExitCode != 0)
          {
+            setExitCode(TeXJavaHelpLibAppAdapter.EXIT_PROCESS_FAILED);
+
             throw new IOException(getMessage("error.app_failed",
               String.format("%s -jobname \"%s\" \"%s\"", invoker, name, file.getName()),
-              exitCode));
+              processExitCode));
          }
 
          if (mimetype == null)
@@ -790,10 +841,10 @@ public class TeXJavaHelpMk extends TeXAppAdapter
 
             String croppedPdfName = name+"-crop.pdf";
 
-            exitCode = execCommandAndWaitFor(tmpDir,
+            processExitCode = execCommandAndWaitFor(tmpDir,
                invoker, pdfFile.getName(), croppedPdfName);
 
-            if (exitCode == 0)
+            if (processExitCode == 0)
             {
                pdfFile = new File(tmpDir, croppedPdfName);
             }
@@ -802,7 +853,7 @@ public class TeXJavaHelpMk extends TeXAppAdapter
                warning(parser, getMessage("error.app_failed",
                  String.format("%s \"%s\"", invoker,
                     pdfFile.getName(), croppedPdfName),
-                 exitCode));
+                 processExitCode));
             }
          }
 
@@ -1586,15 +1637,14 @@ public class TeXJavaHelpMk extends TeXAppAdapter
       catch (InvalidSyntaxException e)
       {
          app.error(e.getMessage(), null);
-
-         System.exit(1);
+         app.setExitCode(TeXJavaHelpLibAppAdapter.EXIT_SYNTAX);
       }
       catch (Throwable e)
       {
          app.error(null, e);
-
-         System.exit(2);
       }
+
+      System.exit(app.getExitCode());
    }
 
    private Hashtable<String,String> kpsewhichResults;
@@ -1618,6 +1668,7 @@ public class TeXJavaHelpMk extends TeXAppAdapter
 
    private int debugMode = 0;
    private int verboseLevel = 0;
+   protected int exitCode = 0;
 
    private boolean deleteTempDirOnExit = true;
    private boolean convertImages = true;

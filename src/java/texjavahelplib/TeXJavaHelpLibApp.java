@@ -212,4 +212,6 @@ public interface TeXJavaHelpLibApp
    public void debug(Component owner, String message, Throwable e);
 
    public boolean isDebuggingOn();
+
+   public default void setExitCode(int code) { }
 }

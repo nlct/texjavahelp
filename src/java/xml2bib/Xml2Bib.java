@@ -54,6 +54,41 @@ public class Xml2Bib
       inFileNames = new Vector<String>();
    }
 
+   public int getExitCode()
+   {
+      return helpLibApp == null ? exitCode : helpLibApp.getExitCode();
+   }
+
+   public void setExitCode(int code)
+   {
+      if (helpLibApp != null)
+      {
+         helpLibApp.setExitCode(code);
+      }
+
+      exitCode = code;
+   }
+
+   public int getExitCode(Throwable e, boolean isFatal)
+   {
+      if (helpLibApp != null)
+      {
+         return helpLibApp.getExitCode(e, isFatal);
+      }
+      else if (e instanceof InvalidSyntaxException)
+      {
+         return TeXJavaHelpLibAppAdapter.EXIT_SYNTAX;
+      }
+      else if (e instanceof IOException)
+      {
+         return TeXJavaHelpLibAppAdapter.EXIT_IO;
+      }
+      else
+      {
+         return TeXJavaHelpLibAppAdapter.EXIT_OTHER; 
+      }
+   }
+
    protected void initHelpLibrary() throws IOException
    {
       helpLibApp = new TeXJavaHelpLibAppAdapter()
@@ -85,6 +120,11 @@ public class Xml2Bib
        };
       helpLib = new TeXJavaHelpLib(helpLibApp);
       helpLibApp.setHelpLib(helpLib);
+
+      if (exitCode != 0)
+      {
+         helpLibApp.setExitCode(exitCode);
+      }
    }
 
    public TeXJavaHelpLib getHelpLib()
@@ -139,6 +179,7 @@ public class Xml2Bib
       else
       {
          message("error", message, e);
+         setExitCode(getExitCode(e, false));
       }
    }
 
@@ -165,6 +206,10 @@ public class Xml2Bib
          {
             e.printStackTrace();
          }
+      }
+      else if (msgTag.contains("error"))
+      {
+         System.err.format("%s: %s: %s%n", getApplicationName(), msgTag, message);
       }
       else
       {
@@ -981,15 +1026,14 @@ public class Xml2Bib
       catch (InvalidSyntaxException e)
       {
          app.error(e.getMessage(), null);
-
-         System.exit(1);
+         app.setExitCode(TeXJavaHelpLibAppAdapter.EXIT_SYNTAX);
       }
       catch (Throwable e)
       {
          app.error(null, e);
-
-         System.exit(2);
       }
+
+      System.exit(app.getExitCode());
    }
 
    protected boolean debugMode = false;
@@ -1001,6 +1045,7 @@ public class Xml2Bib
    protected boolean copyXml = false, replaceXml = false;
    protected String noEncapField=null;// field to save non-encapsulated value
    protected boolean autoTrim = true;
+   protected int exitCode = 0;
 
    private TeXJavaHelpLib helpLib;
    private TeXJavaHelpLibAppAdapter helpLibApp;

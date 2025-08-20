@@ -422,6 +422,8 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
          stdErrMessage(e, String.format("%s: %s",
            getApplicationName(), msg));
       }
+
+      setExitCode(getExitCode(e, false));
    }
 
    public void internalError(Component owner, String msg, Throwable e)
@@ -515,7 +517,7 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
             else if (result == JOptionPane.NO_OPTION)
             {
                closeLogWriter();
-               System.exit(fatalErrorExitCode);
+               System.exit(getExitCode(e, true));
             }
          }
       }
@@ -523,8 +525,10 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
       {
          stdErrMessage(e, String.format("%s: %s: %s",
            getApplicationName(), internalErrorTitle, msg));
-         System.exit(fatalErrorExitCode);
+         System.exit(getExitCode(e, true));
       }
+
+      setExitCode(getExitCode(e, false));
    }
 
    public void fatalError(String message, Throwable e, int exitCode)
@@ -668,7 +672,7 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
       else if (result == JOptionPane.NO_OPTION)
       {
          closeLogWriter();
-         System.exit(fatalErrorExitCode);
+         System.exit(getExitCode(e, true));
       }
    }
 
@@ -863,6 +867,51 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
       logMessages = false;
    }
 
+   @Override
+   public void setExitCode(int code)
+   {
+      if (code > exitCode || exitCode == 0)
+      {
+         exitCode = code;
+      }
+   }
+
+   public int getExitCode()
+   {
+      return exitCode;
+   }
+
+   public int getExitCode(Throwable e, boolean isFatal)
+   {
+      if (e instanceof InvalidSyntaxException)
+      {
+         return EXIT_SYNTAX;
+      }
+      else if ((e instanceof HelpSetNotInitialisedException)
+            || (e instanceof UnknownContextException)
+            || (e instanceof UnknownNodeException)
+              )
+      {
+         return EXIT_HELPSET;
+      }
+      else if (e instanceof SecurityException)
+      {
+         return EXIT_SECURITY;
+      }
+      else if (e instanceof RuntimeException)
+      {
+         return EXIT_RUNTIME;
+      }
+      else if (e instanceof IOException)
+      {
+         return EXIT_IO;
+      }
+      else
+      {
+         return isFatal ? fatalErrorExitCode : EXIT_OTHER;
+      }
+   }
+
    protected TeXJavaHelpLib helpLib;
 
    private JTabbedPane stackTracePane;
@@ -870,7 +919,19 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
    private JTextArea errWarnMessageArea, stackTraceMessageArea, stackTraceDetails;
    private String okayOptionText, crashExitOptionText, logOptionText,
      errorTitle, internalErrorTitle, warningTitle;
+
    protected int fatalErrorExitCode = 100;
+   protected int exitCode = 0;
+
+   public static final int EXIT_SYNTAX=1;
+   public static final int EXIT_IO=2;
+   public static final int EXIT_TEX_PARSER=3;
+   public static final int EXIT_PROCESS_FAILED=4;
+   public static final int EXIT_HELPSET=5;
+   public static final int EXIT_INVALID_DATA=6;
+   public static final int EXIT_RUNTIME=7;
+   public static final int EXIT_SECURITY=90;
+   public static final int EXIT_OTHER=-1;
 
    protected PrintWriter logWriter;
    protected File logFile;
