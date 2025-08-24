@@ -841,7 +841,8 @@ public class TeXJavaHelpMk extends TeXAppAdapter
 
             String croppedPdfName = name+"-crop.pdf";
 
-            processExitCode = execCommandAndWaitFor(tmpDir,
+            processExitCode = helpLib.execCommandAndWaitFor(tmpDir,
+               MAX_PROCESS_TIME,
                invoker, pdfFile.getName(), croppedPdfName);
 
             if (processExitCode == 0)
@@ -939,7 +940,9 @@ public class TeXJavaHelpMk extends TeXAppAdapter
       String line = null;
       StringBuilder result = new StringBuilder();
 
-      int exitCode = execCommandAndWaitFor(result, invoker, file.getAbsolutePath());
+      int exitCode = helpLib.execCommandAndWaitFor(result,
+       MAX_PROCESS_TIME,
+       invoker, file.getAbsolutePath());
 
       Pattern pat = null;
 
@@ -1011,7 +1014,8 @@ public class TeXJavaHelpMk extends TeXAppAdapter
    {
       String invoker = "pdftoppm";
 
-      int exitCode = execCommandAndWaitFor(tmpDir,
+      int exitCode = helpLib.execCommandAndWaitFor(tmpDir,
+          MAX_PROCESS_TIME, 
           invoker, "-singlefile", "-"+format,
           pdfFile.getAbsolutePath().toString(), basename);
 
@@ -1057,190 +1061,11 @@ public class TeXJavaHelpMk extends TeXAppAdapter
       }
    }
 
-   public String cmdListToString(String... params)
-   {
-      StringBuilder builder = new StringBuilder();
-
-      builder.append(params[0]);
-
-      for (int i = 1; i < params.length; i++)
-      {
-         builder.append(" \"");
-         builder.append(params[i]);
-         builder.append("\"");
-      }
-
-      return builder.toString();
-   }
-
-   protected int execCommandAndWaitFor(String... cmd)
-     throws IOException,InterruptedException
-   {
-      return execCommandAndWaitFor(null, null, 0, cmd);
-   }
-
-   protected int execCommandAndWaitFor(StringBuilder result, int maxLines, String... cmd)
-     throws IOException,InterruptedException
-   {
-      return execCommandAndWaitFor(null, result, maxLines, cmd);
-   }
-
-   protected int execCommandAndWaitFor(boolean warnOnNonZeroExit,
-      StringBuilder result, int maxLines, String... cmd)
-     throws IOException,InterruptedException
-   {
-      return execCommandAndWaitFor(null, warnOnNonZeroExit, result, maxLines, cmd);
-   }
-
-   protected int execCommandAndWaitFor(StringBuilder result, String... cmd)
-     throws IOException,InterruptedException
-   {
-      return execCommandAndWaitFor(null, result, Integer.MAX_VALUE, cmd);
-   }
-
-   protected int execCommandAndWaitFor(File processDir, String... cmd)
-     throws IOException,InterruptedException
-   {
-      return execCommandAndWaitFor(processDir, null, 0, cmd);
-   }
-
-   protected int execCommandAndWaitFor(File processDir,
-      StringBuilder result, int maxLines, String... cmd)
-     throws IOException,InterruptedException
-   {
-      return execCommandAndWaitFor(processDir, true, result, maxLines, cmd);
-   }
-
-   protected int execCommandAndWaitFor(File processDir,
-      boolean warnOnNonZeroExit,
-      StringBuilder result, int maxLines, String... cmd)
-     throws IOException,InterruptedException
-   {
-      if (isDebuggingOn())
-      {
-         helpLibApp.debug(getMessageWithFallback("message.running",
-           "Running {0}", cmdListToString(cmd)));
-      }
-         
-      Process process = null;
-      int exitCode = -1;
-
-      try
-      {
-         ProcessBuilder pb = new ProcessBuilder(cmd);
-
-         if (processDir != null)
-         {
-            pb.directory(processDir);
-         }
-
-         process = pb.start();
-         exitCode = process.waitFor();
-      }
-      catch (Exception e)
-      {
-         helpLibApp.debug(e);
-
-         return exitCode;
-      }
-
-      if (exitCode != 0 && warnOnNonZeroExit)
-      {
-         helpLibApp.warning(getMessageWithFallback("error.app_failed",
-           "{0} failed with exit code {1}",
-           cmdListToString(cmd),  exitCode));
-      }
-
-      if (result != null)
-      {
-         String line = null;
-         int lineNum = 0;
-
-         InputStream stream = process.getInputStream();
-
-         if (stream == null)
-         {
-            throw new IOException(
-             getMessageWithFallback("error.cant.open.process.stream",
-             "Unable to open input stream from process: {0}",
-             cmdListToString(cmd)));
-         }
-
-         BufferedReader reader = null;
-
-         try
-         {
-            reader = new BufferedReader(new InputStreamReader(stream));
-
-            while (lineNum < maxLines)
-            {
-               line = reader.readLine();
-
-               if (line == null) break;
-
-               lineNum++;
-
-               if (lineNum > 1)
-               {
-                  result.append(String.format("%n"));
-               }
-
-               result.append(line);
-            }
-         }
-         finally
-         {
-            if (reader != null)
-            {
-               reader.close();
-            }
-         }
-
-         helpLibApp.debug(getMessageWithFallback("message.process.result",
-           "Processed returned: {0}", result));
-      }
-
-      return exitCode;
-   }
-
    @Override
    public String kpsewhich(String arg)
      throws IOException,InterruptedException
    {
-      if (arg.indexOf("\\") != -1)
-      {
-         throw new IOException(getMessage("error.bksl_in_kpsewhich", arg));
-      }
-
-      if (kpsewhichResults == null)
-      {
-         kpsewhichResults = new Hashtable<String,String>();
-      }
-      else
-      {
-         // has kpsewhich already been called with this argument? 
-
-         String result = kpsewhichResults.get(arg);
-         
-         if (result != null)
-         {
-            return result;
-         }
-      }
-
-      String line = null;
-      StringBuilder result = new StringBuilder();
-
-      execCommandAndWaitFor(false, result, 1, "kpsewhich", arg);
-
-      if (result.length() > 0)
-      {
-         line = result.toString();
-
-         kpsewhichResults.put(arg, line);
-      }
-
-      return line;
+      return helpLib.kpsewhich(arg, MAX_PROCESS_TIME);
    }
 
    public File getTeXMF()
@@ -1290,7 +1115,7 @@ public class TeXJavaHelpMk extends TeXAppAdapter
 
       String fileName = file.getAbsolutePath();
 
-      exitCode = execCommandAndWaitFor(app,
+      exitCode = helpLib.execCommandAndWaitFor(MAX_PROCESS_TIME, app,
          "--outfile="+pdfFile.getAbsolutePath(), fileName);
 
       if (exitCode != 0)
@@ -1324,7 +1149,7 @@ public class TeXJavaHelpMk extends TeXAppAdapter
 
       String fileName = file.getAbsolutePath();
 
-      exitCode = execCommandAndWaitFor(app,
+      exitCode = helpLib.execCommandAndWaitFor(MAX_PROCESS_TIME, app,
          "-o", epsFile.getAbsolutePath(),
          fileName);
 
@@ -1389,7 +1214,7 @@ public class TeXJavaHelpMk extends TeXAppAdapter
 
       args[idx++] = outFile.getAbsolutePath();
 
-      exitCode = execCommandAndWaitFor(args);
+      exitCode = helpLib.execCommandAndWaitFor(MAX_PROCESS_TIME, args);
 
       if (exitCode != 0)
       {
@@ -1647,7 +1472,6 @@ public class TeXJavaHelpMk extends TeXAppAdapter
       System.exit(app.getExitCode());
    }
 
-   private Hashtable<String,String> kpsewhichResults;
    private File texmf;
    private boolean shownVersion = false;
 
@@ -1682,6 +1506,8 @@ public class TeXJavaHelpMk extends TeXAppAdapter
 
    private File imagePreambleFile = null;
    private String imagePreamble = null;
+
+   public static final long MAX_PROCESS_TIME = 360000L; // millisecs
 
    public static final Pattern PNG_INFO =
     Pattern.compile(".*: PNG image data, (\\d+) x (\\d+),.*");

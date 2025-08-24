@@ -23,12 +23,16 @@ import java.text.BreakIterator;
 
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
 import java.util.Vector;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.TimeUnit;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -3488,6 +3492,305 @@ public class TeXJavaHelpLib
       return button;
    }
 
+   // Just used in messages for informational purposes
+   public String cmdListToString(String... params)
+   {
+      StringBuilder builder = new StringBuilder();
+
+      builder.append(params[0]);
+
+      for (int i = 1; i < params.length; i++)
+      {
+         builder.append(' ');
+
+         if (params[i].contains(" "))
+         {
+            builder.append("\"");
+            builder.append(params[i]);
+            builder.append("\"");
+         }
+         else
+         {
+            builder.append(params[i]);
+         }
+      }
+
+      return builder.toString();
+   }
+
+   public int execCommandAndWaitFor(String... cmd)
+     throws IOException,InterruptedException
+   {
+      return execCommandAndWaitFor(null, null, 0L, 0, cmd);
+   }
+
+   public int execCommandAndWaitFor(long maxProcessTime, String... cmd)
+     throws IOException,InterruptedException
+   {
+      return execCommandAndWaitFor(null, null, maxProcessTime, 0, cmd);
+   }
+
+   public int execCommandAndWaitFor(StringBuilder result, int maxLines, String... cmd)
+     throws IOException,InterruptedException
+   {
+      return execCommandAndWaitFor(null, result, maxLines, cmd);
+   }
+
+   public int execCommandAndWaitFor(StringBuilder result,
+       long maxProcessTime, int maxLines, String... cmd)
+     throws IOException,InterruptedException
+   {
+      return execCommandAndWaitFor(null, result, maxLines, cmd);
+   }
+
+   public int execCommandAndWaitFor(boolean warnOnNonZeroExit,
+      StringBuilder result, int maxLines, String... cmd)
+     throws IOException,InterruptedException
+   {
+      return execCommandAndWaitFor(null, warnOnNonZeroExit, result, maxLines, cmd);
+   }
+
+   public int execCommandAndWaitFor(boolean warnOnNonZeroExit,
+      StringBuilder result, long maxProcessTime, int maxLines, String... cmd)
+     throws IOException,InterruptedException
+   {
+      return execCommandAndWaitFor(null, warnOnNonZeroExit, result,
+        maxProcessTime, maxLines, cmd);
+   }
+
+   public int execCommandAndWaitFor(StringBuilder result, String... cmd)
+     throws IOException,InterruptedException
+   {
+      return execCommandAndWaitFor(null, result, Integer.MAX_VALUE, cmd);
+   }
+
+   public int execCommandAndWaitFor(StringBuilder result,
+      long maxProcessTime, String... cmd)
+     throws IOException,InterruptedException
+   {
+      return execCommandAndWaitFor(null, result, maxProcessTime,
+        Integer.MAX_VALUE, cmd);
+   }
+
+   public int execCommandAndWaitFor(File processDir, String... cmd)
+     throws IOException,InterruptedException
+   {
+      return execCommandAndWaitFor(processDir, null, 0L, 0, cmd);
+   }
+
+   public int execCommandAndWaitFor(File processDir, long maxProcessTime,
+        String... cmd)
+     throws IOException,InterruptedException
+   {
+      return execCommandAndWaitFor(processDir, null, maxProcessTime, 0, cmd);
+   }
+
+   public int execCommandAndWaitFor(File processDir,
+      StringBuilder result, int maxLines, String... cmd)
+     throws IOException,InterruptedException
+   {
+      return execCommandAndWaitFor(processDir, true, result, maxLines, cmd);
+   }
+
+   public int execCommandAndWaitFor(File processDir,
+      StringBuilder result, long maxProcessTime, int maxLines, String... cmd)
+     throws IOException,InterruptedException
+   {
+      return execCommandAndWaitFor(processDir, true, result, maxProcessTime,
+        maxLines, cmd);
+   }
+
+   public int execCommandAndWaitFor(File processDir,
+      boolean warnOnNonZeroExit,
+      StringBuilder result, int maxLines, String... cmd)
+     throws IOException,InterruptedException
+   {
+      return execCommandAndWaitFor(processDir, (File)null,
+      warnOnNonZeroExit, MessageType.WARNING, result, 0L, maxLines, cmd);
+   }
+
+   public int execCommandAndWaitFor(File processDir,
+      boolean warnOnNonZeroExit,
+      StringBuilder result,
+      long maxProcessTime,
+      int maxLines, String... cmd)
+     throws IOException,InterruptedException
+   {
+      return execCommandAndWaitFor(processDir, (File)null,
+      warnOnNonZeroExit, MessageType.WARNING, result, maxProcessTime, maxLines, cmd);
+   }
+
+   public int execCommandAndWaitFor(File processDir,
+      File texInputsDir, boolean warnOnNonZeroExit,
+      MessageType stdErrMsgType,
+      StringBuilder result, 
+      long maxProcessTime,
+      int maxLines, String... cmd)
+     throws IOException,InterruptedException
+   {
+      if (application.isDebuggingOn())
+      {
+         application.debug(getMessageWithFallback("message.running",
+           "Running {0}", cmdListToString(cmd)));
+      }
+         
+      Process process = null;
+      int exitCode = -1;
+
+      BufferedReader in = null;
+      BufferedReader err = null;
+      String line = null;
+
+      try
+      {
+         ProcessBuilder pb = new ProcessBuilder(cmd);
+
+         if (processDir != null)
+         {
+            pb.directory(processDir);
+         }
+
+         if (texInputsDir != null)
+         {
+            Map<String,String> env = pb.environment();
+
+            env.put("TEXINPUTS", String.format("%s%c",
+              texInputsDir.getAbsolutePath(), File.pathSeparatorChar));
+         }
+
+         process = pb.start();
+
+         in = new BufferedReader(
+            new InputStreamReader(process.getInputStream()));
+         err = new BufferedReader(
+            new InputStreamReader(process.getErrorStream()));
+
+         if (maxProcessTime > 0L)
+         {
+            if (!process.waitFor(maxProcessTime, TimeUnit.MILLISECONDS))
+            {
+               throw new TimeoutException(getMessageWithFallback(
+                 "error.timedout",
+                 "Process timed-out (process time limit: {0}ms)",
+                 maxProcessTime));
+            }
+
+            exitCode = process.exitValue();
+         }
+         else
+         {
+            exitCode = process.waitFor();
+         }
+
+         if (exitCode != 0 && warnOnNonZeroExit)
+         {
+            application.warning(getMessageWithFallback("error.app_failed",
+              "{0} failed with exit code {1}",
+              cmdListToString(cmd),  exitCode));
+         }
+
+         int lineNum = 0;
+
+         while ((line = in.readLine()) != null)
+         {
+            if (result != null)
+            {
+               lineNum++;
+
+               if (lineNum <= maxLines)
+               {
+                  if (lineNum > 1)
+                  {
+                     result.append(String.format("%n"));
+                  }
+
+                  result.append(line);
+               }
+            }
+         }
+
+         while ((line = err.readLine()) != null)
+         {
+            switch (stdErrMsgType)
+            {
+               case NORMAL: message(line); break;
+               case WARNING: warning(line); break;
+               case ERROR: error(line); break;
+               case DEBUG: debug(line); break;
+            }
+         }
+      }
+      catch (Exception e)
+      {
+         application.debug(getMessageWithFallback("message.process.result",
+           "Processed returned: {0}", result), e);
+      }
+      finally
+      {
+         if (in != null)
+         {
+            in.close();
+         }
+
+         if (err != null)
+         {
+            err.close();
+         }
+      }
+
+      return exitCode;
+   }
+
+   public String kpsewhich(String arg)
+     throws IOException,InterruptedException
+   {
+      return kpsewhich(arg, 0L);
+   }
+
+   public String kpsewhich(String arg, long maxProcessTime)
+     throws IOException,InterruptedException
+   {
+      if (arg.indexOf("\\") != -1)
+      {
+         throw new IOException(getMessage("error.bksl_in_kpsewhich", arg));
+      }
+
+      if (kpsewhichResults == null)
+      {
+         kpsewhichResults = new HashMap<String,String>();
+      }
+      else
+      {
+         // has kpsewhich already been called with this argument? 
+
+         String result = kpsewhichResults.get(arg);
+         
+         if (result != null)
+         {
+            return result;
+         }
+      }
+
+      String line = null;
+      StringBuilder result = new StringBuilder();
+
+      execCommandAndWaitFor(false, result, maxProcessTime, 1, "kpsewhich", arg);
+
+      if (result.length() > 0)
+      {
+         line = result.toString();
+
+         kpsewhichResults.put(arg, line);
+      }
+
+      return line;
+   }
+
+   public static enum MessageType
+   {
+      NORMAL, WARNING, ERROR, DEBUG, SILENT;
+   }
+
    protected String resourcebase = "/resources";
    protected String dictionaryBase = resourcebase;
    protected String resourceIconBase = "/resources/icons";
@@ -3541,6 +3844,8 @@ public class TeXJavaHelpLib
 
    private Dimension helpWindowInitSize;
 
+   private HashMap<String,String> kpsewhichResults;
+
    /**
     * List of image extensions to try when searching for icons.
     */
@@ -3568,6 +3873,6 @@ public class TeXJavaHelpLib
    public static final String LICENSE_GPL3 = String.format(
    "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>%nThis is free software: you are free to change and redistribute it.%nThere is NO WARRANTY, to the extent permitted by law.");
 
-   public static final String VERSION = "1.0.2025-08-20";
-   public static final String VERSION_DATE = "2025-08-20";
+   public static final String VERSION = "1.0.2025-08-24";
+   public static final String VERSION_DATE = "2025-08-24";
 }
