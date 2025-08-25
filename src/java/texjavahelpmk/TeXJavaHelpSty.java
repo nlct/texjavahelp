@@ -466,8 +466,6 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new GenericCommand(true, "qquad", null, 
        new TeXObject[] {new HtmlTag("<span class=\"qquad\">&nbsp; &nbsp; </span>")}));
 
-      registerControlSequence(new AtNumberOfNumber("jdroutline", 3, 3));
-
       registerControlSequence(new NumberedDec());
 
       registerControlSequence(new GenericCommand(true, "thedocversion", null,
