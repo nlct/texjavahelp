@@ -3630,8 +3630,17 @@ public class TeXJavaHelpLib
    {
       if (application.isDebuggingOn())
       {
-         application.debug(getMessageWithFallback("message.running",
-           "Running {0}", cmdListToString(cmd)));
+         if (processDir == null)
+         {
+            application.debug(getMessageWithFallback("message.running",
+              "Running {0}", cmdListToString(cmd)));
+         }
+         else
+         {
+            application.debug(getMessageWithFallback("message.running_in_dir",
+              "Running {0} in directory {1}",
+               cmdListToString(cmd), processDir));
+         }
       }
          
       Process process = null;
@@ -3873,6 +3882,6 @@ public class TeXJavaHelpLib
    public static final String LICENSE_GPL3 = String.format(
    "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>%nThis is free software: you are free to change and redistribute it.%nThere is NO WARRANTY, to the extent permitted by law.");
 
-   public static final String VERSION = "1.0.2025-08-25";
-   public static final String VERSION_DATE = "2025-08-25";
+   public static final String VERSION = "1.0.2025-09-04";
+   public static final String VERSION_DATE = "2025-09-04";
 }
