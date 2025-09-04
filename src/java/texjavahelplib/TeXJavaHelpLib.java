@@ -3628,6 +3628,22 @@ public class TeXJavaHelpLib
       int maxLines, String... cmd)
      throws IOException,InterruptedException
    {
+      return execCommandAndWaitFor(processDir,
+      texInputsDir, warnOnNonZeroExit,
+      stdErrMsgType, result, maxProcessTime, maxLines,
+      (UserCancellationListener)null, cmd);
+   }
+
+   public int execCommandAndWaitFor(File processDir,
+      File texInputsDir, boolean warnOnNonZeroExit,
+      MessageType stdErrMsgType,
+      StringBuilder result, 
+      long maxProcessTime,
+      int maxLines, 
+      UserCancellationListener cancelListener,
+      String... cmd)
+     throws IOException,InterruptedException
+   {
       if (application.isDebuggingOn())
       {
          if (processDir == null)
@@ -3669,6 +3685,11 @@ public class TeXJavaHelpLib
 
          process = pb.start();
 
+         if (cancelListener != null)
+         {
+            cancelListener.setProcess(process);
+         }
+
          in = new BufferedReader(
             new InputStreamReader(process.getInputStream()));
          err = new BufferedReader(
@@ -3702,6 +3723,11 @@ public class TeXJavaHelpLib
 
          while ((line = in.readLine()) != null)
          {
+            if (cancelListener != null)
+            {
+               cancelListener.checkForInterrupt();
+            }
+
             if (result != null)
             {
                lineNum++;
@@ -3720,6 +3746,11 @@ public class TeXJavaHelpLib
 
          while ((line = err.readLine()) != null)
          {
+            if (cancelListener != null)
+            {
+               cancelListener.checkForInterrupt();
+            }
+
             switch (stdErrMsgType)
             {
                case NORMAL: message(line); break;
