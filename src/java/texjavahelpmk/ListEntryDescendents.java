@@ -138,7 +138,7 @@ public class ListEntryDescendents extends PrintUnsrtGlossary
 
       parser.putControlSequence(true, new AtGobble("glossaryentrynumbers"));
 
-      sty.setGlossaryStyle("topic", stack);
+      //sty.setGlossaryStyle("topic", stack);
 
       ControlSequence cs
         = parser.getListener().getControlSequence("listentrydescendentsinit");
