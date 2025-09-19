@@ -2,7 +2,7 @@
 % in the TeX Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{texjavahelp}[2025/08/25 v1.0 (NLCT)]
+\ProvidesPackage{texjavahelp}[2025/09/19 v1.0 (NLCT)]
 
 \RequirePackage{pifont}
 \RequirePackage{fontawesome}
@@ -2944,7 +2944,7 @@ halign upper=flush left,halign lower=justify,
     angle .code:n = 
      {
        \__texjavahelp_img_apply_resize:
-       \box_rotate:Nnn  \l__texjavahelp_img_box { #1 } 
+       \box_rotate:Nn  \l__texjavahelp_img_box { #1 } 
      },
     width .tl_set:N = \l__texjavahelp_img_width_tl ,
     height .tl_set:N = \l__texjavahelp_img_height_tl ,
