@@ -3734,8 +3734,12 @@ public class TeXJavaHelpLib
 
                if (lineNum <= maxLines)
                {
+                  if (lineNum > 1)
+                  {
+                     result.append(String.format("%n"));
+                  }
+
                   result.append(line);
-                  result.append(String.format("%n"));
                }
             }
          }
