@@ -2,7 +2,7 @@
 % in the TeX Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{texjavahelp}[2025/09/19 v1.0 (NLCT)]
+\ProvidesPackage{texjavahelp}[2025/10/21 v1.0 (NLCT)]
 
 \RequirePackage{pifont}
 \RequirePackage{fontawesome}
@@ -1356,12 +1356,12 @@
       name = "\cs{filefmt}{" + entrylabel->original + "}"
         [ entrytype->original = /(common)?file/], 
 % file extensions
-      name = "\cs{filefmt}{" + \MGP{1} + "}"
+      name = "\cs{fileext}{" + \MGP{1} + "}"
         [
             entrytype->original = /(?:common)?fileext/
           & entrylabel->original=/ext\.(.+)/
         ], 
-      name = "\cs{filefmt}{" + entrylabel->original + "}"
+      name = "\cs{fileext}{" + entrylabel->original + "}"
         [ entrytype->original = /(common)?fileext/], 
 % variables (e.g. environment variables)
       name = "\cs{varfmt}{" + entrylabel->original + "}"
@@ -1735,6 +1735,9 @@
 
 \newcommand{\filefmt}[1]{\texorpdfstring{\texttt{#1}}{#1}}
 \MFUblocker{\filefmt}
+
+\newcommand{\fileext}[1]{\filefmt{.#1}}
+\MFUblocker{\fileext}
 
 % \metafilefmt{prefix}{val}{suffix} -> prefix<val>suffix
 \newcommand*{\metafilefmt}[3]{%

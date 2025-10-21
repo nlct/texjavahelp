@@ -83,6 +83,15 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       addSemanticCommand("iconfmt", "icon", null, null, null, null);
 
+      registerControlSequence(new LaTeXGenericCommand(true,
+       "fileext", "m", 
+         TeXParserUtils.createStack(listener, 
+           new TeXCsRef("filefmt"),
+           TeXParserUtils.createGroup(listener, 
+             listener.getOther('.'),
+             TeXParserUtils.createGroup(listener, listener.getParam(1))
+            ))));
+
       addDiscretionaryCommands();
       addCrossRefCommands();
       addFootnoteCommands();
