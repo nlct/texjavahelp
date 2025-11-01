@@ -85,6 +85,15 @@ public class WidgetDef extends StandaloneDef
             list = parser.getListener().createString("\u2610");
          }
       }
+      else
+      {
+         String category = glslabel.getCategory();
+
+         if (category.equals("dialog"))
+         {
+            list = parser.getListener().createString("\uD83D\uDDD4");
+         }
+      }
 
       return list;
    }

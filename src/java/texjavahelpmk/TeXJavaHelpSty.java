@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.awt.Color;
 
 import com.dickimawbooks.texparserlib.*;
+import com.dickimawbooks.texparserlib.generic.Symbol;
 import com.dickimawbooks.texparserlib.latex.*;
 import com.dickimawbooks.texparserlib.latex.glossaries.*;
 import com.dickimawbooks.texparserlib.latex.color.ColorSty;
@@ -629,6 +630,13 @@ public class TeXJavaHelpSty extends UserGuideSty
         "manualtext", "optionvaluedef", "Option Value Definition"));
       registerControlSequence(createLangCs("optionvaluedesc",
         "manualdesc", "optionvaluedef", "the definition of an option value"));
+
+      registerControlSequence(createLangCs("dialogtext",
+        "manualtext", "dialog", "Dialog"));
+      registerControlSequence(createLangCs("dialogdesc",
+        "manualdesc", "dialog", "a dialog or window"));
+
+      registerControlSequence(new Symbol("dialogsym", 0x1F5D4));
 
       registerControlSequence(createLangCs("countertext",
         "manualtext", "counterdef", "Counter"));
