@@ -314,8 +314,13 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(
         new GlsEntryField("entrykeystroke", "keystroke", glossariesSty));
 
-      registerControlSequence(new Dglsfield("btn", glossariesSty,
+      registerControlSequence(new Dglsfield("btntooltip", glossariesSty,
          CaseChange.NO_CHANGE, "tooltip"));
+
+      registerControlSequence(new GenericCommand(true,
+       "btniconsep", null, new TeXCsRef("space")));
+
+      registerControlSequence(new Btn(glossariesSty));
 
       registerControlSequence(new Dglsfield("accelerator", glossariesSty,
          CaseChange.NO_CHANGE, "keystroke"));

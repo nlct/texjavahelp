@@ -1157,7 +1157,26 @@
 \newcommand*{\buttonfmt}[1]{\widgetfmt{#1}}
 
 % For icon-only buttons use the tooltip
-\newdglsfield{tooltip}{\btn}
+\newdglsfield{tooltip}{\btntooltip}
+
+\newcommand\btniconsep{\space}
+\newcommand\@btnicon[1]{%
+ \glsxtrifhasfield{iconimage}{#1}%
+ {%
+   \includegraphics[height=2ex]{\glscurrentfieldvalue}%
+   \btniconsep
+ }%
+ {}%
+}
+
+\NewDocumentCommand\btn{omO{}}{%
+ {%
+   \let\predglshook\@btnicon
+   \IfValueTF{#1}%
+   {\dgls[#1]{#2}[]}%
+   {\dgls{#2}[]}%
+ }%
+}
   
 \renewcommand{\glslinkpresetkeys}{%
  \glsxtrifhasfield*{defaultkeys}{\glslabel}
