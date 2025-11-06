@@ -151,7 +151,7 @@ public class FloatSubFigs extends ControlSequence
          }
          else
          {
-            expanded.add(listener.getSpace());
+            expanded.add(listener.getOther('\u2009'));
          }
       }
 
