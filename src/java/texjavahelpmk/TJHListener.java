@@ -117,6 +117,8 @@ public class TJHListener extends L2HConverter
       addCssStyle(".numbered .displaylist .displaylist { padding-left: 10pt; margin-left: 10pt; }");
       addCssStyle("div.iconstartpar { float: left; padding-right: 1em;  }");
 
+      addCssStyle("img.framed { border: solid 1pt; }");
+
       addCssStyle(TeXJavaHelpLib.KEYSTROKE_CSS);
       addCssStyle(TeXJavaHelpLib.MENU_CSS);
       addCssStyle(TeXJavaHelpLib.ICON_CSS);

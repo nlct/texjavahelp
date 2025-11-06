@@ -2,7 +2,7 @@
 % in the TeX Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{texjavahelp}[2025/11/01 v1.0 (NLCT)]
+\ProvidesPackage{texjavahelp}[2025/11/06 v1.0 (NLCT)]
 
 \RequirePackage{pifont}
 \RequirePackage{fontawesome}
@@ -2970,6 +2970,16 @@ halign upper=flush left,halign lower=justify,
   }
 }
 
+\bool_new:N \l__texjavahelp_frameimg_bool
+\bool_set_false:N \l__texjavahelp_frameimg_bool
+
+\cs_new:Nn \__texjavahelp_img_encap:n
+ {
+   \bool_if:NTF \l__texjavahelp_frameimg_bool
+    { \frame { #1 } }
+    { #1 }
+ }
+
 \keys_define:nn { texjavahelp / img }
  {
     scale .code:n = 
@@ -2985,7 +2995,13 @@ halign upper=flush left,halign lower=justify,
     width .tl_set:N = \l__texjavahelp_img_width_tl ,
     height .tl_set:N = \l__texjavahelp_img_height_tl ,
 % NB "alt" key is now defined in \includegraphics as from 2021/09/16
-    alt .code:n = { }
+    alt .code:n = { },
+% NB "actualtext" and "artifact" keys as from 2024/12/31
+    actualtext .code:n = { },
+    artifact .code:n = { },% boolean
+% boolean to place a frame around the image
+    frame .bool_set:N = \l__texjavahelp_frameimg_bool ,
+    frame  .groups:n = { custom }
  }
 
 \tl_new:N \l__texjavahelp_img_dir_tl
@@ -3000,6 +3016,8 @@ halign upper=flush left,halign lower=justify,
     \hbox{ \includeimg [ #1 ] { #2 } }
   }
 }
+
+\tl_new:N \l__texjavahelp_imgopts_tl
 
 \NewDocumentCommand \includeimg { o m }
 {
@@ -3016,8 +3034,17 @@ halign upper=flush left,halign lower=justify,
     }
     {
       \IfValueTF { #1 }
-       { \includegraphics [ #1 ] { #2 } }
-       { \includegraphics { #2 } }
+       {
+         \keys_set_groups:nnnN
+           { texjavahelp / img } { custom } {  #1 }
+           \l__texjavahelp_imgopts_tl
+         \__texjavahelp_img_encap:n
+          {
+            \exp_last_unbraced:NNV \includegraphics
+             [ \l__texjavahelp_imgopts_tl ] { #2 }
+          }
+       }
+       { \__texjavahelp_img_encap:n { \includegraphics { #2 } } }
     }
   \group_end:
 }
@@ -3031,10 +3058,19 @@ halign upper=flush left,halign lower=justify,
        { \file_input:n { #2 } }
       \keys_set:nn { texjavahelp / img } { #1 }
       \__texjavahelp_img_apply_resize:
-      \mbox { \box_use:N \l__texjavahelp_img_box }
+      \mbox
+       {
+         \__texjavahelp_img_encap:n
+          {
+            \box_use:N \l__texjavahelp_img_box
+          }
+       }
     }
     {
-      \file_input:n { #2 }
+      \__texjavahelp_img_encap:n
+      {
+        \file_input:n { #2 }
+      }
     }
  }
 \ExplSyntaxOff

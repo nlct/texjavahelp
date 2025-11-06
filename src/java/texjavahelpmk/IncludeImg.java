@@ -22,6 +22,7 @@ package com.dickimawbooks.texjavahelpmk;
 import java.io.IOException;
 
 import com.dickimawbooks.texparserlib.*;
+import com.dickimawbooks.texparserlib.latex.KeyValList;
 
 public class IncludeImg extends ControlSequence
 {
@@ -55,7 +56,7 @@ public class IncludeImg extends ControlSequence
    {
       TJHListener listener = (TJHListener)parser.getListener();
 
-      TeXObject options = popOptArg(parser, stack);
+      KeyValList options = TeXParserUtils.popOptKeyValList(parser, stack);
       TeXObject content = popArg(parser, stack);
 
       TeXObjectList expanded = listener.createStack();
@@ -64,20 +65,46 @@ public class IncludeImg extends ControlSequence
 
       if (options != null)
       {
-         expanded.add(listener.getOther('['));
-         expanded.add(options, true);
+         String css = cssClass;
 
-         if (cssClass != null)
+         Boolean frame = options.getBoolean("frame", parser, stack);
+
+         if (frame != null)
          {
-            expanded.add(listener.createString(",class="+cssClass));
+            options.remove("frame");
+
+            if (frame.booleanValue())
+            {
+               if (!listener.isHtml5())
+               {
+                  options.put("border", listener.getOther('1'));
+               }
+               else if (css == null)
+               {
+                  css = "framed";
+               }
+               else
+               {
+                  css += " framed";
+               }
+            }
          }
 
-         expanded.add(listener.getOther(']'));
+         if (css != null)
+         {
+            options.put("class", listener.createString(css));
+         }
       }
       else if (cssClass != null)
       {
+         options = new KeyValList();
+         options.put("class", listener.createString(cssClass));
+      }
+
+      if (options != null && !options.isEmpty())
+      {
          expanded.add(listener.getOther('['));
-         expanded.add(listener.createString("class="+cssClass));
+         expanded.add(options);
          expanded.add(listener.getOther(']'));
       }
 
