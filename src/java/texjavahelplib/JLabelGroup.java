@@ -127,6 +127,39 @@ public class JLabelGroup extends Vector<JLabel>
       return super.add(label);
    }
 
+   public static void setSameMinPrefMaxWidth(JComponent... comps)
+   {
+      int maxWidth = 0;
+
+      for (JComponent c : comps)
+      {
+         Dimension prefDim = c.getPreferredSize();
+
+         if (prefDim.width > maxWidth)
+         {
+            maxWidth = prefDim.width;
+         }
+      }
+
+      if (maxWidth > 0)
+      {
+         for (JComponent c : comps)
+         {
+            Dimension dim = c.getMinimumSize();
+            dim.width = maxWidth;
+            c.setMinimumSize(dim);
+
+            dim = c.getPreferredSize();
+            dim.width = maxWidth;
+            c.setPreferredSize(dim);
+
+            dim = c.getMaximumSize();
+            dim.width = maxWidth;
+            c.setMaximumSize(dim);
+         }
+      }
+   }
+
    public boolean isAutoUpdateOn()
    {
       return autoUpdate;
