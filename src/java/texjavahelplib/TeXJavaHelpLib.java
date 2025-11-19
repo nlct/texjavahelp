@@ -2017,6 +2017,7 @@ public class TeXJavaHelpLib
             keyStroke = KeyStroke.getKeyStroke(text);
          }
       }
+
       return keyStroke;
    }
 
