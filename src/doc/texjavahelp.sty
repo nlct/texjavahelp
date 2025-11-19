@@ -2,7 +2,7 @@
 % in the TeX Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{texjavahelp}[2025/11/06 v1.0 (NLCT)]
+\ProvidesPackage{texjavahelp}[2025/11/19 v1.0 (NLCT)]
 
 \RequirePackage{pifont}
 \RequirePackage{fontawesome}
@@ -2127,6 +2127,11 @@
 \newrobustcmd*{\Inlineglstextdef}[1]{%
  \glsadd[format=main]{#1}%
  \Glsxtrglossentryother{}{#1}{text}%
+}
+
+\newrobustcmd*{\inlinekeystrokedef}[1]{%
+ \glsadd[format=main]{#1}%
+ \glsxtrglossentryother{}{#1}{keystroke}%
 }
 
 \NewDocumentCommand\sectionentry{O{\section}om}{%

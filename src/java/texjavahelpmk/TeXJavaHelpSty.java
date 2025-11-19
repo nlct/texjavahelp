@@ -442,6 +442,9 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new InlineGlsDef("Inlineglstextdef", "",
         "text", true, CaseChange.SENTENCE, glossariesSty));
 
+      registerControlSequence(new InlineGlsDef("inlinekeystrokedef", "",
+        "keystroke", true, glossariesSty));
+
       // dual prefix list
       def = listener.createString("action.,button.,menu.,widget.,help.,index.,label.,");
         def.add(listener.getControlSequence("empty"));
