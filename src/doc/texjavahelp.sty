@@ -2011,7 +2011,19 @@
  }
  {}%
  \glsxtrglossentry{#2}%
- \hfill #3%
+ \hfill 
+ \glsxtrifhasfield{keystroke}{#2}%
+ {%
+  \glscurrentfieldvalue
+ }%
+ {%
+   \glsxtrifhasfield{mnemonic}{#2}%
+   {%
+     \premnemonic
+     \keys{\glscurrentfieldvalue}%
+   }{}%
+ }
+ #3%
  \end{settingsbox}% 
  \ignorespaces
 }

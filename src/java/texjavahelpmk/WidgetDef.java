@@ -112,5 +112,39 @@ public class WidgetDef extends StandaloneDef
       }
    }
 
+   @Override
+   protected void addEntryName(TeXObjectList list, GlsLabel glslabel, TeXParser parser)
+   {
+      TeXParserListener listener = parser.getListener();
+
+      list.add(listener.getControlSequence("glossentryname"));
+      list.add(glslabel);
+
+      TeXObject keystroke = glslabel.getField("keystroke");
+
+      if (keystroke == null)
+      {
+         TeXObject mnemonic = glslabel.getField("mnemonic");
+
+         if (mnemonic != null)
+         {
+            list.add(listener.getControlSequence("qquad"));
+
+            list.add(listener.getControlSequence("premnemonic"));
+
+            Group grp = listener.createGroup();
+            list.add(grp);
+
+            grp.add(new TeXCsRef("keys"));
+            grp.add(TeXParserUtils.createGroup(listener, mnemonic));
+         }
+      }
+      else
+      {
+         list.add(listener.getControlSequence("qquad"));
+         list.add(keystroke, true);
+      }
+   }
+
    TeXObject note;
 }
