@@ -2,7 +2,7 @@
 % in the TeX Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{texjavahelp}[2025/11/23 v1.1 (NLCT)]
+\ProvidesPackage{texjavahelp}[2026/01/15 v1.2 (NLCT)]
 
 \RequirePackage{pifont}
 \RequirePackage{fontawesome}
@@ -941,6 +941,8 @@
   \def\clsfmt##1{\protect\clsfmt{##1}}%
   \def\envfmt##1{\protect\envfmt{##1}}%
   \def\appfmt##1{\protect\appfmt{##1}}%
+  \def\xmltagfmt##1{\protect\xmltagfmt{##1}}%
+  \def\xmlattrfmt##1{\protect\xmlattrfmt{##1}}%
 }
 
 \newcommand{\nlctexampledisablecmds}{}
@@ -1331,6 +1333,10 @@
      commonswitch=index,
      environment=index,
      commonenvironment=index,
+     xmlelement=index,
+     commonxmlelement=index,
+     xmlattribute=index,
+     commonxmlattribute=index,
      counter=index,
      commoncounter=index,
      variable=index,
@@ -1443,6 +1449,22 @@
         ], 
       name = "\cs{envfmt}{" + entrylabel->original + "}"
         [ entrytype->original =/(common)?environment/], 
+% xml elements
+      name = "\cs{xmltagfmt}{" + \MGP{1} + "}"
+        [
+           entrytype->original =/(?:common)?xmlelement/
+         & entrylabel->original=/xmlelement\.(.+)/
+        ], 
+      name = "\cs{xmltagfmt}{" + entrylabel->original + "}"
+        [ entrytype->original =/(common)?xmlelement/], 
+% xml attributes
+      name = "\cs{xmlattrfmt}{" + \MGP{1} + "}"
+        [
+           entrytype->original =/(?:common)?xmlattribute/
+         & entrylabel->original=/xmlattr\.(.+)/
+        ], 
+      name = "\cs{xmlattrfmt}{" + entrylabel->original + "}"
+        [ entrytype->original =/(common)?xmlattribute/], 
 % menus
       text = name
         [ entrytype->original =/menu/ & parent=\NULL ],
@@ -1790,6 +1812,9 @@
 
 \newcommand*{\xmltagfmt}[1]{\texorpdfstring{\texttt{<#1>}}{\string<#1\string>}}
 \MFUblocker{\xmltagfmt}
+
+\newcommand*{\xmlattrfmt}[1]{\texorpdfstring{\textsf{#1}}{#1}}
+\MFUblocker{\xmlattrfmt}
 
 \newcommand{\longswitch}{-\/-}
 \newcommand\pdflongswitch{\string-\string-}
@@ -2163,6 +2188,9 @@
 \newcommand*{\apptext}[1]{\glsfmttext{app.#1}}
 \newcommand*{\switchtext}[1]{\glsfmttext{switch.#1}}
 
+\newcommand*{\xmlelemtext}[1]{\glsfmttext{xmlelement.#1}}
+\newcommand*{\xmlattrtext}[1]{\glsfmttext{xmlattr.#1}}
+
 \glsxtrnewgls{file.}{\file}
 \glsxtrnewgls{pkg.}{\sty}
 \glsxtrnewgls{cls.}{\cls}
@@ -2174,6 +2202,9 @@
 \glsxtrnewgls{app.}{\app}
 \glsxtrnewgls{switch.}{\switch}
 \newcommand{\swch}[2][]{\shortswitchref[#1]{switch.#2}}
+
+\glsxtrnewgls{xmlelement.}{\xmlelem}
+\glsxtrnewgls{xmlattr.}{\xmlattr}
 
 \newcommand{\optval}[2]{%
  \texorpdfstring
@@ -2839,6 +2870,8 @@ transcript or log file or written to STDOUT or STDERR}}
  \renewcommand*{\clsfmt}[1]{##1}%
  \renewcommand*{\ctrfmt}[1]{##1}%
  \renewcommand*{\csfmtfont}[1]{\textcolor{cs}{##1}}%
+ \renewcommand*{\xmltagfmt}[1]{<##1>}%
+ \renewcommand*{\xmlattrfmt}[1]{##1}%
  \let\fmtorcode\@secondoftwo
  \let\code\@firstofone
 }

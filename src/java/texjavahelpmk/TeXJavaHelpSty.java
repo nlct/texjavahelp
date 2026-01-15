@@ -80,6 +80,8 @@ public class TeXJavaHelpSty extends UserGuideSty
       addSemanticCommand("xmltagfmt", TeXFontFamily.TT,
         null, listener.getOther('<'), listener.getOther('>'));
 
+      addSemanticCommand("xmlattrfmt", TeXFontFamily.TT);
+
       addSemanticCommand("varfmt", TeXFontFamily.VERB);
 
       addSemanticCommand("iconfmt", "icon", null, null, null, null);
@@ -120,6 +122,12 @@ public class TeXJavaHelpSty extends UserGuideSty
       addLocationCommands();
       addBib2GlsCommands();
       addGlsCommands();
+
+      addGlsFmtTextCommand("xmlelemtext", "xmlelement.");
+      addGlsFmtTextCommand("xmlattrtext", "xmlattr.");
+
+      registerControlSequence(glossariesSty.createGls("xmlelem", "xmlelement."));
+      registerControlSequence(glossariesSty.createGls("xmlattr", "xmlattr."));
 
       // no-op for resource related commands
 
