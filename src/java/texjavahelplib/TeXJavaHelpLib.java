@@ -275,7 +275,14 @@ public class TeXJavaHelpLib
    public String getMessageWithFallback(String label,
        String fallbackFormat, Object... params)
    {
-      return messages.getMessageWithFallback(label, fallbackFormat, params);
+      if (fallbackFormat == null)
+      {
+         return getMessage(label, params);
+      }
+      else
+      {
+         return messages.getMessageWithFallback(label, fallbackFormat, params);
+      }
    }
 
    public String getMessageIfExists(String label, Object... args)
@@ -3927,6 +3934,6 @@ public class TeXJavaHelpLib
    public static final String LICENSE_GPL3 = String.format(
    "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>%nThis is free software: you are free to change and redistribute it.%nThere is NO WARRANTY, to the extent permitted by law.");
 
-   public static final String VERSION = "1.2";
-   public static final String VERSION_DATE = "2026-01-15";
+   public static final String VERSION = "1.3";
+   public static final String VERSION_DATE = "2026-01-22";
 }
