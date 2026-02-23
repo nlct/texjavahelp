@@ -365,14 +365,14 @@ public abstract class CLISyntaxParser
       }
    }
 
-   protected boolean isArg(String arg,
+   public boolean isArg(String arg,
      String longName, CLIArgValue[] returnVals)
     throws InvalidSyntaxException
    {
       return isArg(arg, null, longName, returnVals, CLIArgValueType.STRING);
    }
 
-   protected boolean isArg(String arg,
+   public boolean isArg(String arg,
      String longName, CLIArgValue[] returnVals,
      CLIArgValueType type)
     throws InvalidSyntaxException
@@ -380,7 +380,7 @@ public abstract class CLISyntaxParser
       return isArg(arg, null, longName, returnVals, type);
    }
 
-   protected boolean isArg(String arg,
+   public boolean isArg(String arg,
      String shortName, String longName, CLIArgValue[] returnVals)
     throws InvalidSyntaxException
    {
@@ -388,7 +388,7 @@ public abstract class CLISyntaxParser
          CLIArgValueType.STRING);
    }
 
-   protected boolean isIntArg(String arg,
+   public boolean isIntArg(String arg,
      String longName, CLIArgValue[] returnVals)
     throws InvalidSyntaxException
    {
@@ -396,7 +396,7 @@ public abstract class CLISyntaxParser
          CLIArgValueType.INT);
    }
 
-   protected boolean isIntArg(String arg,
+   public boolean isIntArg(String arg,
      String shortName, String longName, CLIArgValue[] returnVals)
     throws InvalidSyntaxException
    {
@@ -404,7 +404,7 @@ public abstract class CLISyntaxParser
          CLIArgValueType.INT);
    }
 
-   protected boolean isListArg(String arg,
+   public boolean isListArg(String arg,
      String longName, CLIArgValue[] returnVals)
     throws InvalidSyntaxException
    {
@@ -412,7 +412,7 @@ public abstract class CLISyntaxParser
          CLIArgValueType.LIST);
    }
 
-   protected boolean isListArg(String arg,
+   public boolean isListArg(String arg,
      String shortName, String longName, CLIArgValue[] returnVals)
     throws InvalidSyntaxException
    {
@@ -420,7 +420,7 @@ public abstract class CLISyntaxParser
          CLIArgValueType.LIST);
    }
 
-   protected boolean isArg(String arg,
+   public boolean isArg(String arg,
      String shortName, String longName, CLIArgValue[] returnVals,
      CLIArgValueType type)
     throws InvalidSyntaxException
@@ -428,7 +428,7 @@ public abstract class CLISyntaxParser
       return isArg(arg, shortName, longName, null, returnVals, type);
    }
 
-   protected boolean isArg(String arg,
+   public boolean isArg(String arg,
      String shortName, String longName, String altLongName,
      CLIArgValue[] returnVals,
      CLIArgValueType type)
@@ -515,7 +515,7 @@ public abstract class CLISyntaxParser
       return true;
    }
 
-   protected boolean isIntArg(String arg,
+   public boolean isIntArg(String arg,
      String longName, CLIArgValue[] returnVals, int defValue)
     throws InvalidSyntaxException
    {
@@ -525,7 +525,7 @@ public abstract class CLISyntaxParser
    /**
     * Test for switch that takes a single optional integer argument.
     */ 
-   protected boolean isIntArg(String arg,
+   public boolean isIntArg(String arg,
      String shortName, String longName, CLIArgValue[] returnVals,
      int defValue)
     throws InvalidSyntaxException
