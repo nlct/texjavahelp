@@ -63,15 +63,16 @@ public class TJHListener extends L2HConverter
 {
    public TJHListener(TeXJavaHelpMk app, Charset outCharset)
    {
-      this(app, outCharset, false);
+      this(app, outCharset, true);
    }
 
-   public TJHListener(TeXJavaHelpMk app, Charset outCharset, boolean isHtml5)
+   public TJHListener(TeXJavaHelpMk app, Charset outCharset, boolean isHelpset)
    {
       super(app, app.isUseMathJaxOn(), app.getOutDirectory(),
         outCharset, app.isParsePackagesOn(), app.getSplitLevel());
 
-      this.isHtml5 = isHtml5;
+      this.isHelpset = isHelpset;
+      this.isHtml5 = !isHelpset;
       setSeparateCss(true);
 
       setSplitUseBaseNamePrefix(app.isSplitBaseNamePrefixOn());
@@ -137,7 +138,55 @@ public class TJHListener extends L2HConverter
       }
 
       // reduce default set of image extensions
-      setImageExtensions(".png", ".jpg", ".jpeg", ".pdf", ".tex");
+
+      if (isHelpset)
+      {
+         setImageExtensions(".png", ".jpg", ".jpeg", ".pdf", ".tex");
+      }
+      else
+      {
+         setImageExtensions(".pdf", ".png", ".jpg", ".jpeg", ".tex");
+      }
+   }
+
+   public void setBreadCrumbTrailEnabled(boolean on)
+   {
+      breadcrumbtrail = on;
+   }
+
+   public boolean isBreadCrumbTrailEnabled()
+   {
+      return breadcrumbtrail;
+   }
+
+   public void setMiniTocEnabled(boolean on)
+   {
+      minitoc = on;
+   }
+
+   public boolean isMiniTocEnabled()
+   {
+      return minitoc;
+   }
+
+   public void setMiniTocPreamble(String html)
+   {
+      minitocPreamble = html;
+   }
+
+   public String getMiniTocPreamble()
+   {
+      return minitocPreamble;
+   }
+
+   public void setMiniTocPostamble(String html)
+   {
+      minitocPostamble = html;
+   }
+
+   public String getMiniTocPostamble()
+   {
+      return minitocPostamble;
    }
 
    public void parseAux(String prefix, File auxFile) throws IOException
@@ -216,6 +265,53 @@ public class TJHListener extends L2HConverter
    @Override
    protected void footerNav() throws IOException
    {
+      if (!isHelpset)
+      {
+         super.footerNav();
+      }
+   }
+
+   @Override
+   protected void startBody(TeXObjectList stack) throws IOException
+   {
+      super.startBody(stack);
+
+      if (breadcrumbtrail)
+      {
+         TeXObjectList trail = createBreadcrumbTrail();
+
+         if (trail != null)
+         {
+            TeXParserUtils.process(trail, parser, stack);
+         }
+      }
+
+      if (minitoc)
+      {
+         TeXObjectList minitoc = createMiniToc();
+
+         if (minitoc != null)
+         {
+            if (minitocPreamble != null)
+            {
+               writeliteral(minitocPreamble);
+            }
+
+            TeXObjectList nav = createDivNav(true);
+
+            if (nav != null)
+            {
+               TeXParserUtils.process(nav, parser, stack);
+            }
+
+            TeXParserUtils.process(minitoc, parser, stack);
+
+            if (minitocPostamble != null)
+            {
+               writeliteral(minitocPostamble);
+            }
+         }
+      }
    }
 
    protected void writeNavigationXmlFile()
@@ -793,7 +889,8 @@ public class TJHListener extends L2HConverter
    protected SearchData searchData;
 
    protected DocumentBlockWriter documentBlockWriter;
-   protected boolean isHtml5=false;
+   protected boolean isHtml5=false, isHelpset = true, breadcrumbtrail=false, minitoc=false;
+   protected String minitocPreamble = null, minitocPostamble = null;
 
    public static final int MIN_SEARCH_LENGTH = 3;
 

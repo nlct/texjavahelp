@@ -76,9 +76,12 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       if (arg.equals("--log")
        || arg.equals("--split")
        || arg.equals("--head")
+       || arg.equals("--minitoc-preamble")
+       || arg.equals("--minitoc-postamble")
        || arg.equals("--in") || arg.equals("-i")
        || arg.equals("--output") || arg.equals("-o")
        || arg.equals("--out-charset")
+       || arg.equals("--image-dest")
        || arg.equals("--image-preamble")
        || arg.equals("--debug")
        || arg.equals("--debug-mode")
@@ -107,6 +110,34 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       else if (arg.equals("--mathjax"))
       {
          mathJax = true;
+      }
+      else if (arg.equals("--nohelpset"))
+      {
+         isHelpset = false;
+         breadcrumbtrail = true;
+         minitoc = true;
+      }
+      else if (arg.equals("--helpset"))
+      {
+         isHelpset = true;
+         breadcrumbtrail = false;
+         minitoc = false;
+      }
+      else if (arg.equals("--nobreadcrumbtrail"))
+      {
+         breadcrumbtrail = false;
+      }
+      else if (arg.equals("--breadcrumbtrail"))
+      {
+         breadcrumbtrail = true;
+      }
+      else if (arg.equals("--nominitoc"))
+      {
+         minitoc = false;
+      }
+      else if (arg.equals("--minitoc"))
+      {
+         minitoc = true;
       }
       else if (arg.equals("--nosupport-unicode-script"))
       {
@@ -172,6 +203,14 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       {
          extraHead = returnVals[0].toString();
       }
+      else if (cliParser.isArg(arg, "--minitoc-preamble", returnVals))
+      {
+         minitocPreamble = returnVals[0].toString();
+      }
+      else if (cliParser.isArg(arg, "--minitoc-postamble", returnVals))
+      {
+         minitocPostamble = returnVals[0].toString();
+      }
       else if (cliParser.isArg(arg, "--in", "-i", returnVals))
       {
          if (inFile != null)
@@ -195,6 +234,19 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       else if (cliParser.isArg(arg, "--out-charset", returnVals))
       {
          outCharset = Charset.forName(returnVals[0].toString());
+      }
+      else if (cliParser.isArg(arg, "--image-dest", returnVals))
+      {
+         String dir = returnVals[0].toString();
+
+         if (dir.isEmpty())
+         {
+            imageDir = null;
+         }
+         else
+         {
+            imageDir = new File(dir);
+         }
       }
       else if (cliParser.isArg(arg, "--image-preamble", returnVals))
       {
@@ -272,7 +324,17 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
 
    protected void run() throws IOException
    {
-      TJHListener listener = new TJHListener(this, outCharset);
+      TJHListener listener = new TJHListener(this, outCharset, isHelpset);
+
+      listener.setBreadCrumbTrailEnabled(breadcrumbtrail);
+      listener.setMiniTocEnabled(minitoc);
+      listener.setMiniTocPreamble(minitocPreamble);
+      listener.setMiniTocPostamble(minitocPostamble);
+
+      if (imageDir != null)
+      {
+         listener.setImageDest(imageDir.toPath());
+      }
 
       TeXParser parser = new TeXParser(listener);
 
@@ -746,10 +808,16 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       System.out.println();
       helpLib.printSyntaxItem(getMessage("syntax.out", "--output", "-o"));
       helpLib.printSyntaxItem(getMessage("syntax.out.charset", "--out-charset"));
+      helpLib.printSyntaxItem(getMessage("syntax.out.image-dest", "--image-dest"));
       System.out.println();
       helpLib.printSyntaxItem(getMessage("syntax.html.options"));
       System.out.println();
       helpLib.printSyntaxItem(getMessage("syntax.head", "--head"));
+      helpLib.printSyntaxItem(getMessage("syntax.helpset", "--[no]helpset"));
+      helpLib.printSyntaxItem(getMessage("syntax.breadcrumbtrail", "--[no]breadcrumbtrail"));
+      helpLib.printSyntaxItem(getMessage("syntax.minitoc", "--[no]minitoc"));
+      helpLib.printSyntaxItem(getMessage("syntax.minitoc-preamble", "--minitoc-preamble"));
+      helpLib.printSyntaxItem(getMessage("syntax.minitoc-postamble", "--minitoc-postamble"));
       helpLib.printSyntaxItem(getMessage("syntax.mathjax", "--[no]mathjax"));
       helpLib.printSyntaxItem(getMessage("syntax.support-unicode-script",
          "--[no]support-unicode-script"));
@@ -841,7 +909,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    private boolean mathJax = false;
    private boolean useUnicodeSubSupScript = false;
 
-   private File inFile, outDir;
+   private File inFile, outDir, imageDir;
    private int splitLevel=8;
    private Charset outCharset;
 
@@ -850,6 +918,11 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    private boolean deleteTempDirOnExit = true;
    private boolean convertImages = true;
    private boolean splitUseBaseNamePrefix = false;
+   private boolean isHelpset = true;
+   private boolean breadcrumbtrail = false;
+   private boolean minitoc = false;
+   private String minitocPreamble = null;
+   private String minitocPostamble = null;
 
    private String outputFormat = "latex";
 
