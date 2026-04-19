@@ -57,12 +57,15 @@ has have</entry>
 <entry key="syntax.out">{0} (or {1}) &lt;directory&gt;	Save output in &lt;directory&gt;.</entry>
 <entry key="syntax.out.charset">{0} &lt;charset&gt;	Set the character encoding to &lt;charset&gt; for the output files.</entry>
 <entry key="syntax.out.image-dest">{0} &lt;directory&gt;	Save output images in &lt;directory&gt; (relative to the output directory).</entry>
+<entry key="syntax.html-suffix">{0} &lt;ext&gt;	Set the file extension to &lt;ext&gt; (default "html").</entry>
 <entry key="syntax.html.options">HTML Options:</entry>
 <entry key="syntax.head">{0} &lt;html&gt;	Add &lt;html&gt; code to HTML header.</entry>
 <entry key="syntax.mathjax">{0}	Use MathJax.</entry>
 <entry key="syntax.helpset">{0}	Create helpset files.</entry>
 <entry key="syntax.breadcrumbtrail">{0}	Create breadcrumb trail.</entry>
 <entry key="syntax.minitoc">{0}	Create minitoc.</entry>
+<entry key="syntax.minitoc-div-class">{0} &lt;name&gt;	Encapsulate minitoc in div with given class name.</entry>
+<entry key="syntax.minitoc-div-id">{0} &lt;id&gt;	Encapsulate minitoc in div with given id.</entry>
 <entry key="syntax.minitoc-preamble">{0} &lt;html&gt;	Add &lt;html&gt; code before minitoc.</entry>
 <entry key="syntax.minitoc-postamble">{0} &lt;html&gt;	Add &lt;html&gt; code after minitoc.</entry>
 <entry key="syntax.support-unicode-script">{0}	Use Unicode superscripts or subscripts where available.</entry>
@@ -103,5 +106,6 @@ has have</entry>
 <entry key="error.syntax.missing_value">Value expected after {0}</entry>
 <entry key="error.syntax.number_expected">Number expected after {0}. Found: ''{1}''</entry>
 <entry key="error.syntax.unknown_debug_mode">Unknown debug mode ''{0}''</entry>
+<entry key="error.syntax.io_load">Unable to load file ''{0}'': {1}</entry>
 
 </properties>

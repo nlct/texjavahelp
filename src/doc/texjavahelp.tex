@@ -136,7 +136,7 @@ in the \gls{index.help-page}.
 The \sty{texjavahelp} package requires the following packages:
 \sty{glossaries-extra}, \sty{fontawesome}, \sty{twemojis},
 \sty{upquote}, \sty{hologo}, \sty{xcolor}, \sty{tcolorbox}, \sty{hyperref},
-and (optionally) \sty{tikz}. These are loaded automatically.
+and \sty{tikz}. These are loaded automatically.
 The \sty{glossaries-extra} package is loaded with the options:
 \optval{record}{nameref} (which means that \app{bib2gls} should be used),
 \opt{indexcounter}, \opt{floats}, \opt{nostyles}, 
@@ -151,8 +151,7 @@ and \gls{baruparrow}. The \opt{fontsymbols} option will required a package that 
 these commands, such as \sty{stix} or \sty{boisk}, if those commands are required.
 
 \optiondef{tikzsymbols}
-This option automatically loads the \sty{tikz} package and 
-defines \gls{tabsym} and \gls{upsym} as images.
+This option  defines \gls{tabsym} and \gls{upsym} as images.
 The \opt{tikzsymbols} option counteracts the \opt{fontsymbols} option.
 
 Another other options supplied to \sty{texjavahelp} will be passed to
@@ -227,6 +226,82 @@ Buttons and menu items may have mnemonics, such as
 \mnemonic{help} for the help button or \mnemonictrail{help.manual}
 for the \menu{help.manual} menu item.
 
+\section{Image Commands}
+\label{sec:imagecmds}
+
+The \sty{graphicx} package is automatically loaded so you can use
+\gls{includegraphics} (the definition with the \keyvallist\ optional
+argument). The \gls{TeXParserLib} supports this command (but not
+all options). The \sty{tikz} package is also automatically loaded
+but is not supported by the \gls{TeXParserLib}.
+
+\cmddef{TeXParserLibToImage}
+This just does \meta{\LaTeX\ code} when compiling with
+\LaTeX\ but the \gls{TeXParserLib} will attempt to convert
+the supplied code to an image if \app{texjavahelpmk} is run 
+with the default \switch{convert-images} setting.
+Recognised options:
+
+\optiondef{TeXParserLibToImage.alt}
+Sets the alt text. If not supplied, the \LaTeX\ code will be
+used.
+
+\optiondef{TeXParserLibToImage.pre-alt}
+If set, inserts \meta{text} at the start of the alt text.
+
+\optiondef{TeXParserLibToImage.post-alt}
+If set, inserts \meta{text} at the end of the alt text.
+
+\optiondef{TeXParserLibToImage.name}
+Set the image file basename to \meta{basename}. If not
+set, a generic basename is used in the form \metafilefmt{img}{n}{}
+(for example, \filefmt{img000001.png}). The file extension is
+determined by the image type.
+
+\optiondef{TeXParserLibToImage.type}
+Identifies the type of image to create, where
+\meta{mime-type} should be a supported image MIME type
+(\code{image/png}, \code{image/jpeg} or \code{application/pdf}).
+In the case of PDF, the image will be embedded in the HTML file
+using the \code{object} element. Note that this is not supported
+by HTMLDocument. However, a PNG file will be created to use as a
+fallback.
+
+\optiondef{TeXParserLibToImage.crop}
+A boolean option that determines whether or not to crop the image.
+
+\optiondef{TeXParserLibToImage.div}
+Indicates whether or not to encapsulate the image in a
+\code{div} element. The value may be boolean (\optfmt{true} or
+\optfmt{false}) or the CSS class name.
+
+\cmddef{TeXParserLibToImagePreamble}
+If defined, the value of this token list variable will 
+be added to the document preamble used to create the image for
+\gls{TeXParserLibToImage}.
+
+\cmddef{includeimg}
+Behaves like \gls{includegraphics} if \metafilefmt{}{basename}{.tex}
+does not exist, otherwise \gls{includeimg} sets the input path to
+the same as for \gls{includegraphics} and inputs
+\metafilefmt{}{basename}{.tex} (where the file is expected to
+include \LaTeX\ image code, such as \sty{tikz} commands).
+With \app{texjavahelpmk}, a bitmap will be searched for with the
+same basename, otherwise
+it the default \switch{convert-images} setting is on,
+\app{texjavahelpmk} will convert the image to a bitmap.
+
+\cmddef{includetimg}
+As \gls{includeimg} but top-aligns the image.
+
+The options for \gls{includeimg} and \gls{includetimg} are a subset
+of those for \gls{includegraphics}: \opt{includeimg.scale},
+\opt{includeimg.width}, \opt{includeimg.height},
+\opt{includeimg.rotate}, \opt{includeimg.alt},
+\opt{includeimg.actualtext}, and \opt{includeimg.artifact}.
+Additionally, the \opt{includeimg.frame} boolean option is also
+available. If true, this will put a frame around the image.
+
 \chapter{The \apptext{texjavahelpmk} Command Line Application}
 \label{sec:texjavahelpmk}
 
@@ -254,6 +329,202 @@ Specifies the output directory. The switch may be omitted
 (that is, \meta{out-dir} may just be provided) provided that
 \switch{in} is also used or the output directory is specified after
 the input file.
+
+\switchdef{html-ext}
+The extension to use for the HTML files.
+
+\switchdef{split}
+Specifies the sectioning level to split on. The level should be a
+number that corresponds to the section level (0 for chapter, 1 for
+section, etc).
+
+Each section should be labelled as the HTML filenames
+are constructed from the label. Any colon prefix such as
+\code{sec:}\ or \code{ch:}\ will be stripped and any periods will be
+removed or replaced by underscores. If a section isn't labelled, the basename
+will be \metafilefmt{node}{n}{} instead.
+
+\switchdef{prefix-split}
+The HTML filename will be prefixed with the input file basename.
+For example, if the input file is \filefmt{foo.tex} and the
+introduction section has been assigned the label \code{sec:intro}
+then the HTML file for the introduction section will be
+\filefmt{foo-intro.html} instead of just \filefmt{intro.html}.
+
+\switchdef{noprefix-split}
+Don't prefix the HTML filename with the input file basename.
+
+\switchdef{out-charset}
+Sets the character encoding for the output files.
+
+\switchdef{image-dest}
+Specifies where to put output images. The given directory should be
+relative to the output directory.  If \meta{directory} is an empty
+string (the default) then the images will be copied to a location
+relative to the output directory that retains the same structure as
+for the input. 
+
+For example, if the input file \filefmt{doc.tex}
+is in the directory \filefmt{doc/} and the image \filefmt{img1.png} is in
+\filefmt{doc/images1/} and the image \filefmt{img2.png} is in
+\filefmt{doc/images2/} and, if the output directory is
+\filefmt{helpset/}, then with the default setting, \filefmt{img1.png}
+will be copied to \filefmt{helpset/images1/} and \filefmt{img2.png}
+will be copied to \filefmt{helpset/images2/}. However, if
+\switch{image-dest} sets the image destination to \filefmt{images}
+then both \filefmt{img1.png} and \filefmt{img2.png} will be copied
+to \filefmt{helpset/images/}.  
+
+\switchdef{convert-images}
+Use \pdfLaTeX\ or \LuaLaTeX\ to convert \LaTeX\ code (with
+\gls{TeXParserLibToImage} or input with \gls{includeimg} etc) to
+bitmap images. This is the default. The temporary files used in this
+operation will be deleted by default. Use \switchdef{no-rm-tmp-dir}
+to retain them.
+
+\switchdef{noconvert-images}
+Don't convert \LaTeX\ image files.
+
+\switch{image-preamble}
+If an image needs to be automatically generated, the temporary
+\LaTeX\ file used to create the image should have the preamble set
+to \meta{\LaTeX\ code}. If not set, the preamble will be the same as
+the preamble from the input file.
+
+\switch{image-preamble-from-file}
+As \switch{image-preamble} but the content is obtained from the file
+identified by \meta{filename}.
+
+The following options govern the HTML output.
+
+\switchdef{entities}
+Use HTML entities for non-ASCII characters. This will interfere with
+the helpset search data.
+
+\switchdef{noentities}
+Don't use HTML entities for non-ASCII characters (default).
+
+\switchdef{support-unicode-script}
+Use Unicode superscripts or subscripts where available.
+
+\switchdef{nosupport-unicode-script}
+Don't use Unicode superscripts or subscripts, just
+use \code{sub} or \code{sup} elements (default).
+
+\switchdef{head}
+Add \meta{html} code to the HTML header.
+
+\switch{body-preamble}
+Insert \meta{html} at the start of the HTML body.
+
+\switch{body-preamble-from-file}
+As \switch{body-preamble} but the content is obtained from the file
+identified by \meta{filename}.
+
+\switch{body-postamble}
+Insert \meta{html} at the end of the HTML body.
+
+\switch{body-preamble-from-file}
+As \switch{body-preamble} but the content is obtained from the file
+identified by \meta{filename}.
+
+\switchdef{helpset}
+Create helpset files. These files are designed for integration with
+the \TeX\ Java Help system, which means that there won't be any
+HTML5 markup (as it's not supported by Java's \code{HTMLDocument} class).
+There also won't be any navigation added as that's dealt with by the
+Help window (see \sectionref{sec:helpwindows}).
+This setting automatically implements
+\switch{nobreadcrumbtrail}, \switch{nominitoc} and
+\switch{nomathjax}.
+
+\switchdef{nohelpset}
+Indicates that the HTML files are not intended for use with the
+\TeX\ Java Help system, so HTML5 markup will be used and a
+navigation line will be added to the end of each HTML body. This setting
+also automatically implements \switch{breadcrumbtrail},
+\switch{minitoc} and \switch{mathjax}.
+
+\begin{information}
+The \switch{nohelpset} setting will still create the associated XML
+files as they may still be useful.
+\end{information}
+
+\switchdef{mathjax}
+Add MathJax support. Note that Java's \code{HTMLDocument} class
+doesn't support MathJax, so this setting is off by default.
+
+\switchdef{nomathjax}
+Don't add MathJax support. This will just use an HTML
+approximation which is quite limited.
+
+\switch{breadcrumbtrail}
+Add breadcrumb trail to the start of HTML body.
+
+\switch{nobreadcrumbtrail}
+Don't add breadcrumb trail to the start of HTML body.
+
+\switchdef{minitoc}
+Add minitoc to HTML body. This isn't required for helpset files as
+the Help window provides a navigation panel.
+
+\switchdef{nominitoc}
+Don't add minitoc to HTML body.
+
+\switchdef{minitoc-div-class}
+If \meta{class-name} not empty, encapsulate minitoc in a
+div with the given class name. This option is ignored with
+\switch{nominitoc}.
+
+\switchdef{minitoc-div-id}
+If \meta{id-name} not empty, encapsulate minitoc in a
+div with the id class name. This option is ignored with
+\switch{nominitoc}.
+
+If neither \switch{minitoc-div-class} nor \switch{minitoc-div-id} is
+set to a non-empty value, then the encapsulating div won't be added.
+
+\switch{minitoc-preamble}
+Insert \meta{html} at the start of the minitoc (inside the
+encapsulating div if \switch{minitoc-div-class} or \switch{minitoc-div-id} have been
+set).
+
+\switch{minitoc-preamble-from-file}
+As \switch{minitoc-preamble} but the content is obtained from the file
+identified by \meta{filename}.
+
+\switch{minitoc-postamble}
+Insert \meta{html} at the end of the minitoc (inside the
+encapsulating div if \switch{minitoc-div-class} or \switch{minitoc-div-id} have been
+set).
+
+\switch{minitoc-postamble-from-file}
+As \switch{minitoc-postamble} but the content is obtained from the file
+identified by \meta{filename}.
+
+The following options are provided for debugging purposes.
+
+\switchdef{no-rm-tmp-dir}
+Don't remove temporary files on exit.
+
+\switchdef{rm-tmp-dir}
+Remove temporary files on exit (default).
+
+\switchdef{log}
+Set the \TeX\ Parser log file to \meta{filename}.
+
+\switchdef{nolog}
+Don't log messages.
+
+\switchdef{debug}
+Switch on debug mode. The \meta{level} (if present) should be an
+integer greater than 0. (Setting the level to 0 is equivalent to
+switching off debugging.)
+
+\switchdef{debug-mode}
+
+Enable \TeX\ Parser debugging. Be aware that this can be extremely
+verbose.
 
 \switchdef{nodebug}
 Switch off debugging mode (default).

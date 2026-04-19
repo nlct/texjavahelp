@@ -103,9 +103,249 @@ directory if missing or if \app{xml2bib}['s] file is newer}
   description={Specifies the output directory}
 }
 
+@switch{switch.image-dest,
+  parent={app.texjavahelpmk},
+  syntax={\meta{directory}},
+  description={Save output images in \meta{directory} (relative to
+the output directory)}
+}
+
+@switch{switch.out-charset,
+  parent={app.texjavahelpmk},
+  syntax={\meta{charset}},
+  description={Set the character encoding to \meta{charset} for the
+output files}
+}
+
+@switch{switch.html-ext,
+  parent={app.texjavahelpmk},
+  syntax={\meta{extension}},
+  initvalue={html},
+  description={Set the HTML file extension.}
+}
+
+@switch{switch.head,
+  parent={app.texjavahelpmk},
+  syntax={\meta{html}},
+  description={Add \meta{html} code to the HTML header.}
+}
+
+@switch{switch.helpset,
+  parent={app.texjavahelpmk},
+  description={Create helpset files.}
+}
+
+@switch{switch.nohelpset,
+  parent={app.texjavahelpmk},
+  description={Create HTML5 files instead of helpset files.}
+}
+
+@switch{switch.image-preamble,
+  parent={app.texjavahelpmk},
+  syntax={\meta{\LaTeX\ code}},
+  description={If an image needs to be automatically generated, set
+the temporary \LaTeX\ file preamble to \meta{\LaTeX\ code}.}
+}
+
+@switch{switch.image-preamble-from-file,
+  parent={app.texjavahelpmk},
+  syntax={\meta{filename}},
+  description={As \switch{image-preamble} but obtains content from
+the file identified by \meta{filename}.}
+}
+
+
+@switch{switch.body-preamble,
+  parent={app.texjavahelpmk},
+  syntax={\meta{html}},
+  description={Insert \meta{html} at the start of the HTML body.}
+}
+
+@switch{switch.body-preamble-from-file,
+  parent={app.texjavahelpmk},
+  syntax={\meta{filename}},
+  description={As \switch{body-preamble} but obtains content from
+the file identified by \meta{filename}.}
+}
+
+@switch{switch.body-postamble,
+  parent={app.texjavahelpmk},
+  syntax={\meta{html}},
+  description={Insert \meta{html} at the end of the HTML body.}
+}
+
+@switch{switch.body-postamble-from-file,
+  parent={app.texjavahelpmk},
+  syntax={\meta{filename}},
+  description={As \switch{body-postamble} but obtains content from
+the file identified by \meta{filename}.}
+}
+
+@switch{switch.breadcrumbtrail,
+  parent={app.texjavahelpmk},
+  description={Add breadcrumb trail to start of HTML body.}
+}
+
+@switch{switch.nobreadcrumbtrail,
+  parent={app.texjavahelpmk},
+  description={Don't add breadcrumb trail to start of HTML body.}
+}
+
+@switch{switch.minitoc,
+  parent={app.texjavahelpmk},
+  description={Add minitoc to HTML body before the main content.}
+}
+
+@switch{switch.nominitoc,
+  parent={app.texjavahelpmk},
+  description={Don't add minitoc to HTML body.}
+}
+
+@switch{switch.minitoc-preamble,
+  parent={app.texjavahelpmk},
+  syntax={\meta{html}},
+  description={Insert \meta{html} at the start of the minitoc.}
+}
+
+@switch{switch.minitoc-preamble-from-file,
+  parent={app.texjavahelpmk},
+  syntax={\meta{filename}},
+  description={As \switch{minitoc-preamble} but obtains content from
+the file identified by \meta{filename}.}
+}
+
+@switch{switch.minitoc-postamble,
+  parent={app.texjavahelpmk},
+  syntax={\meta{html}},
+  description={Insert \meta{html} at the end of the minitoc.}
+}
+
+@switch{switch.minitoc-postamble-from-file,
+  parent={app.texjavahelpmk},
+  syntax={\meta{filename}},
+  description={As \switch{minitoc-postamble} but obtains content from
+the file identified by \meta{filename}.}
+}
+
+@switch{switch.minitoc-div-class,
+  parent={app.texjavahelpmk},
+  syntax={\meta{class-name}},
+  initvalue={\initvalnotefmt{empty}},
+  description={If \meta{class-name} not empty, encapsulate minitoc in a
+div with the given class name.}
+}
+
+@switch{switch.minitoc-div-id,
+  parent={app.texjavahelpmk},
+  syntax={\meta{id-name}},
+  initvalue={\initvalnotefmt{empty}},
+  description={If \meta{id-name} not empty, encapsulate minitoc in a
+div with the given id name.}
+}
+
+@switch{switch.mathjax,
+  parent={app.texjavahelpmk},
+  description={Add MathJax support.}
+}
+
+@switch{switch.nomathjax,
+  parent={app.texjavahelpmk},
+  description={Don't add MathJax support. This will just use an HTML
+approximation which is quite limited. (Default, as
+\code{HTMLDocument} doesn't support MathJax.)}
+}
+
+@switch{switch.support-unicode-script,
+  parent={app.texjavahelpmk},
+  description={Use Unicode superscripts or subscripts where
+available.}
+}
+
+@switch{switch.nosupport-unicode-script,
+  parent={app.texjavahelpmk},
+  description={Don't use Unicode superscripts or subscripts, just
+use \code{sub} or \code{sup} elements (default).}
+}
+
+@switch{switch.entities,
+  parent={app.texjavahelpmk},
+  description={Use HTML entities for non-ASCII characters.}
+}
+
+@switch{switch.noentities,
+  parent={app.texjavahelpmk},
+  description={Don't convert non-ASCII characters into HTML entities
+(default).}
+}
+
+@switch{switch.convert-images,
+  parent={app.texjavahelpmk},
+  description={Use \pdfLaTeX\ or \LuaLaTeX\ to convert \LaTeX\ image files
+(referenced with \gls{includeimg} etc) to bitmap images (default).}
+}
+
+@switch{switch.noconvert-images,
+  parent={app.texjavahelpmk},
+  description={Don't convert \LaTeX\ image files}
+}
+
+@switch{switch.prefix-split,
+  parent={app.texjavahelpmk},
+  description={Use the basename as a prefix for HTML files when
+splitting on sections.}
+}
+
+@switch{switch.noprefix-split,
+  parent={app.texjavahelpmk},
+  description={Don't use the basename as a prefix for HTML files when
+splitting on sections (default).}
+}
+
+@switch{switch.split,
+  parent={app.texjavahelpmk},
+  syntax={\meta{level}},
+  initvalue={8},
+  description={Set the split level (the sectioning depth to split
+the document on).}
+}
+
+
+@switch{switch.log,
+  parent={app.texjavahelpmk},
+  syntax={\meta{filename}},
+  description={Set the log file.}
+}
+
+@switch{switch.nolog,
+  parent={app.texjavahelpmk},
+  description={Don't log (default).}
+}
+
+@switch{switch.no-rm-tmp-dir,
+  parent={app.texjavahelpmk},
+  description={Don't remove temporary files on exit.}
+}
+
+@switch{switch.rm-tmp-dir,
+  parent={app.texjavahelpmk},
+  description={Remove temporary files on exit (default).}
+}
+
+@switch{switch.debug,
+  parent={app.texjavahelpmk},
+  syntax={\oargm{level}},
+  description={Switch on debug mode}
+}
+
+@switch{switch.debug-mode,
+  parent={app.texjavahelpmk},
+  syntax={\meta{value}},
+  description={Switch on debug mode for the given verbosity}
+}
+
 @switch{switch.nodebug,
   parent={app.texjavahelpmk},
-  description={switch off debug mode (default)}
+  description={Switch off debug mode (default)}
 }
 
 @switch{switch.no-debug,
@@ -164,7 +404,11 @@ was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer availabl
 }
 
 @package{pkg.glossaries-extra,
- name={\styfmt{glos\-saries-extra}}
+ name={\styfmt{glos\-saries\dhyphen extra}}
+}
+
+@package{pkg.glossaries-extra-bib2gls,
+ name={\styfmt{glos\-saries\dhyphen extra\dhyphen bib2gls}}
 }
 
 @package{pkg.fontawesome,
@@ -185,6 +429,8 @@ was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer availabl
 }
 
 @package{pkg.tikz}
+
+@package{pkg.graphicx}
 
 @package{pkg.hyperref,
   name={\styfmt{hyper\-ref}}
@@ -246,6 +492,158 @@ was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer availabl
   description={an upward-pointing arrow with an under bar}
 }
 
+@command{includegraphics,
+ name={\csfmt{in\-clude\-graph\-ics}}
+}
+
+@command{includeimg,
+ name={\csfmt{include\-img}},
+ syntax={\oargm{options}\margm{basename}},
+ description={Behaves like \gls{includegraphics} if
+\metafilefmt{}{basename}{.tex} does not exist, otherwise sets the
+input path to the same as for \gls{includegraphics} and inputs
+\metafilefmt{}{basename}{.tex}}
+}
+
+@option{opt.includeimg.scale,
+ name={\optfmt{scale}},
+ parent={includeimg},
+ syntax={\meta{value}},
+ description={scale the image by \meta{value}}
+}
+
+@option{opt.includeimg.rotate,
+ name={\optfmt{rotate}},
+ parent={includeimg},
+ syntax={\meta{angle}},
+ description={rotate the image by \meta{angle}}
+}
+
+@option{opt.includeimg.width,
+ name={\optfmt{width}},
+ parent={includeimg},
+ syntax={\meta{value}},
+ description={scale the image so that the width is \meta{value}}
+}
+
+@option{opt.includeimg.height,
+ name={\optfmt{height}},
+ parent={includeimg},
+ syntax={\meta{value}},
+ description={scale the image so that the height is \meta{value}}
+}
+
+@option{opt.includeimg.frame,
+ name={\optfmt{frame}},
+ parent={includeimg},
+ syntax={\meta{boolean}},
+ description={if true, place a frame around the image}
+}
+
+@option{opt.includeimg.alt,
+ name={\optfmt{alt}},
+ parent={includeimg},
+ syntax={\meta{text}},
+ description={set the alt text (\gls{TeXParserLib} only, unless
+implemented by \gls{includegraphics})}
+}
+
+@option{opt.includeimg.actualtext,
+ name={\optfmt{actual\-text}},
+ parent={includeimg},
+ syntax={\meta{text}},
+ description={set the actual text (\gls{TeXParserLib} only, unless
+implemented by \gls{includegraphics})}
+}
+
+@option{opt.includeimg.artifact,
+ name={\optfmt{arti\-fact}},
+ parent={includeimg},
+ syntax={\meta{boolean}},
+ description={identifies image as an artifact (\gls{TeXParserLib} only, unless
+implemented by \gls{includegraphics})}
+}
+
+@command{includetimg,
+ name={\csfmt{include\-t\-img}},
+ syntax={\oargm{options}\margm{basename}},
+ description={as \gls{includeimg} but top-aligns the image}
+}
+
+@command{TeXParserLibToImagePreamble,
+ name={\csfmt{TeX\-Par\-ser\-Lib\-To\-Image\-Pre\-amble}},
+ description={If defined, the value of this token list variable will
+be added to the document preamble used to create the image for
+\gls{TeXParserLibToImage}}
+}
+
+@command{TeXParserLibToImage,
+ name={\csfmt{TeX\-Par\-ser\-Lib\-To\-Image}},
+ syntax={\oargm{options}\margm{\LaTeX\ code}},
+ description={Just does \meta{\LaTeX\ code} when compiling with
+\LaTeX\ but the \gls{TeXParserLib} will attempt to convert
+the supplied code to an image}
+}
+
+@option{opt.TeXParserLibToImage.alt,
+ name={\optfmt{alt}},
+ parent={TeXParserLibToImage},
+ syntax={\meta{text}},
+ description={set the alt text. If not set, the \LaTeX\ code will be
+used}
+}
+
+@option{opt.TeXParserLibToImage.pre-alt,
+ name={\optfmt{pre\dhyphen alt}},
+ parent={TeXParserLibToImage},
+ syntax={\meta{text}},
+ description={if set, inserts \meta{text} at the start of the alt
+text}
+}
+
+@option{opt.TeXParserLibToImage.post-alt,
+ name={\optfmt{post\dhyphen alt}},
+ parent={TeXParserLibToImage},
+ syntax={\meta{text}},
+ description={if set, inserts \meta{text} at the end of the alt
+text}
+}
+
+@option{opt.TeXParserLibToImage.name,
+ name={\optfmt{name}},
+ parent={TeXParserLibToImage},
+ syntax={\meta{basename}},
+ description={set the image file basename to \meta{basename}. If not
+set, a generic basename is used in the form \metafilefmt{img}{n}{}}
+}
+
+@option{opt.TeXParserLibToImage.type,
+ name={\optfmt{type}},
+ parent={TeXParserLibToImage},
+ syntax={\meta{mime-type}},
+ description={identifies the type of image to create, where
+\meta{mime-type} should be a supported image MIME type
+(\code{image/png}, \code{image/jpeg} or \code{application/pdf})}
+}
+
+@option{opt.TeXParserLibToImage.crop,
+ name={\optfmt{crop}},
+ parent={TeXParserLibToImage},
+ syntax={\meta{boolean}},
+ description={indicates whether or not to crop the image}
+}
+
+@option{opt.TeXParserLibToImage.div,
+ name={\optfmt{div}},
+ parent={TeXParserLibToImage},
+ syntax={\meta{value}},
+ initval={false},
+ defaultval={true},
+ description={indicates whether or not to encapsulate the image in a
+\code{div} element. The value may be boolean (\optfmt{true} or
+\optfmt{false}) or the CSS class name}
+}
+
 @command{GlsXtrLoadResources,
   name={\csfmt{Gls\-Xtr\-Load\-Resources}},
   syntax={\oargm{resource options}},
@@ -286,6 +684,41 @@ was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer availabl
 @option{opt.post-description-dot,
   name={\optfmt{post\dhyphen description\dhyphen dot}},
   parent={GlsXtrLoadResources}
+}
+
+@command{IfTeXParserLib,
+  name={\csfmt{If\-TeX\-Par\-ser\-Lib}},
+  syntax={\margm{true}\margm{false}},
+  description={the \gls{TeXParserLib} defines this command to expand
+to \meta{true}. The \sty{glossaries-extra-bib2gls} package defines
+this command to expand to \meta{false}}
+}
+
+@command{IfHelpSetTF,
+  name={\csfmt{If\-Help\-Set\-TF}},
+  syntax={\margm{true}\margm{false}},
+  description={the \sty{texjavahelp} package defines this command to
+expand to \meta{false} but \app{texjavahelpmk} will define this
+command to expand to \meta{true} if \switch{helpset} otherwise to
+\meta{false}}
+}
+
+@command{IfHelpSetT,
+  name={\csfmt{If\-Help\-Set\-T}},
+  syntax={\margm{true}},
+  description={the \sty{texjavahelp} package defines this command to
+expand to nothing but \app{texjavahelpmk} will define this
+command to expand to \meta{true} if \switch{helpset} otherwise to
+nothing}
+}
+
+@command{IfHelpSetF,
+  name={\csfmt{If\-Help\-Set\-F}},
+  syntax={\margm{false}},
+  description={the \sty{texjavahelp} package defines this command to
+expand to \meta{false} but \app{texjavahelpmk} will define this
+command to expand to nothing if \switch{helpset} otherwise to
+\meta{false}}
 }
 
 @command{TeXJavaHelpGlsResourceOptions,

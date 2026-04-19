@@ -2,7 +2,7 @@
 % in the TeX Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{texjavahelp}[2026/01/22 v1.3 (NLCT)]
+\ProvidesPackage{texjavahelp}[2026/04/19 v1.3 (NLCT)]
 
 \RequirePackage{pifont}
 \RequirePackage{fontawesome}
@@ -1180,6 +1180,8 @@
  }%
 }
   
+\newrobustcmd{\initvalnotefmt}[1]{\textrm{\em #1}}
+
 \renewcommand{\glslinkpresetkeys}{%
  \glsxtrifhasfield*{defaultkeys}{\glslabel}
  {\expandafter\setupglslink\expandafter{\glscurrentfieldvalue}}%
@@ -3174,6 +3176,10 @@ halign upper=flush left,halign lower=justify,
 }
 
 \providecommand\TeXParserLibToImage[2][]{#2}
+
+\newcommand\IfHelpSetTF[2]{#2}
+\newcommand\IfHelpSetT[1]{}
+\newcommand\IfHelpSetF[1]{#1}
 
 \newenvironment{numbered}%
 {%

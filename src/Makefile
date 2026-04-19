@@ -114,6 +114,18 @@ classes/com/dickimawbooks/xml2bib	:
 	cp ../README.md ../unstable/texjavahelp
 	cd ../unstable ; zip -r texjavahelp.zip texjavahelp
 
+../unstable/html/texjavahelp.shtml	: lib/texjavahelpmk.jar \
+	doc/texjavahelp.pdf
+	$(texjavahelpmk) --nohelpset \
+	--html-ext shtml \
+	--image-dest images \
+	--head-from-file doc/head.html \
+	--body-preamble-from-file doc/bodypreamble.html \
+	--body-postamble-from-file doc/bodypostamble.html \
+	--minitoc-div-id sidebar \
+	--minitoc-preamble-from-file doc/minitocpreamble.html \
+	doc/texjavahelp.tex -o ../unstable/html
+
 clean	:
 	\rm -rf classes
 	\rm -f doc/*.glstex

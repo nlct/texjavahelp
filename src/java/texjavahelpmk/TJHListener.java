@@ -36,6 +36,10 @@ import java.nio.file.Path;
 import java.awt.Dimension;
 
 import com.dickimawbooks.texparserlib.*;
+import com.dickimawbooks.texparserlib.latex.AtGobble;
+import com.dickimawbooks.texparserlib.latex.AtFirstOfOne;
+import com.dickimawbooks.texparserlib.latex.AtFirstOfTwo;
+import com.dickimawbooks.texparserlib.latex.AtSecondOfTwo;
 import com.dickimawbooks.texparserlib.latex.FloatBoxStyle;
 import com.dickimawbooks.texparserlib.latex.FrameBox;
 import com.dickimawbooks.texparserlib.latex.KeyValList;
@@ -48,6 +52,7 @@ import com.dickimawbooks.texparserlib.html.L2HConverter;
 import com.dickimawbooks.texparserlib.html.L2HImage;
 import com.dickimawbooks.texparserlib.html.DivisionNode;
 import com.dickimawbooks.texparserlib.html.HtmlTag;
+import com.dickimawbooks.texparserlib.html.StartElement;
 import com.dickimawbooks.texparserlib.auxfile.DivisionInfo;
 import com.dickimawbooks.texparserlib.auxfile.LabelInfo;
 import com.dickimawbooks.texparserlib.auxfile.CiteInfo;
@@ -76,6 +81,7 @@ public class TJHListener extends L2HConverter
       setSeparateCss(true);
 
       setSplitUseBaseNamePrefix(app.isSplitBaseNamePrefixOn());
+      setSuffix(app.getHtmlSuffix());
 
       // NB this will need to be off for search to work properly
       setUseEntities(app.isUseHtmlEntitiesOn());
@@ -149,6 +155,47 @@ public class TJHListener extends L2HConverter
       }
    }
 
+   @Override
+   protected void addPredefined()
+   {
+      super.addPredefined();
+
+      if (isHelpset)
+      {
+         putControlSequence(new AtFirstOfTwo("IfHelpSetTF"));
+         putControlSequence(new AtFirstOfOne("IfHelpSetT"));
+         putControlSequence(new AtGobble("IfHelpSetF"));
+      }
+      else
+      {
+         putControlSequence(new AtSecondOfTwo("IfHelpSetTF"));
+         putControlSequence(new AtGobble("IfHelpSetT"));
+         putControlSequence(new AtFirstOfOne("IfHelpSetF"));
+      }
+   }
+
+   @Override
+   protected void writeMetaData(String title) throws IOException
+   {
+      super.writeMetaData(title);
+
+      File file = currentNode == null ? getRootFile() : currentNode.getFile();
+
+      if (ogUrlPath != null && file != null)
+      {
+         String url = ogUrlPath + file.getName();
+
+         writeMeta(String.format("property=\"og:url\" content=\"%s\"",
+           HtmlTag.encodeAttributeValue(url, true)));
+
+         if (title != null)
+         {
+            writeMeta(String.format("property=\"og:title\" content=\"%s\"",
+              HtmlTag.encodeAttributeValue(title, false)));
+         }
+      }
+   }
+
    public void setBreadCrumbTrailEnabled(boolean on)
    {
       breadcrumbtrail = on;
@@ -187,6 +234,31 @@ public class TJHListener extends L2HConverter
    public String getMiniTocPostamble()
    {
       return minitocPostamble;
+   }
+
+   public void setMiniTocDivClass(String cls)
+   {
+      minitocDivClass = cls;
+   }
+
+   public void setMiniTocDivId(String id)
+   {
+      minitocDivId = id;
+   }
+
+   public void setBodyPreamble(String html)
+   {
+      bodyPreamble = html;
+   }
+
+   public void setBodyPostamble(String html)
+   {
+      bodyPostamble = html;
+   }
+
+   public void setOgUrlPath(String url)
+   {
+      ogUrlPath = url;
    }
 
    public void parseAux(String prefix, File auxFile) throws IOException
@@ -271,10 +343,45 @@ public class TJHListener extends L2HConverter
       }
    }
 
+   public boolean inNavigation()
+   {
+      return inNavigation;
+   }
+
+   public void setRootPagePreMain(String html)
+   {
+      rootPagePreMainContent = html;
+   }
+
+   @Override
+   protected void rootPagePreMain(TeXObjectList stack) throws IOException
+   {
+      inNavigation = true;
+
+      if (rootPagePreMainContent != null)
+      {
+         writeliteralln(rootPagePreMainContent);
+      }
+
+      if (minitoc)
+      {
+         doMiniToc(stack);
+      }
+
+      inNavigation = false;
+   }
+
    @Override
    protected void startBody(TeXObjectList stack) throws IOException
    {
       super.startBody(stack);
+
+      inNavigation = true;
+
+      if (bodyPreamble != null)
+      {
+         writeliteral(bodyPreamble);
+      }
 
       if (breadcrumbtrail)
       {
@@ -288,31 +395,71 @@ public class TJHListener extends L2HConverter
 
       if (minitoc)
       {
-         TeXObjectList minitoc = createMiniToc();
+         doMiniToc(stack);
+      }
 
-         if (minitoc != null)
+      inNavigation = false;
+   }
+
+   protected void doMiniToc(TeXObjectList stack) throws IOException
+   {
+      TeXObjectList minitoc = createMiniToc();
+
+      if (minitoc != null)
+      {
+         if (minitocDivClass != null || minitocDivId != null)
          {
-            if (minitocPreamble != null)
+            StartElement startElem = new StartElement("div");
+
+            if (minitocDivClass != null)
             {
-               writeliteral(minitocPreamble);
+               startElem.putAttribute("class", minitocDivClass);
             }
 
-            TeXObjectList nav = createDivNav(true);
-
-            if (nav != null)
+            if (minitocDivId != null)
             {
-               TeXParserUtils.process(nav, parser, stack);
+               startElem.putAttribute("id", minitocDivId);
             }
 
-            TeXParserUtils.process(minitoc, parser, stack);
+            TeXParserUtils.process(startElem, parser, stack);
+         }
 
-            if (minitocPostamble != null)
-            {
-               writeliteral(minitocPostamble);
-            }
+         if (minitocPreamble != null)
+         {
+            writeliteral(minitocPreamble);
+         }
+
+         TeXObjectList nav = createDivNav(true);
+
+         if (nav != null)
+         {
+            TeXParserUtils.process(nav, parser, stack);
+         }
+
+         TeXParserUtils.process(minitoc, parser, stack);
+
+         if (minitocPostamble != null)
+         {
+            writeliteral(minitocPostamble);
+         }
+
+         if (minitocDivClass != null || minitocDivId != null)
+         {
+            writeliteral("</div>");
          }
       }
    }
+
+   @Override
+   protected void endBody(TeXObjectList stack) throws IOException
+   {
+      super.endBody(stack);
+
+      if (bodyPostamble != null)
+      {
+         writeliteral(bodyPostamble);
+      }
+   }  
 
    protected void writeNavigationXmlFile()
      throws IOException
@@ -890,7 +1037,12 @@ public class TJHListener extends L2HConverter
 
    protected DocumentBlockWriter documentBlockWriter;
    protected boolean isHtml5=false, isHelpset = true, breadcrumbtrail=false, minitoc=false;
-   protected String minitocPreamble = null, minitocPostamble = null;
+   protected String minitocPreamble = null, minitocPostamble = null,
+      minitocDivClass=null, minitocDivId=null;
+   protected String bodyPreamble = null, bodyPostamble = null;
+   protected String ogUrlPath=null;
+   protected String rootPagePreMainContent = null;
+   protected boolean inNavigation = false;
 
    public static final int MIN_SEARCH_LENGTH = 3;
 

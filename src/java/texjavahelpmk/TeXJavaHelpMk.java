@@ -20,6 +20,7 @@
 package com.dickimawbooks.texjavahelpmk;
 
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.Vector;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -76,13 +77,27 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       if (arg.equals("--log")
        || arg.equals("--split")
        || arg.equals("--head")
+       || arg.equals("--head-from-file")
+       || arg.equals("--html-ext")
+       || arg.equals("--og-url-path")
+       || arg.equals("--root-page-preamble")
+       || arg.equals("--root-page-preamble-from-file")
+       || arg.equals("--body-preamble")
+       || arg.equals("--body-preamble-from-file")
+       || arg.equals("--body-postamble")
+       || arg.equals("--body-postamble-from-file")
+       || arg.equals("--minitoc-div-class")
+       || arg.equals("--minitoc-div-id")
        || arg.equals("--minitoc-preamble")
+       || arg.equals("--minitoc-preamble-from-file")
        || arg.equals("--minitoc-postamble")
+       || arg.equals("--minitoc-postamble-from-file")
        || arg.equals("--in") || arg.equals("-i")
        || arg.equals("--output") || arg.equals("-o")
        || arg.equals("--out-charset")
        || arg.equals("--image-dest")
        || arg.equals("--image-preamble")
+       || arg.equals("--image-preamble-from-file")
        || arg.equals("--debug")
        || arg.equals("--debug-mode")
          )
@@ -116,12 +131,14 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
          isHelpset = false;
          breadcrumbtrail = true;
          minitoc = true;
+         mathJax = true;
       }
       else if (arg.equals("--helpset"))
       {
          isHelpset = true;
          breadcrumbtrail = false;
          minitoc = false;
+         mathJax = false;
       }
       else if (arg.equals("--nobreadcrumbtrail"))
       {
@@ -157,11 +174,11 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       }
       else if (arg.equals("--prefix-split"))
       {
-        splitUseBaseNamePrefix = true;
+         splitUseBaseNamePrefix = true;
       }
       else if (arg.equals("--noprefix-split"))
       {
-        splitUseBaseNamePrefix = false;
+         splitUseBaseNamePrefix = false;
       }
       else if (arg.equals("--no-rm-tmp-dir"))
       {
@@ -203,13 +220,130 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       {
          extraHead = returnVals[0].toString();
       }
+      else if (cliParser.isArg(arg, "--head-from-file", returnVals))
+      {
+         String filename = returnVals[0].toString();
+
+         try
+         {
+            extraHead = getFileContents(new File(filename));
+         }
+         catch (IOException e)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.io_load", filename, e.getMessage()), e);
+         }
+      }
+      else if (cliParser.isArg(arg, "--html-ext", returnVals))
+      {
+         htmlSuffix = returnVals[0].toString();
+      }
+      else if (cliParser.isArg(arg, "--og-url-path", returnVals))
+      {
+         ogUrlPath = returnVals[0].toString();
+
+         if (ogUrlPath.isEmpty())
+         {
+            ogUrlPath = null;
+         }
+      }
+      else if (cliParser.isArg(arg, "--root-page-preamble", returnVals))
+      {
+         rootPagePreMainContent = returnVals[0].toString();
+      }
+      else if (cliParser.isArg(arg, "--root-page-preamble-from-file", returnVals))
+      {
+         String filename = returnVals[0].toString();
+
+         try
+         {
+            rootPagePreMainContent = getFileContents(new File(filename));
+         }
+         catch (IOException e)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.io_load", filename, e.getMessage()), e);
+         }
+      }
+      else if (cliParser.isArg(arg, "--body-preamble", returnVals))
+      {
+         bodyPreamble = returnVals[0].toString();
+      }
+      else if (cliParser.isArg(arg, "--body-preamble-from-file", returnVals))
+      {
+         String filename = returnVals[0].toString();
+
+         try
+         {
+            bodyPreamble = getFileContents(new File(filename));
+         }
+         catch (IOException e)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.io_load", filename, e.getMessage()), e);
+         }
+      }
+      else if (cliParser.isArg(arg, "--body-postamble", returnVals))
+      {
+         bodyPostamble = returnVals[0].toString();
+      }
+      else if (cliParser.isArg(arg, "--body-postamble-from-file", returnVals))
+      {
+         String filename = returnVals[0].toString();
+
+         try
+         {
+            bodyPostamble = getFileContents(new File(filename));
+         }
+         catch (IOException e)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.io_load", filename, e.getMessage()), e);
+         }
+      }
       else if (cliParser.isArg(arg, "--minitoc-preamble", returnVals))
       {
          minitocPreamble = returnVals[0].toString();
       }
+      else if (cliParser.isArg(arg, "--minitoc-preamble-from-file", returnVals))
+      {
+         String filename = returnVals[0].toString();
+
+         try
+         {
+            minitocPreamble = getFileContents(new File(filename));
+         }
+         catch (IOException e)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.io_load", filename, e.getMessage()), e);
+         }
+      }
       else if (cliParser.isArg(arg, "--minitoc-postamble", returnVals))
       {
          minitocPostamble = returnVals[0].toString();
+      }
+      else if (cliParser.isArg(arg, "--minitoc-postamble-from-file", returnVals))
+      {
+         String filename = returnVals[0].toString();
+
+         try
+         {
+            minitocPostamble = getFileContents(new File(filename));
+         }
+         catch (IOException e)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.io_load", filename, e.getMessage()), e);
+         }
+      }
+      else if (cliParser.isArg(arg, "--minitoc-div-class", returnVals))
+      {
+         minitocDivClass = returnVals[0].toString();
+      }
+      else if (cliParser.isArg(arg, "--minitoc-div-id", returnVals))
+      {
+         minitocDivId = returnVals[0].toString();
       }
       else if (cliParser.isArg(arg, "--in", "-i", returnVals))
       {
@@ -250,7 +384,21 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       }
       else if (cliParser.isArg(arg, "--image-preamble", returnVals))
       {
-         imagePreambleFile = new File(returnVals[0].toString());
+         imagePreamble = returnVals[0].toString();
+      }
+      else if (cliParser.isArg(arg, "--image-preamble-from-file", returnVals))
+      {
+         String filename = returnVals[0].toString();
+
+         try
+         {
+            imagePreamble = getFileContents(new File(filename));
+         }
+         catch (IOException e)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.io_load", filename, e.getMessage()), e);
+         }
       }
       else
       {
@@ -317,6 +465,11 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       return extraHead;
    }
 
+   public String getHtmlSuffix()
+   {
+      return htmlSuffix;
+   }
+
    public File getOutDirectory()
    {
       return outDir;
@@ -326,10 +479,26 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    {
       TJHListener listener = new TJHListener(this, outCharset, isHelpset);
 
+      listener.setOgUrlPath(ogUrlPath);
+
+      listener.setRootPagePreMain(rootPagePreMainContent);
+      listener.setBodyPreamble(bodyPreamble);
+      listener.setBodyPostamble(bodyPostamble);
+
       listener.setBreadCrumbTrailEnabled(breadcrumbtrail);
       listener.setMiniTocEnabled(minitoc);
       listener.setMiniTocPreamble(minitocPreamble);
       listener.setMiniTocPostamble(minitocPostamble);
+
+      if (minitocDivClass != null && !minitocDivClass.isEmpty())
+      {
+         listener.setMiniTocDivClass(minitocDivClass);
+      }
+
+      if (minitocDivId != null && !minitocDivId.isEmpty())
+      {
+         listener.setMiniTocDivId(minitocDivId);
+      }
 
       if (imageDir != null)
       {
@@ -344,11 +513,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       {
          if (convertImages)
          {
-            if (imagePreambleFile != null)
-            {
-               imagePreamble = getFileContents(imagePreambleFile);
-            }
-            else
+            if (imagePreamble == null)
             {
                imagePreamble = parsePreamble(inFile);
             }
@@ -396,7 +561,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       if (name == null)
       {
          nameIdx++;
-         name = String.format("img%06d", nameIdx);
+         name = String.format((Locale)null, "img%06d", nameIdx);
       }
 
       Charset charset = listener.getCharSet();
@@ -511,7 +676,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
          }
 
          File pdfFile = new File(tmpDir, name+".pdf");
-         File destFile;
+         File destFile = null;
 
          if (crop)
          {
@@ -545,10 +710,11 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
             outPath = outPath.resolve(relPath);
          }
 
+         boolean isPdf = false;
+
          if (mimetype.equals(L2HConverter.MIME_TYPE_PDF))
          {
-            destFile = (new File(outPath.toFile(), name+".pdf"));
-            copyFile(pdfFile, destFile);
+            isPdf = true;
          }
          else if (mimetype.equals(L2HConverter.MIME_TYPE_PNG))
          {
@@ -574,9 +740,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
              mimetype));
 
             mimetype=L2HConverter.MIME_TYPE_PDF;
-
-            destFile = new File(outPath.toFile(), name+".pdf");
-            copyFile(pdfFile, destFile);
+            isPdf = true;
          }
 
          int width=0;
@@ -586,6 +750,31 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
          {
             width = imageDim.width;
             height = imageDim.height;
+         }
+
+         if (isPdf)
+         {
+            destFile = (new File(outPath.toFile(), name+".pdf"));
+            copyFile(pdfFile, destFile);
+
+            File pngFile = pdfToImage(pdfFile, name, "png");
+
+            imageDim = getImageFileDimensions(parser, pngFile,
+               L2HConverter.MIME_TYPE_PNG);
+
+            if (crop && imageDim != null)
+            {
+               width = imageDim.width;
+               height = imageDim.height;
+            }
+
+            L2HImage fallback = new L2HImage(pngFile.toPath(), 
+              L2HConverter.MIME_TYPE_PNG, 
+              imageDim == null ? 0 : imageDim.width,
+              imageDim == null ? 0 : imageDim.height,
+              name, alt, true);  
+
+            alt = fallback;
          }
 
          image = new L2HImage(outDir.toPath().relativize(destFile.toPath()),
@@ -809,6 +998,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       helpLib.printSyntaxItem(getMessage("syntax.out", "--output", "-o"));
       helpLib.printSyntaxItem(getMessage("syntax.out.charset", "--out-charset"));
       helpLib.printSyntaxItem(getMessage("syntax.out.image-dest", "--image-dest"));
+      helpLib.printSyntaxItem(getMessage("syntax.html-ext", "--html-ext"));
       System.out.println();
       helpLib.printSyntaxItem(getMessage("syntax.html.options"));
       System.out.println();
@@ -816,12 +1006,14 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       helpLib.printSyntaxItem(getMessage("syntax.helpset", "--[no]helpset"));
       helpLib.printSyntaxItem(getMessage("syntax.breadcrumbtrail", "--[no]breadcrumbtrail"));
       helpLib.printSyntaxItem(getMessage("syntax.minitoc", "--[no]minitoc"));
+      helpLib.printSyntaxItem(getMessage("syntax.minitoc-div-class", "--minitoc-div-class"));
+      helpLib.printSyntaxItem(getMessage("syntax.minitoc-div-id", "--minitoc-div-id"));
       helpLib.printSyntaxItem(getMessage("syntax.minitoc-preamble", "--minitoc-preamble"));
       helpLib.printSyntaxItem(getMessage("syntax.minitoc-postamble", "--minitoc-postamble"));
       helpLib.printSyntaxItem(getMessage("syntax.mathjax", "--[no]mathjax"));
       helpLib.printSyntaxItem(getMessage("syntax.support-unicode-script",
          "--[no]support-unicode-script"));
-      helpLib.printSyntaxItem(getMessage("syntax.entities", "--entities"));
+      helpLib.printSyntaxItem(getMessage("syntax.entities", "--[no]entities"));
       System.out.println();
       System.out.println(getMessage("clisyntax.bugreport",
         "https://github.com/nlct/texjavahelp"));
@@ -923,14 +1115,20 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    private boolean minitoc = false;
    private String minitocPreamble = null;
    private String minitocPostamble = null;
+   private String minitocDivClass = null;
+   private String minitocDivId = null;
+   private String bodyPreamble = null;
+   private String bodyPostamble = null;
+   private String ogUrlPath = null;
+   private String rootPagePreMainContent = null;
 
    private String outputFormat = "latex";
 
    private int nameIdx=0;
    
    private String extraHead=null;
+   private String htmlSuffix = "html";
 
-   private File imagePreambleFile = null;
    private String imagePreamble = null;
 
    public static final Pattern PNG_INFO =

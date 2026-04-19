@@ -74,8 +74,13 @@ public class DocumentBlockWriter extends Writer
 
          if (buffer.length() > 0)
          {
-            if (oldType == DocumentBlockType.PARAGRAPH
-                || oldType == DocumentBlockType.BLOCK)
+            if (!listener.inNavigation() 
+                &&
+                 (
+                   oldType == DocumentBlockType.PARAGRAPH
+                || oldType == DocumentBlockType.BLOCK
+                 )
+               )
             {
                processBuffer();
             }
