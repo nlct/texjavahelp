@@ -76,6 +76,7 @@ public class TJHListener extends L2HConverter
       super(app, app.isUseMathJaxOn(), app.getOutDirectory(),
         outCharset, app.isParsePackagesOn(), app.getSplitLevel());
 
+      this.generator = "TeXJavaHelpMk";
       this.isHelpset = isHelpset;
       this.isHtml5 = !isHelpset;
       setSeparateCss(true);
