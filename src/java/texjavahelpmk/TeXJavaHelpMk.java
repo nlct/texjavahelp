@@ -80,6 +80,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
        || arg.equals("--head-from-file")
        || arg.equals("--html-ext")
        || arg.equals("--og-url-path")
+       || arg.equals("--root-name")
        || arg.equals("--root-page-preamble")
        || arg.equals("--root-page-preamble-from-file")
        || arg.equals("--body-preamble")
@@ -246,6 +247,10 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
          {
             ogUrlPath = null;
          }
+      }
+      else if (cliParser.isArg(arg, "--root-name", returnVals))
+      {
+         rootName = returnVals[0].toString();
       }
       else if (cliParser.isArg(arg, "--root-page-preamble", returnVals))
       {
@@ -481,6 +486,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
 
       listener.setOgUrlPath(ogUrlPath);
 
+      listener.setRootName(rootName);
       listener.setRootPagePreMain(rootPagePreMainContent);
       listener.setBodyPreamble(bodyPreamble);
       listener.setBodyPostamble(bodyPostamble);
@@ -1121,6 +1127,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    private String bodyPostamble = null;
    private String ogUrlPath = null;
    private String rootPagePreMainContent = null;
+   private String rootName = null;
 
    private String outputFormat = "latex";
 
