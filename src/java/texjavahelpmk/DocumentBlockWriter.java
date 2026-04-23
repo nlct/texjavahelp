@@ -65,7 +65,13 @@ public class DocumentBlockWriter extends Writer
          }
          else if (oldType == DocumentBlockType.PARAGRAPH)
          {
-            if (EMPTY_P.matcher(buffer).matches())
+            if (EMPTY_AFTER_HEADING_P.matcher(buffer).matches())
+            {
+               // discard and reset
+               buffer.setLength(0);
+               listener.setAfterHeading(true);
+            }
+            else if (EMPTY_P.matcher(buffer).matches())
             {
                // discard
                buffer.setLength(0);
@@ -300,6 +306,20 @@ public class DocumentBlockWriter extends Writer
       listener.getParser().debugMessage(TeXParser.DEBUG_IO,
         "WRITING "+toString());
 
+      if (!listener.isInDocEnv())
+      {
+         // remove excessive white space (from EOLs in preamble)
+
+         Matcher m = BLANK_LINES.matcher(buffer); 
+         String replaced = m.replaceAll("$1");
+
+         if (replaced.length() < buffer.length())
+         {
+            buffer.setLength(0);
+            buffer.append(replaced);
+         }
+      }
+
       index += buffer.length();
 
       writer.write(buffer.toString());
@@ -360,8 +380,14 @@ public class DocumentBlockWriter extends Writer
 
    protected int contextId = 0;
 
+   public static final Pattern BLANK_LINES
+     = Pattern.compile("(\\R)(?:\\s*\\R)+");
+
    public static final Pattern EMPTY_P
      = Pattern.compile("\\s*<p>\\s*(</p>)?\\s*");
+
+   public static final Pattern EMPTY_AFTER_HEADING_P
+     = Pattern.compile("\\s*<p class=\"afterheading\">\\s*(</p>)?\\s*");
 
    public static final Pattern REDUNDANT_P
      = Pattern.compile("^\\s*<p>\\s*<(ul|ol|dl|li|dt|dd|pre|table|caption)\\s*");
