@@ -232,6 +232,10 @@
 
 \RequirePackage{glossaries-extra}[2025/08/13]
 
+\ifdef\glswriteglossarygroup
+ {\setupglossaries{saveglossarygroups}}
+ {}
+
 % Title page information
 
 \newcommand{\nlct@v@version}{}

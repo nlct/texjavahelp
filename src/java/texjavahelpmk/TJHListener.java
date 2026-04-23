@@ -21,6 +21,8 @@ package com.dickimawbooks.texjavahelpmk;
 
 import java.util.Vector;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.Iterator;
 
 import java.util.regex.Pattern;
 
@@ -47,10 +49,12 @@ import com.dickimawbooks.texparserlib.latex.LaTeXSty;
 import com.dickimawbooks.texparserlib.latex.color.ColorSty;
 import com.dickimawbooks.texparserlib.latex.glossaries.GlossariesSty;
 import com.dickimawbooks.texparserlib.latex.glossaries.GlossaryEntry;
+import com.dickimawbooks.texparserlib.latex.glossaries.GlossaryGroup;
 
 import com.dickimawbooks.texparserlib.html.L2HConverter;
 import com.dickimawbooks.texparserlib.html.L2HImage;
 import com.dickimawbooks.texparserlib.html.DivisionNode;
+import com.dickimawbooks.texparserlib.html.DocumentBlockType;
 import com.dickimawbooks.texparserlib.html.HtmlTag;
 import com.dickimawbooks.texparserlib.html.StartElement;
 import com.dickimawbooks.texparserlib.auxfile.DivisionInfo;
@@ -126,6 +130,7 @@ public class TJHListener extends L2HConverter
       addCssStyle("div.iconstartpar { float: left; padding-right: 1em;  }");
 
       addCssStyle("img.framed { border: solid 1pt; }");
+      addCssStyle(".scenebreak { padding-top: .5ex; padding-bottom: .5ex; }");
 
       addCssStyle(TeXJavaHelpLib.KEYSTROKE_CSS);
       addCssStyle(TeXJavaHelpLib.MENU_CSS);
@@ -579,6 +584,68 @@ public class TJHListener extends L2HConverter
       }
    }
 
+   @Override
+   protected void createDivisionTree(TeXObjectList stack)
+      throws IOException
+   {
+      super.createDivisionTree(stack);
+
+      GlossariesSty glossariesSty = tjhSty.getGlossariesSty();
+
+      Set<String> keySet = glossariesSty.getRefLabelGroupsKeySet();
+
+      if (keySet != null)
+      {
+         int index = divisionData.size();
+
+         for (Iterator<String> it = keySet.iterator(); it.hasNext(); )
+         {
+            String refLabel = it.next();
+
+            Vector<GlossaryGroup> list = glossariesSty.getGroupsForRefLabel(refLabel);
+
+            if (list != null)
+            {
+               DivisionNode parentNode = getDivisionNode(refLabel);
+
+               if (parentNode != null && parentNode.getChildCount() == 0)
+               {
+                  for (GlossaryGroup grp : list)
+                  {
+                     if (grp.getLevel() == 0 && grp.hasGroupTitle())
+                     {
+                        String grpLabel = grp.getGroupLabel();
+                        File file = parentNode.getFile();
+                        String anchor = "#"+HtmlTag.getUriFragment(grpLabel);
+
+                        TeXObjectList location = createString(anchor);
+
+                        DivisionInfo data = new DivisionInfo("glossarygroup",
+                         null, grp.getGroupTitle(), grpLabel, location);
+
+                        DivisionNode childNode = new DivisionNode(index, data, parentNode);
+
+                        childNode.setTitle(parser.expandToString(
+                          (TeXObject)grp.getGroupTitle().clone(), stack));
+
+                        if (parentNode.getRef().startsWith("#"))
+                        {
+                           childNode.setRef(anchor);
+                        }
+                        else
+                        {
+                           childNode.setRef(parentNode.getRef() + anchor);
+                        }
+
+                        index++;
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+
    protected void writeIndexFile(TeXObjectList stack) throws IOException
    {
       for (String label : glossariesSty.entryLabelSet())
@@ -1021,6 +1088,33 @@ public class TJHListener extends L2HConverter
    public TeXObject getLocationPrefix()
    {
       return locationPrefix;
+   }
+
+   public void writeScenebreak(TeXObjectList stack, boolean heading) throws IOException
+   {
+      writeScenebreak(null, stack, heading);
+   }
+
+   public void writeScenebreak(TeXObject ornament, TeXObjectList stack, boolean heading)
+    throws IOException
+   {
+      setCurrentBlockType(DocumentBlockType.BLOCK);
+
+      writeliteralln("<div class=\"scenebreak\">");
+
+      if (ornament != null)
+      {
+         TeXParserUtils.process(ornament, getParser(), stack);
+      }
+
+      writeliteralln("</div>");
+
+      if (heading)
+      {
+         setAfterHeading(true);
+      }
+
+      setCurrentBlockType(DocumentBlockType.PARAGRAPH);
    }
 
    protected File navigationXmlFile;
