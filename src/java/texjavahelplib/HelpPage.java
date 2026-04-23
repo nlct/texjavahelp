@@ -213,9 +213,20 @@ public class HelpPage extends TJHEditorPane
    public void setPage(NavigationNode node)
      throws IOException
    {
-      updateCurrentNode(node, null);
+      String ref = node.getRef();
 
-      setPage(node.getURL());
+      int idx = ref.indexOf('#');
+
+      if (idx == -1)
+      {
+         ref = null;
+      }
+      else if (idx > 0)
+      {
+         ref = ref.substring(idx+1);
+      }
+
+      setPage(node, ref);
    }
 
    protected void updateCurrentNode(NavigationNode node, String ref)
