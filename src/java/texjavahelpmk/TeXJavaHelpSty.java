@@ -24,6 +24,7 @@ import java.awt.Color;
 
 import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texparserlib.generic.Symbol;
+import com.dickimawbooks.texparserlib.primitives.Relax;
 import com.dickimawbooks.texparserlib.latex.*;
 import com.dickimawbooks.texparserlib.latex.glossaries.*;
 import com.dickimawbooks.texparserlib.latex.color.ColorSty;
@@ -85,6 +86,13 @@ public class TeXJavaHelpSty extends UserGuideSty
       addSemanticCommand("varfmt", TeXFontFamily.VERB);
 
       addSemanticCommand("iconfmt", "icon", null, null, null, null);
+
+      registerControlSequence(new FancyBreak());
+      registerControlSequence(new PlainBreak());
+      registerControlSequence(new PlainFancyBreak());
+      registerControlSequence(new Relax("pfbreakskip"));// ignore
+      registerControlSequence(new TextualContentCommand("pfbreakdisplay", "* * *"));
+      registerControlSequence(new PFBreak());
 
       registerControlSequence(new LaTeXGenericCommand(true,
        "fileext", "m", 
