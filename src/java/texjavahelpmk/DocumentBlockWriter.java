@@ -257,7 +257,8 @@ public class DocumentBlockWriter extends Writer
    {
       if (writerClosed)
       {
-         if (!TeXParserUtils.isBlank(str) && !str.trim().equals("<p>"))
+         if (!TeXParserUtils.isBlank(str)
+               && !EMPTY_P_MAYBE_CLASS.matcher(str).matches())
          {
             throw new IOException("Writer closed. Can't write string " +str);
          }
@@ -382,6 +383,9 @@ public class DocumentBlockWriter extends Writer
 
    public static final Pattern BLANK_LINES
      = Pattern.compile("(\\R)(?:\\s*\\R)+");
+
+   public static final Pattern EMPTY_P_MAYBE_CLASS
+     = Pattern.compile("\\s*<p(\\s+class=\"[^\"]+\")?\\s*>\\s*(</p>)?\\s*");
 
    public static final Pattern EMPTY_P
      = Pattern.compile("\\s*<p>\\s*(</p>)?\\s*");
