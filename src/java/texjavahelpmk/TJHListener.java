@@ -105,16 +105,20 @@ public class TJHListener extends L2HConverter
       File outDir = app.getOutDirectory();
 
       setNavigationFile(new File(outDir, "navigation."+suffix));
-      setNavigationXmlFile(new File(outDir, "navigation.xml"));
-      setIndexXmlFile(new File(outDir, "index.xml"));
-      setSearchXmlFile(new File(outDir, "search.xml"));
 
-      indexData = new HashMap<String,IndexItem>();
+      if (isHelpset)
+      {
+         setNavigationXmlFile(new File(outDir, "navigation.xml"));
+         setIndexXmlFile(new File(outDir, "index.xml"));
+         setSearchXmlFile(new File(outDir, "search.xml"));
 
-      String omissions = app.getMessageWithFallback("manual.no-search",
-        "and the");
+         indexData = new HashMap<String,IndexItem>();
 
-      noSearchWords = omissions.trim().split("\\s+");
+         String omissions = app.getMessageWithFallback("manual.no-search",
+           "and the");
+
+         noSearchWords = omissions.trim().split("\\s+");
+      }
 
       // HTMLDocument only has very limited support
 
@@ -470,6 +474,8 @@ public class TJHListener extends L2HConverter
    protected void writeNavigationXmlFile()
      throws IOException
    {
+      if (navigationXmlFile == null) return;
+
       if (divisionData == null)
       {
          throw new TeXSyntaxException(getParser(), "error.no_division_data");
@@ -546,41 +552,44 @@ public class TJHListener extends L2HConverter
          }
       }
 
-      Vector<String> targets = glossariesSty.getTargets(label);
-
-      if (targets != null && !targets.isEmpty())
+      if (indexData != null)
       {
-         for (String target : targets)
-         {
-            IndexItem indexItem = indexData.get(target);
+         Vector<String> targets = glossariesSty.getTargets(label);
 
-            if (indexItem != null)
+         if (targets != null && !targets.isEmpty())
+         {
+            for (String target : targets)
             {
-               indexItem.setName(nameStr);
-               indexItem.setDescription(descStr);
-               indexItem.setShortValue(shortStr);
-               indexItem.setLongValue(longStr);
+               IndexItem indexItem = indexData.get(target);
+
+               if (indexItem != null)
+               {
+                  indexItem.setName(nameStr);
+                  indexItem.setDescription(descStr);
+                  indexItem.setShortValue(shortStr);
+                  indexItem.setLongValue(longStr);
+               }
             }
          }
-      }
-      else
-      {
-         String target = parser.expandToString(getControlSequence("glslinkprefix"), stack)
-             + label;
-
-         IndexItem indexItem = indexData.get(target);
-
-         if (indexItem == null)
+         else
          {
-            indexItem = createIndexItem(target, target, null);
+            String target = parser.expandToString(getControlSequence("glslinkprefix"), stack)
+                + label;
 
-            indexData.put(target, indexItem);
+            IndexItem indexItem = indexData.get(target);
+
+            if (indexItem == null)
+            {
+               indexItem = createIndexItem(target, target, null);
+
+               indexData.put(target, indexItem);
+            }
+
+            indexItem.setName(nameStr);
+            indexItem.setDescription(descStr);
+            indexItem.setShortValue(shortStr);
+            indexItem.setLongValue(longStr);
          }
-
-         indexItem.setName(nameStr);
-         indexItem.setDescription(descStr);
-         indexItem.setShortValue(shortStr);
-         indexItem.setLongValue(longStr);
       }
    }
 
@@ -648,6 +657,8 @@ public class TJHListener extends L2HConverter
 
    protected void writeIndexFile(TeXObjectList stack) throws IOException
    {
+      if (indexXmlFile == null || indexData == null) return;
+
       for (String label : glossariesSty.entryLabelSet())
       {
          updateGlossaryEntryIndexItems(label, stack);
@@ -675,6 +686,8 @@ public class TJHListener extends L2HConverter
 
    public void addIndexGroupMap(String glosLabel, String grpLabel, String title)
    {
+      if (indexData == null) return;
+
       IndexItem item = createIndexItem(
         String.format("%s.%08d", glosLabel, ++indexGroupIdx),
         grpLabel, glosLabel+"."+suffix);
@@ -690,34 +703,37 @@ public class TJHListener extends L2HConverter
    {
       TeXObject obj = super.createAnchor(anchorName, text);
 
-      IndexItem item = indexData.get(anchorName);
+      if (indexData != null)
+      {
+         IndexItem item = indexData.get(anchorName);
 
-      if (currentNode == null)
-      {
-         getParser().warningMessage("error.no_current_node");
-      }
-      else
-      {
-         if (item == null)
+         if (currentNode == null)
          {
-            item = createIndexItem(anchorName, anchorName, currentNode.getFile().getName());
-
-            indexData.put(anchorName, item);
+            getParser().warningMessage("error.no_current_node");
          }
          else
          {
-            if (item.getTarget() == null)
+            if (item == null)
             {
-               item.setTarget(anchorName);
+               item = createIndexItem(anchorName, anchorName, currentNode.getFile().getName());
+
+               indexData.put(anchorName, item);
             }
+            else
+            {
+               if (item.getTarget() == null)
+               {
+                  item.setTarget(anchorName);
+               }
 
-            item.setFileName(currentNode.getFile().getName());
+               item.setFileName(currentNode.getFile().getName());
+            }
          }
-      }
 
-      if (!text.isEmpty())
-      {
-         item.setName(processToPlainString((TeXObject)text.clone(), null));
+         if (!text.isEmpty())
+         {
+            item.setName(processToPlainString((TeXObject)text.clone(), null));
+         }
       }
 
       return obj;
@@ -727,6 +743,8 @@ public class TJHListener extends L2HConverter
    protected void createLinkHook(String anchorName, TeXObject text, String ref)
     throws IOException
    {
+      if (indexData == null) return;
+
       IndexItem item = indexData.get(anchorName);
 
       String filename = null;
@@ -1046,10 +1064,15 @@ public class TJHListener extends L2HConverter
       return documentBlockWriter;
    }
 
+   public boolean isSearchEnabled()
+   {
+      return searchXmlFile != null;
+   }
+
    public boolean isValidSearchWord(String word)
    {
       if (word.length() < MIN_SEARCH_LENGTH || TeXParserUtils.isBlank(word)
-          || PATTERN_NO_SEARCH.matcher(word).matches())
+          || PATTERN_NO_SEARCH.matcher(word).matches() || noSearchWords == null)
       {
          return false;
       }
@@ -1069,6 +1092,8 @@ public class TJHListener extends L2HConverter
 
    public void addSearchItem(SearchItem item, StringBuilder context)
    {
+      if (searchXmlFile == null) return;
+
       if (searchData == null)
       {
          searchData = new SearchData();
@@ -1079,7 +1104,7 @@ public class TJHListener extends L2HConverter
 
    protected void writeSearchFile() throws IOException
    {
-      if (searchData != null)
+      if (searchXmlFile != null && searchData != null)
       {
          searchData.write(searchXmlFile.toPath(), getHtmlCharset());
       }

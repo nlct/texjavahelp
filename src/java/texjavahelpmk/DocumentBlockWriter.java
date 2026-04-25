@@ -171,36 +171,39 @@ public class DocumentBlockWriter extends Writer
    protected void processBuffer(int start, int end, StringBuilder context)
      throws IOException
    {
-      String source = listener.getHelpLib().preProcessSearchWordList(
-        buffer.substring(start, end));
-
-      int contextOffset = context.length();
-
-      context.append(source);
-
-      BreakIterator boundary = BreakIterator.getWordInstance();
-
-      boundary.setText(source);
-
-      int idx1 = boundary.first();
-
-      for (int idx2 = boundary.next(); idx2 != BreakIterator.DONE;
-           idx1 = idx2, idx2 = boundary.next())
+      if (listener.isSearchEnabled())
       {
-         String word = source.substring(idx1, idx2);
+         String source = listener.getHelpLib().preProcessSearchWordList(
+           buffer.substring(start, end));
 
-         if (listener.isValidSearchWord(word))
+         int contextOffset = context.length();
+
+         context.append(source);
+
+         BreakIterator boundary = BreakIterator.getWordInstance();
+
+         boundary.setText(source);
+
+         int idx1 = boundary.first();
+
+         for (int idx2 = boundary.next(); idx2 != BreakIterator.DONE;
+              idx1 = idx2, idx2 = boundary.next())
          {
-            DivisionNode node = listener.getCurrentNode();
+            String word = source.substring(idx1, idx2);
 
-            if (node != null)
+            if (listener.isValidSearchWord(word))
             {
-                SearchItem item = new SearchItem(word, 
-                 contextOffset+idx1, contextOffset+idx2,
-                 node.getId(),
-                 contextId);
+               DivisionNode node = listener.getCurrentNode();
 
-                listener.addSearchItem(item, context);
+               if (node != null)
+               {
+                   SearchItem item = new SearchItem(word, 
+                    contextOffset+idx1, contextOffset+idx2,
+                    node.getId(),
+                    contextId);
+
+                   listener.addSearchItem(item, context);
+               }
             }
          }
       }
