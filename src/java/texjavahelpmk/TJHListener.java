@@ -23,15 +23,21 @@ import java.util.Vector;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Iterator;
+import java.util.Locale;
+
+import java.util.zip.*;
 
 import java.util.regex.Pattern;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -55,7 +61,9 @@ import com.dickimawbooks.texparserlib.html.L2HConverter;
 import com.dickimawbooks.texparserlib.html.L2HImage;
 import com.dickimawbooks.texparserlib.html.DivisionNode;
 import com.dickimawbooks.texparserlib.html.DocumentBlockType;
+import com.dickimawbooks.texparserlib.html.FileData;
 import com.dickimawbooks.texparserlib.html.HtmlTag;
+import com.dickimawbooks.texparserlib.html.HtmlLiteral;
 import com.dickimawbooks.texparserlib.html.StartElement;
 import com.dickimawbooks.texparserlib.auxfile.DivisionInfo;
 import com.dickimawbooks.texparserlib.auxfile.LabelInfo;
@@ -72,17 +80,18 @@ public class TJHListener extends L2HConverter
 {
    public TJHListener(TeXJavaHelpMk app, Charset outCharset)
    {
-      this(app, outCharset, true);
+      this(app, outCharset, DocumentTargetType.HELPSET);
    }
 
-   public TJHListener(TeXJavaHelpMk app, Charset outCharset, boolean isHelpset)
+   public TJHListener(TeXJavaHelpMk app, Charset outCharset, DocumentTargetType type)
    {
       super(app, app.isUseMathJaxOn(), app.getOutDirectory(),
         outCharset, app.isParsePackagesOn(), app.getSplitLevel());
 
       this.generator = "TeXJavaHelpMk";
-      this.isHelpset = isHelpset;
-      this.isHtml5 = !isHelpset;
+      this.documentTargetType = type;
+      this.isHtml5 = (type == DocumentTargetType.HTML);
+      this.isXml = (type == DocumentTargetType.EPUB);
       setSeparateCss(true);
 
       setSplitUseBaseNamePrefix(app.isSplitBaseNamePrefixOn());
@@ -106,18 +115,21 @@ public class TJHListener extends L2HConverter
 
       setNavigationFile(new File(outDir, "navigation."+suffix));
 
-      if (isHelpset)
+      if (documentTargetType == DocumentTargetType.HELPSET)
       {
          setNavigationXmlFile(new File(outDir, "navigation.xml"));
          setIndexXmlFile(new File(outDir, "index.xml"));
          setSearchXmlFile(new File(outDir, "search.xml"));
 
-         indexData = new HashMap<String,IndexItem>();
-
          String omissions = app.getMessageWithFallback("manual.no-search",
            "and the");
 
          noSearchWords = omissions.trim().split("\\s+");
+      }
+
+      if (documentTargetType != DocumentTargetType.HTML)
+      {
+         indexData = new HashMap<String,IndexItem>();
       }
 
       // HTMLDocument only has very limited support
@@ -146,22 +158,31 @@ public class TJHListener extends L2HConverter
       {
          // HTMLDocument has difficulty with nested span elements.
 
-         String tag = isHtml5 ? "span" : "font";
+         String tag = (documentTargetType == DocumentTargetType.HELPSET ? "font" : "span");
 
-         locationPrefix = new HtmlTag(
+         locationPrefix = new HtmlLiteral(
            String.format("<%s class=\"locationprefix\">%s</%s>",
              tag, locPrefString, tag));
       }
 
       // reduce default set of image extensions
 
-      if (isHelpset)
+
+      switch (documentTargetType)
       {
-         setImageExtensions(".png", ".jpg", ".jpeg", ".pdf", ".tex");
-      }
-      else
-      {
-         setImageExtensions(".pdf", ".png", ".jpg", ".jpeg", ".tex");
+         case HELPSET:
+            setImageExtensions(".png", ".jpg", ".jpeg", ".pdf", ".tex");
+         break;
+         case HTML:
+            setImageExtensions(".pdf", ".png", ".jpg", ".jpeg", ".tex");
+         break;
+         case EPUB:
+            setImageExtensions(".png", ".jpg", ".jpeg");
+
+            epubContents = new Vector<String>();
+            epubContents.add("META-INF/container.xml");
+            epubContents.add("content.opf");
+         break;
       }
    }
 
@@ -170,7 +191,7 @@ public class TJHListener extends L2HConverter
    {
       super.addPredefined();
 
-      if (isHelpset)
+      if (documentTargetType == DocumentTargetType.HELPSET)
       {
          putControlSequence(new AtFirstOfTwo("IfHelpSetTF"));
          putControlSequence(new AtFirstOfOne("IfHelpSetT"));
@@ -184,9 +205,36 @@ public class TJHListener extends L2HConverter
       }
    }
 
+   public boolean isWriteOGMarkupOn()
+   {
+      return documentTargetType == DocumentTargetType.HTML;
+   }
+
+   public DocumentTargetType getDocumentTargetType()
+   {
+      return documentTargetType;
+   }
+
    @Override
    protected void writeMetaData(String title) throws IOException
    {
+      // Override any settings in the LaTeX document
+
+      if (keywordsProperty != null)
+      {
+         setDocumentProperty("Keywords", keywordsProperty);
+      }
+
+      if (subjectProperty != null)
+      {
+         setDocumentProperty("Subject", subjectProperty);
+      }
+
+      if (descriptionProperty != null)
+      {
+         setDocumentProperty("Description", descriptionProperty);
+      }
+
       super.writeMetaData(title);
 
       File file = currentNode == null ? getRootFile() : currentNode.getFile();
@@ -271,6 +319,37 @@ public class TJHListener extends L2HConverter
       ogUrlPath = url;
    }
 
+   public void setKeywords(String keywords)
+   {
+      keywordsProperty = keywords;
+   }
+
+   public void setSubject(String subject)
+   {
+      subjectProperty = subject;
+   }
+
+   public void setDescription(String description)
+   {
+      descriptionProperty = description;
+   }
+
+   public void setTitle(String title)
+   {
+      titleProperty = title;
+   }
+
+   public void setAuthor(String author, String authorFileAs)
+   {
+      authorProperty = author;
+      authorFileAsProperty = authorFileAs;
+   }
+
+   public void setISBN(String isbn)
+   {
+      isbnProperty = isbn;
+   }
+
    public void parseAux(String prefix, File auxFile) throws IOException
    {
       super.parseAux(prefix, auxFile);
@@ -333,21 +412,15 @@ public class TJHListener extends L2HConverter
    }
 
    @Override
-   public boolean isHtml5()
-   {
-      return isHtml5;
-   }
-
-   @Override
    protected String getNonHtml5AccSuppTag(String tag)
    {
-      return tag.equals(AccSupp.TAG_IMG) ? tag : "font";
+      return tag.equals(AccSupp.TAG_IMG) ? tag : (isXml ? "span" : "font");
    }
 
    @Override
    protected void footerNav() throws IOException
    {
-      if (!isHelpset)
+      if (documentTargetType == DocumentTargetType.HTML)
       {
          super.footerNav();
       }
@@ -474,8 +547,6 @@ public class TJHListener extends L2HConverter
    protected void writeNavigationXmlFile()
      throws IOException
    {
-      if (navigationXmlFile == null) return;
-
       if (divisionData == null)
       {
          throw new TeXSyntaxException(getParser(), "error.no_division_data");
@@ -486,21 +557,101 @@ public class TJHListener extends L2HConverter
 
       NavigationNode rootNode = NavigationNode.createTree(divNode);
 
-      PrintWriter writer = null;
+      PrintWriter out = null;
 
       try
       {
-         writer = newNavWriter(navigationXmlFile.toPath());
+         if (documentTargetType == DocumentTargetType.EPUB)
+         {
+            File ncx = new File(getOutputDir(), "toc.ncx");
 
-         rootNode.saveTree(writer, getHtmlCharset());
+            addToManifest(new FileData(ncx, "ncx", MIME_TYPE_NCX));
+
+            out = new PrintWriter(
+              getTeXApp().createBufferedWriter(ncx.toPath(), StandardCharsets.UTF_8));
+
+            writeTocNcx(rootNode, out);
+         }
+         else if (navigationXmlFile != null)
+         {
+            out = newNavWriter(navigationXmlFile.toPath());
+
+            addToManifest(new FileData(navigationXmlFile, "nav", MIME_TYPE_XML));
+
+            rootNode.saveTree(out, getHtmlCharset());
+         }
       }
       finally
       {
-         if (writer != null)
+         if (out != null)
          {
-            writer.close();
+            out.close();
          }
       }
+   }
+
+   protected void writeTocNcx(NavigationNode rootNode, PrintWriter out) throws IOException
+   {
+      Locale locale = getMainLanguage();
+
+      out.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+      out.format("<ncx xmlns=\"http://www.daisy.org/z3986/2005/ncx/\" version=\"2005-1\" xml:lang=\"%s\">%n",
+         locale.toLanguageTag());
+
+      out.println("  <head>");
+
+      if (isbnProperty != null)
+      {
+         out.format("  <meta content=\"%s\" name=\"dtb:isbn\" />%n",
+            isbnProperty);
+      }
+
+      out.println("  </head>");
+
+      String title = titleProperty;
+
+      if (title == null)
+      {
+         title = getDocumentProperty("Title");
+      }
+
+      if (title != null)
+      {
+         out.println("  <docTitle>");
+         out.format("    <text>%s</text>%n", title);
+         out.println("  </docTitle>");
+      }
+
+      out.println("  <navMap>");
+
+      NavigationNode node = rootNode;
+      int order = 1;
+
+      while ((node = node.getNextNode()) != null)
+      {
+         String id = processAnchorName(node.getKey());
+
+         out.format((Locale)null,
+           "   <navPoint id=\"%s\" playOrder=\"%d\">%n", id, order);
+
+         out.println("     <navLabel>");
+
+         out.print("      <text>");
+         out.print(node.getTitle());
+         out.println("</text>");
+
+         out.println("     </navLabel>");
+
+         out.format("     <content src=\"%s\" />", node.getRef());
+
+         out.println("   </navPoint>");
+
+         order++;
+      }
+
+      out.println("  </navMap>");
+
+      out.println("</ncx>");
    }
 
    protected void updateGlossaryEntryIndexItems(String label, TeXObjectList stack)
@@ -601,7 +752,12 @@ public class TJHListener extends L2HConverter
 
       GlossariesSty glossariesSty = tjhSty.getGlossariesSty();
 
-      Set<String> keySet = glossariesSty.getRefLabelGroupsKeySet();
+      Set<String> keySet = null;
+
+      if (documentTargetType != DocumentTargetType.EPUB)
+      {
+         keySet = glossariesSty.getRefLabelGroupsKeySet();
+      }
 
       if (keySet != null)
       {
@@ -659,11 +815,6 @@ public class TJHListener extends L2HConverter
    {
       if (indexXmlFile == null || indexData == null) return;
 
-      for (String label : glossariesSty.entryLabelSet())
-      {
-         updateGlossaryEntryIndexItems(label, stack);
-      }
-
       PrintWriter out = null;
 
       try
@@ -672,6 +823,8 @@ public class TJHListener extends L2HConverter
 
          out = new PrintWriter(
            getTeXApp().createBufferedWriter(indexXmlFile.toPath(), charset));
+
+         addToManifest(new FileData(indexXmlFile, MIME_TYPE_XML));
 
          IndexItem.saveIndex(indexData, out, charset, getTeXJavaHelpMk().getOutDirectory());
       }
@@ -796,6 +949,11 @@ public class TJHListener extends L2HConverter
    public void endDocument(TeXObjectList stack)
    throws IOException
    {
+      for (String label : glossariesSty.entryLabelSet())
+      {
+         updateGlossaryEntryIndexItems(label, stack);
+      }
+
       writeIndexFile(stack);
 
       super.endDocument(stack);
@@ -806,6 +964,293 @@ public class TJHListener extends L2HConverter
    {
       writeNavigationXmlFile();
       writeSearchFile();
+
+      if (documentTargetType == DocumentTargetType.EPUB)
+      {
+         writeContentOPF();
+
+         createEpubZip();
+      }
+   }
+
+
+   protected void writeContentOPF() throws IOException
+   {
+      File dir = getOutputDir();
+
+      File opf = new File(dir, "content.opf");
+
+      PrintWriter out = null;
+
+      try
+      {
+         out = new PrintWriter(
+           getTeXApp().createBufferedWriter(opf.toPath(), StandardCharsets.UTF_8));
+
+         out.println("<?xml version='1.0' encoding='utf-8'?>");
+         out.println("<package xmlns=\"http://www.idpf.org/2007/opf\"");
+         out.println("   unique-identifier=\"isbn\" version=\"2.0\">");
+         out.println("<metadata xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
+         out.println("           xmlns:opf=\"http://www.idpf.org/2007/opf\"");
+         out.println("           xmlns:dcterms=\"http://purl.org/dc/terms/\"");
+         out.println("           xmlns:dc=\"http://purl.org/dc/elements/1.1/\">");
+
+         String title = titleProperty;
+
+         if (title == null)
+         {
+            title = getDocumentProperty("Title");
+         }
+
+         if (title != null)
+         {
+            out.format("  <dc:title>%s</dc:title>%n", title);
+         }
+
+         String author = authorProperty;
+
+         if (author == null)
+         {
+            author = getDocumentProperty("author");
+         }
+
+         String authorFileAs = authorFileAsProperty;
+
+         if (authorFileAs == null)
+         {
+            authorFileAs = author;
+         }
+
+         if (author != null)
+         {
+            out.print("  <dc:creator");
+
+            if (!authorFileAs.equals(author))
+            {
+               out.format(" opf:file-as=\"%s\"", authorFileAs);
+            }
+
+            out.format(" opf:role=\"aut\">%s</dc:creator>%n", author);
+         }
+
+         Locale locale = getMainLanguage();
+
+         out.format("  <dc:language>%s</dc:language>%n", locale.toLanguageTag());
+
+         if (isbnProperty != null)
+         {
+            out.format("  <dc:identifier id=\"isbn\" opf:scheme=\"isbn\" >%s</dc:identifier>%n",
+               isbnProperty);
+         }
+
+         String desc = descriptionProperty;
+
+         if (desc == null)
+         {
+            desc = getDocumentProperty("Description");
+         }
+
+         if (desc != null)
+         {
+            out.print("  <dc:description>");
+            out.print(desc);
+            out.println("</dc:description>");
+         }
+
+         String subject = subjectProperty;
+
+         if (subject == null)
+         {
+            subject = getDocumentProperty("Subject");
+         }
+
+         if (subject != null)
+         {
+            out.print("  <dc:subject>");
+            out.print(subject);
+            out.println("</dc:subject>");
+         }
+
+         out.println("</metadata>");
+
+         out.println("<manifest>");
+
+         Vector<FileData> manifest = getManifest();
+
+         Vector<String> ncx = new Vector<String>();
+
+         Path outPath = getOutputPath();
+
+         for (FileData fileData : manifest)
+         {
+            File file = fileData.getFile();
+            Path path = file.toPath();
+
+            if (outPath != null)
+            {
+               path = outPath.relativize(path);
+            }
+
+            addToEpubContents(path);
+
+            String id = processAnchorName(fileData.getId());
+
+            out.format("   <item href=\"%s\" id=\"%s\" media-type=\"%s\" />%n",
+              path, id, fileData.getMimeType());
+
+            if (fileData.getNode() != null)
+            {
+               ncx.add(id);
+            }
+         }
+
+         out.println("</manifest>");
+
+         out.println("<spine toc=\"ncx\">");
+
+         for (String id : ncx)
+         {
+            out.format("   <itemref idref=\"%s\"/>%n", id);
+         }
+
+         out.println("</spine>");
+         out.println("</package>");
+
+         out.close();
+         out = null;
+
+         dir = new File(dir, "META-INF");
+
+         Files.createDirectories(dir.toPath());
+
+         out = new PrintWriter(
+           getTeXApp().createBufferedWriter((new File(dir, "container.xml")).toPath(),
+             StandardCharsets.UTF_8));
+
+         out.println("<?xml version=\"1.0\"?>");
+         out.println("<container version=\"1.0\"");
+         out.println("  xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\">");
+         out.println("   <rootfiles>");
+         out.format("      <rootfile full-path=\"%s\"%n", opf.getName());
+         out.println("               media-type=\"application/oebps-package+xml\" />");
+         out.println("   </rootfiles>");
+         out.println("</container>");
+      }
+      finally
+      {
+         if (out != null)
+         {
+            out.close();
+         }
+      }
+   }
+
+   protected void addToEpubContents(Path path)
+   {
+      StringBuilder builder = new StringBuilder();
+
+      for (int i = 0; i < path.getNameCount(); i++)
+      {
+         if (i > 0)
+         {
+            builder.append('/');
+         }
+
+         builder.append(path.getName(i));
+      }
+
+      epubContents.add(builder.toString());
+   }
+
+   protected void createEpubZip() throws IOException
+   {
+      Path outPath = getOutputPath();
+
+      FileOutputStream fout = null;
+      ZipOutputStream zipOut = null;
+      FileInputStream fin = null;
+
+      try
+      {
+         String base = getRootName();
+
+         if (base == null)
+         {
+            base = baseName;
+         }
+
+         fout = new FileOutputStream(
+           new File(outPath.toFile(), base+".epub"));
+
+         zipOut = new ZipOutputStream(fout);
+
+         ZipEntry zipEntry = new ZipEntry("mimetype");
+         zipEntry.setMethod(ZipEntry.STORED);
+
+         byte[] byteArray = MIME_TYPE_EPUB.getBytes();
+
+         CRC32 crc = new CRC32();
+         crc.update(byteArray);
+         zipEntry.setCrc(crc.getValue());
+         zipEntry.setSize(byteArray.length);
+         zipEntry.setCompressedSize(byteArray.length);
+         zipOut.putNextEntry(zipEntry);
+
+         zipOut.write(byteArray, 0, byteArray.length);
+
+         for (String name : epubContents)
+         {
+            File file = new File(name);
+
+            Path path = outPath.resolve(file.toPath());
+
+            fin = new FileInputStream(path.toFile());
+
+            zipEntry = new ZipEntry(name);
+            zipOut.putNextEntry(zipEntry);
+
+            byteArray = new byte[1024];
+            int length;
+
+            while ((length = fin.read(byteArray)) >= 0)
+            {
+               zipOut.write(byteArray, 0, length);
+            }
+
+            fin.close();
+            fin = null;
+         }
+      }
+      finally
+      {
+         if (fin != null)
+         {
+            fin.close();
+         }
+
+         if (zipOut != null)
+         {
+            zipOut.close();
+         }
+
+         if (fout != null)
+         {
+            fout.close();
+         }
+      }
+   }
+
+   @Override
+   public String processAnchorName(String anchorName)
+   {
+      if (isXml())
+      {
+         return anchorName == null ? anchorName : anchorName.replaceAll("[:+]", "");
+      }
+      else
+      {
+         return anchorName;
+      }
    }
 
    @Override
@@ -1107,6 +1552,8 @@ public class TJHListener extends L2HConverter
       if (searchXmlFile != null && searchData != null)
       {
          searchData.write(searchXmlFile.toPath(), getHtmlCharset());
+
+         addToManifest(new FileData(searchXmlFile, MIME_TYPE_XML));
       }
    }
 
@@ -1156,16 +1603,29 @@ public class TJHListener extends L2HConverter
    protected SearchData searchData;
 
    protected DocumentBlockWriter documentBlockWriter;
-   protected boolean isHtml5=false, isHelpset = true, breadcrumbtrail=false, minitoc=false;
+   protected DocumentTargetType documentTargetType = DocumentTargetType.HELPSET;
+   protected boolean breadcrumbtrail=false, minitoc=false;
    protected String minitocPreamble = null, minitocPostamble = null,
       minitocDivClass=null, minitocDivId=null;
    protected String bodyPreamble = null, bodyPostamble = null;
    protected String ogUrlPath=null;
+   protected String keywordsProperty=null;
+   protected String descriptionProperty=null;
+   protected String subjectProperty=null;
+   protected String titleProperty=null;
+   protected String authorProperty=null;
+   protected String authorFileAsProperty=null;
+   protected String isbnProperty=null;
    protected String rootPagePreMainContent = null;
    protected boolean inNavigation = false;
+
+   protected Vector<String> epubContents;
 
    public static final int MIN_SEARCH_LENGTH = 3;
 
    public static final Pattern PATTERN_NO_SEARCH
      = Pattern.compile("x[0-9a-fA-F]{2,4}|[\\d\\.\\-]+");
+
+   public static final String MIME_TYPE_EPUB = "application/epub+zip";
+   public static final String MIME_TYPE_NCX = "application/x-dtbncx+xml";
 }

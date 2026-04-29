@@ -236,6 +236,8 @@
  {\setupglossaries{saveglossarygroups}}
  {}
 
+\renewcommand\glolinkprefix{glo.}
+
 % Title page information
 
 \newcommand{\nlct@v@version}{}
@@ -261,6 +263,26 @@
 \newcommand{\thedocdate}{\nlct@date}
 
 \renewcommand{\title}[1]{\gdef\@title{#1}\hypersetup{pdftitle={\text_purify:n{#1}}}}
+
+\providecommand \texparser@divisioninfo [ 5 ] { }
+
+\NewDocumentCommand \WriteTJHDivisionInfo { m m m m m }
+ {
+   \protected@write \@auxout { }
+    {
+       \string \texparser@divisioninfo { #1 } { #2 } { #3 } { #4 } { #5 }
+    }
+ }
+
+\providecommand \texparser@newlabel [ 1 ] { }
+
+\NewDocumentCommand \WriteTJHNewLabel { m }
+ {
+   \protected@write \@auxout { }
+    {
+       \string \texparser@newlabel { #1 }
+    }
+ }
 
 % Base bookmark level
 \int_new:N \l_texjavahelp_base_bookmark_level_int
@@ -500,6 +522,7 @@
 
 % \FloatFig[pos]{label}[LaTeX only pre content]{content}[lof]{caption}
 \NewDocumentCommand\FloatFig{omO{}mom}{%
+ \WriteTJHNewLabel{#2}%
  \IfValueTF{#1}%
   {\begin{figure}[#1]}%
   {\begin{figure}}%
@@ -525,6 +548,7 @@
 %{label2}[LaTeX only pre content2]{content2}[lof2]{caption2}
 \NewDocumentCommand \FloatSideBySideFigs { O{} O{} m O{} m o m O{} }
 {
+ \WriteTJHNewLabel { #3 }
  #8
  \tl_if_empty:nTF { #1 }
   { \begin{figure} }
@@ -550,6 +574,7 @@
 }
 
 \NewDocumentCommand\@nextFloatSideBySideFigs{mO{}mom}{
+ \WriteTJHNewLabel { #1 }
  \exp_args:NnNV
    \begin {minipage} [ \floatsidebysidevalign ] { \l__texjavahelp_sidebyside_dim }
  \centering
@@ -612,7 +637,10 @@
 % \FloatSubFigs[pos]{label}[LaTeX only pre-content]{list}[lof]{caption}
 % \FloatSubFigs*[pos]{label}{list}[lof]{caption}
 % Starred form puts first sub-image on a line of its own
-\NewDocumentCommand\FloatSubFigs{somO{}mom}{%
+\NewDocumentCommand \FloatSubFigs { s o m O{} m o m }
+{
+ \WriteTJHNewLabel { #3 }
+ \__texjavahelp_capture_sublabels:n { #5 }
  \IfValueTF { #2 }
   { \begin{figure} [ #2 ] }
   { \begin{figure} }
@@ -640,6 +668,23 @@
  \label { #3 }
  \end{figure}
 }
+
+\cs_new:Nn \__texjavahelp_capture_sublabels:n
+ {
+   \clist_map_inline:nn { #1 }
+   {
+     \int_compare:nNnT
+        { \tl_count:n { ##1 } } { = } { 3 }
+      {
+         \__texjavahelp_capture_sublabel:nnn ##1
+      }
+   }
+ }
+
+\cs_new:Nn \__texjavahelp_capture_sublabel:nnn
+ {
+   \WriteTJHNewLabel { #1 }
+ }
 
 \cs_new:Nn \__texjavahelp_subfig_item:N
 {
@@ -696,6 +741,7 @@
 % \FloatTable[pos]{label}[LaTeX only pre-content]{content}[lot]{caption}
 \NewDocumentCommand \FloatTable { o m O{} m o m }
 {
+ \WriteTJHNewLabel { #2 }
  \IfValueTF { #1 }
   { \begin{table} [ #1 ] }
   { \begin{table} }
@@ -1495,6 +1541,8 @@
         [ entrytype->original = /keystroke/ ], 
 % customise
       \TeXJavaHelpExtraAssignFields 
+% default type
+      type = "\glsdefaulttype" ,
 % common
       defaultkeys = "format=glsignore"
         [ entrytype->original = /common.*/ ] ,

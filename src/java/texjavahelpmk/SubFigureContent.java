@@ -24,7 +24,7 @@ import java.io.IOException;
 import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texparserlib.html.StartElement;
 import com.dickimawbooks.texparserlib.html.EndElement;
-import com.dickimawbooks.texparserlib.html.HtmlTag;
+import com.dickimawbooks.texparserlib.html.HtmlLiteral;
 
 /**
  * An image with caption that forms a sub-figure.
@@ -73,6 +73,8 @@ public class SubFigureContent extends ControlSequence
 
       TeXObjectList expanded = listener.createStack();
 
+      label = listener.processAnchorName(label);
+
       listener.stepcounter("subfigure");
 
       StartElement elem = new StartElement(elemTag, true, false);
@@ -107,7 +109,7 @@ public class SubFigureContent extends ControlSequence
 
       if (inline)
       {
-         expanded.add(new HtmlTag("&nbsp;"));
+         expanded.add(new HtmlLiteral("&nbsp;"));
       }
       else
       {

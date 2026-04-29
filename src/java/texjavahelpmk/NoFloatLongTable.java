@@ -73,6 +73,8 @@ public class NoFloatLongTable extends ControlSequence
 
       TeXObjectList expanded = listener.createStack();
 
+      label = listener.processAnchorName(label);
+
       StartElement elem = new StartElement("div", true, true);
 
       elem.putAttribute("id", label);

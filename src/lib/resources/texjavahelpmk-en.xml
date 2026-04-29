@@ -70,6 +70,7 @@ has have</entry>
 <entry key="syntax.minitoc-postamble">{0} &lt;html&gt;	Add &lt;html&gt; code after minitoc.</entry>
 <entry key="syntax.support-unicode-script">{0}	Use Unicode superscripts or subscripts where available.</entry>
 <entry key="syntax.entities">{0}	Use HTML entities for non-ASCII characters.</entry>
+<entry key="syntax.html-ext">{0}	Set the extension for HTML files (default: html).</entry>
 
 <!--  Error messages -->
 

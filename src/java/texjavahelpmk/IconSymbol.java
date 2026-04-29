@@ -27,9 +27,12 @@ import java.net.URISyntaxException;
 
 import java.nio.file.*;
 
+import java.awt.Dimension;
+
 import com.dickimawbooks.texparserlib.*;
 
-import com.dickimawbooks.texparserlib.html.HtmlTag;
+import com.dickimawbooks.texparserlib.html.L2HImage;
+import com.dickimawbooks.texparserlib.html.L2HConverter;
 
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 
@@ -124,18 +127,35 @@ public class IconSymbol extends AbstractTeXObject
 
             if (!relPath.isAbsolute())
             {
-               String alt = iconTag;
+               TeXObject alt;
 
                ControlSequence cs = parser.getControlSequence(iconTag+"text");
 
-               if (cs != null)
+               if (cs == null)
                {
-                  alt = parser.expandToString(cs, stack);
+                  alt = listener.createString(iconTag);
+               }
+               else
+               {
+                  alt = TeXParserUtils.expandFully(cs, parser, stack);
                }
 
-               return new HtmlTag(String.format(
-                "<img src=\"%s\" alt=\"%s\">",
-                 relPath, TeXJavaHelpLib.encodeHTML(alt, true)));
+               int width = 0;
+               int height = 0;
+
+               Dimension dim = listener.getImageSize(iconPath.toFile(),
+                 L2HConverter.MIME_TYPE_PNG);
+
+               if (dim != null)
+               {
+                  width = dim.width;
+                  height = dim.height;
+               }
+
+               L2HImage img = new L2HImage(relPath, L2HConverter.MIME_TYPE_PNG,
+                 width, height, null, alt, true);
+
+               return img;
             }
          }
       }

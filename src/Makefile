@@ -127,6 +127,15 @@ classes/com/dickimawbooks/xml2bib	:
 	--minitoc-preamble-from-file doc/minitocpreamble.html \
 	doc/texjavahelp.tex -o ../unstable/html
 
+../unstable/epub/texjavahelp.epub	: lib/texjavahelpmk.jar \
+	doc/texjavahelp.pdf
+	$(texjavahelpmk) --epub \
+	--image-dest images \
+	--isbn "xxxxxxxxxxxxx" \
+	--author "Nicola L. C. Talbot" \
+	--author-file-as "Talbot, Nicola L. C." \
+	doc/texjavahelp.tex -o ../unstable/epub
+
 clean	:
 	\rm -rf classes
 	\rm -f doc/*.glstex

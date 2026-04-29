@@ -80,6 +80,13 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
        || arg.equals("--head-from-file")
        || arg.equals("--html-ext")
        || arg.equals("--og-url-path")
+       || arg.equals("--keywords")
+       || arg.equals("--subject")
+       || arg.equals("--description")
+       || arg.equals("--author")
+       || arg.equals("--author-file-as")
+       || arg.equals("--title")
+       || arg.equals("--isbn")
        || arg.equals("--root-name")
        || arg.equals("--root-page-preamble")
        || arg.equals("--root-page-preamble-from-file")
@@ -127,16 +134,23 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       {
          mathJax = true;
       }
-      else if (arg.equals("--nohelpset"))
+      else if (arg.equals("--html") || arg.equals("--nohelpset"))
       {
-         isHelpset = false;
+         docTargetType = DocumentTargetType.HTML;
          breadcrumbtrail = true;
          minitoc = true;
          mathJax = true;
       }
       else if (arg.equals("--helpset"))
       {
-         isHelpset = true;
+         docTargetType = DocumentTargetType.HELPSET;
+         breadcrumbtrail = false;
+         minitoc = false;
+         mathJax = false;
+      }
+      else if (arg.equals("--epub"))
+      {
+         docTargetType = DocumentTargetType.EPUB;
          breadcrumbtrail = false;
          minitoc = false;
          mathJax = false;
@@ -246,6 +260,69 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
          if (ogUrlPath.isEmpty())
          {
             ogUrlPath = null;
+         }
+      }
+      else if (cliParser.isArg(arg, "--keywords", returnVals))
+      {
+         keywords = returnVals[0].toString();
+
+         if (keywords.isEmpty())
+         {
+            keywords = null;
+         }
+      }
+      else if (cliParser.isArg(arg, "--subject", returnVals))
+      {
+         subject = returnVals[0].toString();
+
+         if (subject.isEmpty())
+         {
+            subject = null;
+         }
+      }
+      else if (cliParser.isArg(arg, "--description", returnVals))
+      {
+         description = returnVals[0].toString();
+
+         if (description.isEmpty())
+         {
+            description = null;
+         }
+      }
+      else if (cliParser.isArg(arg, "--title", returnVals))
+      {
+         title = returnVals[0].toString();
+
+         if (title.isEmpty())
+         {
+            title = null;
+         }
+      }
+      else if (cliParser.isArg(arg, "--author", returnVals))
+      {
+         author = returnVals[0].toString();
+
+         if (author.isEmpty())
+         {
+            author = null;
+         }
+      }
+      else if (cliParser.isArg(arg, "--author-file-as", returnVals))
+      {
+         authorFileAs = returnVals[0].toString();
+
+         if (authorFileAs.isEmpty())
+         {
+            authorFileAs = null;
+         }
+      }
+      else if (cliParser.isArg(arg, "--isbn", returnVals))
+      {
+         isbn = returnVals[0].toString();
+
+         if (isbn.isEmpty())
+         {
+            isbn = null;
          }
       }
       else if (cliParser.isArg(arg, "--root-name", returnVals))
@@ -482,9 +559,16 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
 
    protected void run() throws IOException
    {
-      TJHListener listener = new TJHListener(this, outCharset, isHelpset);
+      TJHListener listener = new TJHListener(this, outCharset, docTargetType);
 
       listener.setOgUrlPath(ogUrlPath);
+
+      listener.setKeywords(keywords);
+      listener.setSubject(subject);
+      listener.setDescription(description);
+      listener.setTitle(title);
+      listener.setAuthor(author, authorFileAs);
+      listener.setISBN(isbn);
 
       listener.setRootName(rootName);
       listener.setRootPagePreMain(rootPagePreMainContent);
@@ -1116,7 +1200,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    private boolean deleteTempDirOnExit = true;
    private boolean convertImages = true;
    private boolean splitUseBaseNamePrefix = false;
-   private boolean isHelpset = true;
+   private DocumentTargetType docTargetType = DocumentTargetType.HELPSET;
    private boolean breadcrumbtrail = false;
    private boolean minitoc = false;
    private String minitocPreamble = null;
@@ -1128,6 +1212,13 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    private String ogUrlPath = null;
    private String rootPagePreMainContent = null;
    private String rootName = null;
+   private String keywords = null;
+   private String description = null;
+   private String subject = null;
+   private String author = null;
+   private String authorFileAs = null;
+   private String title = null;
+   private String isbn = null;
 
    private String outputFormat = "latex";
 

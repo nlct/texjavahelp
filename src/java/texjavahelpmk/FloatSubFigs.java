@@ -76,6 +76,8 @@ public class FloatSubFigs extends ControlSequence
 
       TeXObjectList expanded = listener.createStack();
 
+      label = listener.processAnchorName(label);
+
       StartElement elem = listener.newHtml5StartElement("figure", "div", true, true);
       elem.putAttribute("id", label);
 

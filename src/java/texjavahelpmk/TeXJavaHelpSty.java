@@ -34,7 +34,7 @@ import com.dickimawbooks.texparserlib.html.Widget;
 import com.dickimawbooks.texparserlib.html.WidgetKeyStroke;
 import com.dickimawbooks.texparserlib.html.StartElement;
 import com.dickimawbooks.texparserlib.html.EndElement;
-import com.dickimawbooks.texparserlib.html.HtmlTag;
+import com.dickimawbooks.texparserlib.html.HtmlLiteral;
 
 import com.dickimawbooks.texparserlib.latex.latex3.PropertyCommand;
 
@@ -74,6 +74,10 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new AtFirstOfOne("hologoRobust"));
       registerControlSequence(new GenericCommand(true,
         "visiblespace", null, new TeXCsRef("textvisiblespace")));
+
+      registerControlSequence(new AtGobble("WriteTJHDivisionInfo", 5));
+      registerControlSequence(new GobbleOpt("BeforeTOCHead", 1, 1));
+      registerControlSequence(new GobbleOpt("AfterTOCHead", 1, 1));
 
       addCssStyles();
       addSemanticCommands();
@@ -181,7 +185,7 @@ public class TeXJavaHelpSty extends UserGuideSty
       if (listener.isHtml5())
       {
          registerControlSequence(new GenericCommand(true,
-           "spacekeysym", null, new HtmlTag("<span class=\"spacekey\"> </span>")));
+           "spacekeysym", null, new HtmlLiteral("<span class=\"spacekey\"> </span>")));
       }
       else
       {
@@ -496,9 +500,9 @@ public class TeXJavaHelpSty extends UserGuideSty
           TeXParserUtils.createGroup(listener, listener.getParam(1)))));
 
       registerControlSequence(new GenericCommand(true, "quad", null, 
-       new TeXObject[] {new HtmlTag("<span class=\"quad\">&nbsp; </span>")}));
+       new TeXObject[] {new HtmlLiteral("<span class=\"quad\">&nbsp; </span>")}));
       registerControlSequence(new GenericCommand(true, "qquad", null, 
-       new TeXObject[] {new HtmlTag("<span class=\"qquad\">&nbsp; &nbsp; </span>")}));
+       new TeXObject[] {new HtmlLiteral("<span class=\"qquad\">&nbsp; &nbsp; </span>")}));
 
       registerControlSequence(new NumberedDec());
 
@@ -756,6 +760,7 @@ public class TeXJavaHelpSty extends UserGuideSty
       glossariesSty.addField("tooltip");
       glossariesSty.addField("keystroke");
 
+      registerControlSequence(new TextualContentCommand("glolinkprefix", "glo."));
    }
 
    @Override

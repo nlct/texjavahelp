@@ -81,6 +81,7 @@ public class DocumentBlockWriter extends Writer
          if (buffer.length() > 0)
          {
             if (!listener.inNavigation() 
+                && listener.getDocumentTargetType() != DocumentTargetType.EPUB
                 &&
                  (
                    oldType == DocumentBlockType.PARAGRAPH
