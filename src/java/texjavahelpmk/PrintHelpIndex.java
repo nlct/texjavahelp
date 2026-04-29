@@ -109,20 +109,20 @@ public class PrintHelpIndex extends PrintIndex
  
    @Override
    protected void addGroupHeading(ControlSequence subSectionCs,
-     String grpLabel, ControlSequence groupTitleCs, TeXObjectList content,
+     String grpLabel, TeXObject groupTitle, TeXObjectList content,
      TeXParser parser, TeXObjectList stack)
    throws IOException
    {
-      super.addGroupHeading(subSectionCs, grpLabel, groupTitleCs,
+      super.addGroupHeading(subSectionCs, grpLabel, groupTitle,
          content, parser, stack);
 
       TJHListener listener = (TJHListener)parser.getListener();
 
       String title = grpLabel;
 
-      if (groupTitleCs != null)
+      if (groupTitle != null)
       {
-         title = listener.processToString(groupTitleCs, stack);
+         title = listener.processToString((TeXObject)groupTitle.clone(), stack);
       }
 
       listener.addIndexGroupMap(glosLabel, grpLabel, title);
