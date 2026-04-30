@@ -12,63 +12,63 @@
   name={\appfmt{data\-tool\-tk}}
 }
 
-@application{app.xml2bib,
- name={\appfmt{xml\-2\-bib}},
+@application{app.tjhxml2bib,
+ name={\appfmt{tjh\-xml\-2\-bib}},
  syntax={\oargm{options} \meta{XML-file}+}
 }
 
-@switch{switch.xml2bib.help,
-  parent={app.xml2bib},
+@switch{switch.tjhxml2bib.help,
+  parent={app.tjhxml2bib},
   shortswitch={h},
   description={Prints help and exits}
 }
 
-@switch{switch.xml2bib.version,
-  parent={app.xml2bib},
+@switch{switch.tjhxml2bib.version,
+  parent={app.tjhxml2bib},
   shortswitch={v},
   description={Prints version information and exits}
 }
 
-@switch{switch.xml2bib.in,
-  parent={app.xml2bib},
+@switch{switch.tjhxml2bib.in,
+  parent={app.tjhxml2bib},
   shortswitch={i},
   syntax={\meta{XML-file}},
   description={add \meta{XML-file} to the list of input files
 (cumulative)}
 }
 
-@switch{switch.xml2bib.output,
-  parent={app.xml2bib},
+@switch{switch.tjhxml2bib.output,
+  parent={app.tjhxml2bib},
   shortswitch={o},
   syntax={\meta{BIB-file}},
   description={specifies \meta{BIB-file} as the output file}
 }
 
-@switch{switch.xml2bib.out-charset,
-  parent={app.xml2bib},
+@switch{switch.tjhxml2bib.out-charset,
+  parent={app.tjhxml2bib},
   syntax={\meta{charset}},
   description={specifies \meta{charset} as the encoding for the output file}
 }
 
-@switch{switch.xml2bib.provide-xml,
-  parent={app.xml2bib},
-  description={copy XML source files from \app{xml2bib}['s] resource
+@switch{switch.tjhxml2bib.provide-xml,
+  parent={app.tjhxml2bib},
+  description={copy XML source files from \app{tjhxml2bib}['s] resource
 directory if missing}
 }
 
-@switch{switch.xml2bib.copy-overwrite-xml,
-  parent={app.xml2bib},
-  description={copy XML source files from \app{xml2bib}['s] resource
-directory if missing or if \app{xml2bib}['s] file is newer}
+@switch{switch.tjhxml2bib.copy-overwrite-xml,
+  parent={app.tjhxml2bib},
+  description={copy XML source files from \app{tjhxml2bib}['s] resource
+directory if missing or if \app{tjhxml2bib}['s] file is newer}
 }
 
-@switch{switch.xml2bib.debug,
-  parent={app.xml2bib},
+@switch{switch.tjhxml2bib.debug,
+  parent={app.tjhxml2bib},
   description={switch on debug mode}
 }
 
-@switch{switch.xml2bib.nodebug,
-  parent={app.xml2bib},
+@switch{switch.tjhxml2bib.nodebug,
+  parent={app.tjhxml2bib},
   description={switch off debug mode (default)}
 }
 
@@ -135,9 +135,19 @@ output files}
   description={Create helpset files.}
 }
 
-@switch{switch.nohelpset,
+@switch{switch.html,
   parent={app.texjavahelpmk},
   description={Create HTML5 files instead of helpset files.}
+}
+
+@switch{switch.nohelpset,
+  parent={app.texjavahelpmk},
+  alias={switch.html}
+}
+
+@switch{switch.epub,
+  parent={app.texjavahelpmk},
+  description={Create EPUB instead of helpset files.}
 }
 
 @switch{switch.image-preamble,
@@ -360,6 +370,7 @@ the document on).}
   name={\styfmt{tex\-java\-help}}
 }
 
+
 @abbreviation{cli,
   short = {CLI},
   long = {command line interface}
@@ -411,6 +422,17 @@ was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer availabl
  name={\styfmt{glos\-saries\dhyphen extra\dhyphen bib2gls}}
 }
 
+@package{pkg.longtable,
+  name={\styfmt{long\-table}}
+}
+
+@class{cls.scrbook,
+ name={scr\-book}
+}
+
+@class{cls.scrreport,
+ name={scr\-report}
+}
 @package{pkg.fontawesome,
   name={\styfmt{font\-awe\-some}}
 }
@@ -474,6 +496,47 @@ was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer availabl
   description={defines \gls{tabsym} and \gls{upsym} as \sty{tikz} images}
 }
 
+@environment{env.minipage,
+  name={\envfmt{mini\-page}}
+}
+
+@environment{env.figure,
+  name={\envfmt{fig\-ure}}
+}
+
+@environment{env.table}
+@environment{env.longtable,
+ name={\envfmt{long\-table}}
+}
+
+@environment{env.tabular,
+ name={\envfmt{tab\-u\-lar}}
+}
+
+@command{chapter}
+@command{section}
+@command{label}
+@command{ref}
+@command{caption}
+@command{tabcolsep}
+@command{multicolumn}
+
+@command{tableofcontents,
+ name={\csfmt{table\-of\-contents}}
+}
+
+@command{clearpage,
+  name={\csfmt{clear\-page}}
+}
+
+@command{pagestyle,
+  name={\csfmt{page\-style}}
+}
+
+@command{@currentlabelname,
+ name={\csfmt{@current\-label\-name}}
+}
+
 @command{barleftarrowrightarrowbar,
   name={\csfmt{bar\-left\-arrow\-right\-arrow\-bar}}
 }
@@ -482,21 +545,402 @@ was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer availabl
  name={\csfmt{bar\-up\-arrow}}
 }
 
-@command{tabsym,
-  name={\csfmt{tab\-sym}},
-  description={symbol to visually indicate a tab character}
-}
-
-@command{upsym,
-  name={\csfmt{up\-sym}},
-  description={an upward-pointing arrow with an under bar}
-}
-
 @command{includegraphics,
  name={\csfmt{in\-clude\-graph\-ics}}
 }
 
+@command{upsym,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{up\-sym}},
+  description={an upward-pointing arrow with an under bar}
+}
+
+@command{tabsym,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{tab\-sym}},
+  description={symbol to visually indicate a tab character}
+}
+
+@command{backspacekeysym,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{back\-space\-key\-sym}},
+  description={symbol to visually indicate a backspace key}
+}
+
+@command{spacekeysym,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{space\-key\-sym}},
+  description={symbol to visually indicate a space key}
+}
+
+@command{contextmenusym,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{context\-menu\-sym}},
+  description={symbol to represent the content menu key}
+}
+
+@command{upkeysym,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{up\-key\-sym}},
+  description={symbol to indicate the up arrow key}
+}
+
+@command{downkeysym,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{down\-key\-sym}},
+  description={symbol to indicate the down arrow key}
+}
+
+@command{leftkeysym,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{left\-key\-sym}},
+  description={symbol to indicate the left arrow key}
+}
+
+@command{rightkeysym,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{right\-key\-sym}},
+  description={symbol to indicate the right arrow key}
+}
+
+@command{WriteTJHDivisionInfo,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{Write\-TJH\-Division\-Info}},
+ syntax={\margm{unit}\margm{prefix}\margm{title}\margm{target}\margm{location}},
+ description={writes document division information to the \ext{aux}
+file for sections that don't appear in the table of contents}
+}
+
+@command{HeadlessSection,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{Head\-less\-Section}},
+ syntax={\margm{target}\margm{unit}\margm{title}},
+ description={a shortcut command that uses \gls{WriteTJHDivisionInfo}
+where a new navigation node should start but there's no associated
+title}
+}
+
+@environment{env.prefrontmatterblock,
+ providedby={\sty{texjavahelp}},
+  name={\envfmt{pre\-front\-matter\-block}},
+  syntax={\margm{target}\margm{title}},
+  description={a shortcut environment that's only defined if
+\gls{chapter} is defined. This starts and ends the environment
+with \gls{clearpage}, uses \gls{HeadlessSection} to establish a new
+navigation node, and locally sets the page style to empty}
+}
+
+@command{WriteTJHLabel,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{Write\-TJH\-Label}},
+ syntax={\margm{label}},
+ description={used to override the division a label should be in,
+for example, if a label occurs in a float that has floated into a
+different division}
+}
+
+@command{figurename,
+  name={\csfmt{fig\-ure\-name}}
+}
+
+@command{Figurename,
+  name={\csfmt{Fig\-ure\-name}}
+}
+
+@command{figurerefprefix,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{figure\-ref\-prefix}},
+  description={used as a prefix by \gls{figureref}, the default
+definition expands to \gls{figurename} followed by a non-breakable
+space}
+}
+
+@command{Figurerefprefix,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{Figure\-ref\-prefix}},
+  description={used as a prefix by \gls{Figureref}, the default
+definition expands to \gls{Figurename} followed by a non-breakable
+space}
+}
+
+@command{figureref,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{figure\-ref}},
+  syntax={\margm{label}},
+  modifiers={*},
+  description={does \gls{figurerefprefix} followed by 
+\gls{ref} or \starredcs{ref} to reference a figure identified
+by \meta{label}}
+}
+
+@command{Figureref,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{Figure\-ref}},
+  syntax={\margm{label}},
+  modifiers={*},
+  description={does \gls{Figurerefprefix} followed by 
+\gls{ref} or \starredcs{ref} to reference a figure identified
+by \meta{label}}
+}
+
+
+@command{figuresref,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{figures\-ref}},
+  syntax={\margm{label-list}},
+  modifiers={*},
+  description={similar to \gls{figureref} but references a list of
+figure labels. The prefix is given by \gls{figuresrefprefix}}
+}
+
+@command{figuresrefprefix,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{figures\-ref\-prefix}},
+  description={used as a prefix by \gls{figuresref}, the default
+definition expands to \gls{figuresname} followed by a non-breakable
+space}
+}
+
+@command{figuresname,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{figures\-name}},
+  description={used by \gls{figuresrefprefix}}
+}
+
+@command{Figuresref,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{Figures\-ref}},
+  syntax={\margm{label-list}},
+  modifiers={*},
+  description={similar to \gls{Figureref} but references a list of
+figure labels. The prefix is given by \gls{Figuresrefprefix}}
+}
+
+@command{Figuresrefprefix,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{Figures\-ref\-prefix}},
+  description={used as a prefix by \gls{Figuresref}, the default
+definition expands to \gls{Figuresname} followed by a non-breakable
+space}
+}
+
+@command{Figuresname,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{Figures\-name}},
+  description={used by \gls{Figuresrefprefix}}
+}
+
+@command{tablename,
+  name={\csfmt{table\-name}}
+}
+
+@command{Tablename,
+  name={\csfmt{Table\-name}}
+}
+
+@command{tablerefprefix,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{table\-ref\-prefix}},
+  description={used as a prefix by \gls{tableref}, the default
+definition expands to \gls{tablename} followed by a non-breakable
+space}
+}
+
+@command{Tablerefprefix,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{Table\-ref\-prefix}},
+  description={used as a prefix by \gls{Tableref}, the default
+definition expands to \gls{Tablename} followed by a non-breakable
+space}
+}
+
+@command{tableref,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{table\-ref}},
+  syntax={\margm{label}},
+  modifiers={*},
+  description={does \gls{tablerefprefix} followed by 
+\gls{ref} or \starredcs{ref} to reference a table identified
+by \meta{label}}
+}
+
+@command{Tableref,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{Table\-ref}},
+  syntax={\margm{label}},
+  modifiers={*},
+  description={does \gls{Tablerefprefix} followed by 
+\gls{ref} or \starredcs{ref} to reference a table identified
+by \meta{label}}
+}
+
+@command{tablesref,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{tables\-ref}},
+  syntax={\margm{label-list}},
+  modifiers={*},
+  description={similar to \gls{tableref} but references a list of
+table labels. The prefix is given by \gls{tablesrefprefix}}
+}
+
+@command{tablesrefprefix,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{tables\-ref\-prefix}},
+  description={used as a prefix by \gls{tablesref}, the default
+definition expands to \gls{tablesname} followed by a non-breakable
+space}
+}
+
+@command{tablesname,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{tables\-name}},
+  description={used by \gls{tablesrefprefix}}
+}
+
+@command{Tablesref,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{Tables\-ref}},
+  syntax={\margm{label-list}},
+  modifiers={*},
+  description={similar to \gls{Tableref} but references a list of
+table labels. The prefix is given by \gls{Tablesrefprefix}}
+}
+
+@command{Tablesrefprefix,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{Tables\-ref\-prefix}},
+  description={used as a prefix by \gls{Tablesref}, the default
+definition expands to \gls{Tablesname} followed by a non-breakable
+space}
+}
+
+@command{Tablesname,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{Tables\-name}},
+  description={used by \gls{Tablesrefprefix}}
+}
+
+@command{FloatFig,
+ providedby={\sty{texjavahelp}},
+  name={\csfmt{Float\-Fig}},
+  syntax={\oargm{pos}\margm{label}\oargm{\LaTeX\ only
+pre\dhyphen content}\margm{content}\oargm{lof}\margm{caption}},
+  description={creates a figure with the given content, caption and
+label}
+}
+
+@command{FloatSideBySideFigs,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{Float\-Side\-By\-Side\-Figs}},
+ syntax={\oargm{pos}\oargm{\LaTeX\ only
+pre\dhyphen both}\newline
+\margm{label1}\oargm{\LaTeX\ only pre\dhyphen
+content1}\margm{content1}\oargm{lof1}\margm{caption1}\newline
+\oargm{\LaTeX\ pre\dhyphen figure content\slash HTML between
+figures}\newline
+\margm{label2}\oargm{\LaTeX\ only pre\dhyphen content2}\margm{content2}\oargm{lof2}\margm{caption2}},
+  description={creates two side-by-side figures in a single
+\env{figure} environment}
+}
+
+@command{floatsidebysidevalign,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{float\-side\-by\-side\-v\-align}},
+ initvalue={c},
+ description={expands to the vertical alignment parameter for the
+\env{minipage} environments within \gls{FloatSideBySideFigs}}
+}
+
+@command{FloatSubFigs,
+ providedby={\sty{texjavahelp}},
+  name={\csfmt{Float\-Sub\-Figs}},
+  syntax={\oargm{pos}\margm{label}\oargm{\LaTeX\ only
+pre\dhyphen content}\margm{sub\dhyphen figure list}\oargm{lof}\margm{caption}},
+  modifiers={*},
+  description={creates a \env{figure} environment with sub-figures
+as the content. The starred version puts the first sub-figure on a
+line of its own. The \margm{sub-figure list} argument must be a
+comma-separated list where each element is in the form
+\code{\margm{subfig\dhyphen label}\margm{subfig\dhyphen
+content}\oargm{subfig\dhyphen hyp\dhyphen caption}\margm{subfig\dhyphen caption}}. Each item in the list is
+formatted with \gls{SubFigureContent}}
+}
+
+@command{SubFigureContent,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{Sub\-Fig\-ure\-Con\-tent}},
+ syntax={\margm{label}\margm{content}\oargm{hyperref
+caption}\margm{caption}},
+ description={used to format each sub-figure within
+\gls{FloatSubFigs}}
+}
+
+@counter{ctr.subfigure,
+  providedby={\sty{texjavahelp}},
+  name={\ctrfmt{sub\-fig\-ure}},
+  description={counter used by \gls{FloatSubFigs} for each
+sub-figure}
+}
+
+@command{subfigurefmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{sub\-figure\-fmt}},
+ syntax={\margm{text}},
+ description={the formatting command used by \gls{subfigref}}
+}
+
+@command{subfigref,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{sub\-fig\-ref}},
+ syntax={\margm{label}},
+ description={references a sub-figure (created with
+\gls{FloatSubFigs}) without including the parent figure
+reference}
+}
+
+@command{FloatTable,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{Float\-Table}},
+  syntax={\oargm{pos}\margm{label}\oargm{\LaTeX\ only pre\dhyphen content}\margm{content}\oargm{lot}\margm{caption}},
+  description={creates a table with the given content, caption and
+label}
+}
+
+@command{tablecellstack,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{table\-cell\-stack}},
+  syntax={\margm{content}},
+  description={does \code{\cmd{shortstack}\margm{content}}}
+}
+
+@command{NoFloatLongTable,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{No\-Float\-Long\-Table}},
+  syntax={\oargm{h-align}\margm{label}\oargm{\LaTeX\ only
+pre\dhyphen content}\margm{col\dhyphen specs}\margm{header
+row}\margm{content}\oargm{lot}\margm{caption}},
+  description={creates a \env{longtable} with the given content,
+caption and label. This will require the \sty{longtable} package}
+}
+
+@command{continuedfmt,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{con\-tin\-ued\-fmt}},
+  syntax={\margm{text}},
+  description={used to format the \qt{Continued} text in
+\gls{NoFloatLongTable}}
+}
+
+@command{ContinuedNextPageBox,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{Con\-tin\-ued\-Next\-Page\-Box}},
+  syntax={\margm{text}},
+  description={used to format the \qt{Continued on next page} text in
+\gls{NoFloatLongTable}}
+}
+
 @command{includeimg,
+ providedby={\sty{texjavahelp}},
  name={\csfmt{include\-img}},
  syntax={\oargm{options}\margm{basename}},
  description={Behaves like \gls{includegraphics} if
@@ -565,12 +1009,14 @@ implemented by \gls{includegraphics})}
 }
 
 @command{includetimg,
+ providedby={\sty{texjavahelp}},
  name={\csfmt{include\-t\-img}},
  syntax={\oargm{options}\margm{basename}},
  description={as \gls{includeimg} but top-aligns the image}
 }
 
 @command{TeXParserLibToImagePreamble,
+ providedby={\sty{texjavahelp}},
  name={\csfmt{TeX\-Par\-ser\-Lib\-To\-Image\-Pre\-amble}},
  description={If defined, the value of this token list variable will
 be added to the document preamble used to create the image for
@@ -578,6 +1024,7 @@ be added to the document preamble used to create the image for
 }
 
 @command{TeXParserLibToImage,
+ providedby={\sty{texjavahelp}},
  name={\csfmt{TeX\-Par\-ser\-Lib\-To\-Image}},
  syntax={\oargm{options}\margm{\LaTeX\ code}},
  description={Just does \meta{\LaTeX\ code} when compiling with
@@ -645,6 +1092,7 @@ set, a generic basename is used in the form \metafilefmt{img}{n}{}}
 }
 
 @command{GlsXtrLoadResources,
+ providedby={\sty{glossaries-extra}},
   name={\csfmt{Gls\-Xtr\-Load\-Resources}},
   syntax={\oargm{resource options}},
   description={provided by the \sty{glossaries-extra} package, this
@@ -687,6 +1135,7 @@ set, a generic basename is used in the form \metafilefmt{img}{n}{}}
 }
 
 @command{IfTeXParserLib,
+ providedby={\sty{glossaries-extra-bib2gls}},
   name={\csfmt{If\-TeX\-Par\-ser\-Lib}},
   syntax={\margm{true}\margm{false}},
   description={the \gls{TeXParserLib} defines this command to expand
@@ -695,6 +1144,7 @@ this command to expand to \meta{false}}
 }
 
 @command{IfHelpSetTF,
+ providedby={\sty{texjavahelp}},
   name={\csfmt{If\-Help\-Set\-TF}},
   syntax={\margm{true}\margm{false}},
   description={the \sty{texjavahelp} package defines this command to
@@ -704,6 +1154,7 @@ command to expand to \meta{true} if \switch{helpset} otherwise to
 }
 
 @command{IfHelpSetT,
+ providedby={\sty{texjavahelp}},
   name={\csfmt{If\-Help\-Set\-T}},
   syntax={\margm{true}},
   description={the \sty{texjavahelp} package defines this command to
@@ -713,6 +1164,7 @@ nothing}
 }
 
 @command{IfHelpSetF,
+ providedby={\sty{texjavahelp}},
   name={\csfmt{If\-Help\-Set\-F}},
   syntax={\margm{false}},
   description={the \sty{texjavahelp} package defines this command to
@@ -722,12 +1174,14 @@ command to expand to nothing if \switch{helpset} otherwise to
 }
 
 @command{TeXJavaHelpGlsResourceOptions,
+ providedby={\sty{texjavahelp}},
  name={\csfmt{TeX\-Java\-Help\-Gls\-Resource\-Options}},
  description={expands to the resource options customized for 
 use with the \sty{texjavahelp} package}
 }
 
 @command{TeXJavaHelpGlsFieldAdjustments,
+ providedby={\sty{texjavahelp}},
  name={\csfmt{TeX\-Java\-Help\-Gls\-Field\-Adjustments}},
  description={expands to the field adjustment resource options}
 }
@@ -739,6 +1193,7 @@ use with the \sty{texjavahelp} package}
 @fileext{ext.bib}
 @fileext{ext.aux}
 @fileext{ext.glstex}
+@fileext{ext.toc}
 
 @indexplural{menu,
   seealso={index.menu.helpframe}

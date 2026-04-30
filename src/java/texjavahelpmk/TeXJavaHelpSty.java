@@ -76,8 +76,12 @@ public class TeXJavaHelpSty extends UserGuideSty
         "visiblespace", null, new TeXCsRef("textvisiblespace")));
 
       registerControlSequence(new AtGobble("WriteTJHDivisionInfo", 5));
+      registerControlSequence(new AtGobble("WriteTJHLabel", 1));
       registerControlSequence(new GobbleOpt("BeforeTOCHead", 1, 1));
       registerControlSequence(new GobbleOpt("AfterTOCHead", 1, 1));
+
+      registerControlSequence(new HeadlessSection());
+      registerControlSequence(new PreFrontMatterBlock());
 
       addCssStyles();
       addSemanticCommands();
@@ -356,7 +360,7 @@ public class TeXJavaHelpSty extends UserGuideSty
        "premnemonic", null, TeXParserUtils.createGroup(listener,
          new TeXCsRef("keys"),
          TeXParserUtils.createGroup(listener,
-          new TeXCsRef("glsentrytext"), listener.createGroup("manual.keystroke.alt")),
+          new TeXCsRef("gls"), listener.createGroup("manual.keystroke.alt")),
          new TeXCsRef("keysep")
         )));
 
@@ -577,7 +581,7 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(createLangCs("index", "Index"));
       registerControlSequence(createLangCs("summary", "Summary"));
       registerControlSequence(createLangCs("section", "section"));
-      registerControlSequence(createLangCs("seealsoname", "see also"));
+      registerControlSequence(createLangCs("seealso", "see also"));
 
       registerControlSequence(createLangCs("example", "example"));
       registerControlSequence(createLangCs("Examplename",
@@ -586,6 +590,13 @@ public class TeXJavaHelpSty extends UserGuideSty
         "manualplural", "example", "examples"));
       registerControlSequence(createLangCs("Examplesname",
         "Manualplural", "example", "Examples"));
+
+      registerControlSequence(createLangCs("continuedname",
+        "manualtext", "longtable_continued", "Continued"));
+
+      registerControlSequence(createLangCs("continuednextpage",
+        "manualtext", "longtable_continued_next_page",
+        "Continued on next page"));
 
       registerControlSequence(new GenericCommand(true,
         "nlctexampletag", null, TeXParserUtils.createStack(listener,
