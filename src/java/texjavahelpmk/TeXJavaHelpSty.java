@@ -72,6 +72,7 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new VersionDate());
       registerControlSequence(new AtFirstOfOne("hologoRobust"));
+      registerControlSequence(new AtFirstOfOne("hologo"));
       registerControlSequence(new GenericCommand(true,
         "visiblespace", null, new TeXCsRef("textvisiblespace")));
 
