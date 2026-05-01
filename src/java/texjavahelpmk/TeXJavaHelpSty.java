@@ -78,8 +78,12 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new AtGobble("WriteTJHDivisionInfo", 5));
       registerControlSequence(new AtGobble("WriteTJHLabel", 1));
+
+      // KOMA-Script commands that might occur in the document
+      // preamble:
       registerControlSequence(new GobbleOpt("BeforeTOCHead", 1, 1));
       registerControlSequence(new GobbleOpt("AfterTOCHead", 1, 1));
+      registerControlSequence(new GobbleOpt("DeclareTOCStyleEntry", 1, 2));
 
       registerControlSequence(new HeadlessSection());
       registerControlSequence(new PreFrontMatterBlock());
