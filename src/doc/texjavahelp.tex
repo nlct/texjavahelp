@@ -28,6 +28,10 @@
  \TeXJavaHelpGlsResourceOptions
 ]
 
+\AfterTOCHead[lof]{%
+ \label{listoffigures}%
+}
+
 \begin{document}
 \maketitle
 
@@ -49,6 +53,7 @@ progress.
 
 \frontmatter
 \tableofcontents
+\listoffigures
 
 \mainmatter
 \chapter{Introduction}
@@ -234,6 +239,17 @@ the filename for this section has the basename \filefmt{docdivisioncmds}
 (the file extension is determined by \app{texjavahelpmk}['s]
 \switch{html-ext} option).
 
+\begin{information}
+If any glossary entry hyperlinks where the target is in the form
+\code{wrglossary.}\meta{n} have the wrong filename in the link,
+use the \optval{debug}{showwrglos} option when loading
+\sty{texjavahelp}. (This will be passed to \sty{glossaries-extra}.)
+Then compare the target numbers in the PDF with those in the HTML
+files. The problem may stem from an entry being indexed when the
+document is built with \LaTeX\ but \app{texjavahelpmk} omits the
+indexing.
+\end{information}
+
 The navigation tree is determined by the table of contents \ext{toc}
 file. However, there are some divisions that are not typically
 included in the table of contents (such as the table of contents
@@ -265,9 +281,19 @@ will be used after the table of contents title. It's automatically added with:
 \cmd{AfterTOCHead}\oarg{toc}
  \marg{\gls{WriteTJHDivisionInfo}\marg{chapter}\marg{}\marg{\cmd{contentsname}}\marg{toc}\marg{\cmd{thepage}}}
 \end{compactcodebox}
-If KOMA-Script's \optfmt{toc=listof} option is used to add the list
-of figures and list of tables to the table of contents, then this
-adjustment won't be necessary for those lists.
+
+Any sectioning units that are added to the table of
+contents will need to have a label after the chapter heading
+to set the corresponding file's basename.  This includes unnumbered
+chapters that are automatically added with KOMA-Script's
+\optfmt{toc-listof} option. For example:
+\begin{compactcodebox}
+\cmd{AfterTOCHead}\oarg{lof}\marg{\cmd{label}\marg{listoffigures}}
+\cmd{AfterTOCHead}\oarg{lot}\marg{\cmd{label}\marg{listoftables}}
+\end{compactcodebox}
+This doesn't need to be done for navigational units added with 
+\gls{WriteTJHDivisionInfo} as the \meta{target} argument already specifies
+this.
 
 \cmddef{HeadlessSection}
 This is a shortcut command that creates a hyperlink target and uses
@@ -546,7 +572,7 @@ be in the \meta{content} argument.
 
 \gls{NoFloatLongTable} will automatically set the \env{longtable}
 head and foot. Each foot, except for the last, will have
-\continuednextpage. This is encapsulated with:
+\qt{\continuednextpage}. This is encapsulated with:
 \cmddef{ContinuedNextPageBox}
 This uses \gls{multicolumn} to span all columns, with the \code{r}
 alignment specifier and the content is \meta{text} encapsulated
@@ -554,7 +580,7 @@ with:
 \cmddef{continuedfmt}
 This simply does \code{\cmd{emph}\margm{text}}.
 
-Each head, apart from the first, will have \continuedname\ appended
+Each head, apart from the first, will have \qt{\continuedname} appended
 to the caption.  Again, this is encapsulated with
 \gls{continuedfmt}.
 
