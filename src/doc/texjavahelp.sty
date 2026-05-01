@@ -2,7 +2,7 @@
 % in the TeX Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{texjavahelp}[2026/04/30 v1.3 (NLCT)]
+\ProvidesPackage{texjavahelp}[2026/05/01 v1.3 (NLCT)]
 
 \RequirePackage{pifont}
 \RequirePackage{fontawesome}
@@ -282,6 +282,7 @@
   \MakeLinkTarget * { #1 }
   \def \@currentlabelname { #3 }
   \WriteTJHDivisionInfo { #2 } { } { #3 } { #1 } { \thepage }
+  \label { #1 }
 }
 
 \providecommand \texparser@newlabel [ 1 ] { }
@@ -777,8 +778,8 @@
      { \continuedfmt { #1 } }
  }
 
-\newcommand{\continuedname}{\manmsg{longtable_continued}}
-\newcommand{\continuednextpage}{\manmsg{longtable_continued_next_page}}
+\newcommand{\continuedname}{\glsentryname{manual.longtable_continued}}
+\newcommand{\continuednextpage}{\glsentryname{manual.longtable_continued_next_page}}
 
 \newcommand\postlongtablecaption{
  [ \medskipamount ]
@@ -1048,7 +1049,7 @@
    \@ifstar
     {%
       \chapter*{\listofexamplesname}
-      \WriteTJHDivisionInfo{chapter}{}{\contentsname}{listofexamples}{\thepage}
+      \WriteTJHDivisionInfo{chapter}{}{\listofexamplesname}{listofexamples}{\thepage}
       \@starttoc{loe}%
     }%
     {%
@@ -1603,7 +1604,7 @@
 
 % Semantic commands
 
-\newcommand*{\widgetfmt}[1]{\texorpdfstring{\textsf{\bfseries #1}}{#1}}
+\NewDocumentCommand\widgetfmt{m}{\textsf{\bfseries #1}}
 
 \glsxtraddlabelprefix{action.}
 \glsxtraddlabelprefix{button.}
@@ -1868,13 +1869,13 @@
 }
 \ExplSyntaxOff
 
-\newcommand{\appfmt}[1]{\texorpdfstring{\texttt{#1}}{#1}}
+\NewDocumentCommand\appfmt{m}{\texttt{#1}}
 \MFUblocker{\appfmt}
 
 \newcommand{\homedir}{\string~}
 \newcommand{\homefilefmt}[1]{\filefmt{\homedir\slash#1}}
 
-\newcommand{\filefmt}[1]{\texorpdfstring{\texttt{#1}}{#1}}
+\NewDocumentCommand\filefmt{m}{\texttt{#1}}
 \MFUblocker{\filefmt}
 
 \newcommand{\fileext}[1]{\filefmt{.#1}}
@@ -1892,77 +1893,83 @@
   \discretionary{}{}{}\meta{#4}\discretionary{}{}{}\filefmt{#5}%
 }
 
-\newcommand{\styfmt}[1]{\texorpdfstring{\texttt{#1}}{#1}}
+\NewDocumentCommand\styfmt{m}{\texttt{#1}}
 \MFUblocker{\styfmt}
 
-\newcommand{\clsfmt}[1]{\texorpdfstring{\texttt{#1}}{#1}}
+\NewDocumentCommand\clsfmt{m}{\texttt{#1}}
 \MFUblocker{\clsfmt}
 
-\newcommand{\optfmt}[1]{\texorpdfstring{\texttt{#1}}{#1}}
+\NewDocumentCommand\optfmt{m}{\texttt{#1}}
 \MFUblocker{\optfmt}
 
-\newcommand*{\envfmt}[1]{\texorpdfstring{\textsf{#1}}{#1}}
+\NewDocumentCommand\envfmt{m}{\textsf{#1}}
 \MFUblocker{\envfmt}
 
-\newcommand*{\ctrfmt}[1]{\texorpdfstring{\textsf{#1}}{#1}}
+\NewDocumentCommand\ctrfmt{m}{\textsf{#1}}
 \MFUblocker{\ctrfmt}
 
-\newcommand*{\varfmt}[1]{\texorpdfstring{\textsf{#1}}{#1}}
+\NewDocumentCommand\varfmt{m}{\textsf{#1}}
 \MFUblocker{\varfmt}
 
-\newcommand*{\xmltagfmt}[1]{\texorpdfstring{\texttt{<#1>}}{\string<#1\string>}}
+\newcommand*{\stringxmltagfmt}[1]{\string<#1\string>}
+\NewDocumentCommand\xmltagfmt{m}{\texttt{<#1>}}
 \MFUblocker{\xmltagfmt}
 
-\newcommand*{\xmlattrfmt}[1]{\texorpdfstring{\textsf{#1}}{#1}}
+\NewDocumentCommand\xmlattrfmt{m}{\textsf{#1}}
 \MFUblocker{\xmlattrfmt}
 
 \newcommand{\longswitch}{-\/-}
 \newcommand\pdflongswitch{\string-\string-}
+\newcommand\pdflongswitchfmt[1]{\pdflongswitch #1}
 
-\newcommand*{\longargfmt}[1]{%
- \texorpdfstring{\texttt{\longswitch\nolinebreak #1}}{\pdflongswitch#1}%
+\NewDocumentCommand\longargfmt{m}{%
+ \texttt{\longswitch\nolinebreak #1}%
 }
 \MFUblocker{\longargfmt}
 
 \newcommand{\shortswitch}{\string-}
+\newcommand\pdfshortswitchfmt[1]{\shortswitch #1}
 
-\newcommand*{\shortargfmt}[1]{\texorpdfstring{\texttt{\shortswitch\nolinebreak #1}}{\string-#1}}
+\NewDocumentCommand\shortargfmt{m}{\texttt{\shortswitch\nolinebreak #1}}
 \MFUblocker{\shortargfmt}
 
 % \defsemanticcmd[colour]{cs}{font-cs}{prefix}
-\newcommand*{\defsemanticcmd}[4][]{%
-  \ifstrempty{#1}%
+\NewDocumentCommand \defsemanticcmd{ommm}{%
+  \IfValueTF{#1}%
   {%
     \ifstrempty{#3}%
     {%
-      \newcommand#2[1]{#4##1}%
-    }
+      \NewDocumentCommand#2{m}{{\color{#1}#4##1}}%
+    }%
     {%
-      \newcommand#2[1]{\texorpdfstring{\fmtorcode#3{#4##1}}{#4##1}}%
+      \NewDocumentCommand#2{m}{\fmtorcode#3{\color{#1}#4##1}}%
     }%
   }%
   {%
     \ifstrempty{#3}%
     {%
-      \newcommand#2[1]{\texorpdfstring{{\color{#1}#4##1}}{#4##1}}%
-    }%
+      \NewDocumentCommand#2{m}{#4##1}%
+    }
     {%
-      \newcommand#2[1]{\texorpdfstring{\fmtorcode#3{\color{#1}#4##1}}{#4##1}}%
+      \NewDocumentCommand#2{m}{\fmtorcode#3{#4##1}}%
     }%
+  }%
+  \pdfstringdefDisableCommands{%
+    \def#2{#4\@firstofone}
   }%
 }
 
-\newcommand{\faded}[1]{\texorpdfstring{\textcolor{gray}{#1}}{#1}}
+\NewDocumentCommand\faded{m}{\textcolor{gray}{#1}}
 
 
 \newcommand*{\qt}[1]{``#1''}
-\newcommand*{\qtt}[1]{``\,\texttt{#1}\,''}
+\NewDocumentCommand\qtt{m}{``\,\texttt{#1}\,''}
 
 \newcommand*{\csfmtfont}[1]{\ifmmode \mbox{\texttt{#1}}\else\texttt{#1}\fi}
 \newcommand*{\csfmtcolourfont}[1]{\texttt{\textcolor{cs}{#1}}}
 
-\newcommand*{\csfmt}[1]{\csfmtfont{\codebackslash #1}}
-\newcommand*{\cspuncfmt}[1]{\csfmt{#1}}
+\NewDocumentCommand\csfmt{m}{\csfmtfont{\codebackslash #1}}
+\NewDocumentCommand\cspuncfmt{m}{\csfmt{#1}}
 
 \newcommand{\codebackslash}{\texorpdfstring{\char`\\}{\string\\}}
 
@@ -1985,11 +1992,15 @@
 
 \newrobustcmd*{\texmeta}[1]{{\normalfont$\langle$\emph{#1}$\rangle$}}
 
-\newcommand*{\meta}[1]{%
- \texorpdfstring{\ifmmode\text{\texmeta{#1}}\else\texmeta{#1}\fi}{\string<#1\string>}%
+\newcommand{\stringmeta}[1]{\string<#1\string>}
+
+\NewDocumentCommand\meta{m}{%
+ \ifmmode\text{\texmeta{#1}}\else\texmeta{#1}\fi
 }
 
-\newcommand*{\oarg}[1]{\discretionary{}{}{}[#1]}
+\newcommand{\stringoarg}[1]{[#1]}
+
+\NewDocumentCommand\oarg{m}{\discretionary{}{}{}[#1]\discretionary{}{}{}}
 \newcommand*{\oargm}[1]{\oarg{\meta{#1}}}
 
 % To prevent lonely [ and ] from upsetting the syntax highlighter:
@@ -2000,9 +2011,10 @@
 \newrobustcmd*{\nlctopenparen}{(}
 \newrobustcmd*{\nlctcloseparen}{)}
 
-\newcommand*{\marg}[1]{\texorpdfstring
- {\discretionary{}{}{}\char`\{#1\char`\} \discretionary{}{}{}}%
- {\{#1\}}%
+\newcommand\stringmarg[1]{\glsopenbrace #1\glsclosebrace}
+
+\NewDocumentCommand\marg{m}{%
+ \discretionary{}{}{}\char`\{ #1\char`\} \discretionary{}{}{}%
 }
 
 \newcommand*{\margm}[1]{\marg{\meta{#1}}}
@@ -2446,6 +2458,24 @@
   \def\dunderscore{\_}%
   \let\-\empty
   \let\csfmtfont\@firstofone
+  \let\widgetfmt\@firstofone
+  \let\appfmt\@firstofone
+  \let\filefmt\@firstofone
+  \let\styfmt\@firstofone
+  \let\clsfmt\@firstofone
+  \let\optfmt\@firstofone
+  \let\envfmt\@firstofone
+  \let\ctrfmt\@firstofone
+  \let\varfmt\@firstofone
+  \let\xmltagfmt\stringxmltagfmt
+  \let\xmlattrfmt\@firstofone
+  \let\longargfmt\pdflongswitchfmt
+  \let\shortargfmt\pdfshortswitchfmt
+  \let\faded\@firstofone
+  \let\qtt\qt
+  \let\meta\stringmeta
+  \let\oarg\stringoarg
+  \let\marg\stringmarg
 }
 
 \newignoredglossary{minilist}
