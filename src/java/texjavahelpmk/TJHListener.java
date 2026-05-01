@@ -1245,7 +1245,7 @@ public class TJHListener extends L2HConverter
    {
       if (isXml())
       {
-         return anchorName == null ? anchorName : anchorName.replaceAll("[:+]", "");
+         return anchorName == null ? anchorName : anchorName.replaceAll("[@:+]", "_");
       }
       else
       {
