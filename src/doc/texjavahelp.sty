@@ -2,7 +2,7 @@
 % in the TeX Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{texjavahelp}[2026/05/01 v1.3 (NLCT)]
+\ProvidesPackage{texjavahelp}[2026/05/02 v1.3 (NLCT)]
 
 \RequirePackage{pifont}
 \RequirePackage{fontawesome}
@@ -55,7 +55,7 @@
 \DeclareOption{fnsymleft}{\renewcommand{\fnsymmark}[1]{\llap{#1}}}
 \DeclareOption{fnsymright}{\renewcommand{\fnsymmark}[1]{\rlap{#1}}}
 
-\newcommand{\nlct@ns@ref@cs}{\vref}
+\newcommand{\nlct@ns@ref@cs}{\ref}
   
 \newcommand{\nlctnovref}{\renewcommand{\nlct@ns@ref@cs}{\ref}}
 \newcommand{\nlctusevref}{\renewcommand{\nlct@ns@ref@cs}{\vref}}
@@ -237,6 +237,10 @@
  {}
 
 \renewcommand\glolinkprefix{glo.}
+
+% Provide \strong if not already defined
+
+\providecommand\strong[1]{\textbf{#1}}
 
 % Title page information
 
@@ -778,8 +782,10 @@
      { \continuedfmt { #1 } }
  }
 
-\newcommand{\continuedname}{\glsentryname{manual.longtable_continued}}
-\newcommand{\continuednextpage}{\glsentryname{manual.longtable_continued_next_page}}
+\newcommand{\continuedname}{\manualtext{longtable_continued}{Continued}}
+
+\newcommand{\continuednextpage}{%
+ \manualtext{longtable_continued_next_page}{Continued on next page}}
 
 \newcommand\postlongtablecaption{
  [ \medskipamount ]
@@ -999,6 +1005,8 @@
   \def\optfmt##1{\protect\optfmt{##1}}%
   \def\styfmt##1{\protect\styfmt{##1}}%
   \def\clsfmt##1{\protect\clsfmt{##1}}%
+  \def\styoptfmt##1{\protect\styoptfmt{##1}}%
+  \def\clsoptfmt##1{\protect\clsoptfmt{##1}}%
   \def\envfmt##1{\protect\envfmt{##1}}%
   \def\appfmt##1{\protect\appfmt{##1}}%
   \def\xmltagfmt##1{\protect\xmltagfmt{##1}}%
@@ -1280,7 +1288,7 @@
 \newrobustcmd{\initvalnotefmt}[1]{\textrm{\em #1}}
 
 \renewcommand{\glslinkpresetkeys}{%
- \glsxtrifhasfield*{defaultkeys}{\glslabel}
+ \glsxtrifhasfield*{defaultkeys}{\glslabel}%
  {\expandafter\setupglslink\expandafter{\glscurrentfieldvalue}}%
  {}%
 } 
@@ -1480,12 +1488,12 @@
       name = "\cs{filefmt}{" + entrylabel->original + "}"
         [ entrytype->original = /(common)?file/], 
 % file extensions
-      name = "\cs{fileext}{" + \MGP{1} + "}"
+      name = "\cs{extfmt}{" + \MGP{1} + "}"
         [
             entrytype->original = /(?:common)?fileext/
           & entrylabel->original=/ext\.(.+)/
         ], 
-      name = "\cs{fileext}{" + entrylabel->original + "}"
+      name = "\cs{extfmt}{" + entrylabel->original + "}"
         [ entrytype->original = /(common)?fileext/], 
 % variables (e.g. environment variables)
       name = "\cs{varfmt}{" + entrylabel->original + "}"
@@ -1507,6 +1515,18 @@
       name = "\cs{clsfmt}{" + entrylabel->original + "}"
         [ entrytype->original =/(common)?class/ ], 
 % options
+      name = "\cs{styoptfmt}{" + \MGP{1} + "}"
+        [
+          parent -> entrytype->original=/(?:common)?package/
+         & entrytype->original =/(?:common)?option/
+         & entrylabel->original=/opt\.(.+)/
+        ], 
+      name = "\cs{clsoptfmt}{" + \MGP{1} + "}"
+        [
+          parent -> entrytype->original=/(?:common)?class/
+         & entrytype->original =/(?:common)?option/
+         & entrylabel->original=/opt\.(.+)/
+        ], 
       name = "\cs{optfmt}{" + \MGP{1} + "}"
         [
            entrytype->original =/(?:common)?option/
@@ -1873,24 +1893,36 @@
 \MFUblocker{\appfmt}
 
 \newcommand{\homedir}{\string~}
-\newcommand{\homefilefmt}[1]{\filefmt{\homedir\slash#1}}
+\newcommand{\filedirsep}{\slash}
+\newcommand{\homefilefmt}[1]{\filefmt{\homedir\filedirsep#1}}
 
 \NewDocumentCommand\filefmt{m}{\texttt{#1}}
 \MFUblocker{\filefmt}
 
-\newcommand{\fileext}[1]{\filefmt{.#1}}
-\MFUblocker{\fileext}
+\newcommand{\extfmt}[1]{\filefmt{#1}}
+\MFUblocker{\extfmt}
 
-% \metafilefmt{prefix}{val}{suffix} -> prefix<val>suffix
-\newcommand*{\metafilefmt}[3]{%
+\newcommand{\dottedextfmt}[1]{\extfmt{.#1}}
+\MFUblocker{\dottedextfmt}
+
+% \filemetafmt{prefix}{val}{suffix} -> prefix<val>suffix
+\newcommand*{\filemetafmt}[3]{%
   \filefmt{#1}\discretionary{}{}{}\meta{#2}\discretionary{}{}{}\filefmt{#3}%
 }
 
-% \metametafilefmt{prefix}{val1}{mid}{val2}{suffix} ->
+\newcommand*{\metafilefmt}[3]{% deprecated
+  \filemetafmt{#1}{#2}{#3}%
+}
+
+% \filemetametafmt{prefix}{val1}{mid}{val2}{suffix} ->
 % prefix<val1>mid<val2>suffix
-\newcommand*{\metametafilefmt}[5]{%
+\newcommand*{\filemetametafmt}[5]{%
   \filefmt{#1}\discretionary{}{}{}\meta{#2}\discretionary{}{}{}\filefmt{#3}%
   \discretionary{}{}{}\meta{#4}\discretionary{}{}{}\filefmt{#5}%
+}
+
+\newcommand*{\metametafilefmt}[5]{% deprecated
+ \filemetametafmt{#1}{#2}{#3}{#4}{#5}%
 }
 
 \NewDocumentCommand\styfmt{m}{\texttt{#1}}
@@ -1901,6 +1933,12 @@
 
 \NewDocumentCommand\optfmt{m}{\texttt{#1}}
 \MFUblocker{\optfmt}
+
+\NewDocumentCommand\styoptfmt{m}{\textcolor{styopt}{\optfmt{#1}}}
+\MFUblocker{\styoptfmt}
+
+\NewDocumentCommand\clsoptfmt{m}{\styopt{#1}}
+\MFUblocker{\clsoptfmt}
 
 \NewDocumentCommand\envfmt{m}{\textsf{#1}}
 \MFUblocker{\envfmt}
@@ -1933,6 +1971,8 @@
 \NewDocumentCommand\shortargfmt{m}{\texttt{\shortswitch\nolinebreak #1}}
 \MFUblocker{\shortargfmt}
 
+\newcommand*{\fmtorcode}[2]{#1{#2}}
+
 % \defsemanticcmd[colour]{cs}{font-cs}{prefix}
 \NewDocumentCommand \defsemanticcmd{ommm}{%
   \IfValueTF{#1}%
@@ -1955,15 +1995,15 @@
     }%
   }%
   \pdfstringdefDisableCommands{%
-    \def#2{#4\@firstofone}
+    \def#2{#4\@firstofone}%
   }%
 }
 
-\NewDocumentCommand\faded{m}{\textcolor{gray}{#1}}
+\NewDocumentCommand\faded{m}{\textcolor{faded}{#1}}
 
 
 \newcommand*{\qt}[1]{``#1''}
-\NewDocumentCommand\qtt{m}{``\,\texttt{#1}\,''}
+\NewDocumentCommand\qtt{m}{\qt{\,\texttt{#1}\,}}
 
 \newcommand*{\csfmtfont}[1]{\ifmmode \mbox{\texttt{#1}}\else\texttt{#1}\fi}
 \newcommand*{\csfmtcolourfont}[1]{\texttt{\textcolor{cs}{#1}}}
@@ -2268,6 +2308,10 @@
 
 \newsavebox\entrynamebox
 
+\newcommand{\envdefcontentname}{%
+ \manualtext{envdef_content}{content}%
+}
+
 \newcommand{\enventryname}[1]{%
  \createtarget{#1}%
  {%
@@ -2278,14 +2322,14 @@
        \csfmt{begin}%
        \marg{\glossentryname{#1}}%
        \glsxtrifhasfield{syntax}{#1}{\glscurrentfieldvalue}{}%
-       \meta{content}\csfmt{end}\marg{\glsentryname{#1}}%
+       \meta{\envdefcontentname}\csfmt{end}\marg{\glsentryname{#1}}%
      }%
      \settowidth\dimen@{\usebox\entrynamebox}%
      \ifdim\dimen@>0.8\linewidth
        \csfmt{begin}%
        \marg{\glossentryname{#1}}%
        \glsxtrifhasfield{syntax}{#1}{\glscurrentfieldvalue}{}%
-       \endgraf\meta{content}\endgraf\csfmt{end}\marg{\glsentryname{#1}}%
+       \endgraf\meta{\envdefcontentname}\endgraf\csfmt{end}\marg{\glsentryname{#1}}%
      \else
        \usebox\entrynamebox
      \fi
@@ -2386,6 +2430,32 @@
 \glsxtrnewgls{xmlelement.}{\xmlelem}
 \glsxtrnewgls{xmlattr.}{\xmlattr}
 
+\NewDocumentCommand\xmlStartElem{sO{}O{xmlelement.}mm}{%
+ \IfBooleanTF{#1}%
+  {\xmltagfmt{\glslink[format=glsignore,#2]{#3#4}{#4} #5}}%
+  {\xmltagfmt{\glslink[#2]{#3#4}{#4} #5}}%
+}
+
+\NewDocumentCommand\xmlEndElem{sO{}O{xmlelement.}m}{%
+ \IfBooleanTF{#1}%
+ {\xmltagfmt{/\glslink[format=glsignore,#2]{#3#4}{#4}}}%
+ {\xmltagfmt{/\glslink[#2]{#3#4}{#4}}}%
+}
+
+\NewDocumentCommand\xmlVoidElem{sO{}O{xmlelement.}mo}{%
+ \IfBooleanTF{#1}%
+ {%
+   \IfValueTF{#5}%
+   {\xmltagfmt{\glslink[format=glsignore,#2]{#3#4}{#4} #5/}}%
+   {\xmltagfmt{\glslink[format=glsignore,#2]{#3#4}{#4}/}}%
+ }%
+ {%
+   \IfValueTF{#5}%
+   {\xmltagfmt{\glslink[#2]{#3#4}{#4} #5/}}%
+   {\xmltagfmt{\glslink[#2]{#3#4}{#4}/}}%
+ }%
+}
+
 \newcommand{\optval}[2]{%
  \texorpdfstring
   {\gls{opt.#1}\optfmt{\dequals#2}}%
@@ -2464,6 +2534,8 @@
   \let\styfmt\@firstofone
   \let\clsfmt\@firstofone
   \let\optfmt\@firstofone
+  \let\styoptfmt\@firstofone
+  \let\clsoptfmt\@firstofone
   \let\envfmt\@firstofone
   \let\ctrfmt\@firstofone
   \let\varfmt\@firstofone
@@ -3048,7 +3120,17 @@ transcript or log file or written to STDOUT or STDERR}}
 \newcommand{\araracont}{\araraline{-\/-> }}
 
 \definecolor{cs}{rgb}{.328,.436,.1} % dark green
+\definecolor{styopt}{rgb}{.408,.132,.545} % DarkOrchid4
+\definecolor{csopt}{rgb}{.408,.132,.545} % DarkOrchid4
 \definecolor{comment}{rgb}{0.37,0.37,0.37}% grey
+\definecolor{faded}{gray}{0.5}
+
+\definecolor{style1}{rgb}{.32,.545,.545} % DarkSlateGray4
+\definecolor{style2}{rgb}{.21,.392,.545} % SteelBlue4
+\definecolor{style3}{rgb}{0,0,.545} % Blue4
+\definecolor{style4}{rgb}{.332,.1,.545} % Purple4
+\definecolor{style5}{rgb}{.28,.235,.545} % SlateBlue4
+\definecolor{style6}{rgb}{.545,.352,.17} % Tan4
 
 \newcommand*{\setupcodeenvfmts}{%
  \let\cbeg\code@cbeg

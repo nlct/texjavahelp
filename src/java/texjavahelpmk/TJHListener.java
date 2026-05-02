@@ -544,6 +544,22 @@ public class TJHListener extends L2HConverter
       }
    }  
 
+   @Override
+   protected void writeNavigationFile(TeXObjectList stack)
+    throws IOException
+   {
+      if (documentTargetType == DocumentTargetType.HELPSET
+      ||
+          (
+            documentTargetType == DocumentTargetType.HTML
+             && !minitoc 
+           )
+         )
+      {
+         super.writeNavigationFile(stack);
+      }
+   }
+
    protected void writeNavigationXmlFile()
      throws IOException
    {

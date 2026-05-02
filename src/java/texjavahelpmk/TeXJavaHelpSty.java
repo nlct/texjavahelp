@@ -94,6 +94,10 @@ public class TeXJavaHelpSty extends UserGuideSty
       addSemanticCommand("xmltagfmt", TeXFontFamily.TT,
         null, listener.getOther('<'), listener.getOther('>'));
 
+      registerControlSequence(new XmlStartElemCommand(glossariesSty));
+      registerControlSequence(new XmlEndElemCommand(glossariesSty));
+      registerControlSequence(new XmlVoidElemCommand(glossariesSty));
+
       addSemanticCommand("xmlattrfmt", TeXFontFamily.TT);
 
       addSemanticCommand("varfmt", TeXFontFamily.VERB);
@@ -595,6 +599,9 @@ public class TeXJavaHelpSty extends UserGuideSty
         "manualplural", "example", "examples"));
       registerControlSequence(createLangCs("Examplesname",
         "Manualplural", "example", "Examples"));
+
+      registerControlSequence(createLangCs("envdefcontentname",
+        "manualtext", "manual.envdef_content", "content"));
 
       registerControlSequence(createLangCs("continuedname",
         "manualtext", "longtable_continued", "Continued"));

@@ -8,11 +8,42 @@
 \setmainfont{Linux Libertine O}
 \usepackage
  [
-   novref,
 %   debug=showwrgloss
  ]{texjavahelp}
 
 \hypersetup{colorlinks,linkcolor=blue}
+
+\defsemanticcmd[style1]\bibentryfmt{\textsf}{@}
+\defsemanticcmd[style2]\bibentryfieldfmt{\textsf}{}
+
+\glsxtrnewgls{bibentry.}{\bibentry}
+\glsxtrnewgls{bibentryfield.}{\bibentryfield}
+
+\renewcommand{\TeXJavaHelpExtraEntryTypeAliases}{
+  bibentry=index,
+  commonbibentry=index,
+  bibentryfield=index,
+  commonbibentryfield=index,
+}
+
+\renewcommand{\TeXJavaHelpExtraAssignFields}{
+  name = "\cs{bibentryfmt}{" + \MGP{1} + "}"
+    [
+       entrytype->original =/(?:common)?bibentry/
+     & entrylabel->original=/bibentry\.(.+)/
+    ],
+  name = "\cs{bibentryfmt}{" + entrylabel->original + "}"
+    [ entrytype->original =/(common)?bibentry/ ],
+  name = "\cs{bibentryfieldfmt}{" + \MGP{1} + "}"
+    [
+       entrytype->original =/(?:common)?bibentryfield/
+     & entrylabel->original=/bibentryfield\.(.+)/
+    ],
+  name = "\cs{bibentryfieldfmt}{" + entrylabel->original + "}"
+    [ entrytype->original =/(common)?bibentryfield/ ],
+}
+
+\newcommand{\includeimgopt}[2][]{\opt[#1]{includeimg.#2}}
 
 \newcommand{\TeXJavaHelp}{\texorpdfstring{\TeX{}}{TeX} Java Help}
 \graphicspath{{images/}}
@@ -214,7 +245,7 @@ ordinarily recognised by \app{bib2gls}.
 
 For example, the custom \code{@punctuation} field is used to index
 the following symbols in this document:
-\glsname{dblqt}, \glsname{percent}, \glsname{tilde},
+\glsname{dblqt}, \glsname{hashchar}, \glsname{percentchar}, \glsname{tilde},
 \glsname{exclam}, and \glsname{bksl}.
 
 \section{Document Division Commands}
@@ -226,7 +257,7 @@ and \gls{section} should be used. These should all be followed by
 referenced by a context-sensitive help button. The label also
 determines the file basename if the section should be split into a
 separate file. Any colon prefix will be stripped and all dots will
-be replaced with underscores.
+be replaced with underscores when forming the basename.
 
 For example, this section is started with:
 \begin{codebox}
@@ -237,7 +268,7 @@ So the section label is \code{sec:docdivisioncmds} but the
 \qtt{sec:} prefix will be stripped when determining the filename. So
 the filename for this section has the basename \filefmt{docdivisioncmds}
 (the file extension is determined by \app{texjavahelpmk}['s]
-\switch{html-ext} option).
+\switch{html-ext} option, and defaults to \ext{html}).
 
 \begin{information}
 If any glossary entry hyperlinks where the target is in the form
@@ -286,7 +317,7 @@ Any sectioning units that are added to the table of
 contents will need to have a label after the chapter heading
 to set the corresponding file's basename.  This includes unnumbered
 chapters that are automatically added with KOMA-Script's
-\optfmt{toc-listof} option. For example:
+\optfmt{toc=listof} option. For example:
 \begin{compactcodebox}
 \cmd{AfterTOCHead}\oarg{lof}\marg{\cmd{label}\marg{listoffigures}}
 \cmd{AfterTOCHead}\oarg{lot}\marg{\cmd{label}\marg{listoftables}}
@@ -354,7 +385,7 @@ Semantic commands are commands that relate to a particular idea or meaning.
 For example, \code{\gls{emph}\margm{text}} is a semantic command that indicates
 emphasis. This may render \meta{text} in an italic font, but this isn't always the
 case. In \gls{html}, this is equivalent to using
-\code{\xmltagfmt{em}\meta{text}\xmltagfmt{/em}}.
+\code{\xmlelem{em}\meta{text}\xmlEndElem{em}}.
 The style may be changed, but the meaning remains.
 
 As with other commands, semantic commands still have a defined syntax, but
@@ -362,7 +393,9 @@ there is no meaning associated with purely syntactic commands, such as
 \gls{textit}. The commands \gls{emph} and \gls{textit} have the same syntax, in that
 they both take a single argument, but \gls{emph} specifically means that the
 argument should be emphasized, whereas \gls{textit} is a font changing
-instruction.
+instruction. Font declarations should be avoided, except where
+\gls{bfseries} is used at the start of a \env{tabular} cell, which
+will be interpreted as a header cell.
 
 The \sty{texjavahelp} package provides a number of semantic commands, not only
 because it's good practice but also because it helps the \gls{TeXParserLib} to
@@ -374,6 +407,748 @@ menu and \qtt{button.help} is for a \widget{help} button.
 Buttons and menu items may have mnemonics, such as
 \mnemonic{help} for the help button or \mnemonictrail{help.manual}
 for the \menu{help.manual} menu item.
+
+In the event that \gls{strong} hasn't been defined, the
+\sty{texjavahelp} package will provide it.
+\begin{coderesult}
+\gls{emph}\marg{emphasized},
+\gls{strong}\marg{strong}.
+\tcblower
+\emph{emphasized},
+\strong{strong}.
+\end{coderesult}
+The \app{texjavahelpmk} application on parsing this will create the HTML code:
+\begin{codebox*}
+\xmlelem{em}emphasized\xmlEndElem{em},
+\xmlelem{strong}strong\xmlEndElem{strong}.
+\end{codebox*}
+
+A similar command is:
+\cmddef{code}
+This has its argument rendered in a monospaced font (but not
+verbatim) in the PDF but \app{texjavahelpmk} will use the
+\xmlelem{code} element. You can use \gls{verb} or a similar command for
+verbatim inline content but be aware of its limitations.
+\begin{coderesult}
+\gls{code}\marg{@ \glssymbol{cs.hash} \glssymbol{cs.percent} \glssymbol{cs.underscore}}
+\gls{verb}|@ \glssymbol{hashchar} \glssymbol{percentchar} \glssymbol{underscorechar}|
+\tcblower
+\code{@ \# \% \_}
+\verb|@ # % _|
+\end{coderesult}
+The difference in the HTML file is that the \gls{code} content will
+be marked up with \xmlelem{code} but the \gls{verb} content won't
+have any markup.
+
+Other semantic commands will usually be written with a
+\xmlelem{span} tag, but as Java's HTML and CSS support is quite
+limited, the default \switch{helpset} setting will sometimes use
+\xmlelem{font} to get around some of those limitations.
+The \switch{html} setting switches on \app{texjavahelpmk}['s] HTML5
+mode so in that case \xmlelem{font} won't be used.
+
+A semantic command can be defined with:
+\cmddef{defsemanticcmd}
+where \meta{colour} (if present) indicates a colour specification
+that can be used in the argument of \gls{color}, \meta{cs} is the
+command that needs to be defined (which will take a single argument), 
+\meta{font-cs} (which may be empty if not applicable) should be a 
+text-block font command to apply to the argument of \meta{cs}, and
+\meta{prefix} (which may be empty) is a prefix to insert in front of
+the argument of \meta{cs}.
+
+Some predefined colours are provided: 
+\optfmt{cs} (dark green), 
+\optfmt{csopt} (DarkOrchid4), 
+\optfmt{styopt} (DarkOrchid4), 
+\optfmt{comment} (grey), 
+\optfmt{faded} (grey), 
+\optfmt{banned} (red),
+\optfmt{style1} (DarkSlateGray4),
+\optfmt{style2} (SteelBlue4),
+\optfmt{style3} (Blue4),
+\optfmt{style4} (Purple4),
+\optfmt{style5} (SlateBlue4),
+\optfmt{style6} (Tan4).
+These are all recognised by \app{texjavahelpmk} so they can be
+referenced, but you will need to change the CSS file to modify the
+associated classes if you want the style changed.
+
+For example:
+\begin{codebox*}
+\gls{defsemanticcmd}\oarg{purple}\marg{\csfmt{hashtag}}\marg{\gls{texttt}}\marg{\glssymbol{cs.hash}}
+\end{codebox*}
+This defines the command \csfmt{hashtag} with a single argument
+where \code{\csfmt{hashtag}\margm{text}} will be typeset in the PDF
+using:
+\begin{compactcodebox}
+\gls{fmtorcode}\gls{texttt}\marg{\gls{color}\marg{purple}\glssymbol{cs.hash}\meta{text}}
+\end{compactcodebox}
+However, \app{texjavahelpmk} will behave differently. It will create
+a CSS class associated with this command and \csfmt{hashtag} will
+create an element that references that class.
+
+Note that if the \meta{font-cs} argument is not empty, the
+\meta{font-cs} command will be preceded by:
+\cmddef{fmtorcode}
+This normally just expands to \code{\meta{cs}\margm{text}} but in a
+code context, such as with the argument of \gls{code} or in the body
+of \env{codebox}, this just expands to \meta{text}. That is, the
+formatting command \meta{cs} is stripped and the braces are removed
+from \margm{text}.
+
+For example, this document defines:
+\begin{codebox}
+\gls{defsemanticcmd}\oarg{style1}\cmd{bibentryfmt}\marg{\cmd{textsf}}\marg{@}
+\end{codebox}
+The use of \gls{fmtorcode} means that if 
+\code{\csfmt{bibentryfmt}\marg{entry}} occurs in the
+normal document text, the argument will be rendered in the PDF in
+sans-serif (\bibentryfmt{entry}) but if used in a code context, it
+will just be in the surrounding monospaced font (but the colour, if
+specified, remains).
+\begin{coderesult}
+\gls{code}\marg{\csfmt{bibentryfmt}\marg{entry}}
+\tcblower
+\code{\bibentryfmt{entry}}
+\end{coderesult}
+
+The following semantic commands are predefined.
+\cmddef{faded}
+Formats \meta{text} in (colour name) \optfmt{faded}.
+\begin{coderesult}
+\gls{faded}\marg{faded text}
+\tcblower
+\faded{faded text}
+\end{coderesult}
+
+\cmddef{appfmt}
+Formats the name of an application.
+\begin{coderesult}
+\gls{appfmt}\marg{texjavahelpmk}
+\tcblower
+\appfmt{texjavahelpmk}
+\end{coderesult}
+
+If you want the application name to appear in the index, define it
+in the \ext{bib} file with \bibentry{application} and use the
+prefix \qtt{app.}\ for example:
+\begin{codebox}
+\bibentry{application}\marg{app.bib2gls}
+\end{codebox}
+If no \bibentryfield{name} field is specified, the resource options setup by
+\sty{texjavahelp} will automatically set it to the unprefixed label
+encapsulated with \gls{appfmt}, so the above would be equivalent to:
+\begin{codebox}
+\bibentry{application}\marg{app.bib2gls,
+ \bibentryfield{name}=\marg{\gls{appfmt}\marg{bib2gls}}
+}
+\end{codebox}
+You can then reference this entry with \gls{app} for example:
+\begin{codebox}
+You will need to use \gls{app}\marg{bib2gls}.
+\end{codebox}
+
+\cmddef{styfmt}
+Formats the name of a \LaTeX\ package.
+\begin{coderesult}
+\gls{styfmt}\marg{texjavahelp}
+\tcblower
+\styfmt{texjavahelp}
+\end{coderesult}
+
+If you want the package name to appear in the index, define it in
+the \ext{bib} file with \bibentry{package} and use the prefix
+\qtt{pkg.} for example:
+\begin{codebox}
+\bibentry{package}\marg{pkg.texjavahelp}
+\end{codebox}
+If no \bibentryfield{name} field is specified, the resource options setup by
+\sty{texjavahelp} will automatically set it to the unprefixed label
+encapsulated with \gls{styfmt}, so the above would be equivalent to:
+\begin{codebox}
+\bibentry{package}\marg{pkg.texjavahelp,
+ \bibentryfield{name}=\marg{\gls{styfmt}\marg{texjavahelp}}
+}
+\end{codebox}
+You can then reference this entry with \gls{sty} for example:
+\begin{codebox}
+You will need to use the \gls{sty}\marg{texjavahelp} package.
+\end{codebox}
+
+\cmddef{clsfmt}
+Formats the name of a \LaTeX\ class.
+\begin{coderesult}
+\gls{clsfmt}\marg{scrreport}
+\tcblower
+\clsfmt{scrreport}
+\end{coderesult}
+
+If you want the class name to appear in the index, define it in
+the \ext{bib} file with \bibentry{class} and use the prefix
+\qtt{cls.} for example:
+\begin{codebox}
+\bibentry{class}\marg{cls.scrreport}
+\end{codebox}
+If no \bibentryfield{name} field is specified, the resource options setup by
+\sty{texjavahelp} will automatically set it to the unprefixed label
+encapsulated with \gls{clsfmt}, so the above would be equivalent to:
+\begin{codebox}
+\bibentry{class}\marg{cls.scrreport,
+ \bibentryfield{name}=\marg{\gls{clsfmt}\marg{scrreport}}
+}
+\end{codebox}
+You can then reference this entry with \gls{cls} for example:
+\begin{codebox}
+You may want to use the \gls{cls}\marg{scrreport} class.
+\end{codebox}
+
+\cmddef{optfmt}
+Formats the name of a general option.
+\begin{coderesult}
+\gls{optfmt}\marg{tikzsymbols}
+\tcblower
+\optfmt{tikzsymbols}
+\end{coderesult}
+\cmddef{styoptfmt}
+Formats the name of package option. This uses \gls{optfmt} but also
+sets the colour to a predefined colour named \qtt{styopt}.
+\cmddef{clsoptfmt}
+Formats the name of a class option. This simply expands to
+\gls{styoptfmt}.
+
+If you want the option to appear in the index, define it in
+the \ext{bib} file with \bibentry{option} and use the prefix
+\qtt{opt.} for example:
+\begin{codebox}
+\bibentry{package}\marg{pkg.texjavahelp}
+\bibentry{option}\marg{opt.vref,
+ \bibentryfield{parent}={pkg.texjavahelp}
+}
+\end{codebox}
+If no \bibentryfield{name} field is specified, the resource options setup by
+\sty{texjavahelp} will automatically set it to the unprefixed label
+encapsulated with \gls{styoptfmt} (if the parent entry is set and
+has the \bibentry{package} entry type),
+or \gls{clsoptfmt} (if the parent entry is set and
+has the \bibentry{class} entry type), 
+or \gls{optfmt} otherwise, so the above would be equivalent to:
+\begin{codebox}
+\bibentry{option}\marg{opt.vref,
+ \bibentryfield{parent}={pkg.texjavahelp},
+ \bibentryfield{name}=\marg{\gls{styoptfmt}\marg{vref}}
+}
+\end{codebox}
+You can then reference this entry with \gls{opt} for example:
+\begin{codebox}
+You may want to use the \gls{opt}\marg{vref} option.
+\end{codebox}
+
+The following shortcut commands are provided for options and their
+values.
+\cmddef{optval}
+Expands to
+\begin{compactcodebox}
+\gls{gls}\marg{opt.\meta{name}}\gls{optfmt}\marg{\gls{dequals}\meta{value}}
+\end{compactcodebox}
+\cmddef{optvalm}
+Similar to \gls{optval} but adds braces around \meta{value}.
+For example:
+\begin{codebox}
+\gls{optval}\marg{sort}\marg{en},
+\gls{optvalm}\marg{selection}\marg{recorded and deps and see}
+\end{codebox}
+
+\cmddef{envfmt}
+Formats the name of a \LaTeX\ environment name.
+\begin{coderesult}
+\gls{envfmt}\marg{table}
+\tcblower
+\envfmt{table}
+\end{coderesult}
+
+If you want the environment to appear in the index, define it in
+the \ext{bib} file with \bibentry{environment} and use the prefix
+\qtt{env.} for example:
+\begin{codebox}
+\bibentry{environment}\marg{env.table}
+\end{codebox}
+If no \bibentryfield{name} field is specified, the resource options setup by
+\sty{texjavahelp} will automatically set it to the unprefixed label
+encapsulated with \gls{envfmt}, so the above would be equivalent to:
+\begin{codebox}
+\bibentry{environment}\marg{env.table,
+ \bibentryfield{name}=\marg{\gls{envfmt}\marg{table}}
+}
+\end{codebox}
+You can then reference this entry with \gls{env} for example:
+\begin{codebox}
+The \gls{env}\marg{table} environment is a float.
+\end{codebox}
+If you want to reference a starred version of the environment
+without creating a separate entry, you can use \gls{starredenv}
+which ensures that the asterisk is in the same font as that used by
+\gls{envfmt}. For example:
+\begin{codebox}
+The \gls{starredenv}\marg{table} environment spans columns.
+\end{codebox}
+
+\cmddef{ctrfmt}
+Formats the name of a \LaTeX\ counter name.
+\begin{coderesult}
+\gls{ctrfmt}\marg{table}
+\tcblower
+\envfmt{table}
+\end{coderesult}
+
+If you want the counter to appear in the index, define it in
+the \ext{bib} file with \bibentry{counter} and use the prefix
+\qtt{ctr.} for example:
+\begin{codebox}
+\bibentry{counter}\marg{ctr.table}
+\end{codebox}
+If no \bibentryfield{name} field is specified, the resource options setup by
+\sty{texjavahelp} will automatically set it to the unprefixed label
+encapsulated with \gls{ctrfmt}, so the above would be equivalent to:
+\begin{codebox}
+\bibentry{counter}\marg{ctr.table,
+ \bibentryfield{name}=\marg{\gls{ctrfmt}\marg{table}}
+}
+\end{codebox}
+You can then reference this entry with \gls{ctr} for example:
+\begin{codebox}
+The \gls{ctr}\marg{table} counter.
+\end{codebox}
+
+If you want to reference the associated \csmetafmt{the}{name}{}
+or \csmetafmt{theH}{name}{}
+command without defining a separate entry for the command name, you
+can use \gls{thectr} or \gls{theHctr}.
+
+\cmddef{csfmt}
+Format a control word.
+\begin{coderesult}
+\gls{csfmt}\marg{LaTeX}
+\tcblower
+\csfmt{LaTeX}
+\end{coderesult}
+
+If you want the command to appear in the index, define it in the
+\ext{bib} file with \bibentry{command}. Unlike the above, there's
+no associated prefix. For example:
+\begin{codebox}
+\bibentry{command}\marg{LaTeX}
+\end{codebox}
+If no \bibentryfield{name} field is specified, the resource options setup by
+\sty{texjavahelp} will automatically set it to the label
+encapsulated with \gls{csfmt}, so the above would be equivalent to:
+\begin{codebox}
+\bibentry{command}\marg{LaTeX,
+ \bibentryfield{name}=\marg{\gls{csfmt}\marg{LaTeX}}
+}
+\end{codebox}
+You can then reference this entry with \gls{gls}, as usual for a
+glossary entry. If you want to reference a starred version of the
+command without creating a separate entry, there are various
+options, depending on the surrounding context. You can simply add an
+asterisk after \code{\gls{gls}\margm{label}} or
+use the final optional argument (\code{\gls{gls}\margm{label}\oarg{*}})
+if the current font is already monospaced or you can use
+\gls{starredcs} which ensures that the asterisk is in the same font
+as that used by \gls{csfmt}.
+
+If you want to reference the control sequence name (without the
+leading backslash) you can use \gls{glscsname} but this assumes that
+the entry label is the same as the control sequence name.
+
+\cmddef{cspuncfmt}
+Format a control symbol. This just uses \gls{csfmt}.
+\begin{coderesult}
+\gls{cspuncfmt}\marg{\csfmt{textasciitilde}}
+\tcblower
+\cspuncfmt{\textasciitilde}
+\end{coderesult}
+
+If you want the command to appear in the index, define it in the
+\ext{bib} file with \bibentry{cspunctuation}. For example:
+\begin{codebox}
+\bibentry{cspunctuation}\marg{cs.bksl,
+  \bibentryfield{symbol}=\marg{\gls{cspuncfmt}\marg{\cmd{char}`\gls{dbbksl} }},
+  \bibentryfield{description}=\marg{row separator}
+}
+\end{codebox}
+The resources options set up by \sty{texjavahelp} will convert this
+into a \bibentry{symbol} entry type with the \bibentryfield{name} field
+(if not provided) set to the symbol followed by the description in
+parentheses. The entry can be referenced in the usual way with
+\gls{gls}, \gls{glssymbol}, etc or with \gls{starredcs}.
+
+\cmddef{csmetafmt}
+Format a control word that has a variable part.
+\begin{coderesult}
+\gls{csmetafmt}\marg{list}\marg{type}\marg{name}
+\tcblower
+\csmetafmt{list}{type}{name}
+\end{coderesult}
+
+\cmddef{csmetametafmt}
+Format a control word that has two variable parts.
+\begin{coderesult}
+\gls{csmetametafmt}\marg{prefix}\marg{var1}\marg{mid}\marg{var2}\marg{suffix}
+\tcblower
+\csmetametafmt{prefix}{var1}{mid}{var2}{suffix}
+\end{coderesult}
+
+\cmddef{filefmt}
+Format a filename.
+\begin{coderesult}
+\gls{filefmt}\marg{index.xml}
+\tcblower
+\filefmt{index.xml}
+\end{coderesult}
+There are some shortcut commands for Unix-style paths:
+\cmddef{homedir}
+Expands to a literal \gls{tilde}.
+\cmddef{filedirsep}
+Expands to a \gls{slash} (forward slash).
+\cmddef{homefilefmt}
+Expands to
+\code{\gls{filefmt}\marg{\gls{homedir} \gls{filedirsep} \meta{path}}}.
+
+If you want the filename to appear in the index, define it in
+the \ext{bib} file with \bibentry{file} and use the prefix
+\qtt{file.} for example:
+\begin{codebox}
+\bibentry{file}\marg{file.search.xml}
+\end{codebox}
+If no \bibentryfield{name} field is specified, the resource options setup by
+\sty{texjavahelp} will automatically set it to the unprefixed label
+encapsulated with \gls{filefmt}, so the above would be equivalent to:
+\begin{codebox}
+\bibentry{file}\marg{file.search.xml,
+ \bibentryfield{name}=\marg{\gls{filefmt}\marg{search.xml}}
+}
+\end{codebox}
+You can then reference this entry with \gls{file} for example:
+\begin{codebox}
+The search database is in
+the file \gls{file}\marg{search.xml}.
+\end{codebox}
+
+\cmddef{extfmt}
+Format a file extension. This simply expands to
+\code{\gls{filefmt}\margm{extension}}.
+Note that this doesn't include a leading dot. You can instead us:
+\cmddef{dottedextfmt}
+This simply expands to \code{\gls{extfmt}\marg{.\meta{extension}}}.
+You can simply redefine (or \csfmt{let}) \gls{extfmt} to 
+\gls{dottedextfmt} if you prefer.
+\begin{coderesult}
+\gls{extfmt}\marg{xml} or
+\gls{dottedextfmt}\marg{xml}
+\tcblower
+\extfmt{xml} or
+\dottedextfmt{xml}
+\end{coderesult}
+
+If you want the file extension to appear in the index, define it in
+the \ext{bib} file with \bibentry{fileext} and use the prefix
+\qtt{ext.} for example:
+\begin{codebox}
+\bibentry{fileext}\marg{ext.html}
+\end{codebox}
+If no \bibentryfield{name} field is specified, the resource options setup by
+\sty{texjavahelp} will automatically set it to the unprefixed label
+encapsulated with \gls{extfmt}, so the above would be equivalent to:
+\begin{codebox}
+\bibentry{fileext}\marg{ext.html,
+ \bibentryfield{name}=\marg{\gls{extfmt}\marg{html}}
+}
+\end{codebox}
+You can then reference this entry with \gls{ext} for example:
+\begin{codebox}
+The default file extension is \gls{ext}\marg{html}.
+\end{codebox}
+
+\cmddef{filemetafmt}
+Format a filename that has a variable part.
+\begin{coderesult}
+\gls{filemetafmt}\marg{texjavahelplib-}\marg{tag}\marg{.xml}
+\tcblower
+\filemetafmt{texjavahelplib-}{tag}{.xml}
+\end{coderesult}
+
+\cmddef{filemetametafmt}
+Format a filename that has two variable parts.
+\begin{coderesult}
+\gls{filemetametafmt}\marg{texjavahelplib-}\marg{lang}\marg{-}\marg{region}\marg{.xml}
+\tcblower
+\filemetametafmt{texjavahelplib-}{lang}{-}{region}{.xml}
+\end{coderesult}
+
+\cmddef{xmltagfmt}
+Formats \meta{text} between less-than and greater-than
+signs. The \meta{text} part isn't required to be just the element
+name but can include attributes or a leading slash (for a closing
+tag) or a trailing slash (for an \gls{xml} element with no explicit
+closing tag).
+\begin{coderesult}
+\gls{xmltagfmt}\marg{div}\cmd{ldots}
+\gls{xmltagfmt}\marg{/div}
+\tcblower
+\xmltagfmt{div}\ldots
+\xmltagfmt{/div}
+\end{coderesult}
+
+If you want an element to appear in the index, define it in
+the \ext{bib} file with \bibentry{xmlelement} and
+use the prefix \qtt{xmlelement.} for example:
+\begin{codebox}
+\bibentry{xmlelement}\marg{xmlelement.img}
+\end{codebox}
+If no \bibentryfield{name} field is specified, the resource options setup by
+\sty{texjavahelp} will automatically set it to the unprefixed label
+encapsulated with \gls{xmltagfmt}, so the above would be equivalent to:
+\begin{codebox}
+\bibentry{xmlelement}\marg{xmlelement.img,
+ \bibentryfield{name}=\marg{\gls{xmltagfmt}\marg{img}}
+}
+\end{codebox}
+You can then reference this entry with \gls{xmlelem}.
+
+There are some convenient shortcut commands but note that these rely
+on the label being in the form \meta{prefix}\meta{tag} where
+\meta{tag} is the element name. If the
+\meta{prefix} optional argument is omitted, it will have the default
+value \qtt{xmlelement.}\ and the starred version will insert
+\code{format\dequals glsignore,} to the start of the \meta{options} list.
+The \meta{attr-list} argument is a list of the element's attributes.
+
+\cmddef{xmlStartElem}
+This essentially does:
+\begin{compactcodebox}
+\gls{xmltagfmt}\marg{\gls{glslink}\oargm{options}\marg{\meta{prefix}\meta{tag}}\margm{tag} \meta{attr-list}}
+\end{compactcodebox}
+Note that this puts the \meta{attr-list} outside of the link text,
+which means that it may contain attribute references without causing
+interference.
+
+\cmddef{xmlVoidElem}
+In this case, the final \meta{attr-list} argument is optional. If
+present, this command does:
+\begin{compactcodebox}
+\gls{xmltagfmt}\marg{\gls{glslink}\oargm{options}\marg{\meta{prefix}\meta{tag}}\margm{tag} \meta{attr-list}/}
+\end{compactcodebox}
+If the final \meta{attr-list} is omitted, this command does:
+\begin{compactcodebox}
+\gls{xmltagfmt}\marg{\gls{glslink}\oargm{options}\marg{\meta{prefix}\meta{tag}}\margm{tag}/}
+\end{compactcodebox}
+The difference between omitting the \meta{attr-list} optional
+argument and setting it to an empty value is the spacing before
+\meta{attr-list}.
+As with \gls{xmlStartElem}, the \meta{attr-list} (if present) is outside of the
+link text.
+
+\cmddef{xmlEndElem}
+This essentially does:
+\begin{compactcodebox}
+\gls{xmltagfmt}\marg{/\gls{glslink}\oargm{options}\marg{\meta{prefix}\meta{tag}}\margm{tag}}
+\end{compactcodebox}
+
+\cmddef{xmlattrfmt}
+Formats the name of an \gls{xml} attribute. For example
+\begin{coderesult}
+Remember to set the \gls{xmlattrfmt}\marg{alt} tag
+in the \gls{xmltagfmt}\marg{img} element.
+\tcblower
+Remember to set the \xmlattrfmt{alt} tag
+in the \xmltagfmt{img} element.
+\end{coderesult}
+Since the \sty{glossaries} package is automatically loaded, the
+\gls{glsquote} command is also available if you want to ensure that
+the double-quotes around an attribute value are shown as straight
+quotes. For example:
+\begin{coderesult}
+\gls{xmlattrfmt}\marg{src} = \gls{glsquote}\marg{image.png}
+\tcblower
+\xmlattrfmt{src} = \glsquote{image.png}
+\end{coderesult}
+
+If you want an attribute to appear in the index, define it in
+the \ext{bib} file with \bibentry{xmlattribute} and
+use the prefix \qtt{xmlattr.} for example:
+\begin{codebox}
+\bibentry{xmlattribute}\marg{xmlattr.id}
+\end{codebox}
+If no \bibentryfield{name} field is specified, the resource options setup by
+\sty{texjavahelp} will automatically set it to the unprefixed label
+encapsulated with \gls{xmlattrfmt}, so the above would be equivalent to:
+\begin{codebox}
+\bibentry{xmlattribute}\marg{xmlattr.id,
+ \bibentryfield{name}=\marg{\gls{xmlattrfmt}\marg{id}}
+}
+\end{codebox}
+You can then reference this entry with \gls{xmlattr} or
+\gls{xmlattrtext}.
+
+\cmddef{longargfmt}
+Formats the name of a double-hyphen switch (in monospaced font).
+\cmddef{shortargfmt}
+Formats the name of a single-hyphen switch (in monospaced font). For example
+\begin{coderesult}
+Use \longargfmt{help} or \shortargfmt{h}
+for help.
+\tcblower
+Use \gls{longargfmt}\marg{help} or \gls{shortargfmt}\marg{h}
+for help.
+\end{coderesult}
+If you want a switch to appear in the index, define it in
+the \ext{bib} file with \bibentry{switch} and
+use the prefix \qtt{switch.} for example:
+\begin{codebox}
+\bibentry{switch}\marg{switch.help}
+\end{codebox}
+If no \bibentryfield{name} field is specified, the resource options setup by
+\sty{texjavahelp} will automatically set it to the unprefixed label
+encapsulated with \gls{longargfmt}, so the above would be equivalent to:
+\begin{codebox}
+\bibentry{switch}\marg{switch.help,
+ \bibentryfield{name}=\marg{\gls{longargfmt}\marg{help}}
+}
+\end{codebox}
+The custom field \bibentryfield{shortswitch} is also available and will
+automatically be encapsulated with \gls{shortargfmt}. For example,
+to define a long switch and include the short switch alias:
+\begin{codebox}
+\bibentry{switch}\marg{switch.help,
+ \bibentryfield{name}=\marg{\gls{longargfmt}\marg{help}},
+ shortswitch={h}
+}
+\end{codebox}
+If you prefer, you can define them as two separate entries:
+\begin{codebox}
+\bibentry{switch}\marg{switch.help}
+\bibentry{switch}\marg{switch.h,
+ \bibentryfield{name}=\marg{\gls{shortargfmt}\marg{h}},
+ alias=\marg{switch.help}
+}
+\end{codebox}
+A switch entry \bibentryfield{name} can be referenced with
+\gls{switch}. The \bibentryfield{shortswitch} field can be referenced with
+\gls{swch}.
+
+\cmddef{varfmt}
+Formats the name of a general variable. You will need to add any applicable
+prefix or suffix.
+\begin{coderesult}
+The system \gls{varfmt}\marg{PATH} 
+can be referenced with
+\gls{varfmt}\marg{\$PATH}
+(Unix-like) or
+\gls{varfmt}\marg{\%PATH\%}
+(Windows).
+\tcblower
+The system \varfmt{PATH} 
+can be referenced with
+\varfmt{\$PATH}
+(Unix-like) or
+\varfmt{\%PATH\%}
+(Windows).
+\end{coderesult}
+
+If you want the variable to appear in the index, define it in
+the \ext{bib} file with \bibentry{variable} for example:
+\begin{codebox}
+\bibentry{variable}\marg{PATH}
+\end{codebox}
+The resources options set up by \sty{texjavahelp} will set 
+the \bibentryfield{name} field, if not provided, to the label encapsulated
+with \gls{varfmt}. So the above would become:
+\begin{codebox}
+\bibentry{variable}\marg{PATH,
+ \bibentryfield{name}=\marg{\gls{varfmt}\marg{PATH}}
+}
+\end{codebox}
+
+The following add delimiters.
+\cmddef{meta}
+Formats \meta{text} in emphasis between angle brackets.
+Note that these angle brackets are different from the delimiters
+used by \gls{xmltagfmt}.
+
+\cmddef{oarg}
+Formats \meta{text} in square brackets.
+
+\cmddef{oargm}
+A shortcut that expands to
+\code{\gls{oarg}\marg{\gls{meta}\margm{text}}}.
+
+\cmddef{marg}
+Formats \meta{text} in curly braces.
+
+\cmddef{margm}
+A shortcut that expands to
+\code{\gls{marg}\marg{\gls{meta}\margm{text}}}.
+
+\cmddef{longswitch}
+Used as a prefix for \gls{longargfmt} this expands to two hyphens
+separated by a thin space to visually distinguish them (and prevents
+them from becoming an en-dash).
+The thin space is not included in \app{texjavahelpmk}['s] definition
+of this command, which makes it easier to copy and paste.
+
+\cmddef{shortswitch}
+Used as a prefix for \gls{shortargfmt}, this expands to a single hyphen.
+
+Long filenames, options and variables that include hyphens in their name are
+awkward to hyphenate if they can't fit on a line. Preventing a line
+break can cause large amounts of white space but hyphenating can
+cause confusion between actual hyphens that form part of the name
+and hyphens introduced by breaking the word. If a suitable font is
+provided to allow \gls{texttt} (used by \gls{filefmt}) to hyphenate
+its argument, then you can use \gls{dhyphen} to clearly mark
+actual hyphens that form part of the name.
+
+The following commands are designed for filenames, command names or
+options with punctuation but no spaces that may occur inline but
+cause problems for paragraph justification.
+The discretionary hyphen command
+\gls{cs.hyphen} is redefined to use the Roman family hyphen so that
+it's more obviously not part of content formatted in a monospaced
+font.
+
+\cmddef{dhyphen}
+A hyphen that allows a line break before it without placing a
+hyphen before the break.
+
+\cmddef{dequals}
+An equal sign that allows a line break before or after it without a
+hyphen.
+
+\cmddef{dcomma}
+A comma that allows a line break after it.
+
+\cmddef{dcolon}
+A colon that allows a line break after it without a hyphen.
+
+\cmddef{dfullstop}
+A full stop (period) that allows a line break after it without a hyphen.
+
+\cmddef{dunderscore}
+An underscore (produced with \gls{cs.underscore}) that allows a line break before
+or after it without a hyphen.
+
+The following commands are shortcuts for use in the \bibentryfield{syntax}
+field.
+\cmddef{metaboolean}
+Expands to \code{\gls{meta}\marg{boolean}}.
+
+\cmddef{keyval}
+Expands to
+\code{\gls{meta}\marg{key}\gls{dequals}\gls{meta}\marg{value}}.
+
+\cmddef{keyvallist}
+Expands to \code{\gls{meta}\marg{key\gls{dequals} value list}}.
 
 \section{Floats}
 \label{sec:floats}
@@ -721,11 +1496,11 @@ it the default \switch{convert-images} setting is on,
 As \gls{includeimg} but top-aligns the image.
 
 The options for \gls{includeimg} and \gls{includetimg} are a subset
-of those for \gls{includegraphics}: \opt{includeimg.scale},
-\opt{includeimg.width}, \opt{includeimg.height},
-\opt{includeimg.rotate}, \opt{includeimg.alt},
-\opt{includeimg.actualtext}, and \opt{includeimg.artifact}.
-Additionally, the \opt{includeimg.frame} boolean option is also
+of those for \gls{includegraphics}: \includeimgopt{scale},
+\includeimgopt{width}, \includeimgopt{height},
+\includeimgopt{rotate}, \includeimgopt{alt},
+\includeimgopt{actualtext}, and \includeimgopt{artifact}.
+Additionally, the \includeimgopt{frame} boolean option is also
 available. If true, this will put a frame around the image.
 
 \chapter{The \apptext{texjavahelpmk} Command Line Application}

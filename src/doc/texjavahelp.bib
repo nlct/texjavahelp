@@ -1,5 +1,7 @@
 % Encoding: UTF-8
 
+% APPLICATIONS
+
 @application{app.texjavahelpdemo,
  name={\appfmt{tex\-java\-help\-demo}}
 }
@@ -364,74 +366,7 @@ the document on).}
   alias={switch.nodebug}
 }
 
-@file{file.texjavahelplib.jar}
-
-@package{pkg.texjavahelp,
-  name={\styfmt{tex\-java\-help}}
-}
-
-@option{opt.debug,
-  parent={pkg.texjavahelp},
-  name={\optfmt{debug}},
-  syntax={\marg{setting}},
-  description={this option will be passed to the
-\sty{glossaries-extra} package}
-}
-
-@abbreviation{cli,
-  short = {CLI},
-  long = {command line interface}
-}
-
-@abbreviation{gui,
-  short = {GUI},
-  long = {graphical user interface}
-}
-
-@commonabbreviation{pdf,
-  short = {PDF},
-  long = {portable document format}
-}
-
-@commonabbreviation{html,
-  short = {HTML},
-  long = {hypertext markup language}
-}
-
-@commonabbreviation{xml,
-  short = {XML},
-  long = {extensible markup language}
-}
-
-@term{JavaHelp,
-  name={Java\-Help\texttrademark\ System},
-  text={Java\-Help},
-  description={a Java library provided by Sun that could be used by Java
-applications to a help system using Swing components. Its home page
-was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer available}
-}
-
-@term{TeXParserLib,
-  name={\TeX\ Parser Library},
-  description={a Java library for parsing \TeX\ or \LaTeX\ files
-   (\href{https://github.com/nlct/texparser}{\nolinkurl{github.com/nlct/texparser}})}
-}
-
-@package{pkg.nlctuserguide,
-  name={\styfmt{nlct\-user\-guide}}
-}
-
-@package{pkg.glossaries-extra,
- name={\styfmt{glos\-saries\dhyphen extra}}
-}
-
-@package{pkg.glossaries-extra-bib2gls,
- name={\styfmt{glos\-saries\dhyphen extra\dhyphen bib2gls}}
-}
-
-@package{pkg.longtable,
-  name={\styfmt{long\-table}}
-}
+% LaTeX CLASSES
 
 @class{cls.scrbook,
  name={scr\-book}
@@ -440,6 +375,10 @@ was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer availabl
 @class{cls.scrreport,
  name={scr\-report}
 }
+
+
+% PACKAGES
+
 @package{pkg.fontawesome,
   name={\styfmt{font\-awe\-some}}
 }
@@ -467,30 +406,86 @@ was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer availabl
 @package{pkg.stix}
 @package{pkg.boisk}
 
+@package{pkg.longtable,
+  name={\styfmt{long\-table}}
+}
+
+@package{pkg.nlctuserguide,
+  name={\styfmt{nlct\-user\-guide}}
+}
+
+@package{pkg.glossaries,
+ name={\styfmt{glos\-saries}}
+}
+
+@package{pkg.glossaries-extra-bib2gls,
+ name={\styfmt{glos\-saries\dhyphen extra\dhyphen bib2gls}}
+}
+
+% glossaries-extra.sty
+
+@package{pkg.glossaries-extra,
+ name={\styfmt{glos\-saries\dhyphen extra}}
+}
+
 @option{opt.record,parent={pkg.glossaries-extra}}
 
 @option{opt.indexcounter,
- name={\optfmt{index\-counter}},
+ name={\styoptfmt{index\-counter}},
  parent={pkg.glossaries-extra}
 }
 
 @option{opt.floats,parent={pkg.glossaries-extra}}
 
 @option{opt.nostyles,
- name={\optfmt{no\-styles}},
+ name={\styoptfmt{no\-styles}},
  parent={pkg.glossaries-extra}
 }
 
 @option{opt.stylemods,
- name={\optfmt{style\-mods}},
+ name={\styoptfmt{style\-mods}},
  parent={pkg.glossaries-extra}
 }
 
 @option{opt.style,parent={pkg.glossaries-extra}}
 
+@option{opt.debug,
+  parent={pkg.glossaries-extra},
+  name={\styoptfmt{debug}},
+  syntax={\marg{setting}}
+}
+
+% texjavahelp.sty
+
+@package{pkg.texjavahelp,
+  name={\styfmt{tex\-java\-help}}
+}
+
+@option{opt.vref,
+  parent={pkg.texjavahelp},
+  description={use \gls{vref} in cross-referencing commands such as
+\gls{tableref} and \gls{figureref}}
+}
+
+@option{opt.novref,
+  parent={pkg.texjavahelp},
+  description={use \gls{ref} (not \gls{vref}) in cross-referencing commands such as
+\gls{tableref} and \gls{figureref}}
+}
+
+@option{opt.fnsymleft,
+  parent={pkg.texjavahelp},
+  description={defines \gls{fnsymmark} to use \csfmt{llap}}
+}
+
+@option{opt.fnsymright,
+  parent={pkg.texjavahelp},
+  description={defines \gls{fnsymmark} to use \csfmt{rlap}}
+}
+
 @option{opt.fontsymbols,
   parent={pkg.texjavahelp},
-  name={\optfmt{font\-sym\-bols}},
+  name={\styoptfmt{font\-sym\-bols}},
   description={defines \gls{tabsym} and \gls{upsym} in terms of
    the font symbol commands \gls{barleftarrowrightarrowbar}
    and \gls{baruparrow}. This option will required a package that defines
@@ -499,9 +494,128 @@ was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer availabl
 
 @option{opt.tikzsymbols,
   parent={pkg.texjavahelp},
-  name={\optfmt{tikz\-sym\-bols}},
+  name={\styoptfmt{tikz\-sym\-bols}},
   description={defines \gls{tabsym} and \gls{upsym} as \sty{tikz} images}
 }
+
+% BIB2GLS ENTRY TYPES
+
+@bibentry{bibentry.entry}
+@bibentry{bibentry.index}
+@bibentry{bibentry.abbreviation}
+@bibentry{bibentry.symbol}
+
+% Special bib2gls types for texjavahelp.sty
+
+@bibentry{bibentry.application}
+@bibentry{bibentry.commonapplication}
+@bibentry{bibentry.file}
+@bibentry{bibentry.commonfile}
+@bibentry{bibentry.fileext}
+@bibentry{bibentry.commonfileext}
+@bibentry{bibentry.package}
+@bibentry{bibentry.commonpackage}
+@bibentry{bibentry.class}
+@bibentry{bibentry.commonclass}
+@bibentry{bibentry.option}
+@bibentry{bibentry.commonoption}
+@bibentry{bibentry.command}
+@bibentry{bibentry.commoncommand}
+@bibentry{bibentry.switch}
+@bibentry{bibentry.commonswitch}
+@bibentry{bibentry.environment}
+@bibentry{bibentry.commonenvironment}
+@bibentry{bibentry.xmlelement}
+@bibentry{bibentry.commonxmlelement}
+@bibentry{bibentry.xmlattribute}
+@bibentry{bibentry.commonxmlattribute}
+@bibentry{bibentry.counter}
+@bibentry{bibentry.commoncounter}
+@bibentry{bibentry.variable}
+@bibentry{bibentry.commonvariable}
+@bibentry{bibentry.punctuation}
+@bibentry{bibentry.commonpunctuation}
+@bibentry{bibentry.cspunctuation}
+@bibentry{bibentry.commoncspunctuation}
+
+% bib2gls entry types created by tjhxml2bib
+
+@bibentry{bibentry.menu}
+@bibentry{bibentry.commonmenu}
+@bibentry{bibentry.menuitem}
+@bibentry{bibentry.commonmenuitem}
+@bibentry{bibentry.dialog}
+@bibentry{bibentry.commondialog}
+@bibentry{bibentry.widget}
+@bibentry{bibentry.commonwidget}
+@bibentry{bibentry.button}
+@bibentry{bibentry.commonbutton}
+@bibentry{bibentry.term}
+@bibentry{bibentry.commonterm}
+@bibentry{bibentry.termplural}
+@bibentry{bibentry.commonabbreviation}
+@bibentry{bibentry.message}
+@bibentry{bibentry.error}
+@bibentry{bibentry.warning}
+@bibentry{bibentry.syntax}
+@bibentry{bibentry.keystroke}
+
+% BIB2GLS FIELDS
+
+@commonbibentryfield{bibentryfield.name}
+@bibentryfield{bibentryfield.description}
+@bibentryfield{bibentryfield.parent}
+@bibentryfield{bibentryfield.symbol}
+@bibentryfield{bibentryfield.text}
+@bibentryfield{bibentryfield.plural}
+@bibentryfield{bibentryfield.category}
+@bibentryfield{bibentryfield.type}
+
+% Special fields for texjavahelp
+
+@bibentryfield{bibentryfield.shortswitch} 
+@bibentryfield{bibentryfield.defaultkeys} 
+@bibentryfield{bibentryfield.syntax} 
+@bibentryfield{bibentryfield.defaultvalue} 
+@bibentryfield{bibentryfield.initvalue} 
+@bibentryfield{bibentryfield.note} 
+@bibentryfield{bibentryfield.defaultparams} 
+
+% Fields obtained by tjhxml2bib
+
+@bibentryfield{bibentryfield.mnemonic} 
+@bibentryfield{bibentryfield.tooltip} 
+@bibentryfield{bibentryfield.keystroke} 
+@bibentryfield{bibentryfield.iconimage} 
+
+% HTML/XML ELEMENTS
+
+@xmlelement{xmlelement.em}
+@xmlelement{xmlelement.strong}
+@xmlelement{xmlelement.code}
+@xmlelement{xmlelement.span}
+@xmlelement{xmlelement.div}
+@xmlelement{xmlelement.font}
+@xmlelement{xmlelement.img}
+
+% NAMED FILES
+
+@file{file.texjavahelplib.jar}
+
+@file{file.index.xml}
+@file{file.navigation.xml}
+@file{file.search.xml}
+
+% FILE EXTENSIONS
+
+@fileext{ext.xml}
+@fileext{ext.html}
+@fileext{ext.bib}
+@fileext{ext.aux}
+@fileext{ext.glstex}
+@fileext{ext.toc}
+
+% ENVIRONMENTS
 
 @environment{env.minipage,
   name={\envfmt{mini\-page}}
@@ -520,6 +634,36 @@ was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer availabl
  name={\envfmt{tab\-u\-lar}}
 }
 
+@environment{env.prefrontmatterblock,
+ providedby={\sty{texjavahelp}},
+  name={\envfmt{pre\-front\-matter\-block}},
+  syntax={\margm{target}\margm{title}},
+  description={a shortcut environment that's only defined if
+\gls{chapter} is defined. This starts and ends the environment
+with \gls{clearpage}, uses \gls{HeadlessSection} to establish a new
+navigation node, and locally sets the page style to empty}
+}
+
+@environment{env.codebox,
+ providedby={\sty{texjavahelp}},
+ modifiers={*},
+ syntax={\margm{options}},
+ description={a colour box (defined via \sty{tcolorbox}) setup for
+displaying code. The unstarred form sets \optfmt{format=glsignore}
+as the default for \gls{gls}-like and \gls{glstext}-like commands}
+}
+
+% COUNTERS
+
+@counter{ctr.subfigure,
+  providedby={\sty{texjavahelp}},
+  name={\ctrfmt{sub\-fig\-ure}},
+  description={counter used by \gls{FloatSubFigs} for each
+sub-figure}
+}
+
+% COMMANDS
+
 @command{chapter}
 @command{section}
 @command{label}
@@ -527,6 +671,15 @@ was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer availabl
 @command{caption}
 @command{tabcolsep}
 @command{multicolumn}
+
+@command{emph}
+@command{strong}
+@command{textit}
+@command{bfseries}
+@command{color}
+@command{texttt}
+@command{slash}
+@command{verb}
 
 @command{tableofcontents,
  name={\csfmt{table\-of\-contents}}
@@ -554,6 +707,13 @@ was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer availabl
 
 @command{includegraphics,
  name={\csfmt{in\-clude\-graph\-ics}}
+}
+
+@command{glsquote,
+  providedby={\sty{glossaries}},
+  syntax={\margm{text}},
+  description={expands to \glssymbol{dblqt}\meta{text}\glssymbol{dblqt}, where
+  the \glssymbol{dblqt} is a literal straight double-quote character}
 }
 
 @command{upsym,
@@ -610,6 +770,48 @@ was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer availabl
   description={symbol to indicate the right arrow key}
 }
 
+@command{fnsymmarker,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{fn\-sym\-mark\-er}},
+  syntax={\margm{number}},
+  description={used by \gls{fnsym} and \gls{fnsymtext} to display a
+symbol corresponding to the given number. If the number exceeds the
+total number of predefined symbols, this will just expand to the
+number}
+}
+
+@command{fnsymmark,
+  providedby={\sty{texjavahelp}},
+  syntax={\margm{marker}},
+  description={used by \gls{fnsym} for format marker}
+}
+
+@command{fnsym,
+  providedby={\sty{texjavahelp}},
+  modifiers={*},
+  syntax={\margm{number}},
+  description={may be used to create a footnote marker in a table,
+the unstarred version encapsulates the marker with \gls{fnsymmark}.
+The marker is obtain from \code{\gls{fnsymmarker}\margm{number}}}
+}
+
+@command{tablefns,
+  providedby={\sty{texjavahelp}},
+  syntax={marker text},
+  description={this should be placed outside the \env{tabular} environment where the
+\meta{marker text} consists of one or more instances of
+\gls{fnsymtext}\margm{number}\margm{text} referring to footnote
+markers placed inside the \env{tabular} environment with \gls{fnsym}}
+}
+
+@command{fnsymtext,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{fn\-sym\-text}},
+  syntax={\margm{number}\margm{text}},
+  description={supplies the text corresponding to the given footnote
+marker that was identified in a table with \gls{fnsym}}
+}
+
 @command{WriteTJHDivisionInfo,
  providedby={\sty{texjavahelp}},
  name={\csfmt{Write\-TJH\-Division\-Info}},
@@ -625,16 +827,6 @@ file for sections that don't appear in the table of contents}
  description={a shortcut command that uses \gls{WriteTJHDivisionInfo}
 where a new navigation node should start but there's no associated
 title}
-}
-
-@environment{env.prefrontmatterblock,
- providedby={\sty{texjavahelp}},
-  name={\envfmt{pre\-front\-matter\-block}},
-  syntax={\margm{target}\margm{title}},
-  description={a shortcut environment that's only defined if
-\gls{chapter} is defined. This starts and ends the environment
-with \gls{clearpage}, uses \gls{HeadlessSection} to establish a new
-navigation node, and locally sets the page style to empty}
 }
 
 @command{WriteTJHLabel,
@@ -880,13 +1072,6 @@ formatted with \gls{SubFigureContent}}
 caption}\margm{caption}},
  description={used to format each sub-figure within
 \gls{FloatSubFigs}}
-}
-
-@counter{ctr.subfigure,
-  providedby={\sty{texjavahelp}},
-  name={\ctrfmt{sub\-fig\-ure}},
-  description={counter used by \gls{FloatSubFigs} for each
-sub-figure}
 }
 
 @command{subfigurefmt,
@@ -1141,6 +1326,39 @@ set, a generic basename is used in the form \metafilefmt{img}{n}{}}
   parent={GlsXtrLoadResources}
 }
 
+@command{gls,
+ providedby={\sty{glossaries}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={references a glossary entry}
+}
+
+@command{glssymbol,
+ providedby={\sty{glossaries}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={references a glossary entry's symbol}
+}
+
+@command{glstext,
+ providedby={\sty{glossaries}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={references a glossary entry's text field}
+}
+
+@command{glslink,
+ providedby={\sty{glossaries}},
+ syntax={\oargm{options}\margm{label}\margm{text}},
+ description={indexes a glossary entry and display \meta{text}
+(as a hyperlink, if applicable)}
+}
+
+@command{glsfmttext,
+ providedby={\sty{glossaries-extra}},
+ syntax={\margm{label}},
+ description={for use in section headings and captions, this expands
+to the value of the \bibentryfield{text} field for the given entry with applicable
+formatting}
+}
+
 @command{IfTeXParserLib,
  providedby={\sty{glossaries-extra-bib2gls}},
   name={\csfmt{If\-TeX\-Par\-ser\-Lib}},
@@ -1193,17 +1411,603 @@ use with the \sty{texjavahelp} package}
  description={expands to the field adjustment resource options}
 }
 
-@command{emph}
-@command{textit}
+@command{defsemanticcmd,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{defsemanticcmd}},
+ syntax={\oargm{colour}\margm{cs}\margm{font-cs}\margm{prefix}},
+ description={defines the semantic command \meta{cs} which takes a
+single argument \meta{text}, which will be typeset in the PDF using the given
+colour (if present) and the given text-block command \meta{font-cs}
+(if not empty) applied and \meta{prefix} will be inserted before
+\meta{text}. When \app{texjavahelpmk} parses the document, it will
+create a CSS class to apply the formatting to \meta{text}}
+}
 
-@file{file.index.xml}
-@fileext{ext.bib}
-@fileext{ext.aux}
-@fileext{ext.glstex}
-@fileext{ext.toc}
+@command{csfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{cs\-fmt}},
+ syntax={\margm{cs-name}},
+ description={semantic command used to format a control word. This
+automatically inserts the leading backslash}
+}
 
-@indexplural{menu,
-  seealso={index.menu.helpframe}
+@command{csfmtfont,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{cs\-fmt\-font}},
+ syntax={\margm{text}},
+ description={the font formatting command used by \gls{csfmt}}
+}
+
+@command{starredcs,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{starred\-cs}},
+ syntax={\margm{label}},
+ description={shortcut command to reference an entry representing a
+command followed by an asterisk}
+}
+
+@command{glscsname,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{gls\-cs\-name}},
+ syntax={\oargm{options}\margm{csname}},
+ description={shortcut command that expands to
+ \code{\gls{glslink}\oargm{options}\margm{csname}\marg{\gls{csfmtfont}\margm{csname}}}}
+}
+
+@command{cspuncfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{cs\-punc\-fmt}},
+ syntax={\margm{symbol}},
+ description={semantic command used to format a control symbol}
+}
+
+@command{csmetafmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{cs\-meta\-fmt}},
+ syntax={\margm{prefix}\margm{variable}\margm{suffix}},
+ description={semantic command used to format a control 
+word that has a variable part}
+}
+
+@command{csmetametafmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{cs\-meta\-meta\-fmt}},
+ syntax={\margm{prefix}\margm{variable1}\margm{middle}\margm{variable2}\margm{suffix}},
+ description={semantic command used to format a control 
+word that has two variable parts}
+}
+
+@command{code,
+  providedby={\sty{texjavahelp}},
+  syntax={\margm{text}},
+  description={semantic command used to format \meta{text} (not
+verbatim) in a monospaced font}
+}
+
+@command{faded,
+  providedby={\sty{texjavahelp}},
+  syntax={\margm{text}},
+  description={formats \meta{text} in the named colour \optfmt{gray}}
+}
+
+@command{fmtorcode,
+  providedby={\sty{texjavahelp}},
+  syntax={\meta{cs}\margm{text}},
+}
+
+@command{appfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{app\-fmt}},
+ syntax={\margm{name}},
+ description={semantic command used to format the name of an
+application}
+}
+
+@command{app,
+ providedby={\sty{texjavahelp}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={equivalent to
+\code{\gls{gls}\oargm{options}\marg{app.\meta{label}}\oargm{insert}}}
+}
+
+@command{styfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{sty\-fmt}},
+ syntax={\margm{name}},
+ description={semantic command used to format the name of a \LaTeX\
+package}
+}
+
+@command{sty,
+ providedby={\sty{texjavahelp}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={equivalent to
+\code{\gls{gls}\oargm{options}\marg{pkg.\meta{label}}\oargm{insert}}}
+}
+
+@command{clsfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{cls\-fmt}},
+ syntax={\margm{name}},
+ description={semantic command used to format the name of a \LaTeX\
+class}
+}
+
+@command{cls,
+ providedby={\sty{texjavahelp}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={equivalent to
+\code{\gls{gls}\oargm{options}\marg{cls.\meta{label}}\oargm{insert}}}
+}
+
+@command{styoptfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{sty\-opt\-fmt}},
+ syntax={\margm{text}},
+ description={semantic command used to format a package option}
+}
+
+@command{clsoptfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{cls\-opt\-fmt}},
+ syntax={\margm{text}},
+ description={semantic command used to format a class option}
+}
+
+@command{optfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{opt\-fmt}},
+ syntax={\margm{text}},
+ description={semantic command used to format an option}
+}
+
+@command{opt,
+ providedby={\sty{texjavahelp}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={equivalent to
+\code{\gls{gls}\oargm{options}\marg{opt.\meta{label}}\oargm{insert}}}
+}
+
+@command{optval,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{opt\-val}},
+ syntax={\margm{name}\margm{value}},
+ description={equivalent to
+\code{\gls{gls}\marg{opt.\meta{name}}\gls{optfmt}\marg{\gls{dequals}\meta{value}}}}
+}
+
+@command{optvalm,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{opt\-valm}},
+ syntax={\margm{name}\margm{value}},
+ description={equivalent to
+\code{\gls{gls}\marg{opt.\meta{name}}\gls{optfmt}\marg{\gls{dequals}\margm{value}}}}
+}
+
+@command{envfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{env\-fmt}},
+ syntax={\margm{name}},
+ description={semantic command used to format a \LaTeX\ environment
+name}
+}
+
+@command{env,
+ providedby={\sty{texjavahelp}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={equivalent to
+\code{\gls{gls}\oargm{options}\marg{env.\meta{label}}\oargm{insert}}}
+}
+
+@command{starredenv,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{starred\-env}},
+ syntax={\margm{label}},
+ description={shortcut command that expands to
+\code{\gls{gls}\marg{env.\meta{label}}\oarg{\gls{envfmt}\marg{*}}}}
+}
+
+@command{ctrfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{ctr\-fmt}},
+ syntax={\margm{name}},
+ description={semantic command used to format a \LaTeX\ counter
+name}
+}
+
+@command{ctr,
+ providedby={\sty{texjavahelp}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={equivalent to
+\code{\gls{gls}\oargm{options}\marg{ctr.\meta{label}}\oargm{insert}}}
+}
+
+@command{thectr,
+ providedby={\sty{texjavahelp}},
+ syntax={\margm{name}},
+ description={equivalent to
+\code{\gls{glslink}\marg{ctr.\meta{label}}\marg{\gls{csfmt}\marg{the\meta{name}}}}}
+}
+
+@command{theHctr,
+ providedby={\sty{texjavahelp}},
+ syntax={\margm{name}},
+ description={equivalent to
+\code{\gls{glslink}\marg{ctr.\meta{label}}\marg{\gls{csfmt}\marg{theH\meta{name}}}}}
+}
+
+@command{varfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{var\-fmt}},
+ syntax={\margm{name}},
+ description={semantic command used to format a variable name (such
+as an environment variable)}
+}
+
+@command{xmltagfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{xml\-tag\-fmt}},
+ syntax={\margm{text}},
+ description={formats \meta{text} between less-than and greater-than
+signs}
+}
+
+@command{xmlelem,
+ providedby={\sty{texjavahelp}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={equivalent to
+\code{\gls{gls}\oargm{options}\marg{xmlelement.\meta{label}}\oargm{insert}}}
+}
+
+@command{xmlelemtext,
+ providedby={\sty{texjavahelp}},
+ syntax={\margm{label}},
+ description={equivalent to
+\code{\gls{glsfmttext}\marg{xmlelement.\meta{label}}}}
+}
+
+@command{xmlStartElem,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{xml\-Start\-Elem}},
+ modifiers={*},
+ syntax={\oargm{options}\oargm{prefix}\margm{tag}\margm{attr-list}},
+ description={essentially equivalent to
+\code{\xmltagfmt{\gls{glslink}\oargm{options}\marg{\meta{prefix}\meta{tag}}\margm{tag}
+\meta{attr-list}}}. The starred version adds \optfmt{format=ignore}
+to the \meta{options}}
+}
+
+@command{xmlVoidElem,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{xml\-Void\-Elem}},
+ modifiers={*},
+ syntax={\oargm{options}\oargm{prefix}\margm{tag}\oargm{attr-list}},
+ description={essentially equivalent to
+\code{\xmltagfmt{\gls{glslink}\oargm{options}\marg{\meta{prefix}\meta{tag}}\margm{tag}
+\meta{attr-list} \meta{attr-list}/}} but the \qt{ \meta{attr-list}}
+part will be omitted if \meta{attr-list} is not present. 
+The starred version adds \optfmt{format=ignore}
+to the \meta{options}}
+}
+
+@command{xmlEndElem,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{xml\-End\-Elem}},
+ modifiers={*},
+ syntax={\oargm{options}\oargm{prefix}\margm{tag}},
+ description={essentially equivalent to
+\code{\xmltagfmt{/\gls{glslink}\oargm{options}\marg{\meta{prefix}\meta{tag}}\margm{tag}}}. The starred version adds \optfmt{format=ignore}
+to the \meta{options}}
+}
+
+@command{xmlattrfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{xml\-attr\-fmt}},
+ syntax={\margm{name}},
+ description={semantic command used to format an \gls{xml} element attribute}
+}
+
+@command{xmlattr,
+ providedby={\sty{texjavahelp}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={equivalent to
+\code{\gls{gls}\oargm{options}\marg{xmlattr.\meta{label}}\oargm{insert}}}
+}
+
+@command{xmlattrtext,
+ providedby={\sty{texjavahelp}},
+ syntax={\margm{label}},
+ description={equivalent to
+\code{\gls{glsfmttext}\marg{xmlattr.\meta{label}}}}
+}
+
+@command{oarg,
+ providedby={\sty{texjavahelp}},
+ syntax={\margm{text}},
+ description={formats \meta{text} in square brackets}
+}
+
+@command{oargm,
+ providedby={\sty{texjavahelp}},
+ syntax={\margm{text}},
+ description={shortcut for \code{\gls{oarg}\marg{\gls{meta}\margm{text}}}}
+}
+
+@command{marg,
+ providedby={\sty{texjavahelp}},
+ syntax={\margm{text}},
+ description={formats \meta{text} in curly braces}
+}
+
+@command{margm,
+ providedby={\sty{texjavahelp}},
+ syntax={\margm{text}},
+ description={shortcut for \code{\gls{marg}\marg{\gls{meta}\margm{text}}}}
+}
+
+@command{meta,
+ providedby={\sty{texjavahelp}},
+ syntax={\margm{text}},
+ description={formats \meta{text} in emphasis between angle brackets}
+}
+
+@command{switch,
+ providedby={\sty{texjavahelp}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={equivalent to
+\code{\gls{gls}\oargm{options}\marg{switch.\meta{label}}\oargm{insert}}}
+}
+
+@command{shortswitchref,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{short\-switch\-ref}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={references the \bibentryfield{shortswitch} field for the
+given entry}
+}
+
+@command{shortswitchvalue,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{short\-switch\-value}},
+ syntax={\margm{label}},
+ description={expands to the value of the \bibentryfield{shortswitch} field for the
+given entry (without indexing or hyperlink)}
+}
+
+@command{switchtext,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{switch\-text}},
+ syntax={\margm{label}},
+ description={equivalent to
+\code{\gls{glsfmttext}\marg{switch.\meta{label}}}}
+}
+
+@command{swch,
+ providedby={\sty{texjavahelp}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={equivalent to
+\code{\gls{shortswitchref}\oargm{options}\marg{switch.\meta{label}}}}
+}
+
+@command{longswitch,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{longswitch}},
+ description={expands to two hyphens with a thin space between them}
+}
+
+@command{longargfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{long\-arg\-fmt}},
+ syntax={\margm{text}},
+ description={used to format \meta{text} as a double-hyphen switch,
+this expands to \gls{longswitch}\meta{text}}
+}
+
+@command{shortswitch,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{shortswitch}},
+ description={expands to a hyphen}
+}
+
+@command{shortargfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{short\-arg\-fmt}},
+ syntax={\margm{text}},
+ description={used to format \meta{text} as a single-hyphen switch,
+this expands to \gls{shortswitch}\meta{text}}
+}
+
+@command{filefmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{file\-fmt}},
+ syntax={\margm{filename}},
+ description={semantic command used to format the name of a file}
+}
+
+@command{file,
+ providedby={\sty{texjavahelp}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={equivalent to
+\code{\gls{gls}\oargm{options}\marg{file.\meta{label}}\oargm{insert}}}
+}
+
+@command{homefilefmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{home\-file\-fmt}},
+ syntax={\margm{path}},
+ description={expands to
+\code{\gls{filefmt}\marg{\gls{homedir}\gls{filedirsep}\meta{path}}}}
+}
+
+@command{homedir,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{home\-dir}},
+ description={expands to a literal tilde}
+}
+
+@command{filedirsep,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{file\-dir\-sep}},
+ description={expands to \gls{slash} (forward slash)}
+}
+
+@command{extfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{ext\-fmt}},
+ syntax={\margm{extension}},
+ description={semantic command used to format a file extension}
+}
+
+@command{dottedextfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{dott\-ed\-ext\-fmt}},
+ syntax={\margm{extension}},
+ description={expands to \code{\gls{extfmt}\marg{.\meta{extension}}}}
+}
+
+@command{ext,
+ providedby={\sty{texjavahelp}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={equivalent to
+\code{\gls{gls}\oargm{options}\marg{ext.\meta{label}}\oargm{insert}}}
+}
+
+@command{filemetafmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{file\-meta\-fmt}},
+ syntax={\margm{prefix}\margm{variable}\margm{suffix}},
+ description={semantic command used to format a filename that has a variable part}
+}
+
+@command{filemetametafmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{file\-meta\-meta\-fmt}},
+ syntax={\margm{prefix}\margm{variable1}\margm{middle}\margm{variable2}\margm{suffix}},
+ description={semantic command used to format a filename that has two variable parts}
+}
+
+@command{metaboolean,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{meta\-bool\-ean}},
+ description={expands to \code{\gls{meta}\marg{boolean}}}
+}
+
+@command{keyval,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{key\-val}},
+ description={expands to
+\code{\gls{meta}\marg{key}\gls{dequals}\gls{meta}\marg{value}}}
+}
+
+@command{keyvallist,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{key\-val\-list}},
+ description={expands to
+\code{\gls{meta}\marg{key\gls{dequals} value list}}}
+}
+
+@command{dhyphen,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{dhyphen}},
+ description={a hyphen that allows a line break before it}
+}
+
+@command{dequals,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{dequals}},
+ description={an equal sign that allows a line break before or after it}
+}
+
+@command{dcomma,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{dcomma}},
+ description={a comma that allows a line break after it}
+}
+
+@command{dcolon,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{dcolon}},
+ description={a colon that allows a line break after it}
+}
+
+@command{dfullstop,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{dfullstop}},
+ description={a full stop (period) that allows a line break after it}
+}
+
+@command{dunderscore,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{dunderscore}},
+ description={an underscore that allows a line break before or after it}
+}
+
+% CONTROL SYMBOLS
+
+@cspunctuation{dbbksl,
+  symbol={\cspuncfmt{\char`\\ }},
+  description={row separator}
+}
+
+@cspunctuation{cs.hash,
+  symbol={\cspuncfmt{\char`\# }},
+  description={hash symbol}
+}
+
+@cspunctuation{cs.percent,
+  symbol={\cspuncfmt{\char`\% }},
+  description={percent symbol}
+}
+
+@cspunctuation{cs.underscore,
+  symbol={\cspuncfmt{\char`\_ }},
+  description={underscore symbol}
+}
+
+@cspunctuation{cs.hyphen,
+  symbol={\cspuncfmt{\char`\- }},
+  description={discretionary hyphen}
+}
+
+% TERMS AND ABBREVIATIONS
+
+@abbreviation{cli,
+  short = {CLI},
+  long = {command line interface}
+}
+
+@abbreviation{gui,
+  short = {GUI},
+  long = {graphical user interface}
+}
+
+@commonabbreviation{pdf,
+  short = {PDF},
+  long = {portable document format}
+}
+
+@commonabbreviation{html,
+  short = {HTML},
+  long = {hypertext markup language}
+}
+
+@commonabbreviation{xml,
+  short = {XML},
+  long = {extensible markup language}
+}
+
+@term{JavaHelp,
+  name={Java\-Help\texttrademark\ System},
+  text={Java\-Help},
+  description={a Java library provided by Sun that could be used by Java
+applications to a help system using Swing components. Its home page
+was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer available}
+}
+
+@term{TeXParserLib,
+  name={\TeX\ Parser Library},
+  description={a Java library for parsing \TeX\ or \LaTeX\ files
+   (\href{https://github.com/nlct/texparser}{\nolinkurl{github.com/nlct/texparser}})}
 }
 
 % PUNCTUATION
@@ -1213,14 +2017,19 @@ use with the \sty{texjavahelp} package}
   description={backslash}
 }
 
-@cspunctuation{dbbksl,
-  symbol={\cspuncfmt{\char`\\ }},
-  description={new row}
-}
-
-@punctuation{percent,
+@punctuation{percentchar,
   symbol={\code{\char`\% }},
   description={percent}
+}
+
+@punctuation{hashchar,
+  symbol={\code{\char`\# }},
+  description={hash}
+}
+
+@punctuation{underscorechar,
+  symbol={\code{\char`\_ }},
+  description={underscore}
 }
 
 @punctuation{exclam,
@@ -1234,7 +2043,13 @@ use with the \sty{texjavahelp} package}
 }
 
 @punctuation{dblqt,
-  symbol={\code{"}},
+  symbol={\code{\char`\" }},
   description={straight double quote}
+}
+
+% GENERAL INDEX
+
+@indexplural{menu,
+  seealso={index.menu.helpframe}
 }
 
