@@ -101,6 +101,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
        || arg.equals("--minitoc-postamble-from-file")
        || arg.equals("--in") || arg.equals("-i")
        || arg.equals("--output") || arg.equals("-o")
+       || arg.equals("--charset")
        || arg.equals("--out-charset")
        || arg.equals("--image-dest")
        || arg.equals("--image-preamble")
@@ -445,6 +446,10 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
          }
 
          outDir = new File(returnVals[0].toString());
+      }
+      else if (cliParser.isArg(arg, "--charset", returnVals))
+      {
+         defaultCharset = Charset.forName(returnVals[0].toString());
       }
       else if (cliParser.isArg(arg, "--out-charset", returnVals))
       {
@@ -1063,6 +1068,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       TeXJavaHelpLib helpLib = getHelpLib();
 
       versionInfo();
+
       System.out.println();
       System.out.println(getMessage("syntax.title"));
       System.out.println();
@@ -1070,17 +1076,19 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       System.out.println();
       helpLib.printSyntaxItem(getMessage("syntax.general"));
       helpLib.printSyntaxItem(getMessage("syntax.in", "--in", "-i", getApplicationName()));
+      helpLib.printSyntaxItem(getMessage("syntax.charset", "--charset"));
       System.out.println();
-      helpLib.printSyntaxItem(getMessage("syntax.debug", "--debug"));
-      helpLib.printSyntaxItem(getMessage("syntax.nodebug", "--nodebug"));
-      helpLib.printSyntaxItem(getMessage("syntax.debug-mode", "--debug-mode"));
+      helpLib.printSyntaxItem(getMessage("clisyntax.verbose", "--[no]verbose"));
+      helpLib.printSyntaxItem(getMessage("clisyntax.debug", "--debug"));
+      helpLib.printSyntaxItem(getMessage("clisyntax.nodebug", "--nodebug"));
+      helpLib.printSyntaxItem(getMessage("clisyntax.debug-mode", "--debug-mode"));
       System.out.println();
-      helpLib.printSyntaxItem(getMessage("syntax.log", "--log"));
-      helpLib.printSyntaxItem(getMessage("syntax.nolog", "--nolog"));
+      helpLib.printSyntaxItem(getMessage("clisyntax.log", "--log"));
+      helpLib.printSyntaxItem(getMessage("clisyntax.nolog", "--nolog"));
       helpLib.printSyntaxItem(getMessage("syntax.rmtmpdir", "--[no-]rm-tmp-dir"));
       System.out.println();
-      helpLib.printSyntaxItem(getMessage("syntax.version", "--version", "-v"));
-      helpLib.printSyntaxItem(getMessage("syntax.help", "--help", "-h"));
+      helpLib.printSyntaxItem(getMessage("clisyntax.version2", "--version", "-v"));
+      helpLib.printSyntaxItem(getMessage("clisyntax.help2", "--help", "-h"));
       System.out.println();
       helpLib.printSyntaxItem(getMessage("syntax.output.options"));
       System.out.println();
@@ -1115,6 +1123,8 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
          System.out.println(getMessageWithFallback("about.version",
            "{0} version {1} ({2})", getApplicationName(), 
            TeXJavaHelpLib.VERSION, TeXJavaHelpLib.VERSION_DATE));
+
+         libraryVersion();
 
          shownVersion = true;
       }

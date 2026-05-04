@@ -23,6 +23,7 @@ import java.io.*;
 
 import java.nio.file.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import java.text.MessageFormat;
 
@@ -649,7 +650,7 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
    public static final long MAX_PROCESS_TIME = 360000L; // millisecs
 
    protected File texmf;
-   protected Charset defaultCharset = Charset.defaultCharset();
+   protected Charset defaultCharset = StandardCharsets.UTF_8;
 
    CLISyntaxParser cliParser;
 }

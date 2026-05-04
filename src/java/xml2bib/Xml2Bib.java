@@ -254,7 +254,7 @@ public class Xml2Bib
 
       System.out.println();
 
-      helpLib.printSyntaxItem(getMessage("syntax.debug", "--[no]debug"));
+      helpLib.printSyntaxItem(getMessage("clisyntax.debug", "--[no]debug"));
 
 
       helpLib.printSyntaxItem(getMessage("clisyntax.version2", "--version", "-v"));

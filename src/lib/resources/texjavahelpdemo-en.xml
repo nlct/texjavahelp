@@ -10,6 +10,8 @@ Nicola Talbot
 <!-- Main Frame Widgets -->
 <entry key="label.demo">Demo Label (Introduction)</entry>
 
+<entry key="button.help.iconimage">help</entry>
+
 <entry key="button.demohelp">Demo Help</entry>
 <entry key="button.demohelp.keystroke">F2</entry>
 <entry key="button.demohelp.mnemonic">D</entry>
@@ -27,6 +29,8 @@ Nicola Talbot
 
 <entry key="menu.help.sampleframe">Sample Frame...</entry>
 <entry key="menu.help.sampleframe.mnemonic">F</entry>
+
+<entry key="menu.help.manual.iconimage">manual</entry>
 
 <entry key="menu.help.about">About</entry>
 <entry key="menu.help.about.mnemonic">A</entry>
