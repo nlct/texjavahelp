@@ -1,0 +1,13 @@
+pifont
+fontawesome
+twemojis
+upquote
+hologo
+varioref
+xcolor
+graphicx
+accsupp
+tikz
+tcolorbox
+hyperref
+glossaries-extra
