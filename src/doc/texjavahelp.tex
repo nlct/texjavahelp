@@ -1,5 +1,5 @@
 % arara: lualatex
-% arara: bib2gls: { group: on, options: [ --no-warn-unknown-entry-types ] }
+% arara: bib2gls
 % arara: lualatex
 % arara: lualatex
 \documentclass[toc=listof]{scrreport}
@@ -12,6 +12,14 @@
  ]{texjavahelp}
 
 \hypersetup{colorlinks,linkcolor=blue}
+
+\newcommand\TJHMKswitch[1]{\switch{texjavahelpmk.#1}}
+\newcommand\TJHFDswitch[1]{\switch{tjhflattendocsrc.#1}}
+\newcommand\TJHXBswitch[1]{\switch{tjhxml2bib.#1}}
+
+\newcommand\TJHMKswitchdef[1]{\switchdef{texjavahelpmk.#1}}
+\newcommand\TJHFDswitchdef[1]{\switchdef{tjhflattendocsrc.#1}}
+\newcommand\TJHXBswitchdef[1]{\switchdef{tjhxml2bib.#1}}
 
 \defsemanticcmd[style1]\bibentryfmt{\textsf}{@}
 \defsemanticcmd[style2]\bibentryfieldfmt{\textsf}{}
@@ -96,15 +104,18 @@ it's useful for a \gls{gui} to also have an in-application help, where
 an appropriate section can be opened for context-sensitive help (for example,
 via a \widgetfmt{Help} button in a dialog).
 
-In the past, I used \gls{JavaHelp} but it has a number of limitations and now
-no longer seems to be supported. Ideally, I would like the same document source
-to provide the offline \gls{pdf}, the \gls{html} and \gls{xml} files required
-for the application's help system, and (if the documentation is particularly
-large) \gls{html} files for the application's home page.
+In the past, I used \gls{JavaHelp} but it has a number of
+limitations and now no longer seems to be supported. Ideally, I
+would like the same document source to provide the \gls{pdf} (for
+access outside of the application), and the \gls{html} and \gls{xml}
+files required for the application's help system, and (if the
+documentation is particularly large) \gls{html} files for the
+application's home page.
 
 I've tried several ways to achieve this. The first was to use \LaTeX\ source
-and convert to \gls{html}. The limitations of Swing's \varfmt{JEditorPane},
-the complexity of adding support for \gls{JavaHelp}['s] custom
+and convert to \gls{html} using a general purpose \LaTeX\ to
+\gls{html} converter. The limitations of Java's HTML and CSS
+support, the complexity of adding support for \gls{JavaHelp}['s] custom
 \xmltagfmt{object} format, and the need to create the supplementary \gls{xml}
 files, meant that some additional work was required to get the correct output.
 
@@ -112,14 +123,16 @@ The second method I tried was to start with \gls{xml} source with a custom
 script which generated both the \gls{html} and \gls{xml} files for \gls{JavaHelp}
 and also the \LaTeX\ source for the \gls{pdf}. This proved the more reliable route
 for the \gls{html} and \gls{xml} output, as it's much easier to convert from \gls{xml}
-to \gls{html}, although I don't particularly like writing large documents in 
+to \gls{html}, but I don't particularly like writing large documents in 
 \gls{xml}.
 
-One of the advantages of \gls{html} over \gls{pdf} is that it's more accessible.
-This should mean that the in-application help ought to be more accessible than the
-\gls{pdf} manual, but I couldn't find a way to allow the user to customise the
-font without having to resort to editing the \gls{html} files (for example, to
-make the font larger for visually impaired users or to change to a dyslexic font).
+One of the advantages of \gls{html} over \gls{pdf} is that it's more
+accessible.  This should mean that the in-application help ought to
+be more accessible than the \gls{pdf} manual, but I couldn't find a
+way with \gls{JavaHelp} to allow the user to customise the font
+without having to resort to editing the \gls{html} files (for
+example, to make the font larger for visually impaired users or to
+change to a dyslexic font).
 
 I'm now trying a different approach. Since most of my Java applications are in
 some way related to \TeX, and I created the \gls{TeXParserLib} to parse
@@ -158,10 +171,14 @@ package and \app{bib2gls}.
 localisation resource files to \ext{bib} files suitable for use with
 \app{bib2gls}.
 
-\item \app{texjavahelpmk}: a \gls{cli} application that uses the \TeX\ Parser
-Library (with a custom implementation of the \sty{texjavahelp} package) 
+\item \app{texjavahelpmk}: a \gls{cli} application that uses the 
+\gls{TeXParserLib} (with a custom implementation of the \sty{texjavahelp} package) 
 to create the \gls+{html} and \gls+{xml} files (required by the 
 \TeXJavaHelp\ library) from the \LaTeX\ source.
+
+\item \app{tjhflattendocsrc}: a \gls{cli} application that uses the
+\gls{TeXParserLib} to create a flattened version of the \LaTeX\ document
+source for standalone distribution;
 
 \item \file{texjavahelplib.jar}: a Java library that provides a \gls{gui} 
 component to display the \gls{html} files created by \app{texjavahelpmk}.
@@ -170,14 +187,21 @@ component to display the \gls{html} files created by \app{texjavahelpmk}.
 \app{texjavahelpmk} and \file{texjavahelplib.jar}.
 \end{itemize}
 
-\begin{information}
-It's not necessary to use the \sty{texjavahelp} package and \app{texjavahelpmk}.
-The \gls{html} and \gls{xml} files can be created manually in a text editor 
-without them, but they must be in the correct format. The use of \app{bib2gls}
-for the glossary and index provides information written to the \file{index.xml}
-file that's used in the tooltip text when hovering the mouse over a hyperlink
-in the \gls{index.help-page}.
-\end{information}
+The \app{texjavahelpmk} application is much more limited than
+general purpose \LaTeX\ to \gls{html} applications, but it does more
+than simply convert from \LaTeX\ to \gls{html}. The \ext{xml} files
+that it also creates are an integral part of the \gls{gui} system
+provided by \file{texjavahelplib.jar}. The indexing data
+(\file{index.xml}) is obtained via the \ext{glstex} files created by \app{bib2gls} 
+and the \ext{aux} file, the navigation data (\file{navigation.xml}) is obtained 
+by parsing the \ext{aux} file, and the search data (\file{search.xml})
+is created while \app{texjavahelpmk} processes each paragraph.
+
+This means that \app{texjavahelpmk} is likely to take longer than a
+regular \LaTeX\ to \gls{html} generator, as it has to not only
+convert the source \LaTeX\ code to \gls{html} code but then has to
+parse and markup blocks of the \gls{html} code for the search data
+and search context before writing the \gls{html} code to the output file.
 
 \chapter{The \stytext{texjavahelp} \LaTeX\ Package}
 \label{sec:texjavahelpsty}
@@ -185,14 +209,23 @@ in the \gls{index.help-page}.
 \pkgdef{texjavahelp}
 
 The \sty{texjavahelp} package requires the following packages:
-\sty{glossaries-extra}, \sty{fontawesome}, \sty{twemojis},
-\sty{upquote}, \sty{hologo}, \sty{xcolor}, \sty{tcolorbox}, \sty{hyperref},
-and \sty{tikz}. These are loaded automatically.
+\sty{glossaries-extra}, \sty{pifont}, \sty{fontawesome}, \sty{twemojis},
+\sty{upquote}, \sty{hologo}, \sty{varioref}, \sty{xcolor},
+\sty{graphicx}, \sty{tikz}, \sty{tcolorbox} and \sty{hyperref}.
+These are loaded automatically.
+
 The \sty{glossaries-extra} package is loaded with the options:
 \optval{record}{nameref} (which means that \app{bib2gls} should be used),
-\opt{indexcounter}, \opt{floats}, \opt{nostyles}, 
-\optvalm{stylemods}{tree\dcomma bookindex\dcomma topic} 
-and \optval{style}{alttree}.
+\opt{indexcounter}, \opt{floats}, \opt{nostyles},
+\optvalm{stylemods}{tree\dcomma book\-index\dcomma topic} and
+\optval{style}{alttree}. (The \gls{TeXParserLib} only has limited
+support for glossary styles.)
+
+\begin{information}
+Since \sty{texjavahelp} was adapted from \sty{nlctuserguide}, it
+copies the package options and some command names from that package.
+Both packages should not be used in the same document.
+\end{information}
 
 The following \sty{texjavahelp} package options are provided:
 \optiondef{fontsymbols}
@@ -205,7 +238,23 @@ these commands, such as \sty{stix} or \sty{boisk}, if those commands are require
 This option  defines \gls{tabsym} and \gls{upsym} as images.
 The \opt{tikzsymbols} option counteracts the \opt{fontsymbols} option.
 
-Another other options supplied to \sty{texjavahelp} will be passed to
+\optiondef{vref}
+Cross-referencing commands such as \gls{figureref} will use
+\gls{vref} (provided by \sty{varioref}) instead of \gls{ref}.
+This option is equivalent to using \gls{nlctusevref}.
+
+\optiondef{novref}
+Cross-referencing commands such as \gls{figureref} will use
+\gls{ref} (not \gls{vref}).
+This option is equivalent to using \gls{nlctnovref}.
+
+\optiondef{fnsymleft}
+Defines \gls{fnsymmark} to use \gls{llap}.
+
+\optiondef{fnsymright}
+Defines \gls{fnsymmark} to use \gls{rlap}.
+
+Any other options supplied to \sty{texjavahelp} will be passed to
 the \sty{glossaries-extra} package.
 
 The \sty{texjavahelp} package is intended to be used with \app{bib2gls}. This means
@@ -217,11 +266,38 @@ to the \ext+{aux} file to be read by \app{bib2gls} and inputs
 (if it exists) the \ext+{glstex} file created by \app{bib2gls}.
 
 For convenience, the \sty{texjavahelp} package provides:
+\cmddef{TeXJavaHelpSymbolResourceOptions}
+This expands to the resource options customized for use with the
+\sty{texjavahelp} package for the symbols group. This filters
+entries so that only \bibentry{symbol} entry types are include.
+The custom \bibentry{punctuation}, \bibentry{cspunctuation} and
+\bibentry{icon} entry types are all aliased to \bibentry{symbol}, so
+they will be included. The \opt{assign-fields} list is obtained by
+expanding:
+\cmddef{TeXJavaHelpPuncAssignFields}
+This assigns the \bibentryfield{name} field to the
+\bibentryfield{symbol} field followed by the
+\bibentryfield{description} in
+parentheses if the \bibentryfield{description} length is less than:
+\cmddef{TeXJavaHelpMaxPuncDesc}
+This should just expand to a number.
+If a symbol's description length is longer that this value, 
+the \bibentryfield{name} field will just be set to the
+\bibentryfield{symbol} field.
+
+
 \cmddef{TeXJavaHelpGlsResourceOptions}
 This expands to the resource options customized for use with the
-\sty{texjavahelp} package. This sets the \opt{entry-type-aliases}
+\sty{texjavahelp} package for letter groups. This sets the \opt{entry-type-aliases}
 and \opt{assign-fields} options to work with the \ext+{bib} format described in
-in \sectionref{sec:bibformat}.
+in \sectionref{sec:bibformat}. Additional entry type aliases can be set by
+appending to:
+\cmddef{TeXJavaHelpExtraEntryTypeAliases}
+which expands at the end of the \opt{entry-type-aliases} value.
+Extra assignment options can be added by appending to:
+\cmddef{TeXJavaHelpExtraAssignFields}
+which expands with the \opt{assign-fields} value. If you modify this
+command, make sure that it ends with a comma.
 
 Other resource options included in the definition of
 \gls{TeXJavaHelpGlsResourceOptions}
@@ -229,9 +305,180 @@ are: \optvalm{selection}{recorded and deps and see}, \optvalm{category}{same as
 original entry} and \opt{save-entry-count}. Additionally, this command
 starts with:
 \cmddef{TeXJavaHelpGlsFieldAdjustments}
-which expands to the field adjustment resource options: 
-\optval{description-case-change}{firstuc} and \optval{post-description-dot}{check}.
+which expands to the field adjustment resource options, followed by:
+\cmddef{TeXJavaHelpGlsSelection}
+which expands to the adjustments to the selection criteria.
+This will automatically select all entries with the category set to
+\optfmt{menu} and any entry that has a label starting with
+\qtt{manual.} (which provides locale-sensitive text for the document
+and is placed in an ignored glossary).
+
+For example, this document provides some custom fields that aren't
+defined by \sty{texjavahelp}: \bibentryfmt{bibentry},
+\bibentryfmt{commonbibentry}, \bibentryfmt{bibentryfield}, and
+\bibentryfmt{commonbibentryfield}. These are aliased to
+\bibentry{index}:
+\begin{codebox}
+\cmd{renewcommand}\marg{\gls{TeXJavaHelpExtraEntryTypeAliases}}\marg{
+  bibentry=index,
+  commonbibentry=index,
+  bibentryfield=index,
+  commonbibentryfield=index,
+}
+\end{codebox}
+
+In this document, I've also created some formatting commands with 
+\gls{defsemanticcmd} (see
+\sectionref{sec:semanticcmds}) called \csfmt{bibentryfmt}
+and \csfmt{bibentryfieldfmt}. I can automatically set the 
+\bibentryfield{name} field to the label (with the designated prefix
+removed) encapsulated with the applicable formatting command:
+\begin{codebox*}
+\cmd{renewcommand}\marg{\gls{TeXJavaHelpExtraAssignFields}}\marg{
+  name = "\gls{cs}\marg{bibentryfmt}\marg{" + \gls{MGP}\marg{1} + "}"
+    [
+       entrytype->original =/(?:common)?bibentry/
+     \glssymbol{ampchar} entrylabel->original=/bibentry\csfmt{.}(.+)/
+    ],
+  name = "\gls{cs}\marg{bibentryfmt}\marg{" + entrylabel->original + "}"
+    [ entrytype->original =/(common)?bibentry/ ],
+  name = "\gls{cs}\marg{bibentryfieldfmt}\marg{" + \gls{MGP}\marg{1} + "}"
+    [
+       entrytype->original =/(?:common)?bibentryfield/
+     \glssymbol{ampchar} entrylabel->original=/bibentryfield\csfmt{.}(.+)/
+    ],
+  name = "\gls{cs}\marg{bibentryfieldfmt}\marg{" + entrylabel->original + "}"
+    [ entrytype->original =/(common)?bibentryfield/ ],
+}
+\end{codebox*}
+
+This uses the special \app{bib2gls} quarks \gls{cs}, \gls{MGP} and
+\csfmt{.} which are part of the \opt{assign-fields} syntax. The
+\sty{texjavahelp} package sets these up so that they don't expand
+when the resource options are written to the \ext{aux} file.
+
+\begin{information}
 See the \app{bib2gls} user manual for further information on resource options.
+\end{information}
+
+There are two resource files. The first creates the symbol group and
+the second creates the letter groups:
+\begin{codebox*}
+\gls{GlsXtrLoadResources}\oarg{src=\marg{\gls{jobname},texjavahelplib},
+ \gls{TeXJavaHelpSymbolResourceOptions}
+}
+\codepar
+\gls{GlsXtrLoadResources}\oarg{src=\marg{\gls{jobname},texjavahelplib},
+ \gls{TeXJavaHelpGlsResourceOptions}
+}
+\end{codebox*}
+I created the \filemetafmt{}{jobname}{.bib} (\filefmt{\jobname.bib}) file 
+for this document. It contains glossary terms, abbreviations, and
+anything that should be indexed. For example:
+\begin{codebox}
+\bibentry{abbreviation}\marg{gui,
+  \bibentryfield{short} = \marg{GUI},
+  \bibentryfield{long} = \marg{graphical user interface}
+} 
+\end{codebox} 
+I can reference this in the document as usual:
+\begin{coderesult}
+\gls{gls}\marg{gui}
+\tcblower
+\gls{gui}
+\end{coderesult}
+
+The \filefmt{texjavahelplib.bib} file was created by \app{tjhxml2bib}
+from \filefmt{texjavahelplib-en.xml} and \filefmt{texjavahelpdemo-en.xml}
+provided with \TeXJavaHelp. This means I can refer menus and buttons
+in the \app{texjavahelpdemo} application.
+
+For example, \filefmt{texjavahelplib-en.xml} contains:
+\begin{codebox*}
+\xmlStartElem{entry}{\xmlattr{key}="menu.help"}Help\xmlEndElem{entry}
+\xmlStartElem{entry}{\xmlattr{key}="menu.help.mnemonic"}H\xmlEndElem{entry}
+\codepar
+\xmlStartElem{entry}{\xmlattr{key}="menu.help.manual"}Manual\xmlEndElem{entry}
+\xmlStartElem{entry}{\xmlattr{key}="menu.help.manual.mnemonic"}M\xmlEndElem{entry}
+\xmlStartElem{entry}{\xmlattr{key}="menu.help.manual.keystroke"}F1\xmlEndElem{entry}
+\xmlStartElem{entry}{\xmlattr{key}="menu.help.manual.tooltip"}Open manual\xmlEndElem{entry}
+\codepar
+\xmlStartElem{entry}{\xmlattr{key}="button.help"}Help\xmlEndElem{entry}
+\xmlStartElem{entry}{\xmlattr{key}="button.help.mnemonic"}H\xmlEndElem{entry}
+\xmlStartElem{entry}{\xmlattr{key}="button.help.tooltip"}Open relevant section of the manual\xmlEndElem{entry}
+\xmlStartElem{entry}{\xmlattr{key}="button.help.keystroke"}shift F1\xmlEndElem{entry}
+\xmlStartElem{entry}{\xmlattr{key}="button.help.defaultkeys"}format=glsignore\xmlEndElem{entry}
+\end{codebox*}
+The \filefmt{texjavahelpdemo-en.xml} file contains:
+\begin{codebox*}
+\xmlStartElem{entry}{\xmlattr{key}="menu.help.manual.iconimage"}manual\xmlEndElem{entry}
+\xmlStartElem{entry}{\xmlattr{key}="button.help.iconimage"}help\xmlEndElem{entry}
+\end{codebox*}
+This demonstrates how more than one \ext{xml} file can be provided,
+with items appended or altered in another field.
+The order that they are input matters as an entry in a later file
+can override an entry with the same label in an earlier file.
+
+The properties file has a flat \gls{xml} format but the entry data
+and hierarchy is identified by the special labelling system used by
+the \xmlattr{key}, so \app{tjhxml2bib} will convert the above to:
+\begin{codebox}
+\bibentry{menu}\marg{menu.help,
+  \bibentryfield{name}=\marg{\gls{menufmt}\marg{Help}},
+  \bibentryfield{mnemonic}=\marg{H}
+} 
+\codepar
+\bibentry{menu}\marg{menu.help.manual,
+  \bibentryfield{parent}=\marg{menu.help},
+  \bibentryfield{name}=\marg{\gls{menufmt}\marg{Manual}},
+  \bibentryfield{tooltip}=\marg{Open manual},
+  \bibentryfield{mnemonic}=\marg{M},
+  \bibentryfield{iconimage}=\marg{manual},
+  \bibentryfield{keystroke}=\marg{\gls{keys}\marg{\gls{actualkey}\marg{F1}}}
+}
+\codepar
+\bibentry{button}\marg{button.help,
+  \bibentryfield{name}=\marg{\gls{buttonfmt}\marg{Help}},
+  \bibentryfield{tooltip}=\marg{Open relevant section of the manual},
+  \bibentryfield{mnemonic}=\marg{H},
+  \bibentryfield{defaultkeys}=\marg{format=glsignore},
+  \bibentryfield{iconimage}=\marg{help},
+  \bibentryfield{keystroke}=\marg{\gls{keys}\marg{\gls{keyref}\marg{shift}+\gls{actualkey}\marg{F1}}}
+} 
+\end{codebox}
+The special prefixes \qtt{menu.}\ and \qtt{button.}\ determine the
+entry type (\bibentry{menu} and \bibentry{button}). The special
+suffixes \qtt{.mnemonic}, \qtt{.keystroke}, \qtt{.tooltip},
+\qtt{.iconimage} and \qtt{.defaultkeys} identify entry fields (\bibentryfield{mnemonic},
+\bibentryfield{keystroke}, \bibentryfield{tooltip},
+\bibentryfield{iconimage} and \bibentryfield{defaultkeys}).
+
+The \bibentryfield{defaultkeys} field is a special field that
+supplies default keys to apply when using commands like \gls{gls} or
+\gls{glstext}. For example, the \qtt{button.help} entry will default
+to using an ignored location, which means it will be selected but 
+it won't have a location list unless the format is specifically
+change for a particular reference. This is useful for common entries
+that are referenced so often it would otherwise create a lengthy
+location list, which isn't helpful.
+
+The \sty{texjavahelp} package uses \gls{GlsXtrSetPlusModifier}
+to change the behaviour of the \code{+} modifier so that the format
+is set to the general \optfmt{glsnumberformat} format.
+This means that \code{\gls{gls}\marg{button.help}} won't add a
+location to the location list but
+\code{\gls{gls}+\marg{button.help}} will.
+
+The \sty{texjavahelp} package uses \gls{GlsXtrSetAltModifier} to set
+\code{!} as an alternative modifier to set the format to
+\optfmt{glsignore}. So \code{\gls{gls}!\marg{menu.help}} will
+reference the \qtt{menu.help} entry (which doesn't have
+\bibentryfield{defaultkeys} set) without adding a location to the
+location list.
+
+There are some convenient commands provided to reference entries and
+their fields without having to include the label prefix.
+These are listed in \sectionref{sec:tjhglscmds}.
 
 \section{The \TeXJavaHelp\ \exttext{bib} Format}
 \label{sec:bibformat}
@@ -248,135 +495,162 @@ the following symbols in this document:
 \glsname{dblqt}, \glsname{hashchar}, \glsname{percentchar}, \glsname{tilde},
 \glsname{exclam}, and \glsname{bksl}.
 
-\section{Document Division Commands}
-\label{sec:docdivisioncmds}
+\section{Entry Referencing Commands}
+\label{sec:tjhglscmds}
 
-The standard \LaTeX\ sectioning commands such as \gls{chapter}
-and \gls{section} should be used. These should all be followed by
-\code{\gls{label}\margm{label}}, which allows the section to be
-referenced by a context-sensitive help button. The label also
-determines the file basename if the section should be split into a
-separate file. Any colon prefix will be stripped and all dots will
-be replaced with underscores when forming the basename.
+The \sty{glossaries-extra-bib2gls} package provides some commands
+for use with labels that may have a prefix from a known set.
+Once you have established the set of label prefixes, you can use
+commands like \gls{dgls} or \gls{dglsfield} to reference entries
+without including the prefix.
 
-For example, this section is started with:
-\begin{codebox}
-\gls{section}\marg{Document Division Commands}
-\gls{label}\marg{sec:docdivisioncmds}
-\end{codebox}
-So the section label is \code{sec:docdivisioncmds} but the
-\qtt{sec:} prefix will be stripped when determining the filename. So
-the filename for this section has the basename \filefmt{docdivisioncmds}
-(the file extension is determined by \app{texjavahelpmk}['s]
-\switch{html-ext} option, and defaults to \ext{html}).
-
-\begin{information}
-If any glossary entry hyperlinks where the target is in the form
-\code{wrglossary.}\meta{n} have the wrong filename in the link,
-use the \optval{debug}{showwrglos} option when loading
-\sty{texjavahelp}. (This will be passed to \sty{glossaries-extra}.)
-Then compare the target numbers in the PDF with those in the HTML
-files. The problem may stem from an entry being indexed when the
-document is built with \LaTeX\ but \app{texjavahelpmk} omits the
-indexing.
-\end{information}
-
-The navigation tree is determined by the table of contents \ext{toc}
-file. However, there are some divisions that are not typically
-included in the table of contents (such as the table of contents
-itself) that need to be in the navigation tree.
-Some commands are provided to ensure that nodes are added to the
-navigation tree where there is no corresponding entry in the
-\ext{toc} file.
-
-\cmddef{WriteTJHDivisionInfo}
-This simply writes a line to the \ext{aux} file, which
-\app{texjavahelpmk} can pick up. This should be placed immediately
-after the section heading. For example:
-\begin{codebox}
-\gls{chapter}*\marg{Foreword}
-\gls{WriteTJHDivisionInfo}\marg{chapter}\marg{}\marg{Foreword}\marg{foreword}\marg{\cmd{thepage}}
-\end{codebox}
-The \meta{unit} argument should be the sectional unit
-(\qtt{chapter}, \qtt{section} etc). The \meta{prefix} argument is
-the title prefix, if applicable. This should be empty if there's no
-prefix (which is more likely to be the case as the prefix is
-typically the chapter or section number). The \meta{target} is a
-label that will be used as the basis of the node filename.
-The \meta{location} argument will typically be the page number, but
-it's mostly ignored.
-
-If \cls{scrbook} or \cls{scrreport} have been loaded, this command
-will be used after the table of contents title. It's automatically added with:
+The \sty{texjavahelp} package sets up the label prefix list with the
+following:
 \begin{compactcodebox}
-\cmd{AfterTOCHead}\oarg{toc}
- \marg{\gls{WriteTJHDivisionInfo}\marg{chapter}\marg{}\marg{\cmd{contentsname}}\marg{toc}\marg{\cmd{thepage}}}
+\gls{glsxtraddlabelprefix}\marg{action.}
+\gls{glsxtraddlabelprefix}\marg{button.}
+\gls{glsxtraddlabelprefix}\marg{menu.}
+\gls{glsxtraddlabelprefix}\marg{widget.}
+\gls{glsxtraddlabelprefix}\marg{help.}
+\gls{glsxtraddlabelprefix}\marg{index.}
+\gls{glsxtraddlabelprefix}\marg{label.}
+\gls{glsxtraddlabelprefix}\marg{}
 \end{compactcodebox}
 
-Any sectioning units that are added to the table of
-contents will need to have a label after the chapter heading
-to set the corresponding file's basename.  This includes unnumbered
-chapters that are automatically added with KOMA-Script's
-\optfmt{toc=listof} option. For example:
+This means that you can use \gls{dgls} for entries with any of these
+prefixes, for example, \code{\gls{dgls}\marg{help}} would match
+\qtt{button.help} so it would be equivalent to
+\code{\gls{gls}\marg{button.help}} but it wouldn't pick up
+\code{\gls{gls}\marg{menu.help}} which might also be valid.
+
+The following commands are provided by the \sty{texjavahelp} package, some
+of which use this label prefix system, but some use a specific
+prefix instead.
+
+\cmddef{widget}
+Similar to \gls{glstext} but encapsulates the \bibentryfield{text}
+field in \gls{widgetfmt} and uses the prefix label list
+to find the first valid prefix. There are case-changing
+alternatives, \inlineglsdef{Widget} (sentence-case) and
+\inlineglsdef{WIDGET} (all-caps) although widget text is
+more typically formatted using the same case as shown in the application.
+For example:
+\begin{coderesult}
+\gls{widget}\marg{help}
+\tcblower
+\widget{help}
+\end{coderesult}
+
+\cmddef{btn}
+Similar to \gls{dgls} (with no modifier) but this command will check
+if the \bibentryfield{iconimage} field has been set. If it has, 
+the image will be inserted before the text, separated by:
+\cmddef{btniconsep}
+This expands to \csfmt{space} by default. For example:
+\begin{coderesult}
+\gls{btn}\marg{help}
+\tcblower
+\btn{help}
+\end{coderesult}
+Compare this with the earlier \code{\gls{widget}\marg{help}}
+example, which doesn't show the icon image. The image file will need
+to be on the graphics path so that \gls{includegraphics} can find
+it.
+
+\cmddef{menutrail}
+Displays the menu trail that leads to the given entry (identified by
+\meta{entry-label}), which represents a menu item. The trail is 
+obtained from the entry's hierarchy but it stops if a parent doesn't
+have the \bibentryfield{category} set to \qtt{menu}. Each item is
+formatted using \gls{menuitemref}.
+For example:
+\begin{coderesult}
+\gls{menutrail}\marg{menu.help.manual}
+\tcblower
+\menutrail{menu.help.manual}
+\end{coderesult}
+
+\cmddef{menusep}
+Expands to the separator used by \gls{menutrail}.
+
+\cmddef{menuitemref}
+Formats the entry item in \gls{menutrail}. This just expands to
+\code{\gls{glshyperlink}\margm{label}}.
+
+\cmddef{menu}
+This first does \code{\gls{menutrail}\margm{entry-label}} and
+then does \code{\gls{glsadd}\oargm{options}\margm{entry-label}} 
+to index the entry. The \meta{entry-label}
+is formed by concatenating \meta{label-prefix} and \meta{label}.
+The \meta{prefix-label} defaults to \qtt{menu.}\ and
+the starred version prepends \optfmt{format=glsignore} to
+\meta{options}.
+For example:
+\begin{coderesult}
+\gls{menu}\marg{help.manual}
+\tcblower
+\menu{help.manual}
+\end{coderesult}
+
+\cmddef{keyref}
+A shortcut for:
 \begin{compactcodebox}
-\cmd{AfterTOCHead}\oarg{lof}\marg{\cmd{label}\marg{listoffigures}}
-\cmd{AfterTOCHead}\oarg{lot}\marg{\cmd{label}\marg{listoftables}}
+\gls{gls}\oargm{options}\marg{manual.keystroke.\meta{label}}\oargm{insert}
 \end{compactcodebox}
-This doesn't need to be done for navigational units added with 
-\gls{WriteTJHDivisionInfo} as the \meta{target} argument already specifies
-this.
-
-\cmddef{HeadlessSection}
-This is a shortcut command that creates a hyperlink target and uses
-\gls{WriteTJHDivisionInfo} where a new navigation node should start
-but there's no associated title. The \meta{title} argument is the
-title for the navigation node and does not appear in the document.
-The other arguments are as for \gls{WriteTJHDivisionInfo}.
-
-\envdef{prefrontmatterblock}
-A shortcut environment that's only available if \gls{chapter} is
-defined. This simply does:
-\begin{compactcodebox*}
-\gls{clearpage}
-\gls{HeadlessSection}\margm{target}\marg{chapter}\margm{title}
-\gls{pagestyle}\marg{empty}
-\meta{body}
-\gls{clearpage}
-\end{compactcodebox*}
-
+This command may be used to reference keystrokes but they won't
+appear in the index as the \qtt{manual.}\ prefix will cause them to
+be moved into an ignored glossary (assuming that \gls{TeXJavaHelpGlsResourceOptions}
+is used in the resource options).
 For example:
-\begin{codebox}
-\cbeg{prefrontmatterblock}\marg{note}\marg{Note}
-Some untitled front matter note on a page with no header or footer.
-\cend{prefrontmatterblock}
-\end{codebox}
+\begin{coderesult}
+\gls{keyref}\marg{pageup}
+\tcblower
+\keyref{pageup}
+\end{coderesult}
+There's no hyperlink because there's no target.
 
-\cmddef{WriteTJHLabel}
-This is used to establish where a label should actually be for cases
-where the label, created with \gls{label}, might float to a different division. The
-floating commands \gls{FloatFig}, \gls{FloatSubFigs} and \gls{FloatTable}
-all use this command to counteract the possibility that the floats
-may end up in a different section. If you directly use floating
-environments you may find that the HTML anchor corresponding to the
-label is associated with the wrong HTML file. If this happens, you
-will need to place \gls{WriteTJHLabel} at the place where the float
-(which won't float in the HTML file) will occur in the HTML file.
-
-\begin{important}
-\gls{WriteTJHLabel} must be used outside of the floating
-environment. The actual label must still be created with
-\gls{label}.
-\end{important}
-
+\cmddef{keydescref}
+A shortcut that uses \gls{gls} to reference the entry with the
+label \code{manual.keystroke.\meta{label}} and the \optfmt{format}
+set to \glscsname{keys} followed by
+(if set) the description converted to lowercase. This command doesn't have modifiers.
 For example:
-\begin{codebox}
-\gls{WriteTJHLabel}\marg{fig:example}
-\cbeg{figure}[p]
-\gls{includegraphics}\marg{example-image}
-\gls{caption}\marg{Example Image}
-\gls{label}\marg{fig:example}
-\cend{figure}
-\end{codebox}
+\begin{coderesult}
+\gls{keydescref}\marg{pageup}
+\tcblower
+\keydescref{pageup}
+\end{coderesult}
+Note the difference in the way the keystroke is formatted compared
+with just using \gls{keyref}.
+
+\cmddef{desckeyref}
+Similar to \gls{keydescref} but the description (if set) comes
+first.
+\begin{coderesult}
+\gls{desckeyref}\marg{pageup}
+\tcblower
+\desckeyref{pageup}
+\end{coderesult}
+
+\cmddef{Desckeyref}
+As \gls{desckeyref} but if the description is present, it will be
+converted to sentence-case. No case-change will be applied if the
+description isn't present.
+\begin{coderesult}
+\gls{Desckeyref}\marg{pageup}
+\tcblower
+\Desckeyref{pageup}
+\end{coderesult}
+Note that in this case, the description is actually specified in
+title case:
+\begin{compactcodebox}
+\bibentry{keystroke}\marg{manual.keystroke.pageup,
+  \bibentryfield{name}=\marg{PgUp},
+  \bibentryfield{description}=\marg{Page Up}
+}
+\end{compactcodebox}
+This means that the case change has no effect.
+
 
 \section{Semantic Commands}
 \label{sec:semanticcmds}
@@ -408,6 +682,7 @@ Buttons and menu items may have mnemonics, such as
 \mnemonic{help} for the help button or \mnemonictrail{help.manual}
 for the \menu{help.manual} menu item.
 
+\cmddef{strong}
 In the event that \gls{strong} hasn't been defined, the
 \sty{texjavahelp} package will provide it.
 \begin{coderesult}
@@ -417,6 +692,7 @@ In the event that \gls{strong} hasn't been defined, the
 \emph{emphasized},
 \strong{strong}.
 \end{coderesult}
+
 The \app{texjavahelpmk} application on parsing this will create the HTML code:
 \begin{codebox*}
 \xmlelem{em}emphasized\xmlEndElem{em},
@@ -442,9 +718,9 @@ have any markup.
 
 Other semantic commands will usually be written with a
 \xmlelem{span} tag, but as Java's HTML and CSS support is quite
-limited, the default \switch{helpset} setting will sometimes use
+limited, the default \TJHMKswitch{helpset} setting will sometimes use
 \xmlelem{font} to get around some of those limitations.
-The \switch{html} setting switches on \app{texjavahelpmk}['s] HTML5
+The \TJHMKswitch{html} setting switches on \app{texjavahelpmk}['s] HTML5
 mode so in that case \xmlelem{font} won't be used.
 
 A semantic command can be defined with:
@@ -1150,6 +1426,136 @@ Expands to
 \cmddef{keyvallist}
 Expands to \code{\gls{meta}\marg{key\gls{dequals} value list}}.
 
+\section{Document Division Commands}
+\label{sec:docdivisioncmds}
+
+The standard \LaTeX\ sectioning commands such as \gls{chapter}
+and \gls{section} should be used. These should all be followed by
+\code{\gls{label}\margm{label}}, which allows the section to be
+referenced by a context-sensitive help button. The label also
+determines the file basename if the section should be split into a
+separate file. Any colon prefix will be stripped and all dots will
+be replaced with underscores when forming the basename.
+
+For example, this section is started with:
+\begin{codebox}
+\gls{section}\marg{Document Division Commands}
+\gls{label}\marg{sec:docdivisioncmds}
+\end{codebox}
+So the section label is \code{sec:docdivisioncmds} but the
+\qtt{sec:} prefix will be stripped when determining the filename. So
+the filename for this section has the basename \filefmt{docdivisioncmds}
+(the file extension is determined by \app{texjavahelpmk}['s]
+\TJHMKswitch{html-ext} option, and defaults to \ext{html}).
+
+\begin{information}
+If any glossary entry hyperlinks where the target is in the form
+\code{wrglossary.}\meta{n} have the wrong filename in the link,
+use the \optval{debug}{showwrglos} option when loading
+\sty{texjavahelp}. (This will be passed to \sty{glossaries-extra}.)
+Then compare the target numbers in the PDF with those in the HTML
+files. The problem may stem from an entry being indexed when the
+document is built with \LaTeX\ but \app{texjavahelpmk} omits the
+indexing.
+\end{information}
+
+The navigation tree is determined by the table of contents \ext{toc}
+file. However, there are some divisions that are not typically
+included in the table of contents (such as the table of contents
+itself) that need to be in the navigation tree.
+Some commands are provided to ensure that nodes are added to the
+navigation tree where there is no corresponding entry in the
+\ext{toc} file.
+
+\cmddef{WriteTJHDivisionInfo}
+This simply writes a line to the \ext{aux} file, which
+\app{texjavahelpmk} can pick up. This should be placed immediately
+after the section heading. For example:
+\begin{codebox}
+\gls{chapter}*\marg{Foreword}
+\gls{WriteTJHDivisionInfo}\marg{chapter}\marg{}\marg{Foreword}\marg{foreword}\marg{\cmd{thepage}}
+\end{codebox}
+The \meta{unit} argument should be the sectional unit
+(\qtt{chapter}, \qtt{section} etc). The \meta{prefix} argument is
+the title prefix, if applicable. This should be empty if there's no
+prefix (which is more likely to be the case as the prefix is
+typically the chapter or section number). The \meta{target} is a
+label that will be used as the basis of the node filename.
+The \meta{location} argument will typically be the page number, but
+it's mostly ignored.
+
+If \cls{scrbook} or \cls{scrreport} have been loaded, this command
+will be used after the table of contents title. It's automatically added with:
+\begin{compactcodebox}
+\cmd{AfterTOCHead}\oarg{toc}
+ \marg{\gls{WriteTJHDivisionInfo}\marg{chapter}\marg{}\marg{\cmd{contentsname}}\marg{toc}\marg{\cmd{thepage}}}
+\end{compactcodebox}
+
+Any sectioning units that are added to the table of
+contents will need to have a label after the chapter heading
+to set the corresponding file's basename.  This includes unnumbered
+chapters that are automatically added with KOMA-Script's
+\optfmt{toc=listof} option. For example:
+\begin{compactcodebox}
+\cmd{AfterTOCHead}\oarg{lof}\marg{\cmd{label}\marg{listoffigures}}
+\cmd{AfterTOCHead}\oarg{lot}\marg{\cmd{label}\marg{listoftables}}
+\end{compactcodebox}
+This doesn't need to be done for navigational units added with 
+\gls{WriteTJHDivisionInfo} as the \meta{target} argument already specifies
+this.
+
+\cmddef{HeadlessSection}
+This is a shortcut command that creates a hyperlink target and uses
+\gls{WriteTJHDivisionInfo} where a new navigation node should start
+but there's no associated title. The \meta{title} argument is the
+title for the navigation node and does not appear in the document.
+The other arguments are as for \gls{WriteTJHDivisionInfo}.
+
+\envdef{prefrontmatterblock}
+A shortcut environment that's only available if \gls{chapter} is
+defined. This simply does:
+\begin{compactcodebox*}
+\gls{clearpage}
+\gls{HeadlessSection}\margm{target}\marg{chapter}\margm{title}
+\gls{pagestyle}\marg{empty}
+\meta{body}
+\gls{clearpage}
+\end{compactcodebox*}
+
+For example:
+\begin{codebox}
+\cbeg{prefrontmatterblock}\marg{note}\marg{Note}
+Some untitled front matter note on a page with no header or footer.
+\cend{prefrontmatterblock}
+\end{codebox}
+
+\cmddef{WriteTJHLabel}
+This is used to establish where a label should actually be for cases
+where the label, created with \gls{label}, might float to a different division. The
+floating commands \gls{FloatFig}, \gls{FloatSubFigs} and \gls{FloatTable}
+all use this command to counteract the possibility that the floats
+may end up in a different section. If you directly use floating
+environments you may find that the HTML anchor corresponding to the
+label is associated with the wrong HTML file. If this happens, you
+will need to place \gls{WriteTJHLabel} at the place where the float
+(which won't float in the HTML file) will occur in the HTML file.
+
+\begin{important}
+\gls{WriteTJHLabel} must be used outside of the floating
+environment. The actual label must still be created with
+\gls{label}.
+\end{important}
+
+For example:
+\begin{codebox}
+\gls{WriteTJHLabel}\marg{fig:example}
+\cbeg{figure}[p]
+\gls{includegraphics}\marg{example-image}
+\gls{caption}\marg{Example Image}
+\gls{label}\marg{fig:example}
+\cend{figure}
+\end{codebox}
+
 \section{Floats}
 \label{sec:floats}
 
@@ -1440,7 +1846,7 @@ but is not supported by the \gls{TeXParserLib}.
 This just does \meta{\LaTeX\ code} when compiling with
 \LaTeX\ but the \gls{TeXParserLib} will attempt to convert
 the supplied code to an image if \app{texjavahelpmk} is run 
-with the default \switch{convert-images} setting.
+with the default \TJHMKswitch{convert-images} setting.
 Recognised options:
 
 \optiondef{TeXParserLibToImage.alt}
@@ -1489,7 +1895,7 @@ the same as for \gls{includegraphics} and inputs
 include \LaTeX\ image code, such as \sty{tikz} commands).
 With \app{texjavahelpmk}, a bitmap will be searched for with the
 same basename, otherwise
-it the default \switch{convert-images} setting is on,
+it the default \TJHMKswitch{convert-images} setting is on,
 \app{texjavahelpmk} will convert the image to a bitmap.
 
 \cmddef{includetimg}
@@ -1508,33 +1914,39 @@ available. If true, this will put a frame around the image.
 
 \appdef{texjavahelpmk}
 
-Use the \switch{help} switch 
+Use the \TJHMKswitch{help} switch 
 (or \swch{help}) for help and the
-\switch{version} switch
+\TJHMKswitch{version} switch
 (or \swch{version}) for the version information.
 
-\switchdef{help}
+\TJHMKswitchdef{help}
 Display help message and exit.
 
-\switchdef{version}
+\TJHMKswitchdef{version}
 Display version information and exit.
 
-\switchdef{in}
+\TJHMKswitchdef{verbose}
+Switch on verbose mode.
+
+\TJHMKswitchdef{noverbose}
+Switch off verbose mode.
+
+\TJHMKswitchdef{in}
 Specifies the input file. The switch may be omitted (that is,
 \meta{tex-file} may just be provided) provided that
-\switch{output} is also used or the input file is specified before
+\TJHMKswitch{output} is also used or the input file is specified before
 the output directory.
 
-\switchdef{output}
+\TJHMKswitchdef{output}
 Specifies the output directory. The switch may be omitted
 (that is, \meta{out-dir} may just be provided) provided that
-\switch{in} is also used or the output directory is specified after
+\TJHMKswitch{in} is also used or the output directory is specified after
 the input file.
 
-\switchdef{html-ext}
+\TJHMKswitchdef{html-ext}
 The extension to use for the HTML files.
 
-\switchdef{split}
+\TJHMKswitchdef{split}
 Specifies the sectioning level to split on. The level should be a
 number that corresponds to the section level (0 for chapter, 1 for
 section, etc).
@@ -1545,20 +1957,23 @@ are constructed from the label. Any colon prefix such as
 removed or replaced by underscores. If a section isn't labelled, the basename
 will be \metafilefmt{node}{n}{} instead.
 
-\switchdef{prefix-split}
+\TJHMKswitchdef{prefix-split}
 The HTML filename will be prefixed with the input file basename.
 For example, if the input file is \filefmt{foo.tex} and the
 introduction section has been assigned the label \code{sec:intro}
 then the HTML file for the introduction section will be
 \filefmt{foo-intro.html} instead of just \filefmt{intro.html}.
 
-\switchdef{noprefix-split}
+\TJHMKswitchdef{noprefix-split}
 Don't prefix the HTML filename with the input file basename.
 
-\switchdef{out-charset}
+\TJHMKswitchdef{charset}
+Sets the default character encoding.
+
+\TJHMKswitchdef{out-charset}
 Sets the character encoding for the output files.
 
-\switchdef{image-dest}
+\TJHMKswitchdef{image-dest}
 Specifies where to put output images. The given directory should be
 relative to the output directory.  If \meta{directory} is an empty
 string (the default) then the images will be copied to a location
@@ -1572,95 +1987,95 @@ is in the directory \filefmt{doc/} and the image \filefmt{img1.png} is in
 \filefmt{helpset/}, then with the default setting, \filefmt{img1.png}
 will be copied to \filefmt{helpset/images1/} and \filefmt{img2.png}
 will be copied to \filefmt{helpset/images2/}. However, if
-\switch{image-dest} sets the image destination to \filefmt{images}
+\TJHMKswitch{image-dest} sets the image destination to \filefmt{images}
 then both \filefmt{img1.png} and \filefmt{img2.png} will be copied
 to \filefmt{helpset/images/}.  
 
-\switchdef{convert-images}
+\TJHMKswitchdef{convert-images}
 Use \pdfLaTeX\ or \LuaLaTeX\ to convert \LaTeX\ code (with
 \gls{TeXParserLibToImage} or input with \gls{includeimg} etc) to
 bitmap images. This is the default. The temporary files used in this
-operation will be deleted by default. Use \switchdef{no-rm-tmp-dir}
+operation will be deleted by default. Use \TJHMKswitch{no-rm-tmp-dir}
 to retain them.
 
-\switchdef{noconvert-images}
+\TJHMKswitchdef{noconvert-images}
 Don't convert \LaTeX\ image files.
 
-\switch{image-preamble}
+\TJHMKswitchdef{image-preamble}
 If an image needs to be automatically generated, the temporary
 \LaTeX\ file used to create the image should have the preamble set
 to \meta{\LaTeX\ code}. If not set, the preamble will be the same as
 the preamble from the input file.
 
-\switch{image-preamble-from-file}
-As \switch{image-preamble} but the content is obtained from the file
+\TJHMKswitchdef{image-preamble-from-file}
+As \TJHMKswitch{image-preamble} but the content is obtained from the file
 identified by \meta{filename}.
 
 The following options govern the HTML output.
 
-\switchdef{entities}
+\TJHMKswitchdef{entities}
 Use HTML entities for non-ASCII characters. This will interfere with
 the helpset search data.
 
-\switchdef{noentities}
+\TJHMKswitchdef{noentities}
 Don't use HTML entities for non-ASCII characters (default).
 
-\switchdef{support-unicode-script}
+\TJHMKswitchdef{support-unicode-script}
 Use Unicode superscripts or subscripts where available.
 
-\switchdef{nosupport-unicode-script}
+\TJHMKswitchdef{nosupport-unicode-script}
 Don't use Unicode superscripts or subscripts, just
 use \code{sub} or \code{sup} elements (default).
 
-\switchdef{head}
+\TJHMKswitchdef{head}
 Add \meta{html} code to the HTML header.
 
-\switch{body-preamble}
+\TJHMKswitchdef{body-preamble}
 Insert \meta{html} at the start of the HTML body.
 
-\switch{body-preamble-from-file}
-As \switch{body-preamble} but the content is obtained from the file
+\TJHMKswitchdef{body-preamble-from-file}
+As \TJHMKswitch{body-preamble} but the content is obtained from the file
 identified by \meta{filename}.
 
-\switch{body-postamble}
+\TJHMKswitchdef{body-postamble}
 Insert \meta{html} at the end of the HTML body.
 
-\switch{body-preamble-from-file}
-As \switch{body-preamble} but the content is obtained from the file
+\TJHMKswitchdef{body-preamble-from-file}
+As \TJHMKswitch{body-preamble} but the content is obtained from the file
 identified by \meta{filename}.
 
-\switchdef{helpset}
+\TJHMKswitchdef{helpset}
 Create helpset files. These files are designed for integration with
 the \TeX\ Java Help system, which means that there won't be any
 HTML5 markup (as it's not supported by Java's \code{HTMLDocument} class).
 There also won't be any navigation added as that's dealt with by the
 Help window (see \sectionref{sec:helpwindows}).
 This setting automatically implements
-\switch{nobreadcrumbtrail}, \switch{nominitoc} and
-\switch{nomathjax}.
+\TJHMKswitch{nobreadcrumbtrail}, \TJHMKswitch{nominitoc} and
+\TJHMKswitch{nomathjax}.
 
-\switchdef{html}
+\TJHMKswitchdef{html}
 Indicates that the HTML files are not intended for use with the
 \TeX\ Java Help system, so HTML5 markup will be used and a
 navigation line will be added to the end of each HTML body. This setting
-also automatically implements \switch{breadcrumbtrail},
-\switch{minitoc} and \switch{mathjax}.
+also automatically implements \TJHMKswitch{breadcrumbtrail},
+\TJHMKswitch{minitoc} and \TJHMKswitch{mathjax}.
 
-\switchdef{nohelpset}
-Deprecated synonym of \switch{html}.
+\TJHMKswitchdef{nohelpset}
+Deprecated synonym of \TJHMKswitch{html}.
 
-\switchdef{epub}
+\TJHMKswitchdef{epub}
 This is still experimental. This switch indicates that an EPUB file
 should be created. Since this format requires XHTML, this setting
 will switch on \app{texjavahelpmk}['s] XML mode. All the HTML and
 CSS files will be created in the target directory (but not the XML
-files that would ordinarily be created with \switch{helpset}) and
+files that would ordinarily be created with \TJHMKswitch{helpset}) and
 also the additional files required by the EPUB format. The EPUB file
 will be created using these files (but it will also contain the
 \filefmt{mimetype} file which won't be created separately). 
 
-This option automatically implements \switch{nomathjax},
-\switch{nominitoc} and \switch{nobreadcrumbtrail}.
+This option automatically implements \TJHMKswitch{nomathjax},
+\TJHMKswitch{nominitoc} and \TJHMKswitch{nobreadcrumbtrail}.
 
 \begin{important}
 The XML format has restrictions on the characters permitted as
@@ -1668,87 +2083,87 @@ identifiers so \app{texjavahelpmk} will strip or replace problematic
 characters in labels but this isn't guaranteed to always work.
 \end{important}
 
-\switchdef{mathjax}
+\TJHMKswitchdef{mathjax}
 Add MathJax support. Note that Java's \code{HTMLDocument} class
 doesn't support MathJax, so this setting is off by default.
 
-\switchdef{nomathjax}
+\TJHMKswitchdef{nomathjax}
 Don't add MathJax support. This will just use an HTML
 approximation which is quite limited.
 
-\switch{breadcrumbtrail}
+\TJHMKswitchdef{breadcrumbtrail}
 Add breadcrumb trail to the start of HTML body.
 
-\switch{nobreadcrumbtrail}
+\TJHMKswitchdef{nobreadcrumbtrail}
 Don't add breadcrumb trail to the start of HTML body.
 
-\switchdef{minitoc}
+\TJHMKswitchdef{minitoc}
 Add minitoc to HTML body. This isn't required for helpset files as
 the Help window provides a navigation panel.
 
-\switchdef{nominitoc}
+\TJHMKswitchdef{nominitoc}
 Don't add minitoc to HTML body.
 
-\switchdef{minitoc-div-class}
+\TJHMKswitchdef{minitoc-div-class}
 If \meta{class-name} not empty, encapsulate minitoc in a
 div with the given class name. This option is ignored with
-\switch{nominitoc}.
+\TJHMKswitch{nominitoc}.
 
-\switchdef{minitoc-div-id}
+\TJHMKswitchdef{minitoc-div-id}
 If \meta{id-name} not empty, encapsulate minitoc in a
 div with the id class name. This option is ignored with
-\switch{nominitoc}.
+\TJHMKswitch{nominitoc}.
 
-If neither \switch{minitoc-div-class} nor \switch{minitoc-div-id} is
+If neither \TJHMKswitch{minitoc-div-class} nor \TJHMKswitch{minitoc-div-id} is
 set to a non-empty value, then the encapsulating div won't be added.
 
-\switch{minitoc-preamble}
+\TJHMKswitchdef{minitoc-preamble}
 Insert \meta{html} at the start of the minitoc (inside the
-encapsulating div if \switch{minitoc-div-class} or \switch{minitoc-div-id} have been
+encapsulating div if \TJHMKswitch{minitoc-div-class} or \TJHMKswitch{minitoc-div-id} have been
 set).
 
-\switch{minitoc-preamble-from-file}
-As \switch{minitoc-preamble} but the content is obtained from the file
+\TJHMKswitchdef{minitoc-preamble-from-file}
+As \TJHMKswitch{minitoc-preamble} but the content is obtained from the file
 identified by \meta{filename}.
 
-\switch{minitoc-postamble}
+\TJHMKswitchdef{minitoc-postamble}
 Insert \meta{html} at the end of the minitoc (inside the
-encapsulating div if \switch{minitoc-div-class} or \switch{minitoc-div-id} have been
+encapsulating div if \TJHMKswitch{minitoc-div-class} or \TJHMKswitch{minitoc-div-id} have been
 set).
 
-\switch{minitoc-postamble-from-file}
-As \switch{minitoc-postamble} but the content is obtained from the file
+\TJHMKswitchdef{minitoc-postamble-from-file}
+As \TJHMKswitch{minitoc-postamble} but the content is obtained from the file
 identified by \meta{filename}.
 
 The following options are provided for debugging purposes.
 
-\switchdef{no-rm-tmp-dir}
+\TJHMKswitchdef{no-rm-tmp-dir}
 Don't remove temporary files on exit.
 
-\switchdef{rm-tmp-dir}
+\TJHMKswitchdef{rm-tmp-dir}
 Remove temporary files on exit (default).
 
-\switchdef{log}
+\TJHMKswitchdef{log}
 Set the \TeX\ Parser log file to \meta{filename}.
 
-\switchdef{nolog}
+\TJHMKswitchdef{nolog}
 Don't log messages.
 
-\switchdef{debug}
+\TJHMKswitchdef{debug}
 Switch on debug mode. The \meta{level} (if present) should be an
 integer greater than 0. (Setting the level to 0 is equivalent to
 switching off debugging.)
 
-\switchdef{debug-mode}
+\TJHMKswitchdef{debug-mode}
 
 Enable \TeX\ Parser debugging. Be aware that this can be extremely
 verbose.
 
-\switchdef{nodebug}
+\TJHMKswitchdef{nodebug}
 Switch off debugging mode (default).
 
-\switchdef{no-debug}
-Synonym for \switch{nodebug}.
+\TJHMKswitchdef{no-debug}
+Synonym for \TJHMKswitch{nodebug}.
 
 \chapter{The \TeX\ Java Help Library (\filetext{texjavahelplib.jar})}
 \label{sec:texjavahelplib}

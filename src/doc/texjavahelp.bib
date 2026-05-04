@@ -21,18 +21,21 @@
 
 @switch{switch.tjhxml2bib.help,
   parent={app.tjhxml2bib},
+  name={\longargfmt{help}},
   shortswitch={h},
   description={Prints help and exits}
 }
 
 @switch{switch.tjhxml2bib.version,
   parent={app.tjhxml2bib},
+  name={\longargfmt{version}},
   shortswitch={v},
   description={Prints version information and exits}
 }
 
 @switch{switch.tjhxml2bib.in,
   parent={app.tjhxml2bib},
+  name={\longargfmt{in}},
   shortswitch={i},
   syntax={\meta{XML-file}},
   description={add \meta{XML-file} to the list of input files
@@ -41,6 +44,7 @@
 
 @switch{switch.tjhxml2bib.output,
   parent={app.tjhxml2bib},
+  name={\longargfmt{output}},
   shortswitch={o},
   syntax={\meta{BIB-file}},
   description={specifies \meta{BIB-file} as the output file}
@@ -48,273 +52,368 @@
 
 @switch{switch.tjhxml2bib.out-charset,
   parent={app.tjhxml2bib},
+  name={\longargfmt{out\dhyphen charset}},
   syntax={\meta{charset}},
   description={specifies \meta{charset} as the encoding for the output file}
 }
 
 @switch{switch.tjhxml2bib.provide-xml,
   parent={app.tjhxml2bib},
+  name={\longargfmt{provide\dhyphen xml}},
   description={copy XML source files from \app{tjhxml2bib}['s] resource
 directory if missing}
 }
 
 @switch{switch.tjhxml2bib.copy-overwrite-xml,
   parent={app.tjhxml2bib},
+  name={\longargfmt{copy\dhyphen overwrite\dhyphen xml}},
   description={copy XML source files from \app{tjhxml2bib}['s] resource
 directory if missing or if \app{tjhxml2bib}['s] file is newer}
 }
 
 @switch{switch.tjhxml2bib.debug,
   parent={app.tjhxml2bib},
+  name={\longargfmt{debug}},
   description={switch on debug mode}
 }
 
 @switch{switch.tjhxml2bib.nodebug,
   parent={app.tjhxml2bib},
+  name={\longargfmt{nodebug}},
   description={switch off debug mode (default)}
 }
+
+@application{app.tjhflattendocsrc,
+ name={\appfmt{tjh\-flatten\-doc\-src}},
+ syntax={\oargm{options} \meta{tex-file} \meta{out-dir}}
+}
+
+@switch{switch.tjhflattendocsrc.help,
+  parent={app.tjhflattendocsrc},
+  name={\longargfmt{help}},
+  shortswitch={h},
+  description={Prints help and exits}
+}
+
+@switch{switch.tjhflattendocsrc.version,
+  parent={app.tjhflattendocsrc},
+  name={\longargfmt{version}},
+  shortswitch={v},
+  description={Prints version information and exits}
+}
+
+@switch{switch.tjhflattendocsrc.in,
+  parent={app.tjhflattendocsrc},
+  name={\longargfmt{in}},
+  shortswitch={i},
+  syntax={\meta{tex-file}},
+  description={Specifies the input file}
+}
+
+@switch{switch.tjhflattendocsrc.output,
+  parent={app.tjhflattendocsrc},
+  name={\longargfmt{output}},
+  shortswitch={o},
+  syntax={\meta{out-dir}},
+  description={Specifies the output directory}
+}
+
+@switch{switch.tjhflattendocsrc.image-dest,
+  parent={app.tjhflattendocsrc},
+  name={\longargfmt{image\dhyphen dest}},
+  syntax={\meta{directory}},
+  description={Save output images in \meta{directory} (relative to
+the output directory)}
+}
+
 
 @application{app.texjavahelpmk,
  name={\appfmt{tex\-java\-help\-mk}},
  syntax={\oargm{options} \meta{tex-file} \meta{out-dir}}
 }
 
-@switch{switch.help,
+@switch{switch.texjavahelpmk.help,
   parent={app.texjavahelpmk},
+  name={\longargfmt{help}},
   shortswitch={h},
   description={Prints help and exits}
 }
 
-@switch{switch.version,
+@switch{switch.texjavahelpmk.version,
   parent={app.texjavahelpmk},
+  name={\longargfmt{version}},
   shortswitch={v},
   description={Prints version information and exits}
 }
 
-@switch{switch.in,
+@switch{switch.texjavahelpmk.in,
   parent={app.texjavahelpmk},
+  name={\longargfmt{in}},
   shortswitch={i},
   syntax={\meta{tex-file}},
   description={Specifies the input file}
 }
 
-@switch{switch.output,
+@switch{switch.texjavahelpmk.output,
   parent={app.texjavahelpmk},
+  name={\longargfmt{output}},
   shortswitch={o},
   syntax={\meta{out-dir}},
   description={Specifies the output directory}
 }
 
-@switch{switch.image-dest,
+@switch{switch.texjavahelpmk.image-dest,
   parent={app.texjavahelpmk},
+  name={\longargfmt{image\dhyphen dest}},
   syntax={\meta{directory}},
   description={Save output images in \meta{directory} (relative to
 the output directory)}
 }
 
-@switch{switch.out-charset,
+@switch{switch.texjavahelpmk.charset,
   parent={app.texjavahelpmk},
+  name={\longargfmt{charset}},
+  syntax={\meta{charset}},
+  description={Set the default character encoding to \meta{charset}}
+}
+
+@switch{switch.texjavahelpmk.out-charset,
+  parent={app.texjavahelpmk},
+  name={\longargfmt{out\dhyphen charset}},
   syntax={\meta{charset}},
   description={Set the character encoding to \meta{charset} for the
 output files}
 }
 
-@switch{switch.html-ext,
+@switch{switch.texjavahelpmk.html-ext,
   parent={app.texjavahelpmk},
+  name={\longargfmt{html\dhyphen ext}},
   syntax={\meta{extension}},
   initvalue={html},
   description={Set the HTML file extension.}
 }
 
-@switch{switch.head,
+@switch{switch.texjavahelpmk.head,
   parent={app.texjavahelpmk},
+  name={\longargfmt{head}},
   syntax={\meta{html}},
   description={Add \meta{html} code to the HTML header.}
 }
 
-@switch{switch.helpset,
+@switch{switch.texjavahelpmk.helpset,
   parent={app.texjavahelpmk},
-  description={Create helpset files.}
+  name={\longargfmt{helpset}},
+  description={Create helpset files (default).}
 }
 
-@switch{switch.html,
+@switch{switch.texjavahelpmk.html,
   parent={app.texjavahelpmk},
+  name={\longargfmt{html}},
   description={Create HTML5 files instead of helpset files.}
 }
 
-@switch{switch.nohelpset,
+@switch{switch.texjavahelpmk.nohelpset,
   parent={app.texjavahelpmk},
-  alias={switch.html}
+  name={\longargfmt{nohelpset}},
+  alias={switch.texjavahelpmk.html}
 }
 
-@switch{switch.epub,
+@switch{switch.texjavahelpmk.epub,
   parent={app.texjavahelpmk},
+  name={\longargfmt{epub}},
   description={Create EPUB instead of helpset files.}
 }
 
-@switch{switch.image-preamble,
+@switch{switch.texjavahelpmk.image-preamble,
   parent={app.texjavahelpmk},
+  name={\longargfmt{image\dhyphen preamble}},
   syntax={\meta{\LaTeX\ code}},
   description={If an image needs to be automatically generated, set
 the temporary \LaTeX\ file preamble to \meta{\LaTeX\ code}.}
 }
 
-@switch{switch.image-preamble-from-file,
+@switch{switch.texjavahelpmk.image-preamble-from-file,
   parent={app.texjavahelpmk},
+  name={\longargfmt{image\dhyphen preamble\dhyphen from\dhyphen file}},
   syntax={\meta{filename}},
-  description={As \switch{image-preamble} but obtains content from
+  description={As \switch{texjavahelpmk.image-preamble} but obtains content from
 the file identified by \meta{filename}.}
 }
 
 
-@switch{switch.body-preamble,
+@switch{switch.texjavahelpmk.body-preamble,
   parent={app.texjavahelpmk},
+  name={\longargfmt{body\dhyphen preamble}},
   syntax={\meta{html}},
   description={Insert \meta{html} at the start of the HTML body.}
 }
 
-@switch{switch.body-preamble-from-file,
+@switch{switch.texjavahelpmk.body-preamble-from-file,
   parent={app.texjavahelpmk},
+  name={\longargfmt{body\dhyphen preamble\dhyphen from\dhyphen file}},
   syntax={\meta{filename}},
-  description={As \switch{body-preamble} but obtains content from
+  description={As \switch{texjavahelpmk.body-preamble} but obtains content from
 the file identified by \meta{filename}.}
 }
 
-@switch{switch.body-postamble,
+@switch{switch.texjavahelpmk.body-postamble,
   parent={app.texjavahelpmk},
+  name={\longargfmt{body\dhyphen postamble}},
   syntax={\meta{html}},
   description={Insert \meta{html} at the end of the HTML body.}
 }
 
-@switch{switch.body-postamble-from-file,
+@switch{switch.texjavahelpmk.body-postamble-from-file,
   parent={app.texjavahelpmk},
+  name={\longargfmt{body\dhyphen postamble\dhyphen from\dhyphen file}},
   syntax={\meta{filename}},
-  description={As \switch{body-postamble} but obtains content from
+  description={As \switch{texjavahelpmk.body-postamble} but obtains content from
 the file identified by \meta{filename}.}
 }
 
-@switch{switch.breadcrumbtrail,
+@switch{switch.texjavahelpmk.breadcrumbtrail,
   parent={app.texjavahelpmk},
+  name={\longargfmt{breadcrumbtrail}},
   description={Add breadcrumb trail to start of HTML body.}
 }
 
-@switch{switch.nobreadcrumbtrail,
+@switch{switch.texjavahelpmk.nobreadcrumbtrail,
   parent={app.texjavahelpmk},
+  name={\longargfmt{nobreadcrumbtrail}},
   description={Don't add breadcrumb trail to start of HTML body.}
 }
 
-@switch{switch.minitoc,
+@switch{switch.texjavahelpmk.minitoc,
   parent={app.texjavahelpmk},
+  name={\longargfmt{minitoc}},
   description={Add minitoc to HTML body before the main content.}
 }
 
-@switch{switch.nominitoc,
+@switch{switch.texjavahelpmk.nominitoc,
   parent={app.texjavahelpmk},
+  name={\longargfmt{nominitoc}},
   description={Don't add minitoc to HTML body.}
 }
 
-@switch{switch.minitoc-preamble,
+@switch{switch.texjavahelpmk.minitoc-preamble,
   parent={app.texjavahelpmk},
+  name={\longargfmt{minitoc\dhyphen preamble}},
   syntax={\meta{html}},
   description={Insert \meta{html} at the start of the minitoc.}
 }
 
-@switch{switch.minitoc-preamble-from-file,
+@switch{switch.texjavahelpmk.minitoc-preamble-from-file,
   parent={app.texjavahelpmk},
+  name={\longargfmt{minitoc\dhyphen preamble\dhyphen from\dhyphen file}},
   syntax={\meta{filename}},
-  description={As \switch{minitoc-preamble} but obtains content from
+  description={As \switch{texjavahelpmk.minitoc-preamble} but obtains content from
 the file identified by \meta{filename}.}
 }
 
-@switch{switch.minitoc-postamble,
+@switch{switch.texjavahelpmk.minitoc-postamble,
   parent={app.texjavahelpmk},
+  name={\longargfmt{minitoc\dhyphen postamble}},
   syntax={\meta{html}},
   description={Insert \meta{html} at the end of the minitoc.}
 }
 
-@switch{switch.minitoc-postamble-from-file,
+@switch{switch.texjavahelpmk.minitoc-postamble-from-file,
   parent={app.texjavahelpmk},
+  name={\longargfmt{minitoc\dhyphen postamble\dhyphen from\dhyphen file}},
   syntax={\meta{filename}},
-  description={As \switch{minitoc-postamble} but obtains content from
+  description={As \switch{texjavahelpmk.minitoc-postamble} but obtains content from
 the file identified by \meta{filename}.}
 }
 
-@switch{switch.minitoc-div-class,
+@switch{switch.texjavahelpmk.minitoc-div-class,
   parent={app.texjavahelpmk},
+  name={\longargfmt{minitoc\dhyphen div\dhyphen class}},
   syntax={\meta{class-name}},
   initvalue={\initvalnotefmt{empty}},
   description={If \meta{class-name} not empty, encapsulate minitoc in a
 div with the given class name.}
 }
 
-@switch{switch.minitoc-div-id,
+@switch{switch.texjavahelpmk.minitoc-div-id,
   parent={app.texjavahelpmk},
+  name={\longargfmt{minitoc\dhyphen div\dhyphen id}},
   syntax={\meta{id-name}},
   initvalue={\initvalnotefmt{empty}},
   description={If \meta{id-name} not empty, encapsulate minitoc in a
 div with the given id name.}
 }
 
-@switch{switch.mathjax,
+@switch{switch.texjavahelpmk.mathjax,
   parent={app.texjavahelpmk},
+  name={\longargfmt{mathjax}},
   description={Add MathJax support.}
 }
 
-@switch{switch.nomathjax,
+@switch{switch.texjavahelpmk.nomathjax,
   parent={app.texjavahelpmk},
+  name={\longargfmt{nomathjax}},
   description={Don't add MathJax support. This will just use an HTML
 approximation which is quite limited. (Default, as
 \code{HTMLDocument} doesn't support MathJax.)}
 }
 
-@switch{switch.support-unicode-script,
+@switch{switch.texjavahelpmk.support-unicode-script,
   parent={app.texjavahelpmk},
+  name={\longargfmt{support-unicode-script}},
   description={Use Unicode superscripts or subscripts where
 available.}
 }
 
-@switch{switch.nosupport-unicode-script,
+@switch{switch.texjavahelpmk.nosupport-unicode-script,
   parent={app.texjavahelpmk},
+  name={\longargfmt{nosupport-unicode-script}},
   description={Don't use Unicode superscripts or subscripts, just
 use \code{sub} or \code{sup} elements (default).}
 }
 
-@switch{switch.entities,
+@switch{switch.texjavahelpmk.entities,
   parent={app.texjavahelpmk},
+  name={\longargfmt{entities}},
   description={Use HTML entities for non-ASCII characters.}
 }
 
-@switch{switch.noentities,
+@switch{switch.texjavahelpmk.noentities,
   parent={app.texjavahelpmk},
+  name={\longargfmt{noentities}},
   description={Don't convert non-ASCII characters into HTML entities
 (default).}
 }
 
-@switch{switch.convert-images,
+@switch{switch.texjavahelpmk.convert-images,
   parent={app.texjavahelpmk},
+  name={\longargfmt{convert\dhyphen images}},
   description={Use \pdfLaTeX\ or \LuaLaTeX\ to convert \LaTeX\ image files
 (referenced with \gls{includeimg} etc) to bitmap images (default).}
 }
 
-@switch{switch.noconvert-images,
+@switch{switch.texjavahelpmk.noconvert-images,
   parent={app.texjavahelpmk},
+  name={\longargfmt{noconvert\dhyphen images}},
   description={Don't convert \LaTeX\ image files}
 }
 
-@switch{switch.prefix-split,
+@switch{switch.texjavahelpmk.prefix-split,
   parent={app.texjavahelpmk},
+  name={\longargfmt{prefix\dhyphen split}},
   description={Use the basename as a prefix for HTML files when
 splitting on sections.}
 }
 
-@switch{switch.noprefix-split,
+@switch{switch.texjavahelpmk.noprefix-split,
   parent={app.texjavahelpmk},
+  name={\longargfmt{noprefix\dhyphen split}},
   description={Don't use the basename as a prefix for HTML files when
 splitting on sections (default).}
 }
 
-@switch{switch.split,
+@switch{switch.texjavahelpmk.split,
   parent={app.texjavahelpmk},
+  name={\longargfmt{split}},
   syntax={\meta{level}},
   initvalue={8},
   description={Set the split level (the sectioning depth to split
@@ -322,46 +421,118 @@ the document on).}
 }
 
 
-@switch{switch.log,
+@switch{switch.texjavahelpmk.log,
   parent={app.texjavahelpmk},
+  name={\longargfmt{log}},
   syntax={\meta{filename}},
   description={Set the log file.}
 }
 
-@switch{switch.nolog,
+@switch{switch.texjavahelpmk.nolog,
   parent={app.texjavahelpmk},
+  name={\longargfmt{nolog}},
   description={Don't log (default).}
 }
 
-@switch{switch.no-rm-tmp-dir,
+@switch{switch.texjavahelpmk.no-rm-tmp-dir,
   parent={app.texjavahelpmk},
+  name={\longargfmt{no\dhyphen rm\dhyphen tmp\dhyphen dir}},
   description={Don't remove temporary files on exit.}
 }
 
-@switch{switch.rm-tmp-dir,
+@switch{switch.texjavahelpmk.rm-tmp-dir,
   parent={app.texjavahelpmk},
+  name={\longargfmt{rm\dhyphen tmp\dhyphen dir}},
   description={Remove temporary files on exit (default).}
 }
 
-@switch{switch.debug,
+@switch{switch.texjavahelpmk.debug,
   parent={app.texjavahelpmk},
+  name={\longargfmt{debug}},
+  syntax={\oargm{level}},
+  description={Switch on debug mode}
+}
+
+@switch{switch.texjavahelpmk.debug-mode,
+  parent={app.texjavahelpmk},
+  name={\longargfmt{debug\dhyphen mode}},
+  syntax={\meta{value}},
+  description={Switch on debug mode for the given verbosity}
+}
+
+@switch{switch.texjavahelpmk.nodebug,
+  parent={app.texjavahelpmk},
+  name={\longargfmt{nodebug}},
+  description={Switch off debug mode (default)}
+}
+
+@switch{switch.texjavahelpmk.no-debug,
+  parent={app.texjavahelpmk},
+  name={\longargfmt{no\dhyphen debug}},
+  description={synonym for \switch{texjavahelpmk.nodebug}},
+  alias={switch.texjavahelpmk.nodebug}
+}
+
+@switch{switch.texjavahelpmk.verbose,
+  parent={app.texjavahelpmk},
+  name={\longargfmt{verbose}},
+  description={Switch on verbose mode}
+}
+
+@switch{switch.texjavahelpmk.noverbose,
+  parent={app.texjavahelpmk},
+  name={\longargfmt{noverbose}},
+  description={Switch off verbose mode}
+}
+
+% COMMON SWITCHES
+
+@indexplural{common-switch,
+  text={common switch},
+  plural={common switches}
+}
+
+@switch{switch.help,
+  parent={common-switch},
+  shortswitch={h},
+  description={Prints help and exits}
+}
+
+@switch{switch.version,
+  parent={common-switch},
+  shortswitch={v},
+  description={Prints version information and exits}
+}
+
+@switch{switch.verbose,
+  parent={common-switch},
+  description={Switch on verbose mode}
+}
+
+@switch{switch.noverbose,
+  parent={common-switch},
+  description={Switch off verbose mode}
+}
+
+@switch{switch.debug,
+  parent={common-switch},
   syntax={\oargm{level}},
   description={Switch on debug mode}
 }
 
 @switch{switch.debug-mode,
-  parent={app.texjavahelpmk},
+  parent={common-switch},
   syntax={\meta{value}},
   description={Switch on debug mode for the given verbosity}
 }
 
 @switch{switch.nodebug,
-  parent={app.texjavahelpmk},
+  parent={common-switch},
   description={Switch off debug mode (default)}
 }
 
 @switch{switch.no-debug,
-  parent={app.texjavahelpmk},
+  parent={common-switch},
   description={synonym for \switch{nodebug}},
   alias={switch.nodebug}
 }
@@ -383,7 +554,12 @@ the document on).}
   name={\styfmt{font\-awe\-some}}
 }
 
+@package{pkg.pifont}
 @package{pkg.twemojis}
+
+@package{pkg.varioref,
+ name={\styfmt{vario\-ref}}
+}
 
 @package{pkg.upquote,
   name={\styfmt{up\-quote}}
@@ -475,12 +651,12 @@ the document on).}
 
 @option{opt.fnsymleft,
   parent={pkg.texjavahelp},
-  description={defines \gls{fnsymmark} to use \csfmt{llap}}
+  description={defines \gls{fnsymmark} to use \gls{llap}}
 }
 
 @option{opt.fnsymright,
   parent={pkg.texjavahelp},
-  description={defines \gls{fnsymmark} to use \csfmt{rlap}}
+  description={defines \gls{fnsymmark} to use \gls{rlap}}
 }
 
 @option{opt.fontsymbols,
@@ -537,6 +713,7 @@ the document on).}
 @bibentry{bibentry.commonpunctuation}
 @bibentry{bibentry.cspunctuation}
 @bibentry{bibentry.commoncspunctuation}
+@bibentry{bibentry.icon}
 
 % bib2gls entry types created by tjhxml2bib
 
@@ -568,6 +745,8 @@ the document on).}
 @bibentryfield{bibentryfield.symbol}
 @bibentryfield{bibentryfield.text}
 @bibentryfield{bibentryfield.plural}
+@bibentryfield{bibentryfield.short}
+@bibentryfield{bibentryfield.long}
 @bibentryfield{bibentryfield.category}
 @bibentryfield{bibentryfield.type}
 
@@ -597,6 +776,12 @@ the document on).}
 @xmlelement{xmlelement.div}
 @xmlelement{xmlelement.font}
 @xmlelement{xmlelement.img}
+
+@xmlelement{xmlelement.entry}
+
+@xmlattribute{xmlattr.key,
+ parent={xmlelement.entry}
+}
 
 % NAMED FILES
 
@@ -664,16 +849,26 @@ sub-figure}
 
 % COMMANDS
 
+@command{jobname}
 @command{chapter}
 @command{section}
 @command{label}
 @command{ref}
+@command{vref}
 @command{caption}
 @command{tabcolsep}
 @command{multicolumn}
+@command{llap}
+@command{rlap}
 
-@command{emph}
-@command{strong}
+@command{emph,
+  syntax={\margm{text}}
+}
+
+@command{strong,
+  syntax={\margm{text}}
+}
+
 @command{textit}
 @command{bfseries}
 @command{color}
@@ -709,11 +904,56 @@ sub-figure}
  name={\csfmt{in\-clude\-graph\-ics}}
 }
 
+@command{graphicspath,
+ name={\csfmt{graphicspath}}
+}
+
 @command{glsquote,
   providedby={\sty{glossaries}},
   syntax={\margm{text}},
   description={expands to \glssymbol{dblqt}\meta{text}\glssymbol{dblqt}, where
   the \glssymbol{dblqt} is a literal straight double-quote character}
+}
+
+@command{GlsXtrSetStarModifier,
+  providedby={\sty{glossaries-extra}},
+  name={\csfmt{Gls\-Xtr\-Set\-Star\-Mod\-i\-fier}},
+  syntax={\margm{options}},
+  description={overrides the options that should be implemented by the
+     star (\code{*}) modifier for \gls{gls}-like and
+    \gls{glstext}-like commands}
+}
+
+@command{GlsXtrSetPlusModifier,
+  providedby={\sty{glossaries-extra}},
+  name={\csfmt{Gls\-Xtr\-Set\-Plus\-Mod\-i\-fier}},
+  syntax={\margm{options}},
+  description={overrides the options that should be implemented by the
+     plus (\code{+}) modifier for \gls{gls}-like and
+    \gls{glstext}-like commands}
+}
+
+@command{GlsXtrSetAltModifier,
+  providedby={\sty{glossaries-extra}},
+  name={\csfmt{Gls\-Xtr\-Set\-Alt\-Mod\-i\-fier}},
+  syntax={\margm{token}\margm{options}},
+  description={sets \meta{token} as a modifier for the \gls{gls}-like and
+    \gls{glstext}-like commands that will automatically implement the
+    given options}
+}
+
+@command{nlctusevref,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{nlct\-use\-v\-ref}},
+  description={use \gls{vref} in cross-referencing commands such as
+\gls{tableref} and \gls{figureref}}
+}
+
+@command{nlctnovref,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{nlct\-no\-v\-ref}},
+  description={use \gls{ref} (not \gls{vref}) in cross-referencing commands such as
+\gls{tableref} and \gls{figureref}}
 }
 
 @command{upsym,
@@ -768,6 +1008,37 @@ sub-figure}
   providedby={\sty{texjavahelp}},
   name={\csfmt{right\-key\-sym}},
   description={symbol to indicate the right arrow key}
+}
+
+@command{keys,
+  providedby={\sty{texjavahelp}},
+  syntax={\margm{key list}},
+  description={formats the \code{+} separated list of keys,
+encapsulating each item in the list with \gls{keystrokefmt}
+and separating the keys with \gls{keysep}. The \meta{key list}
+should have a literal \code{+} as the separator. The separator for
+the formatted list may be different}
+}
+
+@command{keysep,
+  providedby={\sty{texjavahelp}},
+  initvalue={+},
+  description={used as the separator in key sequence formatted with
+\gls{keys}}
+}
+
+@command{keystrokefmt,
+  providedby={\sty{texjavahelp}},
+  syntax={\meta{symbol}},
+  description={uses \sty{tikz} to render \meta{symbol} inside a
+rectangle with rounded corners}
+}
+
+@command{actualkey,
+  providedby={\sty{texjavahelp}},
+  syntax={\meta{text}},
+  description={used to format the text for a keyboard key. This just
+expands to \meta{text} by default}
 }
 
 @command{fnsymmarker,
@@ -1332,6 +1603,12 @@ set, a generic basename is used in the form \metafilefmt{img}{n}{}}
  description={references a glossary entry}
 }
 
+@command{glsadd,
+ providedby={\sty{glossaries}},
+ syntax={\oargm{options}\margm{label}},
+ description={indexes a glossary entry without displaying any text}
+}
+
 @command{glssymbol,
  providedby={\sty{glossaries}},
  syntax={\oargm{options}\margm{label}\oargm{insert}},
@@ -1374,7 +1651,7 @@ this command to expand to \meta{false}}
   syntax={\margm{true}\margm{false}},
   description={the \sty{texjavahelp} package defines this command to
 expand to \meta{false} but \app{texjavahelpmk} will define this
-command to expand to \meta{true} if \switch{helpset} otherwise to
+command to expand to \meta{true} if \switch{texjavahelpmk.helpset} otherwise to
 \meta{false}}
 }
 
@@ -1384,7 +1661,7 @@ command to expand to \meta{true} if \switch{helpset} otherwise to
   syntax={\margm{true}},
   description={the \sty{texjavahelp} package defines this command to
 expand to nothing but \app{texjavahelpmk} will define this
-command to expand to \meta{true} if \switch{helpset} otherwise to
+command to expand to \meta{true} if \switch{texjavahelpmk.helpset} otherwise to
 nothing}
 }
 
@@ -1394,14 +1671,14 @@ nothing}
   syntax={\margm{false}},
   description={the \sty{texjavahelp} package defines this command to
 expand to \meta{false} but \app{texjavahelpmk} will define this
-command to expand to nothing if \switch{helpset} otherwise to
+command to expand to nothing if \switch{texjavahelpmk.helpset} otherwise to
 \meta{false}}
 }
 
 @command{TeXJavaHelpGlsResourceOptions,
  providedby={\sty{texjavahelp}},
  name={\csfmt{TeX\-Java\-Help\-Gls\-Resource\-Options}},
- description={expands to the resource options customized for 
+ description={expands to the letter group resource options customized for 
 use with the \sty{texjavahelp} package}
 }
 
@@ -1409,6 +1686,53 @@ use with the \sty{texjavahelp} package}
  providedby={\sty{texjavahelp}},
  name={\csfmt{TeX\-Java\-Help\-Gls\-Field\-Adjustments}},
  description={expands to the field adjustment resource options}
+}
+
+@command{TeXJavaHelpSymbolResourceOptions,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{TeX\-Java\-Help\-Sym\-bol\-Resource\-Options}},
+ description={expands to the symbol group resource options customized for 
+use with the \sty{texjavahelp} package}
+}
+
+@command{TeXJavaHelpPuncAssignFields,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{TeX\-Java\-Help\-Punc\-Assign\-Fields}},
+ description={used within \gls{TeXJavaHelpSymbolResourceOptions} for
+the \opt{assign-fields} setting}
+}
+
+@command{TeXJavaHelpMaxPuncDesc,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{TeX\-Java\-Help\-Max\-Punc\-Desc}},
+ initvalue={25},
+ description={expands to a number used by \gls{TeXJavaHelpPuncAssignFields}
+to determine whether or not to append the description to the name}
+}
+
+@command{TeXJavaHelpExtraEntryTypeAliases,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{TeX\-Java\-Help\-Extra\-Entry\-Type\-Aliases}},
+ initvalue={\meta{empty}},
+ description={expands at the end of the \opt{entry-type-aliases}
+  value in \gls{TeXJavaHelpGlsResourceOptions} to allow extra
+aliases to be added}
+}
+
+@command{TeXJavaHelpExtraAssignFields,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{TeX\-Java\-Help\-Extra\-Assign\-Fields}},
+ initvalue={\meta{empty}},
+ description={expands in the \opt{assign-fields} value
+in \gls{TeXJavaHelpGlsResourceOptions} to allow extra assigments to
+be added}
+}
+
+@command{TeXJavaHelpGlsSelection,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{TeX\-Java\-Help\-Gls\-Selection}},
+ description={used within \gls{TeXJavaHelpGlsResourceOptions} to
+expand to the filtering resource options}
 }
 
 @command{defsemanticcmd,
@@ -1942,6 +2266,201 @@ this expands to \gls{shortswitch}\meta{text}}
  description={an underscore that allows a line break before or after it}
 }
 
+@command{menufmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{menu\-fmt}},
+ syntax={\margm{text}},
+ description={semantic command used to format a menu or menu item
+text}
+}
+
+@command{buttonfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{button\-fmt}},
+ syntax={\margm{text}},
+ description={semantic command used to format the text displayed on
+a button}
+}
+
+@command{widgetfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{widget\-fmt}},
+ syntax={\margm{text}},
+ description={semantic command used to format the text displayed on
+a widget}
+}
+
+@command{btn,
+ providedby={\sty{texjavahelp}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={similar to using \gls{dgls} (with no modifier) but if the entry has the
+\bibentryfield{iconimage} field set, the image will be displayed
+before the text. The image and text are separated by \gls{btniconsep}}
+}
+
+@command{btniconsep,
+ providedby={\sty{texjavahelp}},
+ initvalue={\csfmt{space}},
+ description={used by \gls{btn} as a separator}
+}
+
+@command{widget,
+ providedby={\sty{texjavahelp}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ modifiers={* +},
+ description={a \gls{dglsfield}-like command that uses the
+  \bibentryfield{text} field encapsulated with \gls{widgetfmt}}
+}
+
+@command{Widget,
+ providedby={\sty{texjavahelp}},
+ modifiers={* +},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={as \gls{widget} but sentence-case}
+}
+
+@command{WIDGET,
+ providedby={\sty{texjavahelp}},
+ modifiers={* +},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={as \gls{widget} but all uppercase}
+}
+
+@command{keyref,
+ providedby={\sty{texjavahelp}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ modifiers={* +},
+ description={a \gls{gls}-like command that prepends
+\qtt{manual.keystroke.} to \meta{label} to form the entry label}
+}
+
+@command{keydescref,
+ providedby={\sty{texjavahelp}},
+ syntax={\oargm{options}\margm{label}},
+ description={a shortcut command that uses \gls{gls}
+with \optfmt{textformat=keys} followed by the description (if set)
+where the entry label is formed by concatenating 
+\qtt{manual.keystroke.} and \meta{label}}
+}
+
+@command{desckeyref,
+ providedby={\sty{texjavahelp}},
+ syntax={\oargm{options}\margm{label}},
+ description={similar to \gls{keydescref} but the description (if
+set) is shown first}
+}
+
+@command{Desckeyref,
+ providedby={\sty{texjavahelp}},
+ syntax={\oargm{options}\margm{label}},
+ description={as \gls{desckeyref} but the description (if set) will
+be converted to sentence-case. There will be no case-change if
+the description isn't set}
+}
+
+@command{newdglsfield,
+ providedby={\sty{glossaries-extra-bib2gls}},
+ name={\csfmt{new\-d\-gls\-field}},
+ syntax={\oargm{default-options}\margm{field}\margm{cs}},
+ description={defines the command
+\meta{cs}\oargm{options}\margm{entry-label} to behave like
+      \code{\gls{dglsfield}\oarg{\meta{default-options},\meta{options}}\margm{entry-label}\margm{field}}}
+}
+
+@command{newdglsfieldlike,
+ providedby={\sty{glossaries-extra-bib2gls}},
+ name={\csfmt{new\-d\-gls\-field\-like}},
+ syntax={\oargm{default-options}\margm{field}\margm{cs}\margm{Cs}\margm{CS}},
+ description={similar to \gls{newdglsfield} but also defines
+     sentence-case (\meta{Cs}) and all-caps (\meta{CS}) commands
+     with mappings}
+}
+
+@command{dglsfield,
+ providedby={\sty{glossaries-extra-bib2gls}},
+ name={\csfmt{dgls\-field}},
+ modifiers={* +},
+ syntax={\oargm{options}\margm{entry-label}\margm{field-label}\oargm{insert}},
+ description={as \gls{dgls} but selects the first matching label that
+     has an entry with the given field set}
+}
+
+@command{dgls,
+ providedby={\sty{glossaries-extra-bib2gls}},
+ modifiers={* +},
+ syntax={\oargm{options}\margm{entry-label}\oargm{insert}},
+ description={does \code{\gls{gls}\oargm{options}\marg{\meta{prefix}\marg{entry-label}}\oargm{insert}}
+     for the first prefix in the prefix list that matches a defined entry}
+}
+
+@command{glsxtraddlabelprefix,
+  providedby={\sty{glossaries-extra-bib2gls}},
+  name={\csfmt{gls\-xtr\-add\-label\-pre\-fix}},
+  syntax={\margm{label-prefix}},
+  description={appends \meta{label-prefix} to the list of known
+label prefixes}
+}
+
+@command{menutrail,
+  providedby={\sty{texjavahelp}},
+  syntax={\margm{entry-label}},
+  modifiers={*},
+  description={displays the menu trail for \meta{entry-label} using
+its hierarchy with the separator given by \gls{menusep}}
+}
+
+@command{menu,
+  providedby={\sty{texjavahelp}},
+  syntax={\oargm{options}\oargm{label-prefix}\margm{label}},
+  modifiers={*},
+  description={uses \gls{menutrail} to display the menu trail for
+the given entry identified by the prefixed label and then uses
+\gls{glsadd} to index the entry. The \meta{label-prefix} defaults to \qtt{menu.} and
+\meta{options} are as for \gls{glsadd}. The starred version will
+prepend \optfmt{format=glsignore} to the options}
+}
+
+@command{menuitem,
+  providedby={\sty{texjavahelp}},
+  syntax={\oargm{options}\oargm{label-prefix}\margm{entry-label}},
+  modifiers={*},
+  description={references a glossary entry using \gls{gls} but
+locally redefines \gls{msgellipsis} to ignore its argument. The \meta{label-prefix} defaults to \qtt{menu.} and
+\meta{options} are as for \gls{gls}. The starred version will
+prepend \optfmt{format=glsignore} to the options}
+}
+
+@command{menusep,
+  providedby={\sty{texjavahelp}},
+  description={symbol used as the separator for \gls{menutrail}}
+}
+
+@command{menuitemref,
+  providedby={\sty{texjavahelp}},
+  syntax={\margm{entry-label}},
+  description={used for format each entry in \gls{menutrail}, where
+\meta{entry-label} is the label of the current entry in the trail}
+}
+
+@command{glshyperlink,
+  providedby={\sty{glossaries}},
+  syntax={\oargm{text}\margm{entry-label}},
+  description={creates a hyperlink to the given entry with the hyperlink
+      text provided in the optional argument. If omitted the entry's
+text field value is used for \meta{text}}
+}
+
+% BIB2GLS QUARKS
+@command{MGP,
+  name={\csfmt{MGP} (\appfmt{bib2gls} quark)},
+  text={\csfmt{MGP}}
+}
+
+@command{cs,
+  name={\csfmt{cs} (\appfmt{bib2gls} quark)},
+  text={\csfmt{cs}}
+}
+
 % CONTROL SYMBOLS
 
 @cspunctuation{dbbksl,
@@ -2027,6 +2546,11 @@ was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer availabl
   description={hash}
 }
 
+@punctuation{ampchar,
+  symbol={\code{\char`\& }},
+  description={ampersand}
+}
+
 @punctuation{underscorechar,
   symbol={\code{\char`\_ }},
   description={underscore}
@@ -2049,7 +2573,8 @@ was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer availabl
 
 % GENERAL INDEX
 
-@indexplural{menu,
+@indexplural{idx.menu,
+  text={menu},
   seealso={index.menu.helpframe}
 }
 

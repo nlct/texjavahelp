@@ -12,6 +12,7 @@
 \RequirePackage{varioref}
 \RequirePackage{xcolor}
 \RequirePackage{graphicx}
+\RequirePackage{accsupp}
 \RequirePackage{tikz}
 
 \newcommand*{\texjavahelp@doifkoma}[1]{\texjavahelp@ifkoma{#1}{}}
@@ -1178,6 +1179,8 @@
 
 % Glossary information
 
+\BibGlsOptions{group=true,warn-unknown-entry-types=false}
+
 \appto\glsxtrresourceinit{\GlsXtrResourceInitEscSequences}
 
 \glsaddkey{shortswitch}{}{\shortswitchvalue}{\Shortswitchvalue}{\shortswitchref}{\Shortswitchref}{\SHORTSWITCHREF}
@@ -1279,8 +1282,8 @@
  {%
    \let\predglshook\@btnicon
    \IfValueTF{#1}%
-   {\dgls[#1]{#2}[]}%
-   {\dgls{#2}[]}%
+   {\dgls[#1]{#2}[#3]}%
+   {\dgls{#2}[#3]}%
  }%
 }
   
@@ -1840,7 +1843,7 @@
 % key strokes
 \newcommand{\keystrokefont}{\sffamily\bfseries}
 
-\newcommand{\keystrokefmt}[1]{%
+\NewDocumentCommand\keystrokefmt{m}{%
  \begin{tikzpicture}[baseline=(s.base)]
  \node[minimum height=10pt,minimum width=10pt,align=center,
    font={\keystrokefont},draw,double=lightgray,rounded corners]
@@ -1851,19 +1854,19 @@
 \glsxtrnewgls{manual.keystroke.}{\keyref}
 \newcommand{\actualkey}[1]{#1}
 
-\newcommand{\keydescref}[2][]{%
+\NewDocumentCommand\keydescref{O{}m}{%
  \gls[textformat=keys,#1]{manual.keystroke.#2}%
  \ifglshasdesc{manual.keystroke.#2}%
  { \glslowercase{\glsentrydesc{manual.keystroke.#2}}}{}%
 }
 
-\newcommand{\desckeyref}[2][]{%
+\NewDocumentCommand\desckeyref{O{}m}{%
  \ifglshasdesc{manual.keystroke.#2}%
   {\glslowercase{\glsentrydesc{manual.keystroke.#2}} }{}%
  \gls[textformat=keys,#1]{manual.keystroke.#2}%
 }
 
-\newcommand{\Desckeyref}[2][]{%
+\NewDocumentCommand\Desckeyref{O{}m}{%
  \ifglshasdesc{manual.keystroke.#2}%
   {\Glsentrydesc{manual.keystroke.#2} }{}%
  \gls[textformat=keys,#1]{manual.keystroke.#2}%
