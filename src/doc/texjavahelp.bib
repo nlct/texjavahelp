@@ -777,6 +777,13 @@ the document on).}
 @xmlelement{xmlelement.font}
 @xmlelement{xmlelement.img}
 
+@xmlattribute{xmlattr.id}
+@xmlattribute{xmlattr.name}
+@xmlattribute{xmlattr.href}
+@xmlattribute{xmlattr.class}
+@xmlattribute{xmlattr.style}
+
+
 @xmlelement{xmlelement.entry}
 
 @xmlattribute{xmlattr.key,
@@ -834,7 +841,8 @@ navigation node, and locally sets the page style to empty}
  modifiers={*},
  syntax={\margm{options}},
  description={a colour box (defined via \sty{tcolorbox}) setup for
-displaying code. The unstarred form sets \optfmt{format=glsignore}
+displaying code. The unstarred form sets
+\optval{gls.format}{\glscsname{glsignore}}
 as the default for \gls{gls}-like and \gls{glstext}-like commands}
 }
 
@@ -1554,6 +1562,15 @@ set, a generic basename is used in the form \metafilefmt{img}{n}{}}
 \optfmt{false}) or the CSS class name}
 }
 
+@command{TeXJavaHelpLoadResources,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{TeX\-Java\-Help\-Load\-Resources}},
+  syntax={\oargm{options}\margm{bib-list}},
+  description={uses two instances of \gls{GlsXtrLoadResources}, the
+first for the symbols group and the second for all other entries,
+providing custom entry types and field assignments}
+}
+
 @command{GlsXtrLoadResources,
  providedby={\sty{glossaries-extra}},
   name={\csfmt{Gls\-Xtr\-Load\-Resources}},
@@ -1601,6 +1618,37 @@ set, a generic basename is used in the form \metafilefmt{img}{n}{}}
  providedby={\sty{glossaries}},
  syntax={\oargm{options}\margm{label}\oargm{insert}},
  description={references a glossary entry}
+}
+
+@option{opt.gls.format,
+  syntax={\meta{cs-name}},
+  parent={gls},
+  name={\optfmt{format}},
+  description={sets the location format to \meta{cs-name} which
+should be the name of a command without the leading backslash}
+}
+
+@option{opt.gls.textformat,
+  syntax={\meta{cs-name}},
+  parent={gls},
+  name={\optfmt{text\-format}},
+  description={sets link text formatting command name to \meta{cs-name} which
+should be the name of a command without the leading backslash}
+}
+
+@command{glsignore,
+  providedby={\sty{glossaries}},
+  syntax={\margm{text}},
+  description={expands to nothing, this is a special location format
+that denotes an ignored location}
+}
+
+@command{glsnumberformat,
+  providedby={\sty{glossaries}},
+  name={\csfmt{gls\-num\-ber\-for\-mat}},
+  syntax={\margm{text}},
+  description={expands to \meta{text} by default, this is used as the
+default location format}
 }
 
 @command{glsadd,
@@ -1997,7 +2045,8 @@ signs}
  syntax={\oargm{options}\oargm{prefix}\margm{tag}\margm{attr-list}},
  description={essentially equivalent to
 \code{\xmltagfmt{\gls{glslink}\oargm{options}\marg{\meta{prefix}\meta{tag}}\margm{tag}
-\meta{attr-list}}}. The starred version adds \optfmt{format=ignore}
+\meta{attr-list}}}. The starred version adds
+\optval{gls.format}{\glscsname{glsignore}}
 to the \meta{options}}
 }
 
@@ -2010,7 +2059,7 @@ to the \meta{options}}
 \code{\xmltagfmt{\gls{glslink}\oargm{options}\marg{\meta{prefix}\meta{tag}}\margm{tag}
 \meta{attr-list} \meta{attr-list}/}} but the \qt{ \meta{attr-list}}
 part will be omitted if \meta{attr-list} is not present. 
-The starred version adds \optfmt{format=ignore}
+The starred version adds \optval{gls.format}{\glscsname{glsignore}}
 to the \meta{options}}
 }
 
@@ -2020,7 +2069,8 @@ to the \meta{options}}
  modifiers={*},
  syntax={\oargm{options}\oargm{prefix}\margm{tag}},
  description={essentially equivalent to
-\code{\xmltagfmt{/\gls{glslink}\oargm{options}\marg{\meta{prefix}\meta{tag}}\margm{tag}}}. The starred version adds \optfmt{format=ignore}
+\code{\xmltagfmt{/\gls{glslink}\oargm{options}\marg{\meta{prefix}\meta{tag}}\margm{tag}}}.
+The starred version adds \optval{gls.format}{\glscsname{glsignore}}
 to the \meta{options}}
 }
 
@@ -2338,7 +2388,7 @@ before the text. The image and text are separated by \gls{btniconsep}}
  providedby={\sty{texjavahelp}},
  syntax={\oargm{options}\margm{label}},
  description={a shortcut command that uses \gls{gls}
-with \optfmt{textformat=keys} followed by the description (if set)
+with \gls{opt.gls.textformat}\dequals \glscsname{keys} followed by the description (if set)
 where the entry label is formed by concatenating 
 \qtt{manual.keystroke.} and \meta{label}}
 }
@@ -2417,7 +2467,7 @@ its hierarchy with the separator given by \gls{menusep}}
 the given entry identified by the prefixed label and then uses
 \gls{glsadd} to index the entry. The \meta{label-prefix} defaults to \qtt{menu.} and
 \meta{options} are as for \gls{glsadd}. The starred version will
-prepend \optfmt{format=glsignore} to the options}
+prepend \optval{gls.format}{\glscsname{glsignore}} to the options}
 }
 
 @command{menuitem,
@@ -2427,7 +2477,7 @@ prepend \optfmt{format=glsignore} to the options}
   description={references a glossary entry using \gls{gls} but
 locally redefines \gls{msgellipsis} to ignore its argument. The \meta{label-prefix} defaults to \qtt{menu.} and
 \meta{options} are as for \gls{gls}. The starred version will
-prepend \optfmt{format=glsignore} to the options}
+prepend \optval{gls.format}{\glscsname{glsignore}} to the options}
 }
 
 @command{menusep,

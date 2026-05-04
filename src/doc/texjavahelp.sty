@@ -1011,6 +1011,8 @@
   \def\appfmt##1{\protect\appfmt{##1}}%
   \def\xmltagfmt##1{\protect\xmltagfmt{##1}}%
   \def\xmlattrfmt##1{\protect\xmlattrfmt{##1}}%
+  \def\bibentryfmt##1{\protect\bibentryfmt{##1}}%
+  \def\bibentryfieldfmt##1{\protect\bibentryfieldfmt{##1}}%
 }
 
 \newcommand{\nlctexampledisablecmds}{}
@@ -1306,6 +1308,20 @@
 \newignoredglossary{messages}
 \newignoredglossary{keystrokes}
 
+% Shortcut to ensure resources loaded using appropriate options:
+
+\NewDocumentCommand\TeXJavaHelpLoadResources{om}{%
+  \IfValueTF{#1}%
+  {%
+    \GlsXtrLoadResources[src={#2}, \TeXJavaHelpSymbolResourceOptions, #1]
+    \GlsXtrLoadResources[src={#2}, \TeXJavaHelpGlsResourceOptions, #1]
+  }%
+  {%
+    \GlsXtrLoadResources[src={#2}, \TeXJavaHelpSymbolResourceOptions ]
+    \GlsXtrLoadResources[src={#2}, \TeXJavaHelpGlsResourceOptions ]
+  }%
+}
+
 % Identify primary locations:
 
 \renewcommand\GlsXtrDefaultResourceOptions{
@@ -1469,6 +1485,10 @@
      warning=index,
      syntax=index,
      keystroke=symbol,
+     bibentry=index,
+     commonbibentry=index,
+     bibentryfield=index,
+     commonbibentryfield=index,
      \TeXJavaHelpExtraEntryTypeAliases
    },
   assign-fields=
@@ -1591,6 +1611,22 @@
         [ entrytype->original =/menu/ & parent=\NULL ],
       name =[o] name + "\cs{postmenuname}"
         [ entrytype->original =/menu/ & parent=\NULL ],
+% bib entries
+      name = "\cs{bibentryfmt}{" + \MGP{1} + "}"
+        [
+           entrytype->original =/(?:common)?bibentry/
+         & entrylabel->original=/bibentry\.(.+)/
+        ],
+      name = "\cs{bibentryfmt}{" + entrylabel->original + "}"
+        [ entrytype->original =/(common)?bibentry/ ],
+% bib entry fields
+      name = "\cs{bibentryfieldfmt}{" + \MGP{1} + "}"
+        [
+           entrytype->original =/(?:common)?bibentryfield/
+         & entrylabel->original=/bibentryfield\.(.+)/
+        ],
+      name = "\cs{bibentryfieldfmt}{" + entrylabel->original + "}"
+        [ entrytype->original =/(common)?bibentryfield/ ],
 % terms
       text = entrylabel->original
         [ entrytype->original ="termplural" ],
@@ -1972,6 +2008,12 @@
 
 \NewDocumentCommand\shortargfmt{m}{\texttt{\shortswitch\nolinebreak #1}}
 \MFUblocker{\shortargfmt}
+
+\NewDocumentCommand\bibentryfmt{m}{\textsf{@#1}}
+\MFUblocker{\bibentryfmt}
+
+\NewDocumentCommand\bibentryfieldfmt{m}{\textsf{#1}}
+\MFUblocker{\bibentryfieldfmt}
 
 \newcommand*{\fmtorcode}[2]{#1{#2}}
 
@@ -2413,6 +2455,8 @@
 \newcommand*{\exttext}[1]{\glsfmttext{ext.#1}}
 \newcommand*{\apptext}[1]{\glsfmttext{app.#1}}
 \newcommand*{\switchtext}[1]{\glsfmttext{switch.#1}}
+\newcommand*{\bibentrytext}[1]{\glsfmttext{bibentry.#1}}
+\newcommand*{\bibentryfieldtext}[1]{\glsfmttext{bibentryfield.#1}}
 
 \newcommand*{\xmlelemtext}[1]{\glsfmttext{xmlelement.#1}}
 \newcommand*{\xmlattrtext}[1]{\glsfmttext{xmlattr.#1}}
@@ -2428,6 +2472,11 @@
 \glsxtrnewgls{app.}{\app}
 \glsxtrnewgls{switch.}{\switch}
 \newcommand{\swch}[2][]{\shortswitchref[#1]{switch.#2}}
+
+\glsxtrnewgls{bibentry.}{\bibentry}
+\glsxtrnewgls{bibentryfield.}{\bibentryfield}
+
+\newdglsfield{symbol}{\sym}
 
 \glsxtrnewgls{xmlelement.}{\xmlelem}
 \glsxtrnewgls{xmlattr.}{\xmlattr}
@@ -2550,6 +2599,8 @@
   \let\meta\stringmeta
   \let\oarg\stringoarg
   \let\marg\stringmarg
+  \def\bibentryfmt{@\@firstofone}%
+  \let\bibentryfieldfmt\@firstofone
 }
 
 \newignoredglossary{minilist}

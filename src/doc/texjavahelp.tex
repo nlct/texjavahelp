@@ -21,37 +21,10 @@
 \newcommand\TJHFDswitchdef[1]{\switchdef{tjhflattendocsrc.#1}}
 \newcommand\TJHXBswitchdef[1]{\switchdef{tjhxml2bib.#1}}
 
-\defsemanticcmd[style1]\bibentryfmt{\textsf}{@}
-\defsemanticcmd[style2]\bibentryfieldfmt{\textsf}{}
-
-\glsxtrnewgls{bibentry.}{\bibentry}
-\glsxtrnewgls{bibentryfield.}{\bibentryfield}
-
-\renewcommand{\TeXJavaHelpExtraEntryTypeAliases}{
-  bibentry=index,
-  commonbibentry=index,
-  bibentryfield=index,
-  commonbibentryfield=index,
-}
-
-\renewcommand{\TeXJavaHelpExtraAssignFields}{
-  name = "\cs{bibentryfmt}{" + \MGP{1} + "}"
-    [
-       entrytype->original =/(?:common)?bibentry/
-     & entrylabel->original=/bibentry\.(.+)/
-    ],
-  name = "\cs{bibentryfmt}{" + entrylabel->original + "}"
-    [ entrytype->original =/(common)?bibentry/ ],
-  name = "\cs{bibentryfieldfmt}{" + \MGP{1} + "}"
-    [
-       entrytype->original =/(?:common)?bibentryfield/
-     & entrylabel->original=/bibentryfield\.(.+)/
-    ],
-  name = "\cs{bibentryfieldfmt}{" + entrylabel->original + "}"
-    [ entrytype->original =/(common)?bibentryfield/ ],
-}
-
 \newcommand{\includeimgopt}[2][]{\opt[#1]{includeimg.#2}}
+
+\newcommand{\glsopt}[2][]{\opt[#1]{gls.#2}}
+\newcommand{\glsoptval}[2]{\optval{gls.#1}{#2}}
 
 \newcommand{\TeXJavaHelp}{\texorpdfstring{\TeX{}}{TeX} Java Help}
 \graphicspath{{images/}}
@@ -59,13 +32,8 @@
 \title{\TeXJavaHelp}
 \author{Nicola L.C. Talbot\\\href{https://www.dickimaw-books.com/}{\nolinkurl{dickimaw-books.com}}}
 
-\GlsXtrLoadResources[src={\jobname,texjavahelplib},
- \TeXJavaHelpSymbolResourceOptions
-]
-
-\GlsXtrLoadResources[src={\jobname,texjavahelplib},
- \TeXJavaHelpGlsResourceOptions
-]
+% bib2gls files texjavahelp.bib and texjavahelplib.bib
+\TeXJavaHelpLoadResources{texjavahelp,texjavahelplib}
 
 \AfterTOCHead[lof]{%
  \label{listoffigures}%
@@ -266,113 +234,18 @@ to the \ext+{aux} file to be read by \app{bib2gls} and inputs
 (if it exists) the \ext+{glstex} file created by \app{bib2gls}.
 
 For convenience, the \sty{texjavahelp} package provides:
-\cmddef{TeXJavaHelpSymbolResourceOptions}
-This expands to the resource options customized for use with the
-\sty{texjavahelp} package for the symbols group. This filters
-entries so that only \bibentry{symbol} entry types are include.
-The custom \bibentry{punctuation}, \bibentry{cspunctuation} and
-\bibentry{icon} entry types are all aliased to \bibentry{symbol}, so
-they will be included. The \opt{assign-fields} list is obtained by
-expanding:
-\cmddef{TeXJavaHelpPuncAssignFields}
-This assigns the \bibentryfield{name} field to the
-\bibentryfield{symbol} field followed by the
-\bibentryfield{description} in
-parentheses if the \bibentryfield{description} length is less than:
-\cmddef{TeXJavaHelpMaxPuncDesc}
-This should just expand to a number.
-If a symbol's description length is longer that this value, 
-the \bibentryfield{name} field will just be set to the
-\bibentryfield{symbol} field.
-
-
-\cmddef{TeXJavaHelpGlsResourceOptions}
-This expands to the resource options customized for use with the
-\sty{texjavahelp} package for letter groups. This sets the \opt{entry-type-aliases}
-and \opt{assign-fields} options to work with the \ext+{bib} format described in
-in \sectionref{sec:bibformat}. Additional entry type aliases can be set by
-appending to:
-\cmddef{TeXJavaHelpExtraEntryTypeAliases}
-which expands at the end of the \opt{entry-type-aliases} value.
-Extra assignment options can be added by appending to:
-\cmddef{TeXJavaHelpExtraAssignFields}
-which expands with the \opt{assign-fields} value. If you modify this
-command, make sure that it ends with a comma.
-
-Other resource options included in the definition of
-\gls{TeXJavaHelpGlsResourceOptions}
-are: \optvalm{selection}{recorded and deps and see}, \optvalm{category}{same as
-original entry} and \opt{save-entry-count}. Additionally, this command
-starts with:
-\cmddef{TeXJavaHelpGlsFieldAdjustments}
-which expands to the field adjustment resource options, followed by:
-\cmddef{TeXJavaHelpGlsSelection}
-which expands to the adjustments to the selection criteria.
-This will automatically select all entries with the category set to
-\optfmt{menu} and any entry that has a label starting with
-\qtt{manual.} (which provides locale-sensitive text for the document
-and is placed in an ignored glossary).
-
-For example, this document provides some custom fields that aren't
-defined by \sty{texjavahelp}: \bibentryfmt{bibentry},
-\bibentryfmt{commonbibentry}, \bibentryfmt{bibentryfield}, and
-\bibentryfmt{commonbibentryfield}. These are aliased to
-\bibentry{index}:
-\begin{codebox}
-\cmd{renewcommand}\marg{\gls{TeXJavaHelpExtraEntryTypeAliases}}\marg{
-  bibentry=index,
-  commonbibentry=index,
-  bibentryfield=index,
-  commonbibentryfield=index,
-}
-\end{codebox}
-
-In this document, I've also created some formatting commands with 
-\gls{defsemanticcmd} (see
-\sectionref{sec:semanticcmds}) called \csfmt{bibentryfmt}
-and \csfmt{bibentryfieldfmt}. I can automatically set the 
-\bibentryfield{name} field to the label (with the designated prefix
-removed) encapsulated with the applicable formatting command:
-\begin{codebox*}
-\cmd{renewcommand}\marg{\gls{TeXJavaHelpExtraAssignFields}}\marg{
-  name = "\gls{cs}\marg{bibentryfmt}\marg{" + \gls{MGP}\marg{1} + "}"
-    [
-       entrytype->original =/(?:common)?bibentry/
-     \glssymbol{ampchar} entrylabel->original=/bibentry\csfmt{.}(.+)/
-    ],
-  name = "\gls{cs}\marg{bibentryfmt}\marg{" + entrylabel->original + "}"
-    [ entrytype->original =/(common)?bibentry/ ],
-  name = "\gls{cs}\marg{bibentryfieldfmt}\marg{" + \gls{MGP}\marg{1} + "}"
-    [
-       entrytype->original =/(?:common)?bibentryfield/
-     \glssymbol{ampchar} entrylabel->original=/bibentryfield\csfmt{.}(.+)/
-    ],
-  name = "\gls{cs}\marg{bibentryfieldfmt}\marg{" + entrylabel->original + "}"
-    [ entrytype->original =/(common)?bibentryfield/ ],
-}
-\end{codebox*}
-
-This uses the special \app{bib2gls} quarks \gls{cs}, \gls{MGP} and
-\csfmt{.} which are part of the \opt{assign-fields} syntax. The
-\sty{texjavahelp} package sets these up so that they don't expand
-when the resource options are written to the \ext{aux} file.
+\cmddef{TeXJavaHelpLoadResources}
+This uses two instances of \gls{GlsXtrLoadResources}, the first for
+the symbols group and the second for all other entries.
+The optional argument may be used to append extra options for both
+resource sets. The \meta{bib-list} argument should be the list of
+\ext{bib} files. The \dottedextfmt{bib} extension may be omitted.
 
 \begin{information}
 See the \app{bib2gls} user manual for further information on resource options.
 \end{information}
 
-There are two resource files. The first creates the symbol group and
-the second creates the letter groups:
-\begin{codebox*}
-\gls{GlsXtrLoadResources}\oarg{src=\marg{\gls{jobname},texjavahelplib},
- \gls{TeXJavaHelpSymbolResourceOptions}
-}
-\codepar
-\gls{GlsXtrLoadResources}\oarg{src=\marg{\gls{jobname},texjavahelplib},
- \gls{TeXJavaHelpGlsResourceOptions}
-}
-\end{codebox*}
-I created the \filemetafmt{}{jobname}{.bib} (\filefmt{\jobname.bib}) file 
+I created the file \filefmt{texjavahelp.bib} 
 for this document. It contains glossary terms, abbreviations, and
 anything that should be indexed. For example:
 \begin{codebox}
@@ -464,14 +337,14 @@ location list, which isn't helpful.
 
 The \sty{texjavahelp} package uses \gls{GlsXtrSetPlusModifier}
 to change the behaviour of the \code{+} modifier so that the format
-is set to the general \optfmt{glsnumberformat} format.
+is set to the general \glscsname{glsnumberformat} format.
 This means that \code{\gls{gls}\marg{button.help}} won't add a
 location to the location list but
 \code{\gls{gls}+\marg{button.help}} will.
 
 The \sty{texjavahelp} package uses \gls{GlsXtrSetAltModifier} to set
 \code{!} as an alternative modifier to set the format to
-\optfmt{glsignore}. So \code{\gls{gls}!\marg{menu.help}} will
+\glscsname{glsignore}. So \code{\gls{gls}!\marg{menu.help}} will
 reference the \qtt{menu.help} entry (which doesn't have
 \bibentryfield{defaultkeys} set) without adding a location to the
 location list.
@@ -484,16 +357,21 @@ These are listed in \sectionref{sec:tjhglscmds}.
 \label{sec:bibformat}
 
 The \ext{bib} format required by \app{bib2gls} is described in the
-\app{bib2gls} user manual. The \gls{TeXJavaHelpGlsResourceOptions} command
-sets up entry type aliases and field adjustments to assist formatting and work
-with the semantic commands described in \sectionref{sec:semanticcmds}.
-This means that custom entry types and fields are available that aren't
+\app{bib2gls} user manual. The \gls{TeXJavaHelpLoadResources}
+command may be used to specify the \ext{bib} files and any extra
+resource options. This command uses
+\gls{TeXJavaHelpGlsResourceOptions} to set up entry type aliases and
+field adjustments to assist formatting and work with the semantic
+commands described in \sectionref{sec:semanticcmds}.  This means
+that custom entry types and fields are available that aren't
 ordinarily recognised by \app{bib2gls}.
 
-For example, the custom \code{@punctuation} field is used to index
+For example, the custom \bibentry{punctuation} entry type is used to index
 the following symbols in this document:
 \glsname{dblqt}, \glsname{hashchar}, \glsname{percentchar}, \glsname{tilde},
 \glsname{exclam}, and \glsname{bksl}.
+
+% TODO
 
 \section{Entry Referencing Commands}
 \label{sec:tjhglscmds}
@@ -583,7 +461,7 @@ then does \code{\gls{glsadd}\oargm{options}\margm{entry-label}}
 to index the entry. The \meta{entry-label}
 is formed by concatenating \meta{label-prefix} and \meta{label}.
 The \meta{prefix-label} defaults to \qtt{menu.}\ and
-the starred version prepends \optfmt{format=glsignore} to
+the starred version prepends \glsoptval{format}{\glscsname{glsignore}} to
 \meta{options}.
 For example:
 \begin{coderesult}
@@ -599,8 +477,7 @@ A shortcut for:
 \end{compactcodebox}
 This command may be used to reference keystrokes but they won't
 appear in the index as the \qtt{manual.}\ prefix will cause them to
-be moved into an ignored glossary (assuming that \gls{TeXJavaHelpGlsResourceOptions}
-is used in the resource options).
+be moved into an ignored glossary.
 For example:
 \begin{coderesult}
 \gls{keyref}\marg{pageup}
@@ -611,7 +488,7 @@ There's no hyperlink because there's no target.
 
 \cmddef{keydescref}
 A shortcut that uses \gls{gls} to reference the entry with the
-label \code{manual.keystroke.\meta{label}} and the \optfmt{format}
+label \code{manual.keystroke.\meta{label}} and the \glsopt{format}
 set to \glscsname{keys} followed by
 (if set) the description converted to lowercase. This command doesn't have modifiers.
 For example:
@@ -1604,7 +1481,7 @@ When compiling the document normally, this essentially does:
 \cend{figure} 
 \end{compactcodebox}
 However, \app{texjavahelpmk} will create a \xmltagfmt{div} element
-with the \optfmt{id} attribute set to \code{fig:sample}.
+with the \xmlattr{id} attribute set to \code{fig:sample}.
 (The colon will be stripped if the XML setting is on.)
 This should mean that hyperlinks to the figure will scroll to the
 top of the figure rather than to the caption (which would cause the
