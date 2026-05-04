@@ -95,9 +95,27 @@ classes/com/dickimawbooks/xml2bib/Xml2Bib.class	: classes/com/dickimawbooks/xml2
 classes/com/dickimawbooks/xml2bib	:
 	mkdir -p classes/com/dickimawbooks/xml2bib
 
+lib/tjhflattendocsrc.jar	: java/flattendocsrc/Manifest.txt \
+	classes/com/dickimawbooks/flattendocsrc/FlattenDocSrc.class
+	cd classes; \
+	jar cmf ../java/flattendocsrc/Manifest.txt ../lib/tjhflattendocsrc.jar \
+	com/dickimawbooks/flattendocsrc/*.class
+
+classes/com/dickimawbooks/flattendocsrc/FlattenDocSrc.class	: classes/com/dickimawbooks/flattendocsrc \
+	java/flattendocsrc/*.java lib/texjavahelplib.jar lib/texparserlib.jar
+	cd java/flattendocsrc; \
+	javac $(target_version) -d ../../classes \
+	 -Xlint:unchecked -Xlint:deprecation \
+	-cp ../../lib/texparserlib.jar:../../lib/texjavahelplib.jar \
+	*.java
+
+classes/com/dickimawbooks/flattendocsrc	:
+	mkdir -p classes/com/dickimawbooks/flattendocsrc
+
 ../unstable/texjavahelp.zip	: lib/texjavahelplib.jar \
 	lib/texjavahelpmk.jar \
 	lib/tjhxml2bib.jar \
+	lib/flattendocsrc.jar \
 	doc/texjavahelp.sty ../LICENSE ../README.md
 	mkdir -p ../unstable/texjavahelp
 	rsync -rvC --delete lib/resources ../unstable/texjavahelp/lib/
@@ -149,4 +167,5 @@ clean	:
 	\rm -f lib/texjavahelpmk.jar
 	\rm -f lib/tjhxml2bib.jar
 	\rm -f lib/texjavahelpdemo.jar
+	\rm -f lib/flattendocsrc.jar
 	\rm -rf lib/resources/helpset
