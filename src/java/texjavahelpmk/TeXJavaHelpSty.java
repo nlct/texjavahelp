@@ -79,6 +79,8 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new AtGobble("WriteTJHDivisionInfo", 5));
       registerControlSequence(new AtGobble("WriteTJHLabel", 1));
 
+      registerControlSequence(new TeXJavaHelpLoadResources());
+
       // KOMA-Script commands that might occur in the document
       // preamble:
       registerControlSequence(new GobbleOpt("BeforeTOCHead", 1, 1));
@@ -103,6 +105,11 @@ public class TeXJavaHelpSty extends UserGuideSty
       addSemanticCommand("varfmt", TeXFontFamily.VERB);
 
       addSemanticCommand("iconfmt", "icon", null, null, null, null);
+
+      addSemanticCommand("bibentryfmt", TeXFontFamily.TT, STYLE1, 
+        listener.getOther('@'), null);
+
+      addSemanticCommand("bibentryfieldfmt", TeXFontFamily.TT, STYLE2);
 
       registerControlSequence(new FancyBreak());
       registerControlSequence(new PlainBreak());
@@ -150,9 +157,13 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       addGlsFmtTextCommand("xmlelemtext", "xmlelement.");
       addGlsFmtTextCommand("xmlattrtext", "xmlattr.");
+      addGlsFmtTextCommand("bibentrytext", "bibentry.");
+      addGlsFmtTextCommand("bibentryfieldtext", "bibentryfield.");
 
       registerControlSequence(glossariesSty.createGls("xmlelem", "xmlelement."));
       registerControlSequence(glossariesSty.createGls("xmlattr", "xmlattr."));
+      registerControlSequence(glossariesSty.createGls("bibentry", "bibentry."));
+      registerControlSequence(glossariesSty.createGls("bibentryfield", "bibentryfield."));
 
       // no-op for resource related commands
 
