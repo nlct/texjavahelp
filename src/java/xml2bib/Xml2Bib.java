@@ -35,8 +35,6 @@ import java.util.Vector;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-import java.text.MessageFormat;
-
 import java.awt.event.KeyEvent;
 import javax.swing.KeyStroke;
 import javax.swing.ImageIcon;
@@ -44,247 +42,38 @@ import javax.swing.ImageIcon;
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLibAppAdapter;
 import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
+import com.dickimawbooks.texjavahelplib.AbstractCLI;
 import com.dickimawbooks.texjavahelplib.CLISyntaxParser;
 import com.dickimawbooks.texjavahelplib.CLIArgValue;
 
-public class Xml2Bib
+public class Xml2Bib extends AbstractCLI
 {
    public Xml2Bib()
    {
       inFileNames = new Vector<String>();
    }
 
-   public int getExitCode()
+   @Override
+   public void printCLIAbout()
    {
-      return helpLibApp == null ? exitCode : helpLibApp.getExitCode();
+      System.out.println(getHelpLib().getAboutInfo(false,
+        TeXJavaHelpLib.VERSION,
+        getCopyrightDate(),
+        String.format(
+         "Copyright (C) %s Nicola L. C. Talbot (%s)",
+          TeXJavaHelpLib.VERSION_DATE.substring(0, 4),
+          getHelpLib().getInfoUrl(false, "www.dickimaw-books.com")),
+         TeXJavaHelpLib.LICENSE_GPL3,
+         true, null
+      ));
    }
 
-   public void setExitCode(int code)
+   @Override
+   public String getCLIVersionLine()
    {
-      if (helpLibApp != null)
-      {
-         helpLibApp.setExitCode(code);
-      }
-
-      exitCode = code;
-   }
-
-   public int getExitCode(Throwable e, boolean isFatal)
-   {
-      if (helpLibApp != null)
-      {
-         return helpLibApp.getExitCode(e, isFatal);
-      }
-      else if (e instanceof InvalidSyntaxException)
-      {
-         return TeXJavaHelpLibAppAdapter.EXIT_SYNTAX;
-      }
-      else if (e instanceof IOException)
-      {
-         return TeXJavaHelpLibAppAdapter.EXIT_IO;
-      }
-      else
-      {
-         return TeXJavaHelpLibAppAdapter.EXIT_OTHER; 
-      }
-   }
-
-   protected void initHelpLibrary() throws IOException
-   {
-      helpLibApp = new TeXJavaHelpLibAppAdapter()
-       {
-          @Override
-          public boolean isGUI() { return false; }
-
-          @Override
-          public String getApplicationName()
-          {
-             return NAME;
-          }
-
-          @Override
-          public boolean isDebuggingOn()
-          {
-             return debugMode;
-          }
-
-          @Override
-          public void message(String msg)
-          {
-             if (verboseLevel > 0)
-             {
-                stdOutMessage(msg);
-             }
-          }
-
-       };
-      helpLib = new TeXJavaHelpLib(helpLibApp);
-      helpLibApp.setHelpLib(helpLib);
-
-      if (exitCode != 0)
-      {
-         helpLibApp.setExitCode(exitCode);
-      }
-   }
-
-   public TeXJavaHelpLib getHelpLib()
-   {
-      return helpLib;
-   }
-
-   public String getMessageWithFallback(String label,
-       String fallbackFormat, Object... params)
-   {
-      if (helpLib == null)
-      {
-         MessageFormat fmt = new MessageFormat(fallbackFormat);
-
-         return fmt.format(params);
-      }
-
-      return helpLib.getMessageWithFallback(label, fallbackFormat, params);
-   }
-
-   public String getMessageIfExists(String label, Object... args)
-   {
-      if (helpLib == null) return null;
-
-      return helpLib.getMessageIfExists(label, args);
-   }
-
-   public String getMessage(String label, Object... params)
-   {
-      if (helpLib == null)
-      {// message system hasn't been initialised
-
-         String param = (params.length == 0 ? "" : params[0].toString());
-
-         for (int i = 1; i < params.length; i++)
-         {
-            param += ","+params[0].toString();
-         }
-
-         return String.format("%s[%s]", label, param);
-      }
-
-      return helpLib.getMessage(label, params);
-   }
-
-   public void error(String message, Throwable e)
-   {
-      if (helpLibApp != null)
-      {
-         helpLibApp.error(message, e);
-      }
-      else
-      {
-         message("error", message, e);
-         setExitCode(getExitCode(e, false));
-      }
-   }
-
-   public void message(String msgTag, String message, Throwable e)
-   {
-      if (message == null)
-      {
-         if (e != null)
-         {
-            message = e.getMessage();
-         }
-
-         if (message == null)
-         {
-            message = e.getClass().getSimpleName();
-         }
-      }
-
-      if (e != null)
-      {
-         System.err.format("%s: %s: %s%n", getApplicationName(), msgTag, message);
-
-         if (debugMode)
-         {
-            e.printStackTrace();
-         }
-      }
-      else if (msgTag.contains("error"))
-      {
-         System.err.format("%s: %s: %s%n", getApplicationName(), msgTag, message);
-      }
-      else
-      {
-         System.out.format("%s: %s: %s%n", getApplicationName(), msgTag, message);
-      }
-   }
-
-   public void debug(String message, Throwable e)
-   {
-      if (debugMode)
-      {
-         error(message, e);
-      }
-   }
-
-   public void syntax()
-   {
-      versionInfo();
-
-      System.out.println();
-      System.out.println(getMessage("clisyntax.usage",
-        getMessage("syntax.options", getApplicationName())));
-
-      System.out.println();
-
-      helpLib.printSyntaxItem(getMessage("syntax.in", "--in", "-i"));
-
-      helpLib.printSyntaxItem(getMessage("syntax.prop", "--prop"));
-
-      helpLib.printSyntaxItem(getMessage("syntax.out", "--output", "-o"));
-
-      helpLib.printSyntaxItem(getMessage("syntax.out.charset", "--out-charset"));
-      helpLib.printSyntaxItem(getMessage("syntax.provide-xml",
-         "--provide-xml", getApplicationName()));
-
-      helpLib.printSyntaxItem(getMessage("syntax.copy-overwrite-xml",
-          "--copy-overwrite-xml", getApplicationName()));
-
-      helpLib.printSyntaxItem(getMessage("syntax.encapless-field", "--encapless-field"));
-
-      helpLib.printSyntaxItem(getMessage("syntax.auto-trim", "--[no]auto-trim"));
-
-      System.out.println();
-
-      helpLib.printSyntaxItem(getMessage("clisyntax.debug", "--[no]debug"));
-
-
-      helpLib.printSyntaxItem(getMessage("clisyntax.version2", "--version", "-v"));
-
-      helpLib.printSyntaxItem(getMessage("clisyntax.help2", "--help", "-h"));
-
-      System.out.println();
-
-      System.out.println(getMessage("clisyntax.bugreport",
-        "https://github.com/nlct/texjavahelp"));
-   }
-
-   public void versionInfo()
-   {
-      if (!shownVersion)
-      {
-         System.out.println(getMessageWithFallback("about.version_date",
-           "{0} version {1} ({2})", getApplicationName(), 
-           TeXJavaHelpLib.VERSION, TeXJavaHelpLib.VERSION_DATE));
-         shownVersion = true;
-      }
-   }
-
-   public void license()
-   {
-      System.out.println();
-      System.out.format("Copyright %s Nicola Talbot%n",
-       getCopyrightDate());
-      System.out.println(getMessage("about.license"));
-      System.out.println("https://github.com/nlct/texjavahelp");
+      return getMessageWithFallback("about.version_date",
+           "{0} version {1} ({2})", getCLIApplicationName(), 
+           TeXJavaHelpLib.VERSION, TeXJavaHelpLib.VERSION_DATE);
    }
 
    public String getCopyrightStartYear()
@@ -307,14 +96,192 @@ public class Xml2Bib
       }
    }
 
-   public String getApplicationName()
+   @Override
+   public String getCLIApplicationName()
    {
       return NAME;
    }
 
-   public String getApplicationVersion()
+   @Override
+   public String getCLIApplicationVersion()
    {
       return TeXJavaHelpLib.VERSION;
+   }
+
+   @Override
+   public void printCLISyntax()
+   {
+      versionInfo();
+
+      System.out.println();
+      System.out.println(getMessage("clisyntax.usage",
+        getMessage("syntax.options", getCLIApplicationName())));
+
+      System.out.println();
+
+      printSyntaxItem(getMessage("syntax.in", "--in", "-i"));
+
+      printSyntaxItem(getMessage("syntax.prop", "--prop"));
+
+      printSyntaxItem(getMessage("syntax.out", "--output", "-o"));
+
+      printSyntaxItem(getMessage("syntax.out.charset", "--out-charset"));
+      printSyntaxItem(getMessage("syntax.provide-xml",
+         "--provide-xml", getCLIApplicationName()));
+
+      printSyntaxItem(getMessage("syntax.copy-overwrite-xml",
+          "--copy-overwrite-xml", getCLIApplicationName()));
+
+      printSyntaxItem(getMessage("syntax.encapless-field", "--encapless-field"));
+
+      printSyntaxItem(getMessage("syntax.auto-trim", "--[no]auto-trim"));
+
+      System.out.println();
+
+      printCommonCLISyntax();
+
+      System.out.println();
+
+      System.out.println(getMessage("clisyntax.bugreport",
+        "https://github.com/nlct/texjavahelp"));
+   }
+
+   @Override
+   protected int getCLIArgCount(String arg)
+   {
+      if (arg.equals("--encapless-field")
+       || arg.equals("--in") || arg.equals("-i")
+       || arg.equals("--output") || arg.equals("-o")
+       || arg.equals("--prop")
+       || arg.equals("--out-charset")
+         )
+      {
+         return 1;
+      }
+
+      return 0;
+   }
+
+   @Override
+   protected void parseNoSwitchCLIArg(String arg) throws InvalidSyntaxException
+   {
+      inFileNames.add(arg);
+   }
+
+   @Override
+   protected boolean parseCLIArg(String arg, CLIArgValue[] returnVals)
+     throws InvalidSyntaxException
+   {
+      if (arg.equals("--provide-xml"))
+      {
+         copyXml = true;
+         replaceXml = false;
+      }
+      else if (arg.equals("--copy-overwrite-xml"))
+      {
+         copyXml = true;
+         replaceXml = true;
+      }
+      else if (arg.equals("--nocopy-xml"))
+      {
+         copyXml = false;
+      }
+      else if (arg.equals("--auto-trim"))
+      {
+         autoTrim = true;
+      }
+      else if (arg.equals("--noauto-trim"))
+      {
+         autoTrim = false;
+      }
+      else if (isArg(arg, "--encapless-field", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing.value", arg));
+         }
+
+         noEncapField = returnVals[0].toString();
+      }
+      else if (isArg(arg, "--in", "-i", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing.value", arg));
+         }
+
+         inFileNames.add(returnVals[0].toString());
+      }
+      else if (isArg(arg, "--prop", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing.value", arg));
+         }
+
+         if (propFileNames == null)
+         {
+            propFileNames = new Vector<String>();
+         }
+
+         propFileNames.add(returnVals[0].toString());
+      }
+      else if (isArg(arg, "--output", "-o", returnVals))
+      {
+         if (outFile != null)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.syntax.only_one", arg));
+         }
+
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing.value", arg));
+         }
+
+         outFile = new File(returnVals[0].toString());
+      }
+      else if (isArg(arg, "--out-charset", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing.value", arg));
+         }
+
+         if (propFileNames == null)
+         {
+            propFileNames = new Vector<String>();
+         }
+
+         outCharset = Charset.forName(returnVals[0].toString());
+      }
+      else
+      {
+         return false;
+      }
+
+      return true;
+   }
+
+   @Override
+   protected void postCLIProcess() throws InvalidSyntaxException
+   {
+      if (inFileNames.isEmpty())
+      {
+         throw new InvalidSyntaxException(
+            getMessage("error.syntax.missing_in"));
+      }
+      
+      if (outFile == null)
+      {
+         throw new InvalidSyntaxException(
+            getMessage("error.syntax.missing_out"));
+      }
    }
 
    protected boolean isNewer(File file1, File file2)
@@ -336,8 +303,7 @@ public class Xml2Bib
 
       if (copyXml)
       {
-         URL url = getClass().getResource(
-           helpLib.getResourcePath()+"/"+file.getName());
+         URL url = getHelpLibResource(file);
 
          if (url != null)
          {
@@ -347,7 +313,7 @@ public class Xml2Bib
 
                if (!file.exists() || (replaceXml && isNewer(resourceFile, file)))
                {
-                  helpLibApp.message(getMessageWithFallback("message.copying",
+                  publishMessage(getMessageWithFallback("message.copying",
                     "Copying {0} -> {1}", resourceFile, file));
 
                   Files.copy(resourceFile.toPath(), file.toPath(),
@@ -806,249 +772,33 @@ public class Xml2Bib
       }
    }
 
-   private void parseArgs(String[] args) throws InvalidSyntaxException
-   {
-      CLISyntaxParser cliParser = new CLISyntaxParser(helpLib, args, "-h", "-v")
-      {
-         @Override
-         protected int argCount(String arg)
-         {
-            if (arg.equals("--encapless-field")
-             || arg.equals("--in") || arg.equals("-i")
-             || arg.equals("--output") || arg.equals("-o")
-             || arg.equals("--prop")
-             || arg.equals("--out-charset")
-               )
-            {
-               return 1;
-            }
-
-            return 0;
-         }
-
-         @Override
-         public boolean setDebugOption(String option, Integer value)
-         throws InvalidSyntaxException
-         {
-            debugMode = true;
-
-            return true;
-         }
-
-         @Override
-         protected boolean preparseCheckArg()
-         throws InvalidSyntaxException
-         {
-            if (super.preparseCheckArg())
-            {
-               return true;
-            }
-
-            if (originalArgList[preparseIndex].equals("--verbose"))
-            {
-               verboseLevel = 1;
-            }
-            else if (originalArgList[preparseIndex].equals("--noverbose"))
-            {
-               verboseLevel = 0;
-            }
-            else if (originalArgList[preparseIndex].equals("--nodebug")
-                   || originalArgList[preparseIndex].equals("--no-debug")
-                    )
-            {
-               debugMode = false;
-            }
-            else
-            {
-               return false;
-            }
-
-            return true;
-         }
-
-         @Override
-         protected void help()
-         {
-            syntax();
-            System.exit(0);
-         }
-
-         @Override
-         protected void version()
-         {
-            System.out.println(getHelpLib().getAboutInfo(false,
-              TeXJavaHelpLib.VERSION,
-              TeXJavaHelpLib.VERSION_DATE,
-              String.format(
-               "Copyright (C) %s Nicola L. C. Talbot (%s)",
-                TeXJavaHelpLib.VERSION_DATE.substring(0, 4),
-                getHelpLib().getInfoUrl(false, "www.dickimaw-books.com")),
-               TeXJavaHelpLib.LICENSE_GPL3,
-               true, null
-            ));
-
-            System.exit(0);
-         }
-
-         @Override
-         protected void parseArg(String arg)
-         throws InvalidSyntaxException
-         {
-            inFileNames.add(arg);
-         }
-
-         @Override
-         protected boolean parseArg(String arg, CLIArgValue[] returnVals)
-         throws InvalidSyntaxException
-         {
-            if (arg.equals("--provide-xml"))
-            {
-               copyXml = true;
-               replaceXml = false;
-            }
-            else if (arg.equals("--copy-overwrite-xml"))
-            {
-               copyXml = true;
-               replaceXml = true;
-            }
-            else if (arg.equals("--nocopy-xml"))
-            {
-               copyXml = false;
-            }
-            else if (arg.equals("--auto-trim"))
-            {
-               autoTrim = true;
-            }
-            else if (arg.equals("--noauto-trim"))
-            {
-               autoTrim = false;
-            }
-            else if (isArg(arg, "--encapless-field", returnVals))
-            {
-               if (returnVals[0] == null)
-               {
-                  throw new InvalidSyntaxException(
-                     getMessage("error.clisyntax.missing.value", arg));
-               }
-
-               noEncapField = returnVals[0].toString();
-            }
-            else if (isArg(arg, "--in", "-i", returnVals))
-            {
-               if (returnVals[0] == null)
-               {
-                  throw new InvalidSyntaxException(
-                     getMessage("error.clisyntax.missing.value", arg));
-               }
-
-               inFileNames.add(returnVals[0].toString());
-            }
-            else if (isArg(arg, "--prop", returnVals))
-            {
-               if (returnVals[0] == null)
-               {
-                  throw new InvalidSyntaxException(
-                     getMessage("error.clisyntax.missing.value", arg));
-               }
-
-               if (propFileNames == null)
-               {
-                  propFileNames = new Vector<String>();
-               }
-
-               propFileNames.add(returnVals[0].toString());
-            }
-            else if (isArg(arg, "--output", "-o", returnVals))
-            {
-               if (outFile != null)
-               {
-                  throw new InvalidSyntaxException(
-                    getMessage("error.syntax.only_one", arg));
-               }
-
-               if (returnVals[0] == null)
-               {
-                  throw new InvalidSyntaxException(
-                     getMessage("error.clisyntax.missing.value", arg));
-               }
-
-               outFile = new File(returnVals[0].toString());
-            }
-            else if (isArg(arg, "--out-charset", returnVals))
-            {
-               if (returnVals[0] == null)
-               {
-                  throw new InvalidSyntaxException(
-                     getMessage("error.clisyntax.missing.value", arg));
-               }
-
-               if (propFileNames == null)
-               {
-                  propFileNames = new Vector<String>();
-               }
-
-               outCharset = Charset.forName(returnVals[0].toString());
-            }
-            else
-            {
-               return false;
-            }
-
-            return true;
-         }
-      };
-
-      cliParser.process();
-
-      if (inFileNames.isEmpty())
-      {
-         throw new InvalidSyntaxException(
-            getMessage("error.syntax.missing_in"));
-      }
-      
-      if (outFile == null)
-      {
-         throw new InvalidSyntaxException(
-            getMessage("error.syntax.missing_out"));
-      }
-   }
-
    public static void main(String[] args)
    {
-      final Xml2Bib app = new Xml2Bib();
+      final Xml2Bib xml2bib = new Xml2Bib();
 
       try
       {
-         app.initHelpLibrary();
-         app.parseArgs(args);
-         app.run();
+         xml2bib.initialiseHelpAndParse(args);
+         xml2bib.run();
       }
       catch (InvalidSyntaxException e)
       {
-         app.error(e.getMessage(), null);
-         app.setExitCode(TeXJavaHelpLibAppAdapter.EXIT_SYNTAX);
+         xml2bib.error(e.getMessage(), null);
       }
       catch (Throwable e)
       {
-         app.error(null, e);
+         xml2bib.error(null, e);
       }
 
-      System.exit(app.getExitCode());
+      System.exit(xml2bib.getExitCode());
    }
 
-   protected boolean debugMode = false;
-   protected boolean shownVersion = false;
    protected File outFile;
    protected Vector<String> inFileNames, propFileNames;
    private Charset outCharset = Charset.defaultCharset();
-   protected int verboseLevel = 0;
    protected boolean copyXml = false, replaceXml = false;
    protected String noEncapField=null;// field to save non-encapsulated value
    protected boolean autoTrim = true;
-   protected int exitCode = 0;
-
-   private TeXJavaHelpLib helpLib;
-   private TeXJavaHelpLibAppAdapter helpLibApp;
 
    public static final Pattern KEY_SUFFIX_PATTERN
      = Pattern.compile("mnemonic|tooltip|description|keystroke|defaultkeys|plural|symbol|user[1-6]|text|defaultparams|syntax|initvalue|defaultvalue|see(also)?|alias|iconimage");
