@@ -630,6 +630,9 @@ Unable to open URL {0}</entry>
 <!-- CLI syntax parsing -->
 
 <entry key="clisyntax.usage">Usage: {0}</entry>
+
+<entry key="clisyntax.other.options">Other Options</entry>
+
 <entry key="clisyntax.help">{0}	Display help and exit.</entry>
 <entry key="clisyntax.help2">{0} (or {1})	Display help and exit.</entry>
 <entry key="clisyntax.version">{0}	Display version information and exit.</entry>
@@ -655,8 +658,8 @@ Unable to open URL {0}</entry>
 	catcode	Whenever a category code changes
 	read	Whenever a codepoint is read from a file
 </entry>
-<entry key="clisyntax.log">{0} &lt;file&gt;        Set log file.</entry>
-<entry key="clisyntax.nolog">{0}   Don''t log (default).</entry>
+<entry key="clisyntax.log">{0} &lt;file&gt;	Set log file.</entry>
+<entry key="clisyntax.nolog">{0}	Don''t log (default).</entry>
 
 <entry key="clisyntax.bugreport">Report bugs to: {0}</entry>
 <entry key="clisyntax.homepage">{0} home page: {1}</entry>

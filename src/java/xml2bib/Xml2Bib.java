@@ -68,14 +68,6 @@ public class Xml2Bib extends AbstractCLI
       ));
    }
 
-   @Override
-   public String getCLIVersionLine()
-   {
-      return getMessageWithFallback("about.version_date",
-           "{0} version {1} ({2})", getCLIApplicationName(), 
-           TeXJavaHelpLib.VERSION, TeXJavaHelpLib.VERSION_DATE);
-   }
-
    public String getCopyrightStartYear()
    {
       return "2024";
@@ -106,6 +98,12 @@ public class Xml2Bib extends AbstractCLI
    public String getCLIApplicationVersion()
    {
       return TeXJavaHelpLib.VERSION;
+   }
+
+   @Override
+   public String getCLIApplicationVersionDate()
+   {
+      return TeXJavaHelpLib.VERSION_DATE;
    }
 
    @Override

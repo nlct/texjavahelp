@@ -49,7 +49,25 @@ public abstract class AbstractCLI
 
    public abstract void printCLISyntax();
 
-   public abstract String getCLIVersionLine();
+   public abstract String getCLIApplicationVersionDate();
+
+   public String getCLIVersionLine()
+   {
+      String date = getCLIApplicationVersionDate();
+
+      if (date == null)
+      {
+          return getMessageWithFallback("about.version",
+           "{0} version {1}", getCLIApplicationName(),
+           getCLIApplicationVersion());
+      }
+      else
+      {
+          return getMessageWithFallback("about.version_date",
+           "{0} version {1} ({2})", getCLIApplicationName(),
+           getCLIApplicationVersion(), date);
+      }
+   }
 
    public abstract void printCLIAbout();
 
@@ -70,7 +88,7 @@ public abstract class AbstractCLI
    protected boolean setCLIDebugOption(String option, Integer value)
          throws InvalidSyntaxException
    {
-      debugMode = (value == null ? 1 : value.intValue());
+      setDebuggingLevel(value == null ? 1 : value.intValue());
 
       return true;
    }
@@ -86,7 +104,7 @@ public abstract class AbstractCLI
            helpLib.getResourcePath()+"/"+file.getName());
    }
 
-   protected void printCommonCLISyntax()
+   public void printCommonCLISyntax()
    {
       String shortVersion = getShortVersionSwitch();
 
@@ -260,15 +278,20 @@ public abstract class AbstractCLI
       return cliParser.isListArg(arg, shortName, longName, returnVals);
    }
 
+   public void postVersionInfo()
+   {
+   }
 
    public void versionInfo()
    {
       if (!shownVersion)
       {
          System.out.println(getCLIVersionLine());
+         postVersionInfo();
          shownVersion = true;
       }
    }
+
    public boolean isGUIMode()
    {
       return false;
@@ -279,9 +302,39 @@ public abstract class AbstractCLI
       return debugMode != 0;
    }
 
+   public int getDebuggingLevel()
+   {
+      return debugMode;
+   }
+
+   public void setDebuggingLevel(int level)
+   {
+      debugMode = level;
+   }
+
+   public boolean isMinimumVerbosity(int level)
+   {
+      return verboseLevel >= level;
+   }
+
+   public boolean isVerboseModeOn()
+   {
+      return verboseLevel > 0;
+   }
+
+   public int getVerboseLevel()
+   {
+      return verboseLevel;
+   }
+
+   public void setVerboseLevel(int level)
+   {
+      verboseLevel = level;
+   }
+
    public void publishMessage(String msg)
    {
-      if (verboseLevel > 0)
+      if (isVerboseModeOn())
       {
          helpLibApp.stdOutMessage(msg);
       }
@@ -290,6 +343,16 @@ public abstract class AbstractCLI
    public TeXJavaHelpLib getHelpLib()
    {
       return helpLib;
+   }
+
+   public TeXJavaHelpLibAppAdapter getHelpLibApp()
+   {
+      return helpLibApp;
+   }
+
+   public CLISyntaxParser getSyntaxParser()
+   {
+      return cliParser;
    }
 
    public int getExitCode() 
@@ -378,6 +441,18 @@ public abstract class AbstractCLI
       }
    }
 
+   public void warning(String message)
+   {
+      if (helpLibApp != null)
+      {
+         helpLibApp.warning(message);
+      }
+      else
+      {
+         message("warning", message, null);
+      }
+   }
+
    public void message(String msgTag, String message, Throwable e)
    {
       if (message == null)
@@ -412,6 +487,11 @@ public abstract class AbstractCLI
       }
    }
 
+   public void debug(String message)
+   {
+      debug(message, null);
+   }
+
    public void debug(String message, Throwable e)
    {
       if (isDebuggingModeOn())
@@ -420,9 +500,9 @@ public abstract class AbstractCLI
       }
    }
 
-   protected void initHelpLibrary() throws IOException
+   protected TeXJavaHelpLibAppAdapter createHelpLibraryApp()
    {
-      helpLibApp = new TeXJavaHelpLibAppAdapter()
+      return new TeXJavaHelpLibAppAdapter()
        {
           @Override
           public boolean isGUI() { return isGUIMode(); }
@@ -445,9 +525,22 @@ public abstract class AbstractCLI
              publishMessage(msg);
           }
        };
+   }
 
+   protected TeXJavaHelpLib createHelpLib() throws IOException
+   {
       helpLib = new TeXJavaHelpLib(helpLibApp);
+
       helpLibApp.setHelpLib(helpLib);
+
+      return helpLib;
+   }
+
+   protected void initHelpLibrary() throws IOException
+   {
+      helpLibApp = createHelpLibraryApp();
+
+      helpLib = createHelpLib();
 
       if (exitCode != 0)
       {

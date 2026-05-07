@@ -21,6 +21,8 @@ package com.dickimawbooks.texjavahelplib;
 
 import java.io.*;
 
+import java.net.URL;
+
 import java.nio.file.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -33,30 +35,105 @@ import com.dickimawbooks.texparserlib.*;
 
 public abstract class CLITeXAppAdapter extends TeXAppAdapter
 {
-   protected void initHelpLibrary() throws IOException
+   public void initialiseHelpAndParse(String[] args)
+     throws IOException,InvalidSyntaxException
    {
-      helpLibApp = new CLITeXJavaHelpLibAdapter(this);
+      cliTeXHelpLib = new CLITeXHelpLib(this);
+      cliTeXHelpLib.initialiseHelpAndParse(args);
+   }
 
-      helpLib = new TeXJavaHelpLib(helpLibApp);
-      helpLibApp.setHelpLib(helpLib);
-      helpLib.getMessageSystem().loadDictionary("texparserlib");
+   protected String getShortHelpSwitch() { return "-h"; }
+
+   protected String getShortVersionSwitch() { return "-v"; }
+
+   public abstract String getCLIApplicationName();
+
+   @Override
+   public String getApplicationName()
+   {
+      return getCLIApplicationName();
+   }
+
+   public abstract String getCLIApplicationVersion();
+
+   @Override
+   public String getApplicationVersion()
+   {
+      return getCLIApplicationVersion();
+   }
+
+   public abstract String getCLIApplicationVersionDate();
+
+   public abstract void printCLISyntax();
+
+   public abstract void printCLIAbout();
+
+   protected abstract int getCLIArgCount(String arg);
+
+   protected abstract void parseNoSwitchCLIArg(String arg)
+      throws InvalidSyntaxException;
+
+   protected abstract boolean parseCLIArg(String arg, CLIArgValue[] returnVals)
+     throws InvalidSyntaxException;
+
+   protected abstract void postCLIProcess()
+     throws InvalidSyntaxException;
+
+   public void postVersionInfo()
+   {
+   }
+
+   public void versionInfo()
+   {
+      cliTeXHelpLib.versionInfo();
+   }
+
+   public void printSyntaxItem(String msg)
+   {
+      cliTeXHelpLib.printSyntaxItem(msg);
+   }
+
+   public void printCommonCLISyntax()
+   {
+      cliTeXHelpLib.printCommonCLISyntax();
+   }
+
+   public URL getHelpLibResource(File file)
+   {
+      return getClass().getResource(
+           getHelpLib().getResourcePath()+"/"+file.getName());
    }
 
    public TeXJavaHelpLibAppAdapter getHelpLibApp()
    {
-      return helpLibApp;
+      return cliTeXHelpLib.getHelpLibApp();
+   }
+
+   public TeXJavaHelpLib getHelpLib()
+   {
+      return cliTeXHelpLib.getHelpLib();
+   }
+
+   public TeXApp getTeXApp()
+   {
+      return this;
+   }
+
+   public boolean isGUI()
+   {
+      return false;
    }
 
    public int getExitCode()
    {
-      return helpLibApp == null ? exitCode : helpLibApp.getExitCode();
+      return cliTeXHelpLib == null ? exitCode : cliTeXHelpLib.getExitCode();
    }
 
    public void setExitCode(int code)
    {
-      if (helpLibApp != null)
+      if (cliTeXHelpLib != null)
       {
-         helpLibApp.setExitCode(code);
+         cliTeXHelpLib.setExitCode(code);
       }
 
       exitCode = code;
@@ -64,9 +141,9 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
 
    public int getExitCode(Throwable e, boolean isFatal)
    {
-      if (helpLibApp != null)
+      if (cliTeXHelpLib != null)
       {
-         return helpLibApp.getExitCode(e, isFatal);
+         return cliTeXHelpLib.getExitCode(e, isFatal);
       }
       else if (e instanceof InvalidSyntaxException)
       {
@@ -82,40 +159,30 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
       }
    }
 
-   public TeXJavaHelpLib getHelpLib()
-   {
-      return helpLib;
-   }
-
-   public TeXApp getTeXApp()
-   {
-      return this;
-   }
-
    public String getMessageWithFallback(String label,
        String fallbackFormat, Object... params)
    {
-      if (helpLib == null)
+      if (cliTeXHelpLib == null)
       {
          MessageFormat fmt = new MessageFormat(fallbackFormat);
 
          return fmt.format(params);
       }
 
-      return helpLib.getMessageWithFallback(label, fallbackFormat, params);
+      return cliTeXHelpLib.getMessageWithFallback(label, fallbackFormat, params);
    }
 
    public String getMessageIfExists(String label, Object... args)
    {
-      if (helpLib == null) return null;
+      if (cliTeXHelpLib == null) return null;
 
-      return helpLib.getMessageIfExists(label, args);
+      return cliTeXHelpLib.getMessageIfExists(label, args);
    }
 
    @Override
    public String getMessage(String label, Object... params)
    {
-      if (helpLib == null)
+      if (cliTeXHelpLib == null)
       {// message system hasn't been initialised
 
          String param = (params.length == 0 ? "" : params[0].toString());
@@ -128,13 +195,13 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
          return String.format("%s[%s]", label, param);
       }
 
-      return helpLib.getMessage(label, params);
+      return cliTeXHelpLib.getMessage(label, params);
    }
 
    public String getChoiceMessage(String label, int argIdx,
       String choiceLabel, int numChoices, Object... args)
    {
-      return helpLib.getChoiceMessage(label, argIdx, choiceLabel, numChoices, args);
+      return getHelpLib().getChoiceMessage(label, argIdx, choiceLabel, numChoices, args);
    }
 
    @Override
@@ -142,7 +209,7 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
    {
       if (parser == null)
       {
-         helpLibApp.warning(message);
+         getHelpLibApp().warning(message);
       }
       else
       {
@@ -166,9 +233,9 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
 
    public void error(String msg, Throwable e)
    {
-      if (helpLibApp != null)
+      if (cliTeXHelpLib != null)
       {
-         helpLibApp.error(msg, e);
+         cliTeXHelpLib.error(msg, e);
       }
       else
       {
@@ -220,7 +287,8 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
 
    public void logAndPrintMessage(String message, int level)
    {
-      if (debugMode > 0 || verboseLevel >= level)
+      if (cliTeXHelpLib.isDebuggingModeOn()
+       || cliTeXHelpLib.isMinimumVerbosity(level))
       {
          System.out.println(message);
       }
@@ -252,7 +320,7 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
          
          if (parser != null)
          {
-            parser.setDebugMode(debugMode, logWriter);
+            parser.setDebugMode(cliTeXHelpLib.getDebuggingLevel(), logWriter);
          }
       } 
    }
@@ -268,7 +336,7 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
 
    public boolean isDebuggingOn()
    {
-      return debugMode > 0;
+      return cliTeXHelpLib.isDebuggingModeOn();
    }
 
    @Override
@@ -284,12 +352,9 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
       return javax.swing.JOptionPane.showInputDialog(null, message);
    }
 
-   public abstract void cliSyntax();
-   public abstract void cliVersion();
-
    public void libraryVersion()
    {
-      libraryVersion(false);
+      libraryVersion(true);
    }
 
    public void libraryVersion(boolean showHelpLibVersion)
@@ -312,38 +377,14 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
       System.out.println("https://github.com/nlct/texparser");
    }
 
-   protected abstract void parseNoSwitchArg(String arg)
-     throws InvalidSyntaxException;
-
-   protected abstract int cliArgCount(String arg);
-
-   protected abstract boolean parseCliArg(String arg, CLIArgValue[] returnVals)
-     throws InvalidSyntaxException;
-
-   protected abstract void postParseArgs()
-     throws InvalidSyntaxException;
-
-   protected void parseArgs(String[] args)
-     throws InvalidSyntaxException
-   {
-      parseArgs(args, "-h", "-v");
-   }
-
    public CLISyntaxParser getSyntaxParser()
    {
-      return cliParser;
+      return cliTeXHelpLib == null ? null : cliTeXHelpLib.getSyntaxParser();
    }
 
-   protected void parseArgs(String[] args,
-      String shortHelpSwitch, String shortVersionSwitch)
-     throws InvalidSyntaxException
+   public CLITeXHelpLib getCLITeXHelpLib()
    {
-      cliParser = new CLITeXAppSyntaxParser(this, args,
-         shortHelpSwitch, shortVersionSwitch);
-
-      cliParser.process();
-
-      postParseArgs();
+      return cliTeXHelpLib;
    }
 
    protected void setCLIDebugModeOption(String option, String strValue)
@@ -355,14 +396,15 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
 
          if (val >= 0)
          {
-            debugMode = val;
+            cliTeXHelpLib.setDebuggingLevel(val);
          }
       }
       catch (NumberFormatException e)
       {
          try
          {
-            debugMode = TeXParser.getDebugLevelFromModeList(strValue.split(","));
+            cliTeXHelpLib.setDebuggingLevel(
+              TeXParser.getDebugLevelFromModeList(strValue.split(",")));
          }
          catch (TeXSyntaxException e2)
          {
@@ -390,16 +432,16 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
 
       if (file == null)
       {
-         helpLibApp.warning(message);
+         cliTeXHelpLib.warning(message);
       }
       else if (lineNum > 0)
       {
-         helpLibApp.warning(String.format("%s:%d: %s", file.getName(),
+         cliTeXHelpLib.warning(String.format("%s:%d: %s", file.getName(),
            lineNum, message));
       }
       else
       {
-         helpLibApp.warning(String.format("%s: %s", file.getName(), message));
+         cliTeXHelpLib.warning(String.format("%s: %s", file.getName(), message));
       }
    }
 
@@ -407,7 +449,7 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
    public String kpsewhich(String arg)
      throws IOException,InterruptedException
    {
-      return helpLib.kpsewhich(arg, MAX_PROCESS_TIME);
+      return getHelpLib().kpsewhich(arg, MAX_PROCESS_TIME);
    }
 
    public File getTeXMF()
@@ -457,7 +499,7 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
 
       String fileName = file.getAbsolutePath();
 
-      exitCode = helpLib.execCommandAndWaitFor(MAX_PROCESS_TIME, app,
+      exitCode = getHelpLib().execCommandAndWaitFor(MAX_PROCESS_TIME, app,
          "--outfile="+pdfFile.getAbsolutePath(), fileName);
 
       if (exitCode != 0)
@@ -491,7 +533,7 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
 
       String fileName = file.getAbsolutePath();
 
-      exitCode = helpLib.execCommandAndWaitFor(MAX_PROCESS_TIME, app,
+      exitCode = getHelpLib().execCommandAndWaitFor(MAX_PROCESS_TIME, app,
          "-o", epsFile.getAbsolutePath(),
          fileName);
 
@@ -555,7 +597,7 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
 
       args[idx++] = outFile.getAbsolutePath();
 
-      exitCode = helpLib.execCommandAndWaitFor(MAX_PROCESS_TIME, args);
+      exitCode = getHelpLib().execCommandAndWaitFor(MAX_PROCESS_TIME, args);
 
       if (exitCode != 0)
       {
@@ -588,7 +630,7 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
             throw new IOException(getMessage("message.no.write", destDirFile));
          }
 
-          helpLibApp.debug(String.format("mkdir %s", destDirFile));
+          cliTeXHelpLib.debug(String.format("mkdir %s", destDirFile));
           Files.createDirectories(destDirFile.toPath());
       }
 
@@ -597,7 +639,7 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
          throw new IOException(getMessage("message.no.write", dest));
       }
 
-      helpLibApp.debug(String.format("%s -> %s", src, dest));
+      cliTeXHelpLib.debug(String.format("%s -> %s", src, dest));
 
       Files.copy(src.toPath(), dest.toPath(),
          StandardCopyOption.REPLACE_EXISTING);
@@ -637,12 +679,9 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
          StandardCopyOption.REPLACE_EXISTING);
    }
 
-   CLITeXJavaHelpLibAdapter helpLibApp;
-   TeXJavaHelpLib helpLib;
+   CLITeXHelpLib cliTeXHelpLib;
 
    int exitCode = 0;
-   int debugMode = 0;
-   protected int verboseLevel = 0;
 
    protected File logFile = null;
    protected PrintWriter logWriter = null;
@@ -651,53 +690,98 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
 
    protected File texmf;
    protected Charset defaultCharset = StandardCharsets.UTF_8;
-
-   CLISyntaxParser cliParser;
 }
 
-class CLITeXJavaHelpLibAdapter extends TeXJavaHelpLibAppAdapter
+class CLITeXHelpLib extends AbstractCLI
 {
-   CLITeXJavaHelpLibAdapter(CLITeXAppAdapter cliTeXApp)
+   public CLITeXHelpLib(CLITeXAppAdapter cliTeXApp)
    {
       this.cliTeXApp = cliTeXApp;
    }
 
    @Override
-   public String getApplicationName()
+   public String getCLIApplicationName()
    {
-      return cliTeXApp.getApplicationName();
+      return cliTeXApp.getCLIApplicationName();
    }
 
    @Override
-   public boolean isGUI() { return false; }
-
-   @Override
-   public boolean isDebuggingOn()
+   public String getCLIApplicationVersion()
    {
-      return cliTeXApp.debugMode > 0;
+      return cliTeXApp.getCLIApplicationVersion();
    }
 
    @Override
-   public void stdOutMessage(String text)
+   public String getCLIApplicationVersionDate()
    {
-      cliTeXApp.logAndPrintMessage(text);
+      return cliTeXApp.getCLIApplicationVersionDate();
    }
 
    @Override
-   public void stdErrMessage(Throwable e, String msg)
+   public void printCLISyntax()
    {
-      cliTeXApp.logAndStdErrMessage(e, msg);
+      cliTeXApp.printCLISyntax();
    }
 
    @Override
-   public void error(Component owner, String msg, Throwable e)
+   public void printCLIAbout()
    {
-      if (msg == null && e instanceof TeXSyntaxException)
-      {
-         msg = ((TeXSyntaxException)e).getMessage(cliTeXApp.getTeXApp());
-      }
+      cliTeXApp.printCLIAbout();
+   }
 
-      super.error(owner, msg, e);
+   @Override
+   public void postVersionInfo()
+   {
+      cliTeXApp.postVersionInfo();
+   }
+
+   @Override
+   protected int getCLIArgCount(String arg)
+   {
+      return cliTeXApp.getCLIArgCount(arg);
+   }
+
+   @Override
+   protected void parseNoSwitchCLIArg(String arg)
+      throws InvalidSyntaxException
+   {
+      cliTeXApp.parseNoSwitchCLIArg(arg);
+   }
+
+   @Override
+   protected boolean parseCLIArg(String arg, CLIArgValue[] returnVals)
+     throws InvalidSyntaxException
+   {
+      return cliTeXApp.parseCLIArg(arg, returnVals);
+   }
+
+   @Override
+   protected void postCLIProcess()
+     throws InvalidSyntaxException
+   {
+      cliTeXApp.postCLIProcess();
+   }
+
+   @Override
+   protected String getShortHelpSwitch()
+   {
+      return cliTeXApp.getShortHelpSwitch();
+   }
+
+   @Override
+   protected String getShortVersionSwitch()
+   {
+      return cliTeXApp.getShortVersionSwitch();
+   }
+
+   @Override
+   protected TeXJavaHelpLib createHelpLib() throws IOException
+   {
+      TeXJavaHelpLib h = super.createHelpLib();
+
+      h.getMessageSystem().loadDictionary("texparserlib");
+
+      return h;
    }
 
    @Override
@@ -705,7 +789,7 @@ class CLITeXJavaHelpLibAdapter extends TeXJavaHelpLibAppAdapter
    {
       if (e instanceof TeXSyntaxException)
       {
-         return EXIT_TEX_PARSER;
+         return TeXJavaHelpLibAppAdapter.EXIT_TEX_PARSER;
       }
       else
       {
@@ -713,98 +797,11 @@ class CLITeXJavaHelpLibAdapter extends TeXJavaHelpLibAppAdapter
       }
    }
 
-   CLITeXAppAdapter cliTeXApp;
-}
-
-class CLITeXAppSyntaxParser extends CLISyntaxParser
-{
-   CLITeXAppSyntaxParser(CLITeXAppAdapter cliTeXApp, String[] args,
-      String shortHelpSwitch, String shortVersionSwitch)
-   {
-      super(cliTeXApp.getHelpLib(), args, shortHelpSwitch, shortVersionSwitch);
-      this.cliTeXApp = cliTeXApp;
-   }
-
    @Override
-   public boolean setDebugOption(String option, Integer value)
-   throws InvalidSyntaxException
-   {
-      cliTeXApp.debugMode = value.intValue();
-
-      return true;
-   }
-
-   @Override
-   public boolean setDebugModeOption(String option, String strValue)
-   throws InvalidSyntaxException
-   {  
-      cliTeXApp.setCLIDebugModeOption(option, strValue);
-      return true;
-   }
-
-   @Override
-   protected boolean preparseCheckArg()
-   throws InvalidSyntaxException
-   {
-      if (super.preparseCheckArg())
-      {
-         return true;
-      }
-
-      if (originalArgList[preparseIndex].equals("--verbose"))
-      {
-         cliTeXApp.verboseLevel = 1;
-      }
-      else if (originalArgList[preparseIndex].equals("--noverbose"))
-      {
-         cliTeXApp.verboseLevel = 0;
-      }
-      else if (originalArgList[preparseIndex].equals("--nodebug")
-             || originalArgList[preparseIndex].equals("--no-debug")
-              )
-      {
-         cliTeXApp.debugMode = 0;
-      }
-      else
-      {
-         return false;
-      }
-
-      return true;
-   }
-
-   @Override
-   protected void help()
-   {
-      cliTeXApp.cliSyntax();
-      System.exit(0);
-   }
-
-   @Override
-   protected void version()
-   {
-      cliTeXApp.cliVersion();
-      System.exit(0);
-   }
-
-   protected void parseArg(String arg)
-   throws InvalidSyntaxException
-   {
-      cliTeXApp.parseNoSwitchArg(arg);
-   }
-
-   @Override
-   protected int argCount(String arg)
-   {
-      return cliTeXApp.cliArgCount(arg);
-   }
-
-   @Override
-   protected boolean parseArg(String arg, CLIArgValue[] returnVals)
-   throws InvalidSyntaxException
-   {
-      return cliTeXApp.parseCliArg(arg, returnVals);
-   }
+   public boolean isGUIMode()
+   {       
+      return cliTeXApp.isGUI();
+   } 
 
    CLITeXAppAdapter cliTeXApp;
 }

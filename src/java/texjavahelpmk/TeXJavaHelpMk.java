@@ -50,7 +50,7 @@ import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 public class TeXJavaHelpMk extends CLITeXAppAdapter
 {
    @Override
-   protected void parseNoSwitchArg(String arg)
+   protected void parseNoSwitchCLIArg(String arg)
      throws InvalidSyntaxException
    {
       // if no option specified, assume --in or --out
@@ -71,7 +71,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    }
 
    @Override
-   protected int cliArgCount(String arg)
+   protected int getCLIArgCount(String arg)
    {
       if (arg.equals("--log")
        || arg.equals("--split")
@@ -117,7 +117,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    }
 
    @Override
-   protected boolean parseCliArg(String arg, CLIArgValue[] returnVals)
+   protected boolean parseCLIArg(String arg, CLIArgValue[] returnVals)
      throws InvalidSyntaxException
    {
       CLISyntaxParser cliParser = getSyntaxParser();
@@ -495,7 +495,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    }
 
    @Override
-   protected void postParseArgs()
+   protected void postCLIProcess()
      throws InvalidSyntaxException
    {
       if (inFile == null)
@@ -510,6 +510,122 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
             getMessage("error.syntax.missing_out"));
       }
    }
+
+   @Override
+   public void printCLIAbout()
+   {
+      System.out.println(getHelpLib().getAboutInfo(false,
+        TeXJavaHelpLib.VERSION,
+        getCopyrightDate(),
+        String.format(
+         "Copyright (C) %s Nicola L. C. Talbot (%s)",
+          TeXJavaHelpLib.VERSION_DATE.substring(0, 4),
+          getHelpLib().getInfoUrl(false, "www.dickimaw-books.com")),
+         TeXJavaHelpLib.LICENSE_GPL3,
+         true, null
+      ));
+   }
+
+   @Override
+   public void printCLISyntax()
+   {
+      versionInfo();
+
+      System.out.println();
+      System.out.println(getMessage("syntax.title"));
+      System.out.println();
+      printSyntaxItem(getMessage("syntax.opt_in", getApplicationName()));
+      System.out.println();
+      printSyntaxItem(getMessage("syntax.general"));
+      printSyntaxItem(getMessage("syntax.in", "--in", "-i", getApplicationName()));
+      printSyntaxItem(getMessage("syntax.charset", "--charset"));
+      System.out.println();
+      printSyntaxItem(getMessage("syntax.output.options"));
+      System.out.println();
+      printSyntaxItem(getMessage("syntax.out", "--output", "-o"));
+      printSyntaxItem(getMessage("syntax.out.charset", "--out-charset"));
+      printSyntaxItem(getMessage("syntax.out.image-dest", "--image-dest"));
+      printSyntaxItem(getMessage("syntax.html-ext", "--html-ext"));
+      System.out.println();
+      printSyntaxItem(getMessage("syntax.html.options"));
+      System.out.println();
+      printSyntaxItem(getMessage("syntax.head", "--head"));
+      printSyntaxItem(getMessage("syntax.helpset", "--[no]helpset"));
+      printSyntaxItem(getMessage("syntax.breadcrumbtrail", "--[no]breadcrumbtrail"));
+      printSyntaxItem(getMessage("syntax.minitoc", "--[no]minitoc"));
+      printSyntaxItem(getMessage("syntax.minitoc-div-class", "--minitoc-div-class"));
+      printSyntaxItem(getMessage("syntax.minitoc-div-id", "--minitoc-div-id"));
+      printSyntaxItem(getMessage("syntax.minitoc-preamble", "--minitoc-preamble"));
+      printSyntaxItem(getMessage("syntax.minitoc-postamble", "--minitoc-postamble"));
+      printSyntaxItem(getMessage("syntax.mathjax", "--[no]mathjax"));
+      printSyntaxItem(getMessage("syntax.support-unicode-script",
+         "--[no]support-unicode-script"));
+      printSyntaxItem(getMessage("syntax.entities", "--[no]entities"));
+      System.out.println();
+
+      System.out.println();
+      System.out.println(getMessage("clisyntax.other.options"));
+      System.out.println();
+
+      printCommonCLISyntax();
+
+      printSyntaxItem(getMessage("clisyntax.debug-mode", "--debug-mode"));
+
+      System.out.println();
+
+      printSyntaxItem(getMessage("clisyntax.log", "--log"));
+      printSyntaxItem(getMessage("clisyntax.nolog", "--nolog"));
+      printSyntaxItem(getMessage("syntax.rmtmpdir", "--[no-]rm-tmp-dir"));
+
+      System.out.println();
+
+      System.out.println(getMessage("clisyntax.bugreport",
+        "https://github.com/nlct/texjavahelp"));
+   }
+
+   @Override
+   public void libraryVersion()
+   {
+      libraryVersion(false);
+   }
+
+   public String getCopyrightStartYear()
+   {
+      return "2024";
+   }
+
+   public String getCopyrightDate()
+   {
+      String startYr = getCopyrightStartYear();
+      String endYr = TeXJavaHelpLib.VERSION_DATE.substring(0, 4);
+
+      if (startYr.equals(endYr))
+      {
+         return endYr;
+      }
+      else
+      {
+         return String.format("%s-%s", startYr, endYr);
+      }
+   }
+
+   @Override
+   public String getCLIApplicationName()
+   {
+      return NAME;
+   }
+
+   @Override
+   public String getCLIApplicationVersion()
+   {
+      return TeXJavaHelpLib.VERSION;
+   }
+
+   @Override
+   public String getCLIApplicationVersionDate()
+   {
+      return TeXJavaHelpLib.VERSION_DATE;
+   } 
 
    public boolean isConvertImagesOn()
    {
@@ -1042,149 +1158,18 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       return strWriter.toString();
    }
 
-   @Override
-   public void cliSyntax()
-   {
-      syntax();
-   }
-
-   @Override
-   public void cliVersion()
-   {
-      System.out.println(getHelpLib().getAboutInfo(false,
-        TeXJavaHelpLib.VERSION,
-        TeXJavaHelpLib.VERSION_DATE,
-        String.format(
-         "Copyright (C) %s Nicola L. C. Talbot (%s)",
-          TeXJavaHelpLib.VERSION_DATE.substring(0, 4),
-          getHelpLib().getInfoUrl(false, "www.dickimaw-books.com")),
-         TeXJavaHelpLib.LICENSE_GPL3,
-         true, null
-      ));
-   }
-
-   public void syntax()
-   {
-      TeXJavaHelpLib helpLib = getHelpLib();
-
-      versionInfo();
-
-      System.out.println();
-      System.out.println(getMessage("syntax.title"));
-      System.out.println();
-      helpLib.printSyntaxItem(getMessage("syntax.opt_in", getApplicationName()));
-      System.out.println();
-      helpLib.printSyntaxItem(getMessage("syntax.general"));
-      helpLib.printSyntaxItem(getMessage("syntax.in", "--in", "-i", getApplicationName()));
-      helpLib.printSyntaxItem(getMessage("syntax.charset", "--charset"));
-      System.out.println();
-      helpLib.printSyntaxItem(getMessage("clisyntax.verbose", "--[no]verbose"));
-      helpLib.printSyntaxItem(getMessage("clisyntax.debug", "--debug"));
-      helpLib.printSyntaxItem(getMessage("clisyntax.nodebug", "--nodebug"));
-      helpLib.printSyntaxItem(getMessage("clisyntax.debug-mode", "--debug-mode"));
-      System.out.println();
-      helpLib.printSyntaxItem(getMessage("clisyntax.log", "--log"));
-      helpLib.printSyntaxItem(getMessage("clisyntax.nolog", "--nolog"));
-      helpLib.printSyntaxItem(getMessage("syntax.rmtmpdir", "--[no-]rm-tmp-dir"));
-      System.out.println();
-      helpLib.printSyntaxItem(getMessage("clisyntax.version2", "--version", "-v"));
-      helpLib.printSyntaxItem(getMessage("clisyntax.help2", "--help", "-h"));
-      System.out.println();
-      helpLib.printSyntaxItem(getMessage("syntax.output.options"));
-      System.out.println();
-      helpLib.printSyntaxItem(getMessage("syntax.out", "--output", "-o"));
-      helpLib.printSyntaxItem(getMessage("syntax.out.charset", "--out-charset"));
-      helpLib.printSyntaxItem(getMessage("syntax.out.image-dest", "--image-dest"));
-      helpLib.printSyntaxItem(getMessage("syntax.html-ext", "--html-ext"));
-      System.out.println();
-      helpLib.printSyntaxItem(getMessage("syntax.html.options"));
-      System.out.println();
-      helpLib.printSyntaxItem(getMessage("syntax.head", "--head"));
-      helpLib.printSyntaxItem(getMessage("syntax.helpset", "--[no]helpset"));
-      helpLib.printSyntaxItem(getMessage("syntax.breadcrumbtrail", "--[no]breadcrumbtrail"));
-      helpLib.printSyntaxItem(getMessage("syntax.minitoc", "--[no]minitoc"));
-      helpLib.printSyntaxItem(getMessage("syntax.minitoc-div-class", "--minitoc-div-class"));
-      helpLib.printSyntaxItem(getMessage("syntax.minitoc-div-id", "--minitoc-div-id"));
-      helpLib.printSyntaxItem(getMessage("syntax.minitoc-preamble", "--minitoc-preamble"));
-      helpLib.printSyntaxItem(getMessage("syntax.minitoc-postamble", "--minitoc-postamble"));
-      helpLib.printSyntaxItem(getMessage("syntax.mathjax", "--[no]mathjax"));
-      helpLib.printSyntaxItem(getMessage("syntax.support-unicode-script",
-         "--[no]support-unicode-script"));
-      helpLib.printSyntaxItem(getMessage("syntax.entities", "--[no]entities"));
-      System.out.println();
-      System.out.println(getMessage("clisyntax.bugreport",
-        "https://github.com/nlct/texjavahelp"));
-   }
-
-   public void versionInfo()
-   {
-      if (!shownVersion)
-      {
-         System.out.println(getMessageWithFallback("about.version",
-           "{0} version {1} ({2})", getApplicationName(), 
-           TeXJavaHelpLib.VERSION, TeXJavaHelpLib.VERSION_DATE));
-
-         libraryVersion();
-
-         shownVersion = true;
-      }
-   }
-
-   public void license()
-   {
-      System.out.println();
-      System.out.format("Copyright %s Nicola Talbot%n",
-       getCopyrightDate());
-      System.out.println(getMessageWithFallback("about.license", "License"));
-      System.out.println("https://github.com/nlct/texjavahelp");
-   }
-
-   public String getCopyrightStartYear()
-   {
-      return "2024";
-   }
-
-   public String getCopyrightDate()
-   {
-      String startYr = getCopyrightStartYear();
-      String endYr = TeXJavaHelpLib.VERSION_DATE.substring(0, 4);
-
-      if (startYr.equals(endYr))
-      {
-         return endYr;
-      }
-      else
-      {
-         return String.format("%s-%s", startYr, endYr);
-      }
-   }
-
-   @Override
-   public String getApplicationName()
-   {
-      return NAME;
-   }
-
-   @Override
-   public String getApplicationVersion()
-   {
-      return TeXJavaHelpLib.VERSION;
-   }
-
    public static void main(String[] args)
    {
       final TeXJavaHelpMk app = new TeXJavaHelpMk();
 
       try
       {
-         app.initHelpLibrary();
-         app.parseArgs(args);
+         app.initialiseHelpAndParse(args);
          app.run();
       }
       catch (InvalidSyntaxException e)
       {
          app.error(e.getMessage(), null);
-         app.setExitCode(TeXJavaHelpLibAppAdapter.EXIT_SYNTAX);
       }
       catch (Throwable e)
       {
@@ -1193,8 +1178,6 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
 
       System.exit(app.getExitCode());
    }
-
-   private boolean shownVersion = false;
 
    private boolean useHtmlEntities = false;
    private boolean mathJax = false;
