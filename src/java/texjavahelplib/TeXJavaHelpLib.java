@@ -681,18 +681,18 @@ public class TeXJavaHelpLib
 
       builder.append(par);
       builder.append(getMessageWithFallback("about.library.version",
-        "Bundled with {0} version {1} ({2})",
+        "{0} version {1} ({2})",
         "texjavahelplib.jar",
         TeXJavaHelpLib.VERSION, TeXJavaHelpLib.VERSION_DATE));
       builder.append(nl);
 
-      builder.append(getInfoUrl(html, "https://github.com/nlct/texjavahelplib"));
+      builder.append(getInfoUrl(html, "https://github.com/nlct/texjavahelp"));
 
       if (incTeXParser)
       {
          builder.append(par);
          builder.append(getMessageWithFallback("about.library.version",
-           "Bundled with {0} version {1} ({2})",
+           "{0} version {1} ({2})",
            "texparserlib.jar",
             TeXParser.VERSION, TeXParser.VERSION_DATE));
          builder.append(nl);
