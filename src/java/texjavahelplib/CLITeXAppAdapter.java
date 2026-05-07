@@ -298,7 +298,7 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
       {
          System.out.println();
          System.out.println(getMessageWithFallback("about.library.version",
-           "Bundled with {0} version {1} ({2})",
+           "{0} version {1} ({2})",
            "texjavahelplib.jar",
            TeXJavaHelpLib.VERSION, TeXJavaHelpLib.VERSION_DATE));
 
@@ -307,7 +307,7 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
 
       System.out.println();
       System.out.println(getMessageWithFallback("about.library.version",
-        "Bundled with {0} version {1} ({2})",
+        "{0} version {1} ({2})",
         "texparserlib.jar", TeXParser.VERSION, TeXParser.VERSION_DATE));
       System.out.println("https://github.com/nlct/texparser");
    }
