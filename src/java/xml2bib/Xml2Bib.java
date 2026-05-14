@@ -40,7 +40,6 @@ import javax.swing.KeyStroke;
 import javax.swing.ImageIcon;
 
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
-import com.dickimawbooks.texjavahelplib.TeXJavaHelpLibAppAdapter;
 import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 import com.dickimawbooks.texjavahelplib.AbstractCLI;
 import com.dickimawbooks.texjavahelplib.CLISyntaxParser;
