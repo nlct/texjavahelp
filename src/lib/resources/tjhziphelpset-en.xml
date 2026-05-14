@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>English language file for xml2bib
+https://github.com/nlct/texjavahelp
+GPL-3.0
+Nicola Talbot
+</comment>
+
+<!--  Syntax -->
+<entry key="syntax.title">Syntax:</entry>
+<entry key="syntax.options">{0} [&lt;option&gt;]+ &lt;dir&gt; &lt;zip-file&gt;</entry>
+<entry key="syntax.in">{0} (or {1}) &lt;dir&gt;	The directory containing all the hellpset files</entry>
+<entry key="syntax.locales">{0} (or {1}) &lt;locale-list&gt;	The list of supported locales (cumulative). Omit if no locale sub-directories.</entry>
+<entry key="syntax.locale-prefix">{0} (or {1}) &lt;prefix&gt;	The prefix used for the locale sub-directories.</entry>
+<entry key="syntax.out">{0} (or {1}) &lt;zip-file&gt;	The output ZIP file.</entry>
+
+<!-- Error Messages -->
+
+<entry key="error.syntax.only_one_input">Only one input directory permitted</entry>
+<entry key="error.syntax.only_one_output">Only one output file permitted</entry>
+<entry key="error.syntax.only_one_inout">Only one input directory and output file permitted</entry>
+
+<entry key="error.syntax.missing_in">Missing input directory</entry>
+<entry key="error.syntax.missing_out">Missing output zip file</entry>
+
+</properties>

@@ -112,6 +112,23 @@ classes/com/dickimawbooks/flattendocsrc/FlattenDocSrc.class	: classes/com/dickim
 classes/com/dickimawbooks/flattendocsrc	:
 	mkdir -p classes/com/dickimawbooks/flattendocsrc
 
+lib/tjhziphelpset.jar	: java/ziphelpset/Manifest.txt \
+	classes/com/dickimawbooks/ziphelpset/ZipHelpset.class
+	cd classes; \
+	jar cmf ../java/ziphelpset/Manifest.txt ../lib/tjhziphelpset.jar \
+	com/dickimawbooks/ziphelpset/*.class
+
+classes/com/dickimawbooks/ziphelpset/ZipHelpset.class	: classes/com/dickimawbooks/ziphelpset \
+	java/ziphelpset/*.java lib/texjavahelplib.jar
+	cd java/ziphelpset; \
+	javac $(target_version) -d ../../classes \
+	 -Xlint:unchecked -Xlint:deprecation \
+	-cp ../../lib/texjavahelplib.jar \
+	*.java
+
+classes/com/dickimawbooks/ziphelpset	:
+	mkdir -p classes/com/dickimawbooks/ziphelpset
+
 ../unstable/texjavahelp.zip	: lib/texjavahelplib.jar \
 	lib/texjavahelpmk.jar \
 	lib/tjhxml2bib.jar \
