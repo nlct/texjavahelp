@@ -1,2 +1,2 @@
 Main-Class: com/dickimawbooks/ziphelpset/ZipHelpset
-Class-Path: . texjavahelplib.jar
+Class-Path: . texjavahelplib.jar texparserlib.jar

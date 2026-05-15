@@ -1388,6 +1388,11 @@ public class TeXJavaHelpLib
       helpsetSubdirPrefix = prefix;
    }
 
+   public String getHelpsetDirName()
+   {
+      return helpsetdir;
+   }
+
    public String getHelpSetResourcePath()
    {
       if (helpsetsubdir == null || helpsetsubdir.isEmpty())
@@ -1779,7 +1784,7 @@ public class TeXJavaHelpLib
    public void initHelpSet()
     throws IOException,SAXException
    {
-      initHelpSet("helpset", "navigation");
+      initHelpSet(helpsetdir, "navigation");
    }
 
    public void initHelpSet(String helpsetdir)
@@ -3930,6 +3935,8 @@ public class TeXJavaHelpLib
 
    public static final int SYNTAX_ITEM_LINEWIDTH=78;
    public static final int SYNTAX_ITEM_TAB=30;
+
+   public static final String ZIP_HELPSET_MIME_TYPE = "application/texjavahelp+zip";
 
    public static final String LICENSE_GPL3 = String.format(
    "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>%nThis is free software: you are free to change and redistribute it.%nThere is NO WARRANTY, to the extent permitted by law.");

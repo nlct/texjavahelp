@@ -9,10 +9,11 @@ Nicola Talbot
 
 <!--  Syntax -->
 <entry key="syntax.title">Syntax:</entry>
-<entry key="syntax.options">{0} [&lt;option&gt;]+ &lt;dir&gt; &lt;zip-file&gt;</entry>
-<entry key="syntax.in">{0} (or {1}) &lt;dir&gt;	The directory containing all the hellpset files</entry>
+<entry key="syntax.options">{0} [&lt;option&gt;]+ &lt;resources dir&gt; [&lt;zip-file&gt;]</entry>
+<entry key="syntax.in">{0} (or {1}) &lt;resources dir&gt;	The directory containing the resource files.</entry>
 <entry key="syntax.locales">{0} (or {1}) &lt;locale-list&gt;	The list of supported locales (cumulative). Omit if no locale sub-directories.</entry>
 <entry key="syntax.locale-prefix">{0} (or {1}) &lt;prefix&gt;	The prefix used for the locale sub-directories.</entry>
+<entry key="syntax.helpset">{0} &lt;name&gt;	The name of the helpset sub-directory within the resources directory.</entry>
 <entry key="syntax.out">{0} (or {1}) &lt;zip-file&gt;	The output ZIP file.</entry>
 
 <!-- Error Messages -->
@@ -22,6 +23,9 @@ Nicola Talbot
 <entry key="error.syntax.only_one_inout">Only one input directory and output file permitted</entry>
 
 <entry key="error.syntax.missing_in">Missing input directory</entry>
-<entry key="error.syntax.missing_out">Missing output zip file</entry>
+
+<entry key="error.invalid_uri">Invalid URI: {0}</entry>
+<entry key="error.file_not_found">File not found: {0}</entry>
+<entry key="error.file_not_dir">Not a directory: {0}</entry>
 
 </properties>

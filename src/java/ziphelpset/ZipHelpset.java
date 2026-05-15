@@ -19,22 +19,26 @@
 package com.dickimawbooks.ziphelpset;
 
 import java.io.*;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 
-import java.net.URL;
+import java.net.*;
 
+import java.util.Locale;
 import java.util.Vector;
+import java.util.zip.*;
 
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
-import com.dickimawbooks.texjavahelplib.TeXJavaHelpLibAppAdapter;
 import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 import com.dickimawbooks.texjavahelplib.AbstractCLI;
-import com.dickimawbooks.texjavahelplib.CLISyntaxParser;
 import com.dickimawbooks.texjavahelplib.CLIArgValue;
+import com.dickimawbooks.texjavahelplib.HelpsetFile;
 
 public class ZipHelpset extends AbstractCLI
 {
    public ZipHelpset()
    {
+      helpsetFiles = new Vector<HelpsetFile>();
    }
 
    @Override
@@ -101,22 +105,15 @@ public class ZipHelpset extends AbstractCLI
 
       System.out.println();
 
-      printSyntaxItem(getMessage("syntax.in", "--in", "-i"));
+      printSyntaxItem(getMessage("syntax.in", "--lib", "-i"));
 
-      printSyntaxItem(getMessage("syntax.prop", "--prop"));
+      printSyntaxItem(getMessage("syntax.helpset", "--helpset"));
 
       printSyntaxItem(getMessage("syntax.out", "--output", "-o"));
 
-      printSyntaxItem(getMessage("syntax.out.charset", "--out-charset"));
-      printSyntaxItem(getMessage("syntax.provide-xml",
-         "--provide-xml", getCLIApplicationName()));
+      printSyntaxItem(getMessage("syntax.locales", "--locales", "-l"));
 
-      printSyntaxItem(getMessage("syntax.copy-overwrite-xml",
-          "--copy-overwrite-xml", getCLIApplicationName()));
-
-      printSyntaxItem(getMessage("syntax.encapless-field", "--encapless-field"));
-
-      printSyntaxItem(getMessage("syntax.auto-trim", "--[no]auto-trim"));
+      printSyntaxItem(getMessage("syntax.locale-prefix", "--locale-prefix", "-p"));
 
       System.out.println();
 
@@ -131,8 +128,9 @@ public class ZipHelpset extends AbstractCLI
    @Override
    protected int getCLIArgCount(String arg)
    {
-      if (arg.equals("--in") || arg.equals("-i")
+      if (arg.equals("--lib") || arg.equals("-i")
        || arg.equals("--output") || arg.equals("-o")
+       || arg.equals("--helpset")
        || arg.equals("--locales") || arg.equals("-l")
        || arg.equals("--locale-prefix") || arg.equals("-p")
          )
@@ -146,9 +144,9 @@ public class ZipHelpset extends AbstractCLI
    @Override
    protected void parseNoSwitchCLIArg(String arg) throws InvalidSyntaxException
    {
-      if (inDir == null)
+      if (resourcePathName == null)
       {
-         inDir = new File(arg);
+         resourcePathName = arg;
       }
       else if (zipFile == null)
       {
@@ -165,9 +163,9 @@ public class ZipHelpset extends AbstractCLI
    protected boolean parseCLIArg(String arg, CLIArgValue[] returnVals)
      throws InvalidSyntaxException
    {
-      if (isArg(arg, "--in", "-i", returnVals))
+      if (isArg(arg, "--lib", "-i", returnVals))
       {
-         if (inDir != null)
+         if (resourcePathName != null)
          {
             throw new InvalidSyntaxException(
                   getMessage("error.syntax.only_one_input"));
@@ -179,7 +177,11 @@ public class ZipHelpset extends AbstractCLI
                getMessage("error.clisyntax.missing.value", arg));
          }
 
-         inDir = new File(returnVals[0].toString());
+         resourcePathName = returnVals[0].toString();
+      }
+      else if (isArg(arg, "--helpset", returnVals))
+      {
+         helpsetDirName = returnVals[0].toString();
       }
       else if (isArg(arg, "--locales", "-l", returnVals))
       {
@@ -238,21 +240,183 @@ public class ZipHelpset extends AbstractCLI
    @Override
    protected void postCLIProcess() throws InvalidSyntaxException
    {
-      if (inDir == null)
+      if (resourcePathName == null)
       {
          throw new InvalidSyntaxException(
-            getMessage("error.syntax.missing_in"));
+           getMessage("error.syntax.missing_in"));
       }
-      
+
+      File inFile = new File(resourcePathName);
+      inPath = inFile.toPath();
+
+      if (!Files.exists(inPath))
+      {
+         throw new InvalidSyntaxException(
+           getMessage("error.file_not_found", inPath));
+      }
+
+      if (!Files.isDirectory(inPath))
+      {
+         throw new InvalidSyntaxException(
+           getMessage("error.file_not_found", inPath));
+      }
+
+      if (helpsetDirName == null)
+      {
+         helpsetDirName = getHelpLib().getHelpsetDirName();
+      }
+
+      if (helpsetDirName.endsWith("/"))
+      {
+         helpsetDirName = helpsetDirName.substring(0, helpsetDirName.length()-1);
+      }
+
+      helpsetPath = inPath.resolve(helpsetDirName);
+
+      try
+      { 
+         baseUri = inPath.toUri();
+         helpsetUri = helpsetPath.toUri();
+      }
+      catch (Exception e)
+      {
+         throw new InvalidSyntaxException(e.getMessage(), e);
+      }
+
       if (zipFile == null)
       {
-         throw new InvalidSyntaxException(
-            getMessage("error.syntax.missing_out"));
+         zipFile = new File(inFile, helpsetDirName+".zip");
       }
    }
 
    protected void run() throws IOException
    {
+      Files.walkFileTree(helpsetPath, new SimpleFileVisitor<Path>()
+       {
+          @Override
+          public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
+             throws IOException
+          {
+             if (!attrs.isDirectory())
+             {
+                String type = Files.probeContentType(path);
+
+                if (HelpsetFile.isSupportedType(type))
+                {
+                   URI uri = path.toUri();
+
+                   URI rUri = baseUri.relativize(uri);
+                   URI hUri = helpsetUri.relativize(uri);
+
+                   Locale locale = null;
+
+                   if (localeNames != null)
+                   {
+                      Path absPath = path.toAbsolutePath();
+
+                      for (String tag : localeNames)
+                      {
+                         String name = (localePrefix == null ? tag : localePrefix+tag);
+
+                         Path p = helpsetPath.resolve(name);
+
+                         if (absPath.startsWith(p.toAbsolutePath()))
+                         {
+                            locale = Locale.forLanguageTag(tag);
+
+                            hUri = helpsetUri.relativize(path.resolve(p).toUri());
+
+                            break;
+                         }
+                      }
+                   }
+
+                   HelpsetFile hsFile = new HelpsetFile(
+                    rUri, type, hUri, locale);
+
+                   hsFile.setPath(path);
+                   hsFile.setName(inPath.relativize(path).toString());
+
+                   helpsetFiles.add(hsFile);
+                }
+                else
+                {
+                   publishMessage(getMessage("message.skipping_unsupported",
+                    path, type));
+                }
+             }
+
+             return FileVisitResult.CONTINUE;
+          }
+       });
+
+      FileOutputStream fout = null;
+      ZipOutputStream zipOut = null;
+      FileInputStream fin = null;
+
+      try
+      {
+         fout = new FileOutputStream(zipFile);
+
+         zipOut = new ZipOutputStream(fout);
+
+         ZipEntry zipEntry = new ZipEntry("mimetype");
+         zipEntry.setMethod(ZipEntry.STORED);
+
+         byte[] byteArray = TeXJavaHelpLib.ZIP_HELPSET_MIME_TYPE.getBytes();
+
+         CRC32 crc = new CRC32();
+         crc.update(byteArray);
+         zipEntry.setCrc(crc.getValue());
+         zipEntry.setSize(byteArray.length);
+         zipEntry.setCompressedSize(byteArray.length);
+         zipOut.putNextEntry(zipEntry);
+
+         zipOut.write(byteArray, 0, byteArray.length);
+
+         zipEntry = new ZipEntry("manifest.xml");
+         zipOut.putNextEntry(zipEntry);
+
+         HelpsetFile.writeManifest(zipOut, helpsetFiles);
+
+         for (HelpsetFile hs : helpsetFiles)
+         {
+            Path path = hs.getPath();
+
+            fin = new FileInputStream(path.toFile());
+
+            zipEntry = new ZipEntry(hs.getName());
+            zipOut.putNextEntry(zipEntry);
+   
+            byteArray = new byte[1024];
+            int length;
+
+            while ((length = fin.read(byteArray)) >= 0)
+            {
+               zipOut.write(byteArray, 0, length);
+            }
+
+            fin.close();
+            fin = null;
+         }
+      }
+      finally
+      {
+         if (fin != null)
+         {
+            fin.close();
+         }
+
+         if (zipOut != null)
+         {
+            zipOut.close();
+         }
+
+         if (fout != null)
+         {
+            fout.close();
+         }
+      }
    }
 
    public static void main(String[] args)
@@ -278,9 +442,13 @@ public class ZipHelpset extends AbstractCLI
 
    public static final String NAME="tjhziphelpset";
 
-   File inDir = null, zipFile = null;
+   Path inPath = null, helpsetPath;
+   URI baseUri, helpsetUri;
+   String resourcePathName = null, helpsetDirName=null;
+   File zipFile = null;
 
    Vector<String> localeNames;
+   Vector<HelpsetFile> helpsetFiles;
 
-   String localePrefix = "";
+   String localePrefix = null;
 }

@@ -7,6 +7,13 @@ endif
 arara = arara --verbose
 texjavahelpmk=bin/texjavahelpmk #--debug-mode sty-data --log texparser.log
 
+all:	lib/texjavahelplib.jar \
+	lib/tjhziphelpset.jar \
+	lib/tjhxml2bib.jar \
+	lib/texjavahelpmk.jar \
+	lib/tjhflattendocsrc.jar \
+	lib/texjavahelpdemo.jar
+
 lib/texjavahelpdemo.jar	: java/texjavahelpdemo/Manifest.txt \
 	classes/com/dickimawbooks/texjavahelpdemo/TeXJavaHelpDemo.class
 	cd classes; \
@@ -123,7 +130,7 @@ classes/com/dickimawbooks/ziphelpset/ZipHelpset.class	: classes/com/dickimawbook
 	cd java/ziphelpset; \
 	javac $(target_version) -d ../../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
-	-cp ../../lib/texjavahelplib.jar \
+	-cp ../../lib/texparserlib.jar:../../lib/texjavahelplib.jar \
 	*.java
 
 classes/com/dickimawbooks/ziphelpset	:
