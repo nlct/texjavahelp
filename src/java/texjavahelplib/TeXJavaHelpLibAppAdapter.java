@@ -243,7 +243,11 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
    @Override
    public void message(String msg)
    {
-      if (!isGUI())
+      if (isGUI())
+      {
+         debug(msg);
+      }
+      else
       {
          stdOutMessage(msg);
       }

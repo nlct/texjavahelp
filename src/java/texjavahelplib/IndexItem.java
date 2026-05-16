@@ -265,12 +265,12 @@ public class IndexItem implements Comparable<IndexItem>
    public static Vector<IndexItem> load(TeXJavaHelpLib helpLib)
     throws IOException,SAXException
    {
-      InputStream in = null;
+      Reader in = null;
       Vector<IndexItem> data = null;
 
       try
       {
-         in = helpLib.getIndexXMLInputStream();
+         in = helpLib.getIndexXMLReader();
 
          data = readIndex(helpLib.getMessageSystem(), in);
       }

@@ -615,6 +615,18 @@ code should appear in the PDF</entry>
 <entry key="error.xml.unexpected_chars">Unexpected content ''{0}'' found</entry>
 <entry key="error.xml.unknown_context">No context found for ID {0} referenced by entry ''{1}''</entry>
 
+<entry key="error.invalid_mime_type">Invalid mime type: {0}</entry>
+<entry key="error.invalid_uri_for_ref">Invalid URI for reference: {0}</entry>
+
+<entry key="error.zip_io_file">{0}: {1}</entry>
+<entry key="error.zip_io_file_entry">{0}!{1}: {2}</entry>
+
+<entry key="error.zip_missing_entry">Missing entry {0}</entry>
+
+<entry key="error.content_type_not_textual">{0}: Content type {1} is not textual</entry>
+<entry key="error.content_type_not_image">{0}: Content type {1} is not an image</entry>
+<entry key="error.content_type_not_stylesheet">{0}: Content type {1} is not a style sheet</entry>
+
 <entry key="error.resource_not_found">Resource file ''{0}'' not found</entry>
 <entry key="error.resource_not_found_for_node">Resource file ''{0}'' not found for node ''{1}''</entry>
 <entry key="error.no_helpset">Helpset has not been initialised</entry>

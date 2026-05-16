@@ -32,6 +32,10 @@ classes/com/dickimawbooks/texjavahelpdemo/TeXJavaHelpDemo.class	: classes/com/di
 demo:	lib/texjavahelpdemo.jar
 	bin/texjavahelpdemo
 
+zipdemo:	lib/texjavahelpdemo.jar lib/tjhziphelpset.jar
+	bin/tjhziphelpset lib/resources
+	bin/texjavahelpdemo
+
 classes/com/dickimawbooks/texjavahelpdemo	:
 	mkdir -p classes/com/dickimawbooks/texjavahelpdemo
 
@@ -193,3 +197,4 @@ clean	:
 	\rm -f lib/texjavahelpdemo.jar
 	\rm -f lib/flattendocsrc.jar
 	\rm -rf lib/resources/helpset
+	\rm -f lib/resources/helpset.zip

@@ -749,6 +749,11 @@ public class TeXJavaHelpLib
       return resourcebase;
    }
 
+   public URL getResourceURL()
+   {
+      return getClass().getResource(resourcebase+"/");
+   }
+
    public String getDictionaryPath()
    {
       return dictionaryBase;
@@ -1489,6 +1494,13 @@ public class TeXJavaHelpLib
       return availableHelpsets;
    }
 
+   public Reader getNavigationXMLReader()
+     throws FileNotFoundException
+   {
+      return new BufferedReader(
+               new InputStreamReader(getNavigationXMLInputStream()));
+   }
+
    public InputStream getNavigationXMLInputStream()
      throws FileNotFoundException
    {
@@ -1595,6 +1607,12 @@ public class TeXJavaHelpLib
       return stream;
    }
 
+   public Reader getIndexXMLReader()
+     throws FileNotFoundException
+   {
+      return new BufferedReader(new InputStreamReader(getIndexXMLInputStream()));
+   }
+
    public InputStream getIndexXMLInputStream()
      throws FileNotFoundException
    {
@@ -1686,6 +1704,12 @@ public class TeXJavaHelpLib
       }
 
       return stream;
+   }
+
+   public Reader getSearchXMLReader()
+     throws FileNotFoundException
+   {
+      return new BufferedReader(new InputStreamReader(getSearchXMLInputStream()));
    }
 
    public InputStream getSearchXMLInputStream()
@@ -1812,6 +1836,17 @@ public class TeXJavaHelpLib
    {
       this.helpsetdir = helpsetdir;
       this.helpWindowInitSize = helpWindowInitSize;
+
+      // Has the helpset been bundled into a zip file?
+
+      String zipName = resourcebase + "/"+helpsetdir+".zip";
+
+      InputStream zipStream = getClass().getResourceAsStream(zipName);
+
+      if (zipStream != null)
+      {
+         helpSet = Helpset.load(this, zipName, zipStream);
+      }
 
       navhtmlfilename = navBaseName+"."+htmlsuffix;
       navxmlfilename = navBaseName+".xml";
@@ -3885,6 +3920,8 @@ public class TeXJavaHelpLib
    protected String navhtmlfilename, navxmlfilename;
    protected String htmlsuffix = "html";
 
+   protected Helpset helpSet;
+
    protected String indexXmlFilename = "index.xml";
    protected Vector<IndexItem> indexData;
    protected TreeSet<IndexItem> indexGroupList;
@@ -3935,8 +3972,6 @@ public class TeXJavaHelpLib
 
    public static final int SYNTAX_ITEM_LINEWIDTH=78;
    public static final int SYNTAX_ITEM_TAB=30;
-
-   public static final String ZIP_HELPSET_MIME_TYPE = "application/texjavahelp+zip";
 
    public static final String LICENSE_GPL3 = String.format(
    "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>%nThis is free software: you are free to change and redistribute it.%nThere is NO WARRANTY, to the extent permitted by law.");

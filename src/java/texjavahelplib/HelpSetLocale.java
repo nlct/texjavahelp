@@ -71,7 +71,7 @@ public class HelpSetLocale implements Comparable<HelpSetLocale>
 
    @Override
    public int compareTo(HelpSetLocale other)
-   {
+   {// for sorting by name
       return toString().compareTo(other.toString());
    }
 

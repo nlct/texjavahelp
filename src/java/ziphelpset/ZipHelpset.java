@@ -33,12 +33,12 @@ import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 import com.dickimawbooks.texjavahelplib.AbstractCLI;
 import com.dickimawbooks.texjavahelplib.CLIArgValue;
 import com.dickimawbooks.texjavahelplib.HelpsetFile;
+import com.dickimawbooks.texjavahelplib.Helpset;
 
 public class ZipHelpset extends AbstractCLI
 {
    public ZipHelpset()
    {
-      helpsetFiles = new Vector<HelpsetFile>();
    }
 
    @Override
@@ -291,6 +291,8 @@ public class ZipHelpset extends AbstractCLI
 
    protected void run() throws IOException
    {
+      helpset = new Helpset(getHelpLib());
+
       Files.walkFileTree(helpsetPath, new SimpleFileVisitor<Path>()
        {
           @Override
@@ -306,38 +308,37 @@ public class ZipHelpset extends AbstractCLI
                    URI uri = path.toUri();
 
                    URI rUri = baseUri.relativize(uri);
-                   URI hUri = helpsetUri.relativize(uri);
 
                    Locale locale = null;
 
                    if (localeNames != null)
                    {
-                      Path absPath = path.toAbsolutePath();
-
                       for (String tag : localeNames)
                       {
                          String name = (localePrefix == null ? tag : localePrefix+tag);
 
-                         Path p = helpsetPath.resolve(name);
 
-                         if (absPath.startsWith(p.toAbsolutePath()))
+                         for (int i = 0; i < path.getNameCount()-1; i++)
                          {
-                            locale = Locale.forLanguageTag(tag);
+                            if (path.getName(i).toString().equals(name))
+                            {
+                               locale = Locale.forLanguageTag(tag);
 
-                            hUri = helpsetUri.relativize(path.resolve(p).toUri());
-
-                            break;
+                               break;
+                            }
                          }
                       }
                    }
 
-                   HelpsetFile hsFile = new HelpsetFile(
-                    rUri, type, hUri, locale);
+                   HelpsetFile hsFile = new HelpsetFile(getHelpLib(),
+                     rUri.toString(), type, locale);
 
                    hsFile.setPath(path);
-                   hsFile.setName(inPath.relativize(path).toString());
+                   hsFile.setNameFrom(inPath.relativize(path));
 
-                   helpsetFiles.add(hsFile);
+                   hsFile.setEncodingFromPath();
+
+                   helpset.add(hsFile);
                 }
                 else
                 {
@@ -350,73 +351,7 @@ public class ZipHelpset extends AbstractCLI
           }
        });
 
-      FileOutputStream fout = null;
-      ZipOutputStream zipOut = null;
-      FileInputStream fin = null;
-
-      try
-      {
-         fout = new FileOutputStream(zipFile);
-
-         zipOut = new ZipOutputStream(fout);
-
-         ZipEntry zipEntry = new ZipEntry("mimetype");
-         zipEntry.setMethod(ZipEntry.STORED);
-
-         byte[] byteArray = TeXJavaHelpLib.ZIP_HELPSET_MIME_TYPE.getBytes();
-
-         CRC32 crc = new CRC32();
-         crc.update(byteArray);
-         zipEntry.setCrc(crc.getValue());
-         zipEntry.setSize(byteArray.length);
-         zipEntry.setCompressedSize(byteArray.length);
-         zipOut.putNextEntry(zipEntry);
-
-         zipOut.write(byteArray, 0, byteArray.length);
-
-         zipEntry = new ZipEntry("manifest.xml");
-         zipOut.putNextEntry(zipEntry);
-
-         HelpsetFile.writeManifest(zipOut, helpsetFiles);
-
-         for (HelpsetFile hs : helpsetFiles)
-         {
-            Path path = hs.getPath();
-
-            fin = new FileInputStream(path.toFile());
-
-            zipEntry = new ZipEntry(hs.getName());
-            zipOut.putNextEntry(zipEntry);
-   
-            byteArray = new byte[1024];
-            int length;
-
-            while ((length = fin.read(byteArray)) >= 0)
-            {
-               zipOut.write(byteArray, 0, length);
-            }
-
-            fin.close();
-            fin = null;
-         }
-      }
-      finally
-      {
-         if (fin != null)
-         {
-            fin.close();
-         }
-
-         if (zipOut != null)
-         {
-            zipOut.close();
-         }
-
-         if (fout != null)
-         {
-            fout.close();
-         }
-      }
+      helpset.writeHelpset(zipFile);
    }
 
    public static void main(String[] args)
@@ -448,7 +383,7 @@ public class ZipHelpset extends AbstractCLI
    File zipFile = null;
 
    Vector<String> localeNames;
-   Vector<HelpsetFile> helpsetFiles;
+   Helpset helpset;
 
    String localePrefix = null;
 }

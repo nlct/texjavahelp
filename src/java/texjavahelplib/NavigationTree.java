@@ -20,8 +20,7 @@ package com.dickimawbooks.texjavahelplib;
 
 import java.util.HashMap;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
@@ -135,14 +134,14 @@ public class NavigationTree
    public static NavigationTree load(TeXJavaHelpLib helpLib)
     throws IOException,SAXException
    {
-      BufferedReader in = null;
+      Reader in = null;
 
       NavigationNode node = null;
 
       try
       {
-         in = new BufferedReader(new InputStreamReader(
-            helpLib.getNavigationXMLInputStream()));
+         in = helpLib.getNavigationXMLReader();
+
          node = NavigationNode.readTree(helpLib.getMessageSystem(), in);
       }
       finally

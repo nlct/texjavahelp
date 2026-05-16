@@ -22,45 +22,53 @@ package com.dickimawbooks.texjavahelplib;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.BufferedReader;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import javax.swing.text.html.StyleSheet;
 
 import java.nio.file.Path;
+import java.nio.file.Files;
 
-import java.net.URI;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import java.util.Locale;
 import java.util.Vector;
+
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import com.dickimawbooks.texparserlib.html.HtmlTag;
 
 public class HelpsetFile
 {
-   public HelpsetFile(URI resourcesURI, String type)
+   public HelpsetFile(TeXJavaHelpLib helpLib, String ref, String type)
    {
-      this(resourcesURI, type, null, null);
+      this(helpLib, ref, type, null);
    }
 
-   public HelpsetFile(URI resourcesURI, String type,
-      URI helpsetURI, Locale locale)
+   public HelpsetFile(TeXJavaHelpLib helpLib, String ref, String type, Locale locale)
    {
-      if (resourcesURI == null || type == null)
+      if (ref == null || type == null)
       {
          throw new NullPointerException();
       }
 
-      this.resourcesURI = resourcesURI;
+      this.helpLib = helpLib;
+      this.ref = ref;
       this.type = type;
-      this.helpsetURI = helpsetURI;
       this.locale = locale;
    }
 
-   public URI getResourcesURI()
+   public String getRef()
    {
-      return resourcesURI;
-   }
-
-   public URI getHelpsetURI()
-   {
-      return helpsetURI;
+      return ref;
    }
 
    public String getType()
@@ -93,9 +101,234 @@ public class HelpsetFile
       this.name = name;
    }
 
+   public void setNameFrom(Path path)
+   {
+      StringBuilder builder = new StringBuilder();
+
+      for (int i = 0; i < path.getNameCount(); i++)
+      {
+         if (i > 0) builder.append('/');
+
+         builder.append(path.getName(i).toString());
+      }
+
+      setName(builder.toString());
+   }
+
    public String getName()
    {
       return name;
+   }
+
+   public void setEncoding(String encodingName)
+   {
+      encoding = encodingName;
+   }
+
+   public String getEncoding()
+   {
+      return encoding;
+   }
+
+   public void setEncodingFromPath() throws IOException
+   {
+      if (type.equals(TYPE_XML))
+      {
+         FileInputStream in = null;
+
+         try
+         {
+            in = new FileInputStream(path.toFile());
+
+            byte[] bytes = new byte[256];
+
+            int len = in.read(bytes);
+
+            if (len > 0)
+            {
+               Matcher m = Helpset.XML_HEADER_ENCODING_PATTERN.matcher(new String(bytes));
+
+               if (m.lookingAt())
+               {
+                  encoding = m.group(1);
+               }
+            }
+         }
+         finally
+         {
+            if (in != null)
+            {
+               in.close();
+            }
+         }
+      }
+      else if (type.equals(TYPE_HTML))
+      {
+         BufferedReader in = null;
+
+         try
+         {
+            in = Files.newBufferedReader(path, StandardCharsets.ISO_8859_1);
+
+            String line;
+
+            while ((line = in.readLine()) != null)
+            {
+               Matcher m = HTML_META_CHARSET_PATTERN.matcher(line);
+
+               if (m.find())
+               {
+                  encoding = m.group(1);
+                  break;
+               }
+
+               m = HTML_CONTENT_CHARSET_PATTERN.matcher(line);
+
+               if (m.find())
+               {
+                  encoding = m.group(1);
+                  break;
+               }
+            }
+
+            if (encoding == null)
+            {
+               encoding = "UTF-8";
+            }
+         }
+         finally
+         {
+            if (in != null)
+            {
+               in.close();
+            }
+         }
+      }
+      else if (type.equals(TYPE_CSS))
+      {
+         BufferedReader in = null;
+
+         try
+         {
+            in = Files.newBufferedReader(path, StandardCharsets.ISO_8859_1);
+
+            String line;
+
+            while ((line = in.readLine()) != null)
+            {
+               Matcher m = CSS_CHARSET_PATTERN.matcher(line);
+
+               if (m.find())
+               {
+                  encoding = m.group(1);
+                  break;
+               }
+            }
+
+            if (encoding == null)
+            {
+               encoding = "UTF-8";
+            }
+         }
+         finally
+         {
+            if (in != null)
+            {
+               in.close();
+            }
+         }
+      }
+   }
+
+   public void setByteContent(byte[] content)
+   {
+      byteContent = content;
+   }
+
+   public boolean hasContent()
+   {
+      return byteContent != null;
+   }
+
+   public boolean isTextContent()
+   {
+      return type.startsWith("text/");
+   }
+
+   public boolean isImageContent()
+   {
+      return type.startsWith("image/");
+   }
+
+   public String getStringContent()
+     throws InvalidContentTypeException,UnsupportedEncodingException
+   {
+      if (isTextContent())
+      {
+         return byteContent == null ? "" :
+           new String(byteContent, encoding == null ? "UTF-8" : encoding);
+      }
+      else
+      {
+         throw new InvalidContentTypeException(
+           helpLib.getMessageWithFallback(
+            "error.content_type_not_textual",
+            "{0}: Content type {1} is not textual",
+            ref, type));
+      }
+   }
+
+   public BufferedImage getImage() throws IOException
+   {
+      if (image != null || !hasContent()) return image;
+
+      if (isImageContent())
+      {
+         image = ImageIO.read(getInputStream());
+
+         return image;
+      }
+      else
+      {
+         throw new InvalidContentTypeException(
+           helpLib.getMessageWithFallback(
+            "error.content_type_not_image",
+            "{0}: Content type {1} is not an image",
+            ref, type));
+      }
+   }
+
+   public StyleSheet getStyleSheet() throws IOException
+   {
+      if (stylesheet != null || !hasContent()) return stylesheet;
+
+      if (type.equals(TYPE_CSS))
+      {
+         stylesheet = new StyleSheet();
+
+         stylesheet.loadRules(getStringReader(), null);
+
+         return stylesheet;
+      }
+      else
+      {
+         throw new InvalidContentTypeException(
+           helpLib.getMessageWithFallback(
+            "error.content_type_not_stylesheet",
+            "{0}: Content type {1} is not a style sheet",
+            ref, type));
+      }
+   }
+
+   public StringReader getStringReader()
+     throws InvalidContentTypeException,UnsupportedEncodingException
+   {
+      return new StringReader(getStringContent());
+   }
+
+   public InputStream getInputStream()
+   {
+      return new ByteArrayInputStream(byteContent);
    }
 
    public static boolean isSupportedType(String mimetype)
@@ -107,82 +340,60 @@ public class HelpsetFile
           || mimetype.equals(TYPE_JPEG);
    }
 
-   public static void writeManifest(OutputStream out, Vector<HelpsetFile> files)
+   public void writeManifestEntry(OutputStream out)
    throws IOException
    {
-      byte[] byteArray = MANIFEST_XML_HEADER.getBytes();
+      String str = String.format("<%s ref=\"%s\" type=\"%s\" ",
+          ELEMENT_NAME, ref, type);
 
-      out.write(byteArray, 0, byteArray.length);
-
-      byte[] eol = String.format("%n").getBytes();
-      out.write(eol, 0, eol.length);
-
-      byteArray = MANIFEST_HEADER.getBytes();
-      out.write(byteArray, 0, byteArray.length);
-
-      out.write(eol, 0, eol.length);
-
-      for (HelpsetFile hs : files)
+      if (locale != null)
       {
-         String str = String.format("<entry resource=\"%s\" type=\"%s\" ",
-          hs.resourcesURI, hs.type);
-
-         if (hs.helpsetURI != null)
-         {
-            str += String.format("helpset=\"%s\" ", hs.helpsetURI);
-         }
-
-         if (hs.locale != null)
-         {
-            str += String.format("locale=\"%s\" ", 
-                    HtmlTag.encodeAttributeValue(hs.locale.toLanguageTag(), false, false));
-         }
-
-         if (hs.name != null)
-         {
-            str += String.format("name=\"%s\" ", 
-                    HtmlTag.encodeAttributeValue(hs.name, false, false));
-         }
-
-         str += "/>";
-
-         byteArray = str.getBytes();
-         out.write(byteArray, 0, byteArray.length);
-
-         out.write(eol, 0, eol.length);
+         str += String.format("locale=\"%s\" ", 
+                 HtmlTag.encodeAttributeValue(locale.toLanguageTag(), false, false));
       }
 
-      byteArray = MANIFEST_FOOTER.getBytes();
+      if (encoding != null)
+      {
+         str += String.format("encoding=\"%s\" ", 
+                 HtmlTag.encodeAttributeValue(encoding, false, false));
+      }
+
+      str += "/>";
+
+      byte[] byteArray = str.getBytes();
       out.write(byteArray, 0, byteArray.length);
-      out.write(eol, 0, eol.length);
-   }
-
-   public static Vector<HelpsetFile> readManifest(InputStream in)
-      throws IOException
-   {
-      Vector<HelpsetFile> helpsetFiles = new Vector<HelpsetFile>();
-
-// TODO
-      return helpsetFiles;
    }
 
    @Override
    public String toString()
    {
-      return resourcesURI.toString();
+      return ref.toString();
    }
 
-   URI resourcesURI, helpsetURI;
-   String type, name;
+   String ref;
+   String type, name, encoding;
    Locale locale;
 
    Path path;
+   byte[] byteContent;
+
+   BufferedImage image = null;
+   StyleSheet stylesheet = null;
+
+   TeXJavaHelpLib helpLib;
+
+   public static final String ELEMENT_NAME = "entry";
 
    public static final String TYPE_HTML="text/html",
     TYPE_CSS="text/css", TYPE_XML="text/xml",
     TYPE_PNG="image/png", TYPE_JPEG="image/jpeg";
 
-   public static final String MANIFEST_XML_HEADER="<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
-   public static final String MANIFEST_HEADER="<helpset>";
-   public static final String MANIFEST_FOOTER="</helpset>";
+   public static final Pattern CSS_CHARSET_PATTERN = 
+     Pattern.compile("\\@charset\\s+\"([^\"]+)\"\\s+;");
+
+   public static final Pattern HTML_META_CHARSET_PATTERN =
+     Pattern.compile("<meta\\s+charset=\"([^\"]+)\"\\s*>");
+
+   public static final Pattern HTML_CONTENT_CHARSET_PATTERN =
+     Pattern.compile("<meta\\s+.*?content\\s*=\\s*\".+?;\\s+charset=([^\"]+)\"\\s*/?>");
 }
