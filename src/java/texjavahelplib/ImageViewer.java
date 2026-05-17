@@ -20,6 +20,7 @@ package com.dickimawbooks.texjavahelplib;
 
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 
 import java.util.ArrayDeque;
 
@@ -333,10 +334,19 @@ public class ImageViewer extends JDialog
 
          if (image == null)
          {
-            in = getClass().getResourceAsStream(
-               helpLib.getHelpSetResourcePath()+"/"+src);
+            in = helpLib.getHelpSetResourceStream(src);
 
-            image = ImageIO.read(in);
+            if (in == null)
+            {
+               throw new FileNotFoundException(
+                 helpLib.getMessageWithFallback(
+                  "error.image_not_found",
+                  "Image ''{0}'' not found", src));
+            }
+            else
+            {
+               image = ImageIO.read(in);
+            }
          }
 
          zoomDeque.clear();

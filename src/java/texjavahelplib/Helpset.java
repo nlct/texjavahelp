@@ -27,6 +27,7 @@ import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -55,16 +56,6 @@ public class Helpset
       map = new HashMap<String,HelpsetFile>();
       urlMap = new HashMap<URL,HelpsetFile>();
       manifest = new Vector<String>();
-   }
-
-   public String getLanguageTag()
-   {
-      return languageTag;
-   }
-
-   public void setLanguageTag(String tag)
-   {
-      languageTag = tag;
    }
 
    public void add(HelpsetFile hsf)
@@ -137,11 +128,6 @@ public class Helpset
          else if (!supportedLocales.contains(locale))
          {
             supportedLocales.add(locale);
-         }
-
-         if (languageTag == null && locale.equals(hsl.getLocale()))
-         {
-            languageTag = locale.toLanguageTag();
          }
       }
    }
@@ -381,25 +367,7 @@ public class Helpset
 
          in.close();
 
-         HelpSetLocale hsl = helpLib.getHelpSetLocale();
-
-         if (hsl != null && hs.languageTag == null && hs.supportedLocales != null)
-         {
-            for (int i = hs.supportedLocales.size()-1; i >= 0; i--)
-            {
-               Locale locale = hs.supportedLocales.get(i);
-
-               if (! (
-                        hsl.matchesLanguage(locale)
-                        // Keep English as a fallback
-                     || locale.getLanguage().equals(Locale.ENGLISH.getLanguage())
-                     )
-                  )
-               {
-                  hs.supportedLocales.remove(i);
-               }
-            }
-         }
+         hs.createFilteredLocaleList();
 
          in = helpLib.getClass().getResourceAsStream(zipName);
          zipIn = new ZipInputStream(in);
@@ -451,8 +419,15 @@ public class Helpset
 
       if (hsf != null)
       {
-         if (hsf.hasLocale() && supportedLocales != null
-               && !supportedLocales.contains(hsf.getLocale()))
+         if (hsf.hasLocale() && filteredLocales != null
+               && !filteredLocales.contains(hsf.getLocale()))
+         {
+            return;
+         }
+
+         String dir = helpLib.getHelpsetDirName();
+
+         if (!hsf.getRef().startsWith(dir) && hsf.hasLocale())
          {
             return;
          }
@@ -500,6 +475,81 @@ public class Helpset
                }
             }
          }
+      }
+   }
+
+   public Vector<Locale> getSupportedLocales()
+   {
+      return supportedLocales;
+   }
+
+   public Vector<Locale> getFilteredLocales()
+   {
+      return filteredLocales;
+   }
+
+   protected void createFilteredLocaleList()
+   {
+      HelpSetLocale hsl = helpLib.getHelpSetLocale();
+
+      if (hsl != null && supportedLocales != null)
+      {
+         Locale en = null;
+
+         filteredLocales = new Vector<Locale>();
+
+         for (Locale locale : supportedLocales)
+         {
+            if (hsl.matchesLanguage(locale))
+            {
+               filteredLocales.add(locale);
+            }
+            else if (locale.equals(Locale.ENGLISH))
+            {
+               // Keep English as a fallback
+
+               en = locale;
+            }
+         }
+
+         filteredLocales.sort(new Comparator<Locale>()
+          {
+             @Override
+             public int compare(Locale l1, Locale l2)
+             {
+                if (l1.equals(l2)) return 0;
+
+                int result = -l1.getLanguage().compareTo(l2.getLanguage());
+
+                if (result != 0)
+                {
+                   return result;
+                }
+
+                int n1 = 0;
+                int n2 = 0;
+
+                if (!l1.getCountry().isEmpty()) n1++;
+                if (!l2.getCountry().isEmpty()) n2++;
+
+                if (!l1.getScript().isEmpty()) n1++;
+                if (!l2.getScript().isEmpty()) n2++;
+
+                if (!l1.getVariant().isEmpty()) n1++;
+                if (!l2.getVariant().isEmpty()) n2++;
+
+                if (n1 > n2) return -1;
+
+                if (n1 < n2) return 1;
+
+                return -l1.toLanguageTag().compareTo(l2.toLanguageTag());
+             }
+          });
+
+          if (en != null)
+          {
+             filteredLocales.add(en);
+          }
       }
    }
 
@@ -552,8 +602,8 @@ public class Helpset
    HashMap<String,HelpsetFile> map;
    Vector<String> manifest;
 
-   String languageTag = null;
    Vector<Locale> supportedLocales;
+   Vector<Locale> filteredLocales;
 
    Vector<HelpsetFile> cssFiles;
    Dictionary<URL,Image> imageCache;

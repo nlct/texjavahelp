@@ -183,7 +183,7 @@ public class ZipHelpset extends AbstractCLI
       {
          helpsetDirName = returnVals[0].toString();
       }
-      else if (isArg(arg, "--locales", "-l", returnVals))
+      else if (isListArg(arg, "--locales", "-l", returnVals))
       {
          if (returnVals[0] == null)
          {
@@ -258,7 +258,7 @@ public class ZipHelpset extends AbstractCLI
       if (!Files.isDirectory(inPath))
       {
          throw new InvalidSyntaxException(
-           getMessage("error.file_not_found", inPath));
+           getMessage("error.file_not_dir", inPath));
       }
 
       if (helpsetDirName == null)
@@ -272,6 +272,18 @@ public class ZipHelpset extends AbstractCLI
       }
 
       helpsetPath = inPath.resolve(helpsetDirName);
+
+      if (!Files.exists(helpsetPath))
+      {
+         throw new InvalidSyntaxException(
+           getMessage("error.helpset_dir_not_found", helpsetPath, "--helpset"));
+      }
+
+      if (!Files.isDirectory(helpsetPath))
+      {
+         throw new InvalidSyntaxException(
+           getMessage("error.file_not_dir", helpsetPath));
+      }
 
       try
       { 

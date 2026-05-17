@@ -629,6 +629,8 @@ code should appear in the PDF</entry>
 <entry key="error.content_type_not_image">{0}: Content type {1} is not an image</entry>
 <entry key="error.content_type_not_stylesheet">{0}: Content type {1} is not a style sheet</entry>
 
+<entry key="error.image_not_found">Image ''{0}'' not found</entry>
+
 <entry key="error.resource_not_found">Resource file ''{0}'' not found</entry>
 <entry key="error.resource_not_found_for_node">Resource file ''{0}'' not found for node ''{1}''</entry>
 <entry key="error.no_helpset">Helpset has not been initialised</entry>

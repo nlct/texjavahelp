@@ -44,6 +44,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 import java.net.URL;
+import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.awt.Dimension;
@@ -1402,6 +1403,16 @@ public class TeXJavaHelpLib
       return helpsetdir;
    }
 
+   public void setHelpSetZipName(String name)
+   {
+      helpsetZipName = name;
+   }
+
+   public String getHelpSetZipName()
+   {
+      return helpsetZipName;
+   }
+
    public String getHelpSetResourcePath()
    {
       if (helpsetsubdir == null || helpsetsubdir.isEmpty())
@@ -1415,6 +1426,11 @@ public class TeXJavaHelpLib
       }
    }
 
+   public Helpset getHelpset()
+   {
+      return helpSet;
+   }
+
    public HelpsetFile getHelpSetFile(URL url)
    {
       return helpSet == null ? null : helpSet.getForURL(url);
@@ -1426,7 +1442,38 @@ public class TeXJavaHelpLib
 
       String path = getHelpSetResourcePath() + "/" + filename;
 
-      return helpSet.get(path);
+      HelpsetFile hsf = helpSet.get(path);
+
+      if (hsf == null)
+      {
+         URL url = getResourceURL();
+
+         path = helpsetdir + "/";
+
+         if (!(helpsetsubdir == null || helpsetsubdir.isEmpty()))
+         {
+            path += helpsetSubdirPrefix + helpsetsubdir + "/";
+         }
+
+         path += filename;
+
+         try
+         {
+            URI uri = url.toURI().resolve(path);
+
+            uri = uri.normalize();
+
+            url = uri.toURL();
+
+            hsf = helpSet.getForURL(url);
+         }
+         catch (Exception e)
+         {
+            debug(e);
+         }
+      }
+
+      return hsf;
    }
 
    public StyleSheet getHelpSetStyles()
@@ -1465,6 +1512,34 @@ public class TeXJavaHelpLib
       }
 
       return url;
+   }
+
+   public InputStream getHelpSetResourceStream(String filename)
+    throws FileNotFoundException
+   {
+      HelpsetFile hsf = getHelpSetFile(filename);
+
+      InputStream stream = null;
+
+      if (hsf != null)
+      {
+         stream = hsf.getInputStream();
+      }
+
+      if (stream == null)
+      {
+         String path = getHelpSetResourcePath() + "/" + filename;
+
+         stream = getClass().getResourceAsStream(path);
+
+         if (stream == null)
+         {
+            throw new FileNotFoundException(
+              getMessage("error.resource_not_found", path));
+         }
+      }
+
+      return stream;
    }
 
    protected void initHelpsetPattern()
@@ -1542,7 +1617,10 @@ public class TeXJavaHelpLib
       {
          String path;
 
-         if (helpsetLocale == null || helpsetsubdir != null)
+          Vector<Locale> filteredLocales = helpSet.getFilteredLocales();
+
+         if (helpsetLocale == null || helpsetsubdir != null
+               || filteredLocales == null)
          {
             path = getHelpSetResourcePath() + "/" + filename;
 
@@ -1552,107 +1630,16 @@ public class TeXJavaHelpLib
          {
             String base = resourcebase + "/" + helpsetdir;
 
-            helpsetsubdir = helpSet.getLanguageTag();
-
-            if (helpsetsubdir != null)
+            for (Locale l : filteredLocales)
             {
+               helpsetsubdir = l.toLanguageTag();
+
                path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
                   + "/" + filename;
 
                hsf = helpSet.get(path);
-            }
 
-            if (hsf == null)
-            {
-               Locale locale = helpsetLocale.getLocale();
-               helpsetsubdir = helpsetLocale.getTag();
-
-               path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
-                     + "/" + filename;
-
-               hsf = helpSet.get(path);
-
-               if (hsf == null)
-               {
-                  helpsetsubdir = locale.toLanguageTag();
-                  path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
-                     + "/" + filename;
-
-                  hsf = helpSet.get(path);
-               }
-
-               if (hsf == null)
-               {
-                  String lang = locale.getLanguage();
-                  String country = locale.getCountry();
-                  String tag = lang + "-" + country;
-
-                  if (country == null || country.isEmpty() || helpsetsubdir.equals(tag))
-                  {
-                     helpsetsubdir = lang;
-
-                     path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
-                          + "/" + filename;
-
-                     hsf = helpSet.get(path);
-                  }
-                  else
-                  {
-                     helpsetsubdir = tag;
-
-                     path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
-                           + "/" + filename;
-
-                     hsf = helpSet.get(path);
-
-                     if (hsf == null)
-                     {
-                        helpsetsubdir = lang;
-
-                        path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
-                             + "/" + filename;
-
-                        hsf = helpSet.get(path);
-                     }
-                  }
-
-                  if (hsf == null)
-                  {
-                     String script = locale.getScript();
-
-                     if (script != null && !script.isEmpty())
-                     {
-                        helpsetsubdir = lang + "-" + script;
-
-                        path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
-                           + "/" + filename;
-
-                        hsf = helpSet.get(path);
-                     }
-
-                     if (hsf == null)
-                     {
-                        helpsetsubdir = "en";
-                        path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
-                          + "/" + filename;
-
-                        hsf = helpSet.get(path);
-                     }
-
-                     if (hsf == null)
-                     {
-                        path = base + "/" + filename;
-                        helpsetsubdir = "";
-
-                        hsf = helpSet.get(path);
-                     }
-                  }
-
-                  if (hsf != null)
-                  {
-                     helpSet.setLanguageTag(helpsetsubdir);
-                  }
-               }
+               if (hsf != null) break;
             }
          }
       }
@@ -2052,7 +2039,12 @@ public class TeXJavaHelpLib
 
       // Has the helpset been bundled into a zip file?
 
-      String zipName = resourcebase + "/"+helpsetdir+".zip";
+      if (helpsetZipName == null)
+      {
+         helpsetZipName = helpsetdir + ".zip";
+      }
+
+      String zipName = resourcebase + "/"+helpsetZipName;
 
       InputStream zipStream = getClass().getResourceAsStream(zipName);
 
@@ -4156,6 +4148,7 @@ public class TeXJavaHelpLib
    protected String htmlsuffix = "html";
 
    protected Helpset helpSet;
+   protected String helpsetZipName = null;
 
    protected String indexXmlFilename = "index.xml";
    protected Vector<IndexItem> indexData;

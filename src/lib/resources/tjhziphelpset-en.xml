@@ -28,4 +28,6 @@ Nicola Talbot
 <entry key="error.file_not_found">File not found: {0}</entry>
 <entry key="error.file_not_dir">Not a directory: {0}</entry>
 
+<entry key="error.helpset_dir_not_found">Helpset directory ''{0}'' not found (use the {1} switch to set the appropriate name)</entry>
+
 </properties>
