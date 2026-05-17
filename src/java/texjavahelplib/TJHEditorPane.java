@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2024 Nicola L.C. Talbot
+    Copyright (C) 2024-2026 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -19,42 +19,51 @@
 package com.dickimawbooks.texjavahelplib;
 
 import java.net.URL;
-import java.io.IOException;
+import java.net.MalformedURLException;
 
+import java.io.*;
+
+import java.util.Dictionary;
 import java.util.Enumeration;
 
 import java.awt.Rectangle;
+import java.awt.Image;
 
 import javax.swing.JEditorPane;
 
 import javax.swing.text.*;
 
-import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.*;
 
 public class TJHEditorPane extends JEditorPane
 {
-   public TJHEditorPane()
+   public TJHEditorPane(TeXJavaHelpLib helpLib)
    {
       super();
 
+      this.helpLib = helpLib;
+
       setContentType("text/html");
       setEditable(false);
+
+      setEditorKit(new TJHEditorKit());
    }
 
-   public TJHEditorPane(URL url) throws IOException
+   public TJHEditorPane(URL url, TeXJavaHelpLib helpLib) throws IOException
    {
-      super(url);
-
-      setContentType("text/html");
-      setEditable(false);
+      this(helpLib);
+      setPage(url);
    }
 
-   public TJHEditorPane(String type, String text)
+   public TJHEditorPane(String type, String text, TeXJavaHelpLib helpLib)
    {
       super(type, text);
 
       setEditable(false);
+
+      this.helpLib = helpLib;
+
+      setEditorKitForContentType("text/html", new TJHEditorKit());
    }
 
    private Element getElementByIdOrName(String ref)
@@ -171,4 +180,56 @@ public class TJHEditorPane extends JEditorPane
       }
    }
 
+   @Override
+   protected InputStream getStream(URL page) throws IOException
+   {
+      HelpsetFile hsf = helpLib == null ? null : helpLib.getHelpSetFile(page);
+
+      if (hsf == null || !hsf.hasContent())
+      {
+         return super.getStream(page);
+      }
+      else
+      {
+         return hsf.getInputStream();
+      }
+   }
+
+   class TJHEditorKit extends HTMLEditorKit
+   {
+      TJHEditorKit()
+      {
+         super();
+      }
+
+      @Override
+      public Document createDefaultDocument()
+      {
+         StyleSheet styles = getStyleSheet();
+         StyleSheet ss = helpLib.getHelpSetStyles();
+
+         if (ss == null)
+         {
+            ss = new StyleSheet();
+         }
+
+         ss.addStyleSheet(styles);
+
+         HTMLDocument doc = new HTMLDocument(ss);
+         doc.setParser(getParser());
+         doc.setAsynchronousLoadPriority(4);
+         doc.setTokenThreshold(100);
+
+         Dictionary<URL,Image> imageCache = helpLib.getHelpSetImageCache();
+
+         if (imageCache != null)
+         {
+            doc.putProperty("imageCache", imageCache);
+         }
+
+         return doc;
+      }
+   }
+
+   TeXJavaHelpLib helpLib;
 }

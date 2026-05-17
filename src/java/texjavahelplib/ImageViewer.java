@@ -229,7 +229,7 @@ public class ImageViewer extends JDialog
       zoomPanel.add(helpLib.createJLabel("imageviewer.magnify", zoomSpinner));
       zoomPanel.add(zoomSpinner);
 
-      messagePane = new TJHEditorPane();
+      messagePane = new TJHEditorPane(helpLib);
       helpLib.addHelpFontChangeListener(this);
 
       mainPanel.add(new JScrollPane(messagePane), BorderLayout.NORTH);
@@ -318,15 +318,26 @@ public class ImageViewer extends JDialog
 
    protected void loadImage(String src) throws IOException
    {
-      InputStream in = null;
+      HelpsetFile hsf = helpLib.getHelpSetFile(src);
+
       image = null;
+
+      InputStream in = null;
 
       try
       {
-         in = getClass().getResourceAsStream(
-            helpLib.getHelpSetResourcePath()+"/"+src);
+         if (hsf != null)
+         {
+            image = hsf.getImage();
+         }
 
-         image = ImageIO.read(in);
+         if (image == null)
+         {
+            in = getClass().getResourceAsStream(
+               helpLib.getHelpSetResourcePath()+"/"+src);
+
+            image = ImageIO.read(in);
+         }
 
          zoomDeque.clear();
          previousZoom = Integer.valueOf(100);

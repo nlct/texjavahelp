@@ -424,6 +424,21 @@ public class NavigationNode implements TreeNode
       return false;
    }
 
+   public boolean hasHelpSetFile()
+   {
+      return helpsetFile != null;
+   }
+
+   public HelpsetFile getHelpSetFile()
+   {
+      return helpsetFile;
+   }
+
+   public void setHelpSetFile(HelpsetFile hsf)
+   {
+      this.helpsetFile = hsf;
+   }
+
    protected final String key, ref;
    protected String prefix;
    protected String title;
@@ -436,6 +451,8 @@ public class NavigationNode implements TreeNode
 
    protected Vector<NavigationNode> children;
    protected NavigationNode parent;
+
+   protected HelpsetFile helpsetFile;
 }
 
 class NavigationTreeReader extends XMLReaderAdapter

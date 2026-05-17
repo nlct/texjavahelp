@@ -114,7 +114,7 @@ public class HelpFontSettingsFrame extends JFrame
 
       builder.append("</body></html>");
 
-      sampleComp = new TJHEditorPane("text/html", builder.toString());
+      sampleComp = new TJHEditorPane("text/html", builder.toString(), helpLib);
       sampleComp.addHyperlinkListener(this);
 
       sampleComp.setMargin(new Insets(4, 4, 4, 4));

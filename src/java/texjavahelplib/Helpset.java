@@ -23,10 +23,13 @@ import java.io.*;
 
 import java.nio.file.Path;
 
+import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Vector;
 
@@ -34,6 +37,9 @@ import java.util.zip.*;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+
+import javax.swing.text.html.StyleSheet;
+import java.awt.Image;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.Attributes;
@@ -47,16 +53,18 @@ public class Helpset
       this.helpLib = helpLib;
 
       map = new HashMap<String,HelpsetFile>();
+      urlMap = new HashMap<URL,HelpsetFile>();
       manifest = new Vector<String>();
    }
 
-   public void add(HelpsetFile hsf, boolean onlyForHelpLocale)
+   public String getLanguageTag()
    {
-      if (!onlyForHelpLocale || !hsf.hasLocale()
-           || helpLib.getHelpSetLocale().getLocale().equals(hsf.getLocale()))
-      {
-         add(hsf);
-      }
+      return languageTag;
+   }
+
+   public void setLanguageTag(String tag)
+   {
+      languageTag = tag;
    }
 
    public void add(HelpsetFile hsf)
@@ -99,6 +107,48 @@ public class Helpset
       {
          manifest.add(name);
       }
+
+      try
+      {
+         URL url = helpLib.getResourceURL();
+
+         URI uri = url.toURI().resolve(hsf.getRef());
+         url = uri.toURL();
+
+         urlMap.put(url, hsf);
+         hsf.setURL(url);
+      }
+      catch (Exception e)
+      {
+         helpLib.debug(e);
+      }
+
+      HelpSetLocale hsl = helpLib.getHelpSetLocale();
+
+      if (hsl != null && hsf.hasLocale())
+      {
+         Locale locale = hsf.getLocale();
+
+         if (supportedLocales == null)
+         {
+            supportedLocales = new Vector<Locale>();
+            supportedLocales.add(locale);
+         }
+         else if (!supportedLocales.contains(locale))
+         {
+            supportedLocales.add(locale);
+         }
+
+         if (languageTag == null && locale.equals(hsl.getLocale()))
+         {
+            languageTag = locale.toLanguageTag();
+         }
+      }
+   }
+
+   public HelpsetFile getForURL(URL url)
+   {
+      return urlMap.get(url);
    }
 
    public HelpsetFile get(String name)
@@ -221,14 +271,12 @@ public class Helpset
    public static Helpset load(TeXJavaHelpLib helpLib, String zipName, InputStream in)
    throws IOException
    {
-      helpLib.message(helpLib.getMessageWithFallback(
-        "message.reading", "Reading {0}...", zipName));
+      helpLib.debug(helpLib.getMessageWithFallback(
+        "message.reading", "Reading {0}...", "[...]"+zipName));
 
       ZipInputStream zipIn = null;
       ZipEntry zipEntry;
       byte[] byteArray;
-
-      HelpSetLocale locale = helpLib.getHelpSetLocale();
 
       Helpset hs = null;
       String manifestContent = null;
@@ -333,6 +381,26 @@ public class Helpset
 
          in.close();
 
+         HelpSetLocale hsl = helpLib.getHelpSetLocale();
+
+         if (hsl != null && hs.languageTag == null && hs.supportedLocales != null)
+         {
+            for (int i = hs.supportedLocales.size()-1; i >= 0; i--)
+            {
+               Locale locale = hs.supportedLocales.get(i);
+
+               if (! (
+                        hsl.matchesLanguage(locale)
+                        // Keep English as a fallback
+                     || locale.getLanguage().equals(Locale.ENGLISH.getLanguage())
+                     )
+                  )
+               {
+                  hs.supportedLocales.remove(i);
+               }
+            }
+         }
+
          in = helpLib.getClass().getResourceAsStream(zipName);
          zipIn = new ZipInputStream(in);
 
@@ -370,14 +438,27 @@ public class Helpset
    protected void readHelpsetFile(ZipInputStream zipIn, ZipEntry zipEntry)
       throws IOException
    {
-      String name = zipEntry.getName();
+      String name = helpLib.getResourcePath();
+
+      if (!name.endsWith("/"))
+      {
+         name += "/";
+      }
+
+      name += zipEntry.getName();
 
       HelpsetFile hsf = map.get(name);
 
       if (hsf != null)
       {
+         if (hsf.hasLocale() && supportedLocales != null
+               && !supportedLocales.contains(hsf.getLocale()))
+         {
+            return;
+         }
+
          helpLib.debug(helpLib.getMessageWithFallback(
-           "message.reading", "Reading {0}...", hsf));
+           "message.extracting", "Extracting {0}...", hsf));
 
          ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
@@ -390,7 +471,74 @@ public class Helpset
          }
 
          hsf.setByteContent(byteStream.toByteArray());
+
+         if (hsf.isStyleSheetContent())
+         {
+            if (cssFiles == null)
+            {
+               cssFiles = new Vector<HelpsetFile>();
+            }
+
+            cssFiles.add(hsf);
+         }
+         else if (hsf.isImageContent())
+         {
+            URL url = hsf.getURL();
+
+            if (url != null)
+            {
+               Image image = hsf.getImage();
+
+               if (image != null)
+               {
+                  if (imageCache == null)
+                  {
+                     imageCache = new Hashtable<URL,Image>();
+                  }
+
+                  imageCache.put(url, image);
+               }
+            }
+         }
       }
+   }
+
+   public StyleSheet getStyleSheet()
+   {
+      StyleSheet styleSheet = null;
+
+      if (cssFiles != null)
+      {
+         for (HelpsetFile hsf : cssFiles)
+         {
+            StyleSheet s = null;
+
+            try
+            {
+               s = hsf.getStyleSheet();
+
+               if (styleSheet == null)
+               {
+                  styleSheet = s;
+               }
+               else
+               {
+                  styleSheet.addStyleSheet(s);
+               }
+            }
+            catch (IOException e)
+            {
+               helpLib.debug(e);
+            }
+         }
+      }
+
+      return styleSheet;
+   }
+
+   public Dictionary<URL,Image> getImageCache()
+   {
+      return imageCache;
    }
 
    public TeXJavaHelpLib getHelpLib()
@@ -400,8 +548,15 @@ public class Helpset
 
    TeXJavaHelpLib helpLib;
 
+   HashMap<URL,HelpsetFile> urlMap;
    HashMap<String,HelpsetFile> map;
    Vector<String> manifest;
+
+   String languageTag = null;
+   Vector<Locale> supportedLocales;
+
+   Vector<HelpsetFile> cssFiles;
+   Dictionary<URL,Image> imageCache;
 
    public static final String MANIFEST_XML = "manifest.xml";
 
@@ -491,7 +646,7 @@ class ManifestReader extends XMLReaderAdapter
             hsf.setEncoding(encoding);
          }
 
-         helpset.add(hsf, true);
+         helpset.add(hsf);
 
          previousQname = qName;
       }

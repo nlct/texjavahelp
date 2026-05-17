@@ -52,6 +52,11 @@ public class HelpSetLocale implements Comparable<HelpSetLocale>
       return locale;
    }
 
+   public boolean matchesLanguage(Locale other)
+   {
+      return other == null ? false : locale.getLanguage().equals(other.getLanguage());
+   }
+
    @Override
    public String toString()
    {

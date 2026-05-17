@@ -73,9 +73,8 @@ public class HelpPage extends TJHEditorPane
       NavigationNode initialPage, HelpFontSettings fontSettings)
      throws IOException
    {
-      super();
+      super(helpLib);
 
-      this.helpLib = helpLib;
       this.helpPageContainer = helpPageContainer;
       this.fontSettings = fontSettings;
       helpLib.addHelpFontChangeListener(this);
@@ -233,7 +232,18 @@ public class HelpPage extends TJHEditorPane
      throws IOException
    {
       currentNode = node;
+
       URL url = node.getURL();
+
+      if (url == null)
+      {
+         HelpsetFile hsf = node.getHelpSetFile();
+
+         if (hsf != null)
+         {
+            url = hsf.getURL();
+         }
+      }
 
       if (url == null)
       {
@@ -580,7 +590,6 @@ public class HelpPage extends TJHEditorPane
       }
    }
 
-   protected TeXJavaHelpLib helpLib;
    protected HelpPageContainer helpPageContainer;
    protected NavigationNode currentNode;
 

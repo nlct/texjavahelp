@@ -21,6 +21,7 @@ package com.dickimawbooks.texjavahelplib;
 import java.text.MessageFormat;
 import java.text.BreakIterator;
 
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -47,6 +48,7 @@ import java.net.URISyntaxException;
 
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 
@@ -71,6 +73,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
+
+import javax.swing.text.html.StyleSheet;
 
 import java.awt.event.KeyEvent;
 
@@ -1411,17 +1415,53 @@ public class TeXJavaHelpLib
       }
    }
 
+   public HelpsetFile getHelpSetFile(URL url)
+   {
+      return helpSet == null ? null : helpSet.getForURL(url);
+   }
+
+   public HelpsetFile getHelpSetFile(String filename)
+   {
+      if (helpSet == null) return null;
+
+      String path = getHelpSetResourcePath() + "/" + filename;
+
+      return helpSet.get(path);
+   }
+
+   public StyleSheet getHelpSetStyles()
+   {
+      return helpSet == null ? null : helpSet.getStyleSheet();
+   }
+
+   public Dictionary<URL,Image> getHelpSetImageCache()
+   {
+      return helpSet == null ? null : helpSet.getImageCache();
+   }
+
    public URL getHelpSetResource(String filename)
     throws FileNotFoundException
    {
-      String path = getHelpSetResourcePath() + "/" + filename;
+      HelpsetFile hsf = getHelpSetFile(filename);
 
-      URL url = getClass().getResource(path);
+      URL url = null;
+
+      if (hsf != null)
+      {
+         url = hsf.getURL();
+      }
 
       if (url == null)
       {
-         throw new FileNotFoundException(
-           getMessage("error.resource_not_found", path));
+         String path = getHelpSetResourcePath() + "/" + filename;
+
+         url = getClass().getResource(path);
+
+         if (url == null)
+         {
+            throw new FileNotFoundException(
+              getMessage("error.resource_not_found", path));
+         }
       }
 
       return url;
@@ -1494,11 +1534,149 @@ public class TeXJavaHelpLib
       return availableHelpsets;
    }
 
-   public Reader getNavigationXMLReader()
-     throws FileNotFoundException
+   public HelpsetFile findHelpSetFile(String filename)
    {
-      return new BufferedReader(
-               new InputStreamReader(getNavigationXMLInputStream()));
+      HelpsetFile hsf = null;
+
+      if (helpSet != null)
+      {
+         String path;
+
+         if (helpsetLocale == null || helpsetsubdir != null)
+         {
+            path = getHelpSetResourcePath() + "/" + filename;
+
+            hsf = helpSet.get(path);
+         }
+         else
+         {
+            String base = resourcebase + "/" + helpsetdir;
+
+            helpsetsubdir = helpSet.getLanguageTag();
+
+            if (helpsetsubdir != null)
+            {
+               path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
+                  + "/" + filename;
+
+               hsf = helpSet.get(path);
+            }
+
+            if (hsf == null)
+            {
+               Locale locale = helpsetLocale.getLocale();
+               helpsetsubdir = helpsetLocale.getTag();
+
+               path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
+                     + "/" + filename;
+
+               hsf = helpSet.get(path);
+
+               if (hsf == null)
+               {
+                  helpsetsubdir = locale.toLanguageTag();
+                  path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
+                     + "/" + filename;
+
+                  hsf = helpSet.get(path);
+               }
+
+               if (hsf == null)
+               {
+                  String lang = locale.getLanguage();
+                  String country = locale.getCountry();
+                  String tag = lang + "-" + country;
+
+                  if (country == null || country.isEmpty() || helpsetsubdir.equals(tag))
+                  {
+                     helpsetsubdir = lang;
+
+                     path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
+                          + "/" + filename;
+
+                     hsf = helpSet.get(path);
+                  }
+                  else
+                  {
+                     helpsetsubdir = tag;
+
+                     path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
+                           + "/" + filename;
+
+                     hsf = helpSet.get(path);
+
+                     if (hsf == null)
+                     {
+                        helpsetsubdir = lang;
+
+                        path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
+                             + "/" + filename;
+
+                        hsf = helpSet.get(path);
+                     }
+                  }
+
+                  if (hsf == null)
+                  {
+                     String script = locale.getScript();
+
+                     if (script != null && !script.isEmpty())
+                     {
+                        helpsetsubdir = lang + "-" + script;
+
+                        path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
+                           + "/" + filename;
+
+                        hsf = helpSet.get(path);
+                     }
+
+                     if (hsf == null)
+                     {
+                        helpsetsubdir = "en";
+                        path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
+                          + "/" + filename;
+
+                        hsf = helpSet.get(path);
+                     }
+
+                     if (hsf == null)
+                     {
+                        path = base + "/" + filename;
+                        helpsetsubdir = "";
+
+                        hsf = helpSet.get(path);
+                     }
+                  }
+
+                  if (hsf != null)
+                  {
+                     helpSet.setLanguageTag(helpsetsubdir);
+                  }
+               }
+            }
+         }
+      }
+
+      return hsf;
+   }
+
+   public Reader getNavigationXMLReader()
+     throws IOException
+   {
+      HelpsetFile hsf = findHelpSetFile(navxmlfilename);
+
+      if (hsf == null)
+      {
+         return new BufferedReader(
+                  new InputStreamReader(getNavigationXMLInputStream()));
+      }
+      else
+      {
+         debug(getMessageWithFallback(
+           "message.reading", "Reading {0}...", hsf));
+
+         return hsf.getStringReader();
+      }
    }
 
    public InputStream getNavigationXMLInputStream()
@@ -1544,6 +1722,8 @@ public class TeXJavaHelpLib
 
                path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
                     + "/" + navxmlfilename;
+
+               stream = getClass().getResourceAsStream(path);
             }
             else
             {
@@ -1560,10 +1740,10 @@ public class TeXJavaHelpLib
 
                   path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
                        + "/" + navxmlfilename;
+
+                  stream = getClass().getResourceAsStream(path);
                }
             }
-
-            stream = getClass().getResourceAsStream(path);
 
             if (stream == null)
             {
@@ -1604,13 +1784,28 @@ public class TeXJavaHelpLib
            getMessage("error.resource_not_found", path));
       }
 
+      debug(getMessageWithFallback(
+        "message.reading", "Reading {0}...", path));
+
       return stream;
    }
 
    public Reader getIndexXMLReader()
-     throws FileNotFoundException
+     throws IOException
    {
-      return new BufferedReader(new InputStreamReader(getIndexXMLInputStream()));
+      HelpsetFile hsf = findHelpSetFile(indexXmlFilename);
+
+      if (hsf == null)
+      {
+         return new BufferedReader(new InputStreamReader(getIndexXMLInputStream()));
+      }
+      else
+      {
+         debug(getMessageWithFallback(
+           "message.reading", "Reading {0}...", hsf));
+
+         return hsf.getStringReader();
+      }
    }
 
    public InputStream getIndexXMLInputStream()
@@ -1703,13 +1898,28 @@ public class TeXJavaHelpLib
            getMessage("error.resource_not_found", path));
       }
 
+      debug(getMessageWithFallback(
+        "message.reading", "Reading {0}...", path));
+
       return stream;
    }
 
    public Reader getSearchXMLReader()
-     throws FileNotFoundException
+     throws IOException
    {
-      return new BufferedReader(new InputStreamReader(getSearchXMLInputStream()));
+      HelpsetFile hsf = findHelpSetFile(searchXmlFilename);
+
+      if (hsf == null)
+      {
+         return new BufferedReader(new InputStreamReader(getSearchXMLInputStream()));
+      }
+      else
+      {
+         debug(getMessageWithFallback(
+           "message.reading", "Reading {0}...", hsf));
+
+         return hsf.getStringReader();
+      }
    }
 
    public InputStream getSearchXMLInputStream()
@@ -1802,6 +2012,9 @@ public class TeXJavaHelpLib
            getMessage("error.resource_not_found", path));
       }
 
+      debug(getMessageWithFallback(
+        "message.reading", "Reading {0}...", path));
+
       return stream;
    }
 
@@ -1871,9 +2084,31 @@ public class TeXJavaHelpLib
                indexGroupList.add(item);
             }
 
-            URL url = getHelpSetResource(filename);
+            HelpsetFile hsf = getHelpSetFile(filename);
 
-            node = navigationTree.getNodeByURL(url);
+            if (hsf != null)
+            {
+               node = hsf.getNode();
+
+               if (node == null)
+               {
+                  node = navigationTree.getNodeByRef(filename);
+
+                  hsf.setNode(node);
+               }
+
+               if (node != null && !node.hasHelpSetFile())
+               {
+                  node.setHelpSetFile(hsf);
+               }
+            }
+
+            if (node == null)
+            {
+               URL url = getHelpSetResource(filename);
+
+               node = navigationTree.getNodeByURL(url);
+            }
 
             if (node != null)
             {

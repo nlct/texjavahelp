@@ -108,7 +108,7 @@ public class MessageDialog extends JDialog
 
       this.helpLib = helpLib;
 
-      editorPane = new TJHEditorPane(contentType, content);
+      editorPane = new TJHEditorPane(contentType, content, helpLib);
       initGUI();
       setLocationRelativeTo(parent);
    }
@@ -181,7 +181,7 @@ public class MessageDialog extends JDialog
 
       this.helpLib = helpLib;
 
-      editorPane = new TJHEditorPane(contentType, content);
+      editorPane = new TJHEditorPane(contentType, content, helpLib);
       initGUI();
       setLocationRelativeTo(parent);
    }
@@ -222,13 +222,13 @@ public class MessageDialog extends JDialog
       builder.append(bodyText);
       builder.append("</body></html>");
 
-      editorPane = new TJHEditorPane("text/html", builder.toString());
+      editorPane = new TJHEditorPane("text/html", builder.toString(), helpLib);
    }
 
    private void initEditor(URL url, HelpFontSettings fontSettings)
     throws IOException
    {
-      editorPane = new TJHEditorPane(url);
+      editorPane = new TJHEditorPane(url, helpLib);
 
       HTMLDocument htmlDoc = (HTMLDocument)editorPane.getDocument();
       StyleSheet styles = htmlDoc.getStyleSheet();

@@ -84,10 +84,10 @@ public class HelpIndexFrame extends JFrame
 
       builder.append("</body></html>");
 
-      groupPane = new TJHEditorPane("text/html", builder.toString());
+      groupPane = new TJHEditorPane("text/html", builder.toString(), helpLib);
       groupPane.addHyperlinkListener(this);
 
-      editorPane = new TJHEditorPane(indexURL);
+      editorPane = new TJHEditorPane(indexURL, helpLib);
       editorPane.addHyperlinkListener(this);
 
       JSplitPane splitPane = new JSplitPane(

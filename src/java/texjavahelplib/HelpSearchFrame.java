@@ -114,7 +114,7 @@ public class HelpSearchFrame extends JFrame
       exactBox = helpLib.createJCheckBox("help_page_search", "exact", true);
       togglePanel.add(exactBox);
 
-      resultComp = new TJHEditorPane();
+      resultComp = new TJHEditorPane(helpLib);
 
       resultComp.addHyperlinkListener(this);
       resultComp.addMouseListener(new MouseAdapter()

@@ -28,6 +28,8 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
+import java.net.URL;
+
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import javax.swing.text.html.StyleSheet;
@@ -94,6 +96,16 @@ public class HelpsetFile
    public Path getPath()
    {
       return path;
+   }
+
+   public void setURL(URL url)
+   {
+      this.url = url;
+   }
+
+   public URL getURL()
+   {
+      return url;
    }
 
    public void setName(String name)
@@ -240,6 +252,16 @@ public class HelpsetFile
       }
    }
 
+   public void setNode(NavigationNode node)
+   {
+      this.node = node;
+   }
+
+   public NavigationNode getNode()
+   {
+      return node;
+   }
+
    public void setByteContent(byte[] content)
    {
       byteContent = content;
@@ -263,10 +285,14 @@ public class HelpsetFile
    public String getStringContent()
      throws InvalidContentTypeException,UnsupportedEncodingException
    {
+      if (textContent != null || !hasContent()) return textContent;
+
       if (isTextContent())
       {
-         return byteContent == null ? "" :
+         textContent = 
            new String(byteContent, encoding == null ? "UTF-8" : encoding);
+
+         return textContent;
       }
       else
       {
@@ -298,13 +324,16 @@ public class HelpsetFile
       }
    }
 
+   public boolean isStyleSheetContent()
+   {
+      return type.equals(TYPE_CSS);
+   }
+
    public StyleSheet getStyleSheet() throws IOException
    {
-      if (stylesheet != null || !hasContent()) return stylesheet;
-
-      if (type.equals(TYPE_CSS))
+      if (isStyleSheetContent())
       {
-         stylesheet = new StyleSheet();
+         StyleSheet stylesheet = new StyleSheet();
 
          stylesheet.loadRules(getStringReader(), null);
 
@@ -375,10 +404,13 @@ public class HelpsetFile
    Locale locale;
 
    Path path;
+   URL url;
    byte[] byteContent;
 
    BufferedImage image = null;
-   StyleSheet stylesheet = null;
+   String textContent = null;
+
+   NavigationNode node = null;
 
    TeXJavaHelpLib helpLib;
 
