@@ -276,7 +276,7 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
    {
       if (msg == null && e != null)
       {
-         msg = e.getMessage();
+         msg = e.getLocalizedMessage();
 
          if (msg == null)
          {
@@ -379,7 +379,7 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
    {
       if (msg == null && e != null)
       {
-         msg = e.getMessage();
+         msg = e.getLocalizedMessage();
 
          if (msg == null)
          {
@@ -434,7 +434,7 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
    {
       if (msg == null && e != null)
       {
-         msg = e.getMessage();
+         msg = e.getLocalizedMessage();
 
          if (msg == null)
          {
