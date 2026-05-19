@@ -635,6 +635,7 @@ code should appear in the PDF</entry>
 <entry key="error.content_type_not_textual">{0}: Content type {1} is not textual</entry>
 <entry key="error.content_type_not_image">{0}: Content type {1} is not an image</entry>
 <entry key="error.content_type_not_stylesheet">{0}: Content type {1} is not a style sheet</entry>
+<entry key="error.content_type_not_html">{0}: Content type {1} is not HTML</entry>
 
 <entry key="error.image_not_found">Image ''{0}'' not found</entry>
 

@@ -26,8 +26,8 @@ import java.io.*;
 import java.util.Dictionary;
 import java.util.Enumeration;
 
-import java.awt.Rectangle;
 import java.awt.Image;
+import java.awt.Rectangle;
 
 import javax.swing.JEditorPane;
 
@@ -46,7 +46,7 @@ public class TJHEditorPane extends JEditorPane
       setContentType("text/html");
       setEditable(false);
 
-      setEditorKit(new TJHEditorKit());
+      setEditorKit(new TJHEditorKit(helpLib));
    }
 
    public TJHEditorPane(URL url, TeXJavaHelpLib helpLib) throws IOException
@@ -63,7 +63,7 @@ public class TJHEditorPane extends JEditorPane
 
       this.helpLib = helpLib;
 
-      setEditorKitForContentType("text/html", new TJHEditorKit());
+      setEditorKitForContentType("text/html", new TJHEditorKit(helpLib));
    }
 
    private Element getElementByIdOrName(String ref)
@@ -156,21 +156,24 @@ public class TJHEditorPane extends JEditorPane
          if (element != null)
          {
             int pos = element.getStartOffset();
+            setCaretPosition(pos);
+
+            Rectangle r = null;
 
             try
             {
-               Rectangle r = modelToView(pos);
-
-               if (r != null)
-               {
-                  Rectangle vis = getVisibleRect();
-                  r.height = vis.height;
-                  scrollRectToVisible(r);
-                  setCaretPosition(pos);
-               }
+               r = modelToView(pos);
             }
             catch (BadLocationException e)
             {
+            }
+
+            if (r != null)
+            {
+               Rectangle vis = getVisibleRect();
+               r.height = vis.height;
+
+               scrollRectToVisible(r);
             }
          }
       }
@@ -192,42 +195,6 @@ public class TJHEditorPane extends JEditorPane
       else
       {
          return hsf.getInputStream();
-      }
-   }
-
-   class TJHEditorKit extends HTMLEditorKit
-   {
-      TJHEditorKit()
-      {
-         super();
-      }
-
-      @Override
-      public Document createDefaultDocument()
-      {
-         StyleSheet styles = getStyleSheet();
-         StyleSheet ss = helpLib.getHelpSetStyles();
-
-         if (ss == null)
-         {
-            ss = new StyleSheet();
-         }
-
-         ss.addStyleSheet(styles);
-
-         HTMLDocument doc = new HTMLDocument(ss);
-         doc.setParser(getParser());
-         doc.setAsynchronousLoadPriority(4);
-         doc.setTokenThreshold(100);
-
-         Dictionary<URL,Image> imageCache = helpLib.getHelpSetImageCache();
-
-         if (imageCache != null)
-         {
-            doc.putProperty("imageCache", imageCache);
-         }
-
-         return doc;
       }
    }
 

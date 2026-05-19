@@ -20,9 +20,11 @@ package com.dickimawbooks.texjavahelplib;
 
 import java.util.Locale;
 import java.util.Vector;
+import java.util.HashMap;
 
 import java.io.IOException;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -434,9 +436,188 @@ public class HelpPage extends TJHEditorPane
    }
 
    @Override
+   public void setPage(URL page) throws IOException
+   {
+      if (page == null)
+      {
+         throw new IOException("invalid url");
+      }
+
+      URL loaded = getPage();
+
+      Document cachedDoc = null;
+      String ref = page.getRef();
+
+      if (loaded == null || !loaded.sameFile(page))
+      {
+         URI uri = null;
+
+         try
+         {
+            uri = (new URL(page.getProtocol(), page.getHost(), page.getPath())).toURI();
+
+            if ("file".equals(uri.getScheme()))
+            {
+               uri = uri.normalize();
+
+               cachedDoc = getCachedPage(uri);
+            }
+         }
+         catch (Exception e)
+         {
+         }
+      }
+
+      if (cachedDoc != null)
+      {
+         setDocument(cachedDoc);
+
+         getDocument().putProperty(Document.StreamDescriptionProperty, page);
+
+         firePropertyChange("page", loaded, page);
+
+         if (ref != null)
+         {
+            scrollToReference(ref);
+         }
+      }
+      else
+      {
+         super.setPage(page);
+      }
+   }
+
+   protected Document getCachedPage(URI uri)
+   {
+      try
+      {
+         HelpsetFile hsf = helpLib.getHelpSetFile(uri.toURL());
+
+         if (hsf != null)
+         {
+            return hsf.getHTMLDocument();
+         }
+      }
+      catch (Exception e)
+      {
+         helpLib.debug(e);
+      }
+
+      return null;
+   }
+
+   @Override
    public void hyperlinkUpdate(HyperlinkEvent evt)
    {
-      if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
+      if (evt.getURL() == null)
+      {
+         String desc = evt.getDescription();
+
+         int idx = desc.indexOf('#');
+
+         String anchor = null;
+         String path = desc;
+
+         if (idx > -1)
+         {
+            path = desc.substring(0, idx);
+            anchor = desc.substring(idx+1);
+         }
+
+         HelpsetFile hsf = null;
+
+         if (!path.isEmpty())
+         {
+            hsf = helpLib.getHelpSetFile(path);
+         }
+
+         if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
+         {
+            if (hsf == null)
+            {
+               if (anchor != null)
+               {
+                  scrollToReference(anchor);
+               }
+            }
+            else
+            {
+               try
+               {
+                  NavigationNode node = hsf.getNode();
+
+                  if (node == null)
+                  {
+                     URL url = hsf.getURL();
+
+                     if (url == null)
+                     {
+                        helpLib.debug("No URL for '"+desc+"': HelpsetFile: "+hsf);
+                     }
+                     else
+                     {
+                        setPage(url);
+
+                        if (anchor != null)
+                        {
+                           scrollToReference(anchor);
+                        }
+                     }
+                  }
+                  else
+                  {
+                     setPage(node, anchor);
+                  }
+               }
+               catch (IOException e)
+               {
+                  helpLib.error(e);
+               }
+            }
+         }
+         else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED)
+         {
+            String text = null;
+
+            if (anchor != null)
+            {
+               TargetRef targetRef = helpLib.getTargetRef(anchor);
+
+               if (targetRef != null)
+               {
+                  IndexItem item = targetRef.getIndexItem();
+
+                  text = item.brief();
+               }
+            }
+
+            if (text == null || text.isEmpty())
+            {
+               NavigationNode node = hsf.getNode();
+
+               if (node != null)
+               {
+                  text = node.getTitle();
+               }
+            }
+
+            if (text == null || text.isEmpty())
+            {
+               text = desc;
+            }
+            else
+            {
+               text = "<html>"+text+"</html>";
+            }
+
+            setToolTipText(text);
+         }
+         else if (evt.getEventType() == HyperlinkEvent.EventType.EXITED)
+         {
+            setToolTipText(null);
+         }
+      }
+      else if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
       {
          try
          {
@@ -601,4 +782,5 @@ public class HelpPage extends TJHEditorPane
    protected int historyIdx = 0;
 
    protected HelpFontSettings fontSettings;
+
 }

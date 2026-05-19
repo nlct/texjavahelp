@@ -268,7 +268,7 @@ public class ImageViewer extends JDialog
 
       if (alt == null)
       {
-         messagePane.setText("");
+         messagePane.setText(title == null ? src : title);
       }
       else
       {

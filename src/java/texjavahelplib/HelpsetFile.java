@@ -46,6 +46,10 @@ import java.util.Vector;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+import javax.swing.text.BadLocationException;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
+
 import com.dickimawbooks.texparserlib.html.HtmlTag;
 
 public class HelpsetFile
@@ -324,6 +328,45 @@ public class HelpsetFile
       }
    }
 
+   public boolean isHTMLContent()
+   {
+      return type.equals(TYPE_HTML);
+   }
+
+   public HTMLDocument getHTMLDocument() throws IOException
+   {
+      if (isHTMLContent())
+      {
+         if (htmlDocument == null)
+         {
+            StringReader reader = getStringReader();
+            TJHEditorKit htmlKit = new TJHEditorKit(helpLib);
+
+            htmlDocument = (HTMLDocument)htmlKit.createDefaultDocument();
+            htmlDocument.putProperty("IgnoreCharsetDirective", Boolean.TRUE);
+
+            try
+            {
+               htmlKit.read(reader, htmlDocument, 0);
+            }
+            catch (BadLocationException e)
+            {// shouldn't happen
+               helpLib.debug(e);
+            }
+         }
+
+         return htmlDocument;
+      }
+      else
+      {
+         throw new InvalidContentTypeException(
+           helpLib.getMessageWithFallback(
+            "error.content_type_not_html",
+            "{0}: Content type {1} is not HTML",
+            ref, type));
+      }
+   }
+
    public boolean isStyleSheetContent()
    {
       return type.equals(TYPE_CSS);
@@ -409,6 +452,7 @@ public class HelpsetFile
 
    BufferedImage image = null;
    String textContent = null;
+   HTMLDocument htmlDocument = null;
 
    NavigationNode node = null;
 
