@@ -405,11 +405,12 @@ public class HelpsetFile
 
    public static boolean isSupportedType(String mimetype)
    {
-      return mimetype.equals(TYPE_HTML)
+      return mimetype != null
+          && ( mimetype.equals(TYPE_HTML)
           || mimetype.equals(TYPE_CSS)
           || mimetype.equals(TYPE_XML)
           || mimetype.equals(TYPE_PNG)
-          || mimetype.equals(TYPE_JPEG);
+          || mimetype.equals(TYPE_JPEG));
    }
 
    public void writeManifestEntry(OutputStream out)
