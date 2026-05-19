@@ -34,6 +34,7 @@ demo:	lib/texjavahelpdemo.jar
 
 zipdemo:	lib/texjavahelpdemo.jar lib/tjhziphelpset.jar
 	bin/tjhziphelpset lib/resources
+	\rm -rf lib/resources/helpset/
 	bin/texjavahelpdemo
 
 classes/com/dickimawbooks/texjavahelpdemo	:

@@ -134,6 +134,20 @@ public class Helpset
 
    public HelpsetFile getForURL(URL url)
    {
+      String ref = url.getRef();
+
+      if (ref != null)
+      {
+         try
+         {
+            url = new URL(url.getProtocol(), url.getHost(), url.getPath());
+         }
+         catch (Exception e)
+         {
+            helpLib.debug(e);
+         }
+      }
+
       return urlMap.get(url);
    }
 
