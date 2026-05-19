@@ -2,7 +2,7 @@
 % in the TeX Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{texjavahelp}[2026/05/04 v1.3 (NLCT)]
+\ProvidesPackage{texjavahelp}[2026/05/19 v1.3 (NLCT)]
 
 \RequirePackage{pifont}
 \RequirePackage{fontawesome}
@@ -223,7 +223,7 @@
 
 \DeclareOption*{\PassOptionsToPackage{\CurrentOption}{glossaries-extra}}
 
-\ProcessOptions
+\ProcessOptions*
 
 \nlct@definesymbols
 
@@ -1013,6 +1013,7 @@
   \def\xmlattrfmt##1{\protect\xmlattrfmt{##1}}%
   \def\bibentryfmt##1{\protect\bibentryfmt{##1}}%
   \def\bibentryfieldfmt##1{\protect\bibentryfieldfmt{##1}}%
+  \def\unitfmt##1{\protect\unitfmt{##1}}%
 }
 
 \newcommand{\nlctexampledisablecmds}{}
@@ -1476,6 +1477,8 @@
      commonwidget=index,
      button=index,
      commonbutton=index,
+     unit=entry,
+     commonunit=entry,
      term=entry,
      commonterm=entry,
      termplural=entry,
@@ -1638,6 +1641,9 @@
         [ entrytype->original ="termplural" ],
       name = entrylabel->original
         [ entrytype->original =/(common)?term/ & parent=\NULL ],
+% units
+      name = "\cs{unitfmt}{" + entrylabel->original + "}"
+        [ entrytype->original =/(common)?unit/ ] ,
 % messages, errors and warnings
       type = "messages"
         [ entrytype->original = /message|error|warning|syntax/ ], 
@@ -1929,6 +1935,8 @@
 
 \NewDocumentCommand\appfmt{m}{\texttt{#1}}
 \MFUblocker{\appfmt}
+
+\NewDocumentCommand\unitfmt{m}{#1}
 
 \newcommand{\homedir}{\string~}
 \newcommand{\filedirsep}{\slash}
@@ -2780,7 +2788,20 @@
 
 \newcommand{\ifterm}[3]{%
  \glsifcategory{#1}{abbreviation}{#2}%
- {\glsifcategory{#1}{term}{#2}{#3}}%
+ {%
+   \glsifcategory{#1}{term}{#2}%
+   {%
+     \ifglshasdesc{#1}%
+     {%
+       \glsifcategory{#1}{unit}%
+       {#2}%
+       {%
+         \glsifcategory{#1}{general}{#2}{#3}%
+       }%
+     }%
+     {#3}%
+   }%
+ }%
 }
 
 \newcommand{\filterterms}[1]{%
