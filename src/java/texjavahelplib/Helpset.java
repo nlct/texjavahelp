@@ -508,7 +508,8 @@ public class Helpset
 
       if (hsl != null && supportedLocales != null)
       {
-         Locale en = null;
+         Locale fallback = helpLib.getFallbackLocale();
+         boolean foundFallback = false;
 
          filteredLocales = new Vector<Locale>();
 
@@ -518,11 +519,9 @@ public class Helpset
             {
                filteredLocales.add(locale);
             }
-            else if (locale.equals(Locale.ENGLISH))
+            else if (locale.equals(fallback))
             {
-               // Keep English as a fallback
-
-               en = locale;
+               foundFallback = true;
             }
          }
 
@@ -560,10 +559,26 @@ public class Helpset
              }
           });
 
-          if (en != null)
+          if (foundFallback && filteredLocales.isEmpty())
           {
-             filteredLocales.add(en);
+             filteredLocales.add(fallback);
           }
+      }
+
+      if (helpLib.getApplication().isDebuggingOn())
+      {
+         helpLib.debug(helpLib.getMessageWithFallback(
+          "message.helpset.filtered_locales",
+          "{0} helpset {0,choice,0#locales|1#locale|1<locales} established",
+          filteredLocales == null ? 0 : filteredLocales.size()));
+
+         if (filteredLocales != null)
+         {
+            for (Locale l : filteredLocales)
+            {
+               helpLib.debug(l.toLanguageTag());
+            }
+         }
       }
    }
 

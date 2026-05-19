@@ -190,6 +190,11 @@ public class TeXJavaHelpLib
       return messages.getLocale();
    }
 
+   public Locale getFallbackLocale()
+   {
+      return Locale.ENGLISH;
+   }
+
    /**
     * Encodes HTML special characters. See also
     * encodeAttributeValue(String,boolean)
@@ -1615,14 +1620,28 @@ public class TeXJavaHelpLib
 
       if (helpSet != null)
       {
+         debug(getMessageWithFallback(
+          "message.helpset.search",
+          "Searching for helpset file {0} (subdir={1}, prefix={2}, hs locale={3})",
+          filename, helpsetsubdir, helpsetSubdirPrefix, helpsetLocale));
+
          String path;
 
-          Vector<Locale> filteredLocales = helpSet.getFilteredLocales();
+         Vector<Locale> filteredLocales = helpSet.getFilteredLocales();
 
-         if (helpsetLocale == null || helpsetsubdir != null
-               || filteredLocales == null)
+         if (
+               helpsetsubdir != null // already found
+               // no locale:
+               || helpsetLocale == null
+               || filteredLocales == null
+            )
          {
             path = getHelpSetResourcePath() + "/" + filename;
+
+            debug(getMessageWithFallback(
+             "message.helpset.search_try_path",
+             "Trying path {0}",
+             path));
 
             hsf = helpSet.get(path);
          }
@@ -1632,15 +1651,37 @@ public class TeXJavaHelpLib
 
             for (Locale l : filteredLocales)
             {
-               helpsetsubdir = l.toLanguageTag();
+               String dir = l.toLanguageTag();
 
-               path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
+               path = base + "/" + helpsetSubdirPrefix+dir
                   + "/" + filename;
+
+               debug(getMessageWithFallback(
+                "message.helpset.search_try_path_for_locale",
+                "Trying path {0} (locale: {1})",
+                path, l));
 
                hsf = helpSet.get(path);
 
-               if (hsf != null) break;
+               if (hsf != null)
+               {
+                  helpsetsubdir = dir;
+                  break;
+               }
             }
+         }
+
+         if (hsf == null)
+         {
+            debug(getMessageWithFallback(
+             "message.helpset.search_not_found",
+             "No helpset file found"));
+         }
+         else
+         {
+            debug(getMessageWithFallback(
+             "message.helpset.search_found",
+             "Found helpset file {0}", hsf));
          }
       }
 
@@ -1748,7 +1789,7 @@ public class TeXJavaHelpLib
 
                if (stream == null)
                {
-                  helpsetsubdir = "en";
+                  helpsetsubdir = getFallbackLocale().toLanguageTag();
                   path = base + "/" + helpsetSubdirPrefix+helpsetsubdir
                        + "/" + navxmlfilename;
                   stream = getClass().getResourceAsStream(path);

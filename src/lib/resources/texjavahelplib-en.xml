@@ -604,6 +604,13 @@ code should appear in the PDF</entry>
 
 <entry key="message.extracting">Extracting {0}</entry>
 
+<entry key="message.helpset.search">Searching for helpset file {0} (subdir={1}, prefix={2}, hs locale={3})</entry>
+<entry key="message.helpset.search_try_path">Trying path {0}</entry>
+<entry key="message.helpset.search_try_path_for_locale">Trying path {0} (locale: {1})</entry>
+<entry key="message.helpset.search_not_found">No helpset file found</entry>
+<entry key="message.helpset.search_found">Found helpset file {0}</entry>
+<entry key="message.helpset.filtered_locales">{0} helpset {0,choice,0#locales|1#locale|1&lt;locales} established</entry>
+
 <!--  Errors -->
 <entry key="error.xml.more_than_one_tag">More than 1 &lt;{0}&gt; found</entry>
 <entry key="error.xml.missing_attr_in_tag">Missing ''{0}'' attribute in &lt;{1}&gt;</entry>
