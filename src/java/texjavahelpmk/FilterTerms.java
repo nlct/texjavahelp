@@ -22,6 +22,7 @@ package com.dickimawbooks.texjavahelpmk;
 import java.io.IOException;
 
 import com.dickimawbooks.texparserlib.TeXParser;
+import com.dickimawbooks.texparserlib.TeXObject;
 import com.dickimawbooks.texparserlib.TeXObjectList;
 import com.dickimawbooks.texparserlib.ControlSequence;
 import com.dickimawbooks.texparserlib.TeXParserUtils;
@@ -56,10 +57,22 @@ public class FilterTerms extends AbstractGlsCommand
 
       String catLabel = glslabel.getCategory();
 
+      TeXObject desc = glslabel.getField("description");
+
+      boolean hasDesc = (desc != null && !desc.isEmpty());
+
       TeXObjectList expanded = parser.getListener().createStack();
 
       if (catLabel == null
-        || !(catLabel.equals("term") || catLabel.equals("abbreviation")))
+        || !(
+              catLabel.equals("term") || catLabel.equals("abbreviation")
+              ||
+                (
+                   hasDesc
+                    && (catLabel.equals("unit") || catLabel.equals("general"))
+                )
+            )
+         )
       {
          ControlSequence cs 
            = parser.getListener().getControlSequence("printunsrtglossaryskipentry");
