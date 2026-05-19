@@ -87,6 +87,8 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new GobbleOpt("AfterTOCHead", 1, 1));
       registerControlSequence(new GobbleOpt("DeclareTOCStyleEntry", 1, 2));
 
+      registerControlSequence(new TeXParserSetBibPreamble("setbibpreamble"));
+
       registerControlSequence(new HeadlessSection());
       registerControlSequence(new PreFrontMatterBlock());
 
