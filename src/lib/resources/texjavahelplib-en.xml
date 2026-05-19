@@ -602,7 +602,7 @@ code should appear in the PDF</entry>
 <entry key="process.running">Running {0}</entry>
 <entry key="process.running_in_dir">Running {0} in directory {1}</entry>
 
-<entry key="message.extracting">Extracting {0}...</entry>
+<entry key="message.extracting">Extracting {0}</entry>
 
 <!--  Errors -->
 <entry key="error.xml.more_than_one_tag">More than 1 &lt;{0}&gt; found</entry>
