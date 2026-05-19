@@ -414,7 +414,8 @@ public class TJHListener extends L2HConverter
    @Override
    protected String getNonHtml5AccSuppTag(String tag)
    {
-      return tag.equals(AccSupp.TAG_IMG) ? tag : (isXml ? "span" : "font");
+      return tag.equals(AccSupp.TAG_IMG) || tag.equals(AccSupp.TAG_DFN)
+         ? tag : (isXml ? "span" : "font");
    }
 
    @Override
