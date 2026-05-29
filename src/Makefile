@@ -5,7 +5,13 @@ else
   target_version =
 endif
 arara = arara --verbose
-texjavahelpmk=bin/texjavahelpmk #--debug-mode sty-data --log texparser.log
+texjavahelpmk=bin/texjavahelpmk.tlu #--debug-mode sty-data --log texparser.log
+
+texjavaparserlib=$(shell kpsewhich --format=texmfscripts texjavaparserlib.jar)
+
+ifeq ($(texjavaparserlib),)
+  texjavaparserlib = ../../texjavaparser/texjavaparserlib.jar
+endif
 
 all:	lib/texjavahelplib.jar \
 	lib/tjhziphelpset.jar \
@@ -62,11 +68,11 @@ lib/texjavahelpmk.jar	: java/texjavahelpmk/Manifest.txt \
 	com/dickimawbooks/texjavahelpmk/*.class
 
 classes/com/dickimawbooks/texjavahelpmk/TeXJavaHelpMk.class	: classes/com/dickimawbooks/texjavahelpmk \
-	java/texjavahelpmk/*.java lib/texjavahelplib.jar lib/texparserlib.jar
+	java/texjavahelpmk/*.java lib/texjavahelplib.jar 
 	cd java/texjavahelpmk; \
 	javac $(target_version) -d ../../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
-	-cp ../../lib/texparserlib.jar:../../lib/texjavahelplib.jar \
+	-cp $(texjavaparserlib):../../lib/texjavahelplib.jar \
 	*.java
 
 classes/com/dickimawbooks/texjavahelpmk	:
@@ -84,7 +90,7 @@ classes/com/dickimawbooks/texjavahelplib/TeXJavaHelpLib.class	: classes/com/dick
 	cd java/texjavahelplib; \
 	javac $(target_version) -d ../../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
-	-cp ../../lib/texparserlib.jar \
+	-cp $(texjavaparserlib) \
 	*.java
 
 classes/com/dickimawbooks/texjavahelplib	:
@@ -114,11 +120,11 @@ lib/tjhflattendocsrc.jar	: java/flattendocsrc/Manifest.txt \
 	com/dickimawbooks/flattendocsrc/*.class
 
 classes/com/dickimawbooks/flattendocsrc/FlattenDocSrc.class	: classes/com/dickimawbooks/flattendocsrc \
-	java/flattendocsrc/*.java lib/texjavahelplib.jar lib/texparserlib.jar
+	java/flattendocsrc/*.java lib/texjavahelplib.jar
 	cd java/flattendocsrc; \
 	javac $(target_version) -d ../../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
-	-cp ../../lib/texparserlib.jar:../../lib/texjavahelplib.jar \
+	-cp $(texjavaparserlib):../../lib/texjavahelplib.jar \
 	*.java
 
 classes/com/dickimawbooks/flattendocsrc	:
@@ -135,7 +141,7 @@ classes/com/dickimawbooks/ziphelpset/ZipHelpset.class	: classes/com/dickimawbook
 	cd java/ziphelpset; \
 	javac $(target_version) -d ../../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
-	-cp ../../lib/texparserlib.jar:../../lib/texjavahelplib.jar \
+	-cp $(texjavaparserlib):../../lib/texjavahelplib.jar \
 	*.java
 
 classes/com/dickimawbooks/ziphelpset	:
