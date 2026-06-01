@@ -639,6 +639,7 @@ code should appear in the PDF</entry>
 
 <entry key="error.image_not_found">Image ''{0}'' not found</entry>
 
+<entry key="error.no_texjavaparserlib_lang_support">No language support file found for texjavaparserlib</entry>
 <entry key="error.resource_not_found">Resource file ''{0}'' not found</entry>
 <entry key="error.resource_not_found_for_node">Resource file ''{0}'' not found for node ''{1}''</entry>
 <entry key="error.no_helpset">Helpset has not been initialised</entry>

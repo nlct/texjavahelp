@@ -281,6 +281,40 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
       }
    }
 
+   public void loadDictionary(URL url)
+      throws IOException
+   {
+      InputStream in = null;
+
+      try
+      {
+         Properties dictionary = new Properties();
+
+         helpLib.message("Loading "+url);
+
+         in = url.openStream();
+
+         dictionary.loadFromXML(in);
+
+         in.close();
+         in = null;
+
+         helpLib.dictionaryLoaded(url);
+
+         for (Object key : dictionary.keySet())
+         {
+            put((String)key, new MessageFormat((String)dictionary.get(key)));
+         }
+      }
+      finally
+      {
+         if (in != null)
+         {
+            in.close();
+         }
+      }
+   }
+
    public String getMessageWithFallback(String label,
        String fallbackFormat, Object... params)
    {

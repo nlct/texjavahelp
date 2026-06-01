@@ -779,7 +779,18 @@ class CLITeXHelpLib extends AbstractCLI
    {
       TeXJavaHelpLib h = super.createHelpLib();
 
-      h.getMessageSystem().loadDictionary("texparserlib");
+      URL url = TeXParser.getLanguageResourceUrl(h.getMessagesLocale().getLocale());
+
+      if (url == null)
+      {
+         h.warning(h.getMessageWithFallback(
+            "error.no_texjavaparserlib_lang_support",
+            "No language support file found for texjavaparserlib"));
+      }
+      else
+      {
+         h.getMessageSystem().loadDictionary(url);
+      }
 
       return h;
    }
