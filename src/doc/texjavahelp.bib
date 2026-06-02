@@ -14,6 +14,11 @@
   name={\appfmt{data\-tool\-tk}}
 }
 
+@application{app.tjhziphelpset,
+ name={\appfmt{tjh\-zip\-help\-set}},
+ syntax={\oargm{options} \meta{directory}}
+}
+
 @application{app.tjhxml2bib,
  name={\appfmt{tjh\-xml\-2\-bib}},
  syntax={\oargm{options} \meta{XML-file}+}
@@ -2575,8 +2580,22 @@ applications to a help system using Swing components. Its home page
 was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer available}
 }
 
-@term{TeXParserLib,
-  name={\TeX\ Parser Library},
+@abbreviation{TeXJavaHelp,
+  short={TJH},
+  long={\NoCaseChange{\TeX}\ Java Help},
+  description={a system that includes a library and an accompanying set of command line
+tools to create an in-application help system for Java
+\gls{gui}
+applications where the help source is supplied as a \LaTeX\
+document.
+The library also provides methods to implement localisation support
+for both \gls{gui} and \gls{cli} applications, and a \code{TeXApp}
+class for applications that use the \gls{TeXParserLib}.}
+}
+
+@abbreviation{TeXParserLib,
+  short={TJPL},
+  long={\NoCaseChange{\TeX}\ Java Parser Library},
   description={a Java library for parsing \TeX\ or \LaTeX\ files
    (\href{https://github.com/nlct/texparser}{\nolinkurl{github.com/nlct/texparser}})}
 }

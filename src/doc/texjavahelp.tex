@@ -127,7 +127,7 @@ support for \sty{nlctuserguide}. Unlike \sty{nlctuserguide}, which is
 designed for a self-contained source document, the \sty{texjavahelp} package
 is designed to have accompanying \ext{bib} files for use with \app{bib2gls}.
 
-The \TeX\ Java Help repository is at \url{https://github.com/nlct/texjavahelp}
+The \gls{TeXJavaHelp} repository is at \url{https://github.com/nlct/texjavahelp}
 and consists of:
 
 \begin{itemize}
@@ -148,11 +148,12 @@ to create the \gls+{html} and \gls+{xml} files (required by the
 \gls{TeXParserLib} to create a flattened version of the \LaTeX\ document
 source for standalone distribution;
 
+\item \app{tjhziphelpset}: a \gls{cli} application used to bundle
+the helpset files (and standalone license file, if applicable) into
+a zip file.
+
 \item \file{texjavahelplib.jar}: a Java library that provides a \gls{gui} 
 component to display the \gls{html} files created by \app{texjavahelpmk}.
-
-\item \app{texjavahelpdemo}: a \gls{gui} demo application to test 
-the \TeXJavaHelp\ system.
 \end{itemize}
 
 The \app{texjavahelpmk} application is much more limited than
@@ -170,6 +171,30 @@ regular \LaTeX\ to \gls{html} generator, as it has to not only
 convert the source \LaTeX\ code to \gls{html} code but then has to
 parse and markup blocks of the \gls{html} code for the search data
 and search context before writing the \gls{html} code to the output file.
+
+\chapter{Example}\label{sec:example}
+
+The \href{https://github.com/nlct/texjavahelp}{\nolinkurl{github.com/nlct/texjavahelp}}
+repository contains a test application called \app{texjavahelpdemo}
+which simply consists of a window (\code{JFrame}) with a menu bar
+that has menu items that demonstrate an \dialog{about} dialog, a
+\dialog{license} dialog and a help window that opens the
+documentation (the helpset). There is also a button in the window
+that opens the documentation at a particular section (identified by
+a label) and a sample dialog and frame that have a button that opens
+the documentation at a particular page in a secondary window.
+
+The secondary window only contains a subset of the navigation tree
+or even just a single page. (Page in this context refers to a single
+HTML file, which usually corresponds to a sectional unit.)
+
+In this simple example, the \gls{TeXParserLib} is only required by
+the \TeXJavaHelp\ command line applications used to create the
+helpset files. The \gls{TeXParserLib} is not actually needed by the
+demo application itself and so doesn't need to be added to 
+\app{texjavahelpdemo}['s] class path.
+
+TODO
 
 \chapter{The \stytext{texjavahelp} \LaTeX\ Package}
 \label{sec:texjavahelpsty}
