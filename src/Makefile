@@ -42,7 +42,7 @@ classes/com/dickimawbooks/texjavahelpdemo/TeXJavaHelpDemo.class	: classes/com/di
 demo:	lib/texjavahelpdemo.jar
 	bin/texjavahelpdemo
 
-lib/helpset.zip	: lib/helpset/index.xml lib/tjhziphelpset.jar
+lib/helpset.zip	: lib/helpset/index.xml doc/gpl-3.0-standalone.html lib/tjhziphelpset.jar
 	$(tjhziphelpset) -L doc/gpl-3.0-standalone.html en lib
 
 classes/com/dickimawbooks/texjavahelpdemo	:
