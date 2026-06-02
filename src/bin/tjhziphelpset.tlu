@@ -48,22 +48,35 @@ function run_jar(mainclass, jarlist, progname, isGUI)
 
    for _, jarfile in ipairs(jarlist)
    do
-      add_to_classpath(classpath, jarfile, jarfile ~= 'texjavaparserlib.jar')
+      add_to_classpath(classpath, jarfile)
    end
 
-   local cmd = string.format('%s -classpath %s %s',
-           quote_if_spaced(javacmd),
+   local cmd = quote_if_spaced(javacmd);
+
+   local cmdArgs = string.format('-classpath %s %s',
            quote_if_spaced(table.concat(classpath, path_sep)),
            mainclass
          )
 
    for _ , value in ipairs(arg)
    do
-     cmd = cmd .. ' ' .. quote_if_spaced(value)
+     cmdArgs = cmdArgs .. ' ' .. quote_if_spaced(value)
    end
 
-   assert(os.execute(cmd),
-     string.format("Failed to execute '%s'", cmd))
+   local fullcmd = cmd .. ' ' .. cmdArgs
+
+   if string.len(fullcmd) > 8191
+   then
+     local filename = os.tmpname()
+     local fh = io.open(filename, "w+");
+     fh.write(cmdArgs)
+     fh.close();
+   
+     fullcmd = cmd .. ' @' .. filename
+   end
+
+   assert(os.execute(fullcmd),
+     string.format("Failed to execute '%s'", fullcmd))
 
 end
 
@@ -79,7 +92,7 @@ end
 
 function add_to_classpath(array, jarfile, add_dir)
 
-   add_dir = add_dir or true
+   add_dir = add_dir or false
 
    local fullpath = kpse.find_file(jarfile, 'texmfscripts')
 
