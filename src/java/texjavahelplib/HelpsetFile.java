@@ -68,8 +68,20 @@ public class HelpsetFile
 
       this.helpLib = helpLib;
       this.ref = ref;
-      this.type = type;
       this.locale = locale;
+
+      // probing can return application/xml not text/xml
+      // but HelpsetFile needs to distinguish text vs image
+      // so replace application/xml with text/xml
+
+      if (type.equals(TYPE_APPLICATION_XML))
+      {
+         this.type = TYPE_XML;
+      }
+      else
+      {
+         this.type = type;
+      }
    }
 
    public String getRef()
@@ -148,7 +160,7 @@ public class HelpsetFile
 
    public void setEncodingFromPath() throws IOException
    {
-      if (type.equals(TYPE_XML))
+      if (isXMLContent())
       {
          FileInputStream in = null;
 
@@ -328,6 +340,11 @@ public class HelpsetFile
       }
    }
 
+   public boolean isXMLContent()
+   {
+      return type.equals(TYPE_XML);
+   }
+
    public boolean isHTMLContent()
    {
       return type.equals(TYPE_HTML);
@@ -409,6 +426,7 @@ public class HelpsetFile
           && ( mimetype.equals(TYPE_HTML)
           || mimetype.equals(TYPE_CSS)
           || mimetype.equals(TYPE_XML)
+          || mimetype.equals(TYPE_APPLICATION_XML)
           || mimetype.equals(TYPE_PNG)
           || mimetype.equals(TYPE_JPEG));
    }
@@ -463,6 +481,7 @@ public class HelpsetFile
 
    public static final String TYPE_HTML="text/html",
     TYPE_CSS="text/css", TYPE_XML="text/xml",
+    TYPE_APPLICATION_XML = "application/xml",
     TYPE_PNG="image/png", TYPE_JPEG="image/jpeg";
 
    public static final Pattern CSS_CHARSET_PATTERN = 

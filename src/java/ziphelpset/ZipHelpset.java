@@ -45,6 +45,8 @@ public class ZipHelpset extends AbstractCLI
    @Override
    protected void loadDictionaries(MessageSystem msgSys) throws IOException
    {
+      msgSys.loadDictionary("/com/dickimawbooks/texparserlib/", "texjavaparserlib");
+
       msgSys.loadDictionary("/com/dickimawbooks/ziphelpset/", "tjhziphelpset");
    }
 
@@ -361,7 +363,7 @@ public class ZipHelpset extends AbstractCLI
                 }
                 else
                 {
-                   publishMessage(getMessage("message.skipping_unsupported",
+                   warning(getMessage("message.skipping_unsupported",
                     path, type));
                 }
              }

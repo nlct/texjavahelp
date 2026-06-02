@@ -52,7 +52,7 @@ TEXMF tree root:
 *TEXMF*`/scripts/texjavahelp/tjhflattendocsrc.jar`
 *TEXMF*`/scripts/texjavahelp/tjhflattendocsrc.tlu`
 *TEXMF*`/scripts/texjavahelp/tjhziphelpset.jar`
-*TEXMF*`/scripts/texjavahelp/tjhziphelpset.sh`
+*TEXMF*`/scripts/texjavahelp/tjhziphelpset.tlu`
 
 *TEXMF*`/tex/latex/texjavahelp/texjavahelp.sty`
 
@@ -74,15 +74,15 @@ it to the Java class path.
 ```bash
 texjavahelpmk.tlu [options] <in-tex> <out-dir>
 tjhflattendocsrc.tlu [options] <in-tex> <out-dir>
+tjhziphelpset.tlu [options] <dir>
 ```
 
-The `tjhxml2bib` and `tjhziphelpset`
-applications don't require `texjavaparserlib.jar` so the invocation
-is simpler (`path/to/` is the path to *TEXMF*`/scripts/texjavahelp/`): 
+The `tjhxml2bib` application doesn't require `texjavaparserlib.jar`
+so the invocation is simpler (`path/to/` is the path to
+*TEXMF*`/scripts/texjavahelp/`): 
 
 ```bash
 java -jar path/to/tjhxml2bib.jar [options] <xml>... -o <bib>
-java -jar path/to/tjhziphelpset.jar [options] <dir>
 ```
 
 ## Building from Source

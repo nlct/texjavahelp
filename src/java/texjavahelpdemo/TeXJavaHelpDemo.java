@@ -101,6 +101,10 @@ public class TeXJavaHelpDemo extends JFrame
        getLocaleProperty("helpset.locale", Locale.getDefault()));
 
       helpLibApp.setHelpLib(helpLib);
+
+      helpLib.getMessageSystem().loadDictionary(
+        "/com/dickimawbooks/texjavahelpdemo/", "texjavahelpdemo");
+
       helpLib.initHelpSet();
 
       initGui();

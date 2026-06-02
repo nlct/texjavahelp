@@ -16,6 +16,10 @@ Nicola Talbot
 <entry key="syntax.helpset">{0} &lt;name&gt;	The name of the helpset sub-directory within the resources directory.</entry>
 <entry key="syntax.out">{0} (or {1}) &lt;zip-file&gt;	The output ZIP file.</entry>
 
+<!-- Messages -->
+
+<entry key="message.skipping_unsupported">Skipping {0}: unsupported file type {1}</entry>
+
 <!-- Error Messages -->
 
 <entry key="error.syntax.only_one_input">Only one input directory permitted</entry>

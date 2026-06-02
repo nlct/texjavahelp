@@ -7,6 +7,7 @@ endif
 arara = arara --verbose
 texjavahelpmk=bin/texjavahelpmk.tlu #--debug-mode sty-data --log texparser.log
 tjhflattendocsrc=bin/tjhflattendocsrc.tlu 
+tjhziphelpset=bin/tjhziphelpset.tlu 
 
 texjavaparserlib=$(shell kpsewhich --format=texmfscripts texjavaparserlib.jar)
 
@@ -41,8 +42,8 @@ classes/com/dickimawbooks/texjavahelpdemo/TeXJavaHelpDemo.class	: classes/com/di
 demo:	lib/texjavahelpdemo.jar
 	bin/texjavahelpdemo
 
-lib/helpset.zip	: lib/helpset/index.xml  lib/tjhziphelpset.jar
-	bin/tjhziphelpset lib
+lib/helpset.zip	: lib/helpset/index.xml lib/tjhziphelpset.jar
+	$(tjhziphelpset) lib
 
 classes/com/dickimawbooks/texjavahelpdemo	:
 	mkdir -p classes/com/dickimawbooks/texjavahelpdemo
