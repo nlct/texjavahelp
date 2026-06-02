@@ -8,7 +8,7 @@ The accompanying TJH command line applications and the
 in-application help.
 
 The library also provides methods to implement localisation support
-for both GUI and CLI command line applications, and a TeXApp class
+for both GUI and CLI applications, and a TeXApp class
 for applications that use the TeX Java Parser library.
 
 The aim is to provide an alternative to JavaHelp where the documentation 
