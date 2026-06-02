@@ -82,11 +82,10 @@ end
 
 function quote_if_spaced(str)
   
-   if string.find(str, " ") then
-      str = '"' .. string.replace(str, "\"", "\\\"") .. '"' 
-   end
-  
-   return str
+-- copied from runscript.tlu:
+
+  str = string.gsub(str, '"', '') -- disallow embedded double quotes
+  return string.find(str, "%s") and '"'..str..'"' or str
   
 end
 
