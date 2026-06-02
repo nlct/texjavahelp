@@ -61,6 +61,11 @@ public class HelpsetFile
 
    public HelpsetFile(TeXJavaHelpLib helpLib, String ref, String type, Locale locale)
    {
+      this(helpLib, ref, type, locale, false);
+   }
+
+   public HelpsetFile(TeXJavaHelpLib helpLib, String ref, String type, Locale locale, boolean isLicense)
+   {
       if (ref == null || type == null)
       {
          throw new NullPointerException();
@@ -69,6 +74,7 @@ public class HelpsetFile
       this.helpLib = helpLib;
       this.ref = ref;
       this.locale = locale;
+      this.isLicense = isLicense;
 
       // probing can return application/xml not text/xml
       // but HelpsetFile needs to distinguish text vs image
@@ -435,7 +441,7 @@ public class HelpsetFile
    throws IOException
    {
       String str = String.format("<%s ref=\"%s\" type=\"%s\" ",
-          ELEMENT_NAME, ref, type);
+          isLicense ? LICENSE_NAME : ELEMENT_NAME, ref, type);
 
       if (locale != null)
       {
@@ -464,6 +470,7 @@ public class HelpsetFile
    String ref;
    String type, name, encoding;
    Locale locale;
+   boolean isLicense = false;
 
    Path path;
    URL url;
@@ -478,6 +485,8 @@ public class HelpsetFile
    TeXJavaHelpLib helpLib;
 
    public static final String ELEMENT_NAME = "entry";
+
+   public static final String LICENSE_NAME = "license";
 
    public static final String TYPE_HTML="text/html",
     TYPE_CSS="text/css", TYPE_XML="text/xml",

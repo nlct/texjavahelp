@@ -274,21 +274,12 @@ public class TeXJavaHelpDemo extends JFrame
 
       try
       {
-         URL url = getClass().getResource(LICENSE_PATH);
-
-         if (url == null)
-         {
-            throw new FileNotFoundException(helpLib.getMessage(
-              "error.resource_not_found", LICENSE_PATH));
-         }
-
-         licenseDialog = new MessageDialog(this,
-           helpLib.getMessage("license.title"), true,
-           helpLib, url);
+         licenseDialog = helpLib.createLicenseDialog(this,
+             helpLib.getMessage("license.title"));
 
          helpM.add(createJMenuItem("menu.help", "license"));
       }
-      catch (IOException e)
+      catch (Throwable e)
       {
          error(e);
       }
@@ -657,8 +648,6 @@ public class TeXJavaHelpDemo extends JFrame
    private int debugMode = 1;
 
    public static final String APP_NAME = "TeX Java Help Demo";
-
-   public static final String LICENSE_PATH = "/gpl-3.0-standalone.html";
 
    public static final String APP_VERSION = "1.0";
    public static final String APP_DATE = "2024-07-07";

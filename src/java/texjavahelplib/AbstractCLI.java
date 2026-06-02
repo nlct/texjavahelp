@@ -73,6 +73,11 @@ public abstract class AbstractCLI
 
    protected abstract int getCLIArgCount(String arg);
 
+   protected int getCLIMaxArgParams()
+   {
+      return 1;
+   }
+
    protected abstract void parseNoSwitchCLIArg(String arg)
       throws InvalidSyntaxException;
 
@@ -142,6 +147,12 @@ public abstract class AbstractCLI
          protected int argCount(String arg)
          {
             return getCLIArgCount(arg);
+         }
+
+         @Override
+         protected int maxArgParams()
+         {
+            return getCLIMaxArgParams();
          }
 
          @Override

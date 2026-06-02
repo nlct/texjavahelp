@@ -624,6 +624,7 @@ code should appear in the PDF</entry>
 <entry key="error.xml.unexpected_chars">Unexpected content ''{0}'' found</entry>
 <entry key="error.xml.unknown_context">No context found for ID {0} referenced by entry ''{1}''</entry>
 
+<entry key="error.xml.unsupported_mime_type_for">Unsupported type ''{0}'' for &lt;{1}&gt; ({2} required)</entry>
 <entry key="error.invalid_mime_type">Invalid mime type: {0}</entry>
 <entry key="error.invalid_uri_for_ref">Invalid URI for reference: {0}</entry>
 
@@ -643,6 +644,7 @@ code should appear in the PDF</entry>
 <entry key="error.resource_not_found">Resource file ''{0}'' not found</entry>
 <entry key="error.resource_not_found_for_node">Resource file ''{0}'' not found for node ''{1}''</entry>
 <entry key="error.no_helpset">Helpset has not been initialised</entry>
+<entry key="error.no_helpset_license">No license file found in helpset</entry>
 <entry key="error.node_id_not_found">Node with ID ''{0}'' not found</entry>
 <entry key="error.no_desktop">Desktop not supported on the current platform.
 Unable to open URL {0}</entry>

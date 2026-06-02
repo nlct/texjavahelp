@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-<comment>English language file for xml2bib
+<comment>English language file for tjhxml2bib
 https://github.com/nlct/texjavahelp
 GPL-3.0
 Nicola Talbot
@@ -11,6 +11,7 @@ Nicola Talbot
 <entry key="syntax.title">Syntax:</entry>
 <entry key="syntax.options">{0} [&lt;option&gt;]+ &lt;resources dir&gt; [&lt;zip-file&gt;]</entry>
 <entry key="syntax.in">{0} (or {1}) &lt;resources dir&gt;	The directory containing the resource files.</entry>
+<entry key="syntax.license-file">{0} (or {1}) &lt;file&gt; &lt;locale&gt;	Include given license file the specified locale. The &lt;locale&gt; may be empty if there is only one license file for all locales.</entry>
 <entry key="syntax.locales">{0} (or {1}) &lt;locale-list&gt;	The list of supported locales (cumulative). Omit if no locale sub-directories.</entry>
 <entry key="syntax.locale-prefix">{0} (or {1}) &lt;prefix&gt;	The prefix used for the locale sub-directories.</entry>
 <entry key="syntax.helpset">{0} &lt;name&gt;	The name of the helpset sub-directory within the resources directory.</entry>
@@ -25,12 +26,17 @@ Nicola Talbot
 <entry key="error.syntax.only_one_input">Only one input directory permitted</entry>
 <entry key="error.syntax.only_one_output">Only one output file permitted</entry>
 <entry key="error.syntax.only_one_inout">Only one input directory and output file permitted</entry>
+<entry key="error.syntax.missing_file_after">Missing filename after {0}</entry>
+<entry key="error.syntax.missing_locale_after">Missing locale tag after {0} {1}</entry>
 
 <entry key="error.syntax.missing_in">Missing input directory</entry>
 
+<entry key="error.illformed_locale">Ill-formed language tag: {0}</entry>
 <entry key="error.invalid_uri">Invalid URI: {0}</entry>
 <entry key="error.file_not_found">File not found: {0}</entry>
 <entry key="error.file_not_dir">Not a directory: {0}</entry>
+
+<entry key="error.unable_to_parse_encoding">Unable to parse encoding from file {0}: {1}</entry>
 
 <entry key="error.helpset_dir_not_found">Helpset directory ''{0}'' not found (use the {1} switch to set the appropriate name)</entry>
 

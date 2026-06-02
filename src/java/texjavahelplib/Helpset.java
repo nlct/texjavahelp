@@ -163,6 +163,16 @@ public class Helpset
       return map.remove(name);
    }
 
+   public void addLicense(HelpsetFile hsf)
+   {
+      if (licenseFiles == null)
+      {
+         licenseFiles = new Vector<HelpsetFile>();
+      }
+
+      licenseFiles.add(hsf);
+   }
+
    public void writeManifest(OutputStream out) throws IOException
    {
       byte[] byteArray = MANIFEST_XML_HEADER.getBytes();
@@ -176,6 +186,16 @@ public class Helpset
       out.write(byteArray, 0, byteArray.length);
 
       out.write(eol, 0, eol.length);
+
+      if (licenseFiles != null)
+      {
+         for (HelpsetFile hsf : licenseFiles)
+         {
+            hsf.writeManifestEntry(out);
+
+            out.write(eol, 0, eol.length);
+         }
+      }
 
       for (String name : manifest)
       {
@@ -224,6 +244,30 @@ public class Helpset
          zipOut.putNextEntry(zipEntry);
 
          writeManifest(zipOut);
+
+         if (licenseFiles != null)
+         {
+            for (HelpsetFile hsf : licenseFiles)
+            {
+               Path path = hsf.getPath();
+
+               fin = new FileInputStream(path.toFile());
+
+               zipEntry = new ZipEntry(hsf.getName());
+               zipOut.putNextEntry(zipEntry);
+
+               byteArray = new byte[1024];
+               int length;
+
+               while ((length = fin.read(byteArray)) >= 0)
+               {
+                  zipOut.write(byteArray, 0, length);
+               }
+
+               fin.close();
+               fin = null;
+            }
+         }
 
          for (String name : manifest)
          {
@@ -414,7 +458,22 @@ public class Helpset
          }
       }
 
+      if (hs.licenseFiles != null && hs.licenseFiles.size() > 1)
+      {
+         hs.licenseFiles.sort(new HelpsetFileLocaleComparator());
+      }
+
       return hs;
+   }
+
+   public HelpsetFile getLicense()
+   {
+      if (licenseFiles != null && !licenseFiles.isEmpty())
+      {
+         return licenseFiles.firstElement();
+      }
+
+      return null;
    }
 
    protected void readHelpsetFile(ZipInputStream zipIn, ZipEntry zipEntry)
@@ -431,17 +490,37 @@ public class Helpset
 
       HelpsetFile hsf = map.get(name);
 
+      boolean license = false;
+
+      if (hsf == null && licenseFiles != null)
+      {
+         for (HelpsetFile licenseFile : licenseFiles)
+         {
+            if (licenseFile.getRef().equals(zipEntry.getName()))
+            {
+               hsf = licenseFile;
+               license = true;
+               break;
+            }
+         }
+      }
+
       if (hsf != null)
       {
          if (hsf.hasLocale() && filteredLocales != null
                && !filteredLocales.contains(hsf.getLocale()))
          {
+            if (license)
+            {
+               licenseFiles.remove(hsf);
+            }
+
             return;
          }
 
          String dir = helpLib.getHelpsetDirName();
 
-         if (!hsf.getRef().startsWith(dir) && hsf.hasLocale())
+         if (!hsf.getRef().startsWith(dir) && hsf.hasLocale() && !license)
          {
             return;
          }
@@ -525,39 +604,7 @@ public class Helpset
             }
          }
 
-         filteredLocales.sort(new Comparator<Locale>()
-          {
-             @Override
-             public int compare(Locale l1, Locale l2)
-             {
-                if (l1.equals(l2)) return 0;
-
-                int result = -l1.getLanguage().compareTo(l2.getLanguage());
-
-                if (result != 0)
-                {
-                   return result;
-                }
-
-                int n1 = 0;
-                int n2 = 0;
-
-                if (!l1.getCountry().isEmpty()) n1++;
-                if (!l2.getCountry().isEmpty()) n2++;
-
-                if (!l1.getScript().isEmpty()) n1++;
-                if (!l2.getScript().isEmpty()) n2++;
-
-                if (!l1.getVariant().isEmpty()) n1++;
-                if (!l2.getVariant().isEmpty()) n2++;
-
-                if (n1 > n2) return -1;
-
-                if (n1 < n2) return 1;
-
-                return -l1.toLanguageTag().compareTo(l2.toLanguageTag());
-             }
-          });
+         filteredLocales.sort(new LocaleComparator());
 
           if (foundFallback && filteredLocales.isEmpty())
           {
@@ -636,6 +683,8 @@ public class Helpset
 
    Vector<HelpsetFile> cssFiles;
    Dictionary<URL,Image> imageCache;
+
+   Vector<HelpsetFile> licenseFiles;
 
    public static final String MANIFEST_XML = "manifest.xml";
 
@@ -729,6 +778,64 @@ class ManifestReader extends XMLReaderAdapter
 
          previousQname = qName;
       }
+      else if (HelpsetFile.LICENSE_NAME.equals(qName))
+      {
+         if (previousQname != null)
+         {
+            throw new SAXException(
+              helpLib.getMessageWithFallback(
+              "error.xml.tag_found_inside",
+              "<{0}> found inside <{1}>", qName, previousQname));
+         }
+
+         if (!manifestFound)
+         {
+            throw new SAXException(
+              helpLib.getMessageWithFallback(
+              "error.xml.tag_found_outside",
+              "<{0}> found outside <{1}>", qName, Helpset.MANIFEST_CONTAINER));
+         }
+
+         String ref = attrs.getValue("ref");
+
+         if (ref == null)
+         {
+            throw new SAXException(helpLib.getMessageWithFallback(
+             "error.xml.missing_attr_in_tag",
+             "Missing ''{0}'' attribute in <{1}>", "ref", qName));
+         }
+
+         String type = attrs.getValue("type");
+
+         if (type != null && !type.equals(HelpsetFile.TYPE_HTML))
+         {
+            throw new SAXException(helpLib.getMessageWithFallback(
+             "error.xml.unsupported_mime_type_for",
+             "Unsupported file type ''{0}'' for <{1}> ({2} required)",
+              "type", qName, HelpsetFile.TYPE_HTML));
+         }
+
+         if (type == null)
+         {
+            type = HelpsetFile.TYPE_HTML;
+         }
+
+         String localeTag = attrs.getValue("locale");
+
+         HelpsetFile hsf = new HelpsetFile(helpLib, ref, type,  
+           localeTag == null ? null : Locale.forLanguageTag(localeTag), true);
+
+         String encoding = attrs.getValue("encoding");
+
+         if (encoding != null)
+         {
+            hsf.setEncoding(encoding);
+         }
+
+         helpset.addLicense(hsf);
+
+         previousQname = qName;
+      }
       else
       {
          throw new SAXException(helpLib.getMessageWithFallback(
@@ -746,7 +853,9 @@ class ManifestReader extends XMLReaderAdapter
       {
          endTagFound = true;
       }
-      else if (HelpsetFile.ELEMENT_NAME.equals(qName))
+      else if (HelpsetFile.ELEMENT_NAME.equals(qName)
+            || HelpsetFile.LICENSE_NAME.equals(qName)
+             )
       {
          previousQname = null;
       }

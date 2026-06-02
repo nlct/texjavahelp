@@ -24,6 +24,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 import java.net.*;
 
+import java.util.IllformedLocaleException;
 import java.util.Locale;
 import java.util.Vector;
 import java.util.zip.*;
@@ -124,6 +125,8 @@ public class ZipHelpset extends AbstractCLI
 
       printSyntaxItem(getMessage("syntax.locale-prefix", "--locale-prefix", "-p"));
 
+      printSyntaxItem(getMessage("syntax.license-file", "--license-file", "-L"));
+
       System.out.println();
 
       printCommonCLISyntax();
@@ -142,12 +145,23 @@ public class ZipHelpset extends AbstractCLI
        || arg.equals("--helpset")
        || arg.equals("--locales") || arg.equals("-l")
        || arg.equals("--locale-prefix") || arg.equals("-p")
-         )
+       )
       {
          return 1;
       }
 
+      if (arg.equals("--license-file") || arg.equals("-L"))
+      {
+         return 2;
+      }
+
       return 0;
+   }
+
+   @Override
+   protected int getCLIMaxArgParams()
+   {     
+      return 2;
    }
 
    @Override
@@ -221,6 +235,88 @@ public class ZipHelpset extends AbstractCLI
          }
 
          localePrefix = returnVals[0].toString();
+      }
+      else if (isArg(arg, "--license-file", "-L", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.syntax.missing_file_after", arg));
+         }
+
+         if (returnVals[1] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.syntax.missing_locale_after", arg, returnVals[0]));
+         }
+
+         File file = new File(returnVals[0].toString());
+         String localeTag = returnVals[1].toString();
+
+         if (!file.exists())
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.file_not_found", file));
+         }
+
+         String ref;
+
+         try
+         {
+            ref = file.toURI().toString();
+         }
+         catch (SecurityException e)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("message.no.read", file), e);
+         }
+
+         int idx = ref.lastIndexOf('/');
+
+         if (idx > -1)
+         {
+            ref = ref.substring(idx+1);
+         }
+
+         Locale locale = null;
+
+         if (!localeTag.isEmpty())
+         {
+            Locale.Builder builder = new Locale.Builder();
+
+            try
+            {
+               builder.setLanguageTag(localeTag);
+            }
+            catch (IllformedLocaleException e)
+            {
+               throw new InvalidSyntaxException(
+                  getMessage("error.illformed_locale", localeTag), e);
+            }
+         }
+
+         if (licenseFiles == null)
+         {
+            licenseFiles = new Vector<HelpsetFile>();
+         }
+
+         HelpsetFile hsf = new HelpsetFile(getHelpLib(), ref, HelpsetFile.TYPE_HTML, 
+            locale, true);
+
+         hsf.setPath(file.toPath());
+         hsf.setName(file.getName());
+
+         try
+         {
+            hsf.setEncodingFromPath();
+         }
+         catch (IOException e)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.unable_to_parse_encoding", file, e.getMessage()), e);
+         }
+
+         licenseFiles.add(hsf);
       }
       else if (isArg(arg, "--output", "-o", returnVals))
       {
@@ -313,6 +409,14 @@ public class ZipHelpset extends AbstractCLI
    protected void run() throws IOException
    {
       helpset = new Helpset(getHelpLib());
+
+      if (licenseFiles != null)
+      {
+         for (HelpsetFile hsf : licenseFiles)
+         {
+            helpset.addLicense(hsf);
+         }
+      }
 
       Files.walkFileTree(helpsetPath, new SimpleFileVisitor<Path>()
        {
@@ -407,4 +511,6 @@ public class ZipHelpset extends AbstractCLI
    Helpset helpset;
 
    String localePrefix = null;
+
+   Vector<HelpsetFile> licenseFiles;
 }

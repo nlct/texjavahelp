@@ -726,6 +726,48 @@ public class TeXJavaHelpLib
       }
    }
 
+   public MessageDialog createLicenseDialog(JFrame parent, String title)
+   throws HelpSetNotInitialisedException,IOException
+   {
+      return createLicenseDialog(parent, title, java.awt.Dialog.ModalityType.MODELESS);
+   }
+
+   /**
+    * Creates a MessageDialog containing the standalone license document.
+    * The license document needs to have been declared with the
+    * <code>license</code> element in the helpset zip file. This is designed for
+    * standalone license files that are not incorporated into the
+    * documentation. If the license is instead a chapter or section
+    * of the helpset document, then fetch a reference to it 
+    * with <code>getHelpSetFile</code> instead.
+    * @param parent the dialog's parent frame
+    * @param title the dialog's title
+    * @param type the dialog's modality
+    * @return a message dialog containing the license.
+    */
+   public MessageDialog createLicenseDialog(JFrame parent, String title,
+     java.awt.Dialog.ModalityType type)
+   throws HelpSetNotInitialisedException,IOException
+   {
+      if (helpSet == null)
+      {
+         throw new HelpSetNotInitialisedException(
+           getMessageWithFallback("error.no_helpset",
+              "Helpset has not been initialised"));
+      }
+
+      HelpsetFile hsf = helpSet.getLicense();
+
+      if (hsf == null)
+      {
+         throw new FileNotFoundException(
+            getMessageWithFallback("error.no_helpset_license",
+             "No license file found in helpset"));
+      }
+
+      return new MessageDialog(parent, title, type, this, hsf.getHTMLDocument());
+   }
+
    public void setTeXJavaHelpLibApp(TeXJavaHelpLibApp application)
    {
       this.application = application;

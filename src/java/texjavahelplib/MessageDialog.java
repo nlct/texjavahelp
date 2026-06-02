@@ -186,6 +186,20 @@ public class MessageDialog extends JDialog
       setLocationRelativeTo(parent);
    }
 
+   public MessageDialog(JFrame parent, String title,
+      Dialog.ModalityType modalityType, TeXJavaHelpLib helpLib,
+      HTMLDocument htmlDocument)
+   {
+      super(parent, title, modalityType);
+
+      this.helpLib = helpLib;
+
+      editorPane = new TJHEditorPane(helpLib);
+      editorPane.setDocument(htmlDocument);
+      initGUI();
+      setLocationRelativeTo(parent);
+   }
+
    /**
     * Creates a message dialog with the given HTML content obtained
     * from a URL that uses the TeXJavaHelpLib font settings and listens to font

@@ -43,7 +43,7 @@ demo:	lib/texjavahelpdemo.jar
 	bin/texjavahelpdemo
 
 lib/helpset.zip	: lib/helpset/index.xml lib/tjhziphelpset.jar
-	$(tjhziphelpset) lib
+	$(tjhziphelpset) -L doc/gpl-3.0-standalone.html en lib
 
 classes/com/dickimawbooks/texjavahelpdemo	:
 	mkdir -p classes/com/dickimawbooks/texjavahelpdemo
