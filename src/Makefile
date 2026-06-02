@@ -102,24 +102,24 @@ classes/com/dickimawbooks/texjavahelplib/TeXJavaHelpLib.class	: classes/com/dick
 classes/com/dickimawbooks/texjavahelplib	:
 	mkdir -p classes/com/dickimawbooks/texjavahelplib
 
-lib/tjhxml2bib.jar	: java/xml2bib/Manifest.txt \
-	classes/com/dickimawbooks/xml2bib/Xml2Bib.class
-	cp dictionaries/tjhxml2bib-*.xml classes/com/dickimawbooks/xml2bib/
+lib/tjhxml2bib.jar	: java/tjhxml2bib/Manifest.txt \
+	classes/com/dickimawbooks/tjhxml2bib/Xml2Bib.class
+	cp dictionaries/tjhxml2bib-*.xml classes/com/dickimawbooks/tjhxml2bib/
 	cd classes; \
-	jar cmf ../java/xml2bib/Manifest.txt ../lib/tjhxml2bib.jar \
-	com/dickimawbooks/xml2bib/*.class \
-	com/dickimawbooks/xml2bib/*.xml
+	jar cmf ../java/tjhxml2bib/Manifest.txt ../lib/tjhxml2bib.jar \
+	com/dickimawbooks/tjhxml2bib/*.class \
+	com/dickimawbooks/tjhxml2bib/*.xml
 
-classes/com/dickimawbooks/xml2bib/Xml2Bib.class	: classes/com/dickimawbooks/xml2bib \
-	java/xml2bib/*.java lib/texjavahelplib.jar
-	cd java/xml2bib; \
+classes/com/dickimawbooks/tjhxml2bib/Xml2Bib.class	: classes/com/dickimawbooks/tjhxml2bib \
+	java/tjhxml2bib/*.java lib/texjavahelplib.jar
+	cd java/tjhxml2bib; \
 	javac $(target_version) -d ../../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
 	-cp ../../lib/texjavahelplib.jar \
 	*.java
 
-classes/com/dickimawbooks/xml2bib	:
-	mkdir -p classes/com/dickimawbooks/xml2bib
+classes/com/dickimawbooks/tjhxml2bib	:
+	mkdir -p classes/com/dickimawbooks/tjhxml2bib
 
 lib/tjhflattendocsrc.jar	: java/tjhflattendocsrc/Manifest.txt \
 	classes/com/dickimawbooks/tjhflattendocsrc/FlattenDocSrc.class

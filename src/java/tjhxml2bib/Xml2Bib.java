@@ -16,7 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.dickimawbooks.xml2bib;
+package com.dickimawbooks.tjhxml2bib;
 
 import java.io.*;
 
@@ -773,7 +773,7 @@ public class Xml2Bib extends AbstractCLI
    @Override
    protected void loadDictionaries(MessageSystem msgSys) throws IOException
    {
-      msgSys.loadDictionary("/com/dickimawbooks/xml2bib/", "tjhxml2bib");
+      msgSys.loadDictionary("/com/dickimawbooks/tjhxml2bib/", "tjhxml2bib");
    }
 
    public static void main(String[] args)
