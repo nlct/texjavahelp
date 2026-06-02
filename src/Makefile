@@ -140,24 +140,24 @@ classes/com/dickimawbooks/tjhflattendocsrc/FlattenDocSrc.class	: classes/com/dic
 classes/com/dickimawbooks/tjhflattendocsrc	:
 	mkdir -p classes/com/dickimawbooks/tjhflattendocsrc
 
-lib/tjhziphelpset.jar	: java/ziphelpset/Manifest.txt \
-	classes/com/dickimawbooks/ziphelpset/ZipHelpset.class
-	cp dictionaries/tjhziphelpset-*.xml classes/com/dickimawbooks/ziphelpset/
+lib/tjhziphelpset.jar	: java/tjhziphelpset/Manifest.txt \
+	classes/com/dickimawbooks/tjhziphelpset/ZipHelpset.class
+	cp dictionaries/tjhziphelpset-*.xml classes/com/dickimawbooks/tjhziphelpset/
 	cd classes; \
-	jar cmf ../java/ziphelpset/Manifest.txt ../lib/tjhziphelpset.jar \
-	com/dickimawbooks/ziphelpset/*.class \
-	com/dickimawbooks/ziphelpset/*.xml
+	jar cmf ../java/tjhziphelpset/Manifest.txt ../lib/tjhziphelpset.jar \
+	com/dickimawbooks/tjhziphelpset/*.class \
+	com/dickimawbooks/tjhziphelpset/*.xml
 
-classes/com/dickimawbooks/ziphelpset/ZipHelpset.class	: classes/com/dickimawbooks/ziphelpset \
-	java/ziphelpset/*.java lib/texjavahelplib.jar
-	cd java/ziphelpset; \
+classes/com/dickimawbooks/tjhziphelpset/ZipHelpset.class	: classes/com/dickimawbooks/tjhziphelpset \
+	java/tjhziphelpset/*.java lib/texjavahelplib.jar
+	cd java/tjhziphelpset; \
 	javac $(target_version) -d ../../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
 	-cp $(texjavaparserlib):../../lib/texjavahelplib.jar \
 	*.java
 
-classes/com/dickimawbooks/ziphelpset	:
-	mkdir -p classes/com/dickimawbooks/ziphelpset
+classes/com/dickimawbooks/tjhziphelpset	:
+	mkdir -p classes/com/dickimawbooks/tjhziphelpset
 
 ../unstable/texjavahelp.zip	: lib/texjavahelplib.jar \
 	lib/texjavahelpmk.jar \

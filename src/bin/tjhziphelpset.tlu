@@ -193,7 +193,7 @@ function dirname(path)
 end
 
 run_jar(  
-         'com.dickimawbooks.ziphelpset.ZipHelpset' ,
+         'com.dickimawbooks.tjhziphelpset.ZipHelpset' ,
          {
           'texjavaparserlib.jar' ,
           'texjavahelplib.jar'
