@@ -131,10 +131,10 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
       return availableDictionaries;
    }
 
-   protected String getLanguageFileName(String tag)
+   protected String getLanguageFileName(String resourcePath, String tag)
    {
-      return String.format("%s/%s-%s.xml",
-        helpLib.getDictionaryPath(), tagPrefix, tag);
+      return String.format("%s%s-%s.xml",
+        resourcePath, tagPrefix, tag);
    }
 
    /**
@@ -144,7 +144,7 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
      and prefix-en-GB.xml overrides just the different keys specific to GB.
      @return list of available language files
     */ 
-   protected ArrayDeque<URL> getLanguageFiles()
+   protected ArrayDeque<URL> getLanguageFiles(String resourcePath)
      throws FileNotFoundException
    {
       String tag, dict;
@@ -157,7 +157,7 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
 
       // preferred tag
       tag = hsLocale.getTag();
-      dict = getLanguageFileName(tag);
+      dict = getLanguageFileName(resourcePath, tag);
       url = getClass().getResource(dict);
 
       if (url != null)
@@ -170,7 +170,7 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
 
       if (!tag.equals(hsLocale.getTag()))
       {
-         dict = getLanguageFileName(tag);
+         dict = getLanguageFileName(resourcePath, tag);
          url = getClass().getResource(dict);
 
          if (url != null)
@@ -190,7 +190,7 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
       {
          tag = String.format("%s-%s", lang, region);
 
-         dict = getLanguageFileName(tag);
+         dict = getLanguageFileName(resourcePath, tag);
          url = getClass().getResource(dict);
 
          if (url != null)
@@ -204,7 +204,7 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
          }
       }
 
-      dict = getLanguageFileName(lang);
+      dict = getLanguageFileName(resourcePath, lang);
       url = getClass().getResource(dict);
 
       if (url != null)
@@ -223,15 +223,21 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
    public void loadDictionary(String tagPrefix)
       throws IOException
    {
+      loadDictionary(helpLib.getDictionaryPath(), tagPrefix);
+   }
+
+   public void loadDictionary(String resourcePath, String tagPrefix)
+      throws IOException
+   {
       this.tagPrefix = tagPrefix;
 
-      ArrayDeque<URL> deque = getLanguageFiles();
+      ArrayDeque<URL> deque = getLanguageFiles(resourcePath);
 
       if (deque.isEmpty())
       {
          HelpSetLocale orgLocale = hsLocale;
          hsLocale = new HelpSetLocale("en", Locale.ENGLISH);
-         deque = getLanguageFiles();
+         deque = getLanguageFiles(resourcePath);
 
          if (deque.isEmpty())
          {
@@ -239,7 +245,8 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
             (
                String.format(
                "Can't find dictionary resource file for locale \"%s\" or fallback \"%s\" matching \"%s\"",
-                orgLocale.getTag(), hsLocale.getTag(), getLanguageFileName("*")
+                orgLocale.getTag(), hsLocale.getTag(),
+                 getLanguageFileName(resourcePath, "*")
                )
             );
          }

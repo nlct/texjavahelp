@@ -34,11 +34,18 @@ import com.dickimawbooks.texjavahelplib.AbstractCLI;
 import com.dickimawbooks.texjavahelplib.CLIArgValue;
 import com.dickimawbooks.texjavahelplib.HelpsetFile;
 import com.dickimawbooks.texjavahelplib.Helpset;
+import com.dickimawbooks.texjavahelplib.MessageSystem;
 
 public class ZipHelpset extends AbstractCLI
 {
    public ZipHelpset()
    {
+   }
+
+   @Override
+   protected void loadDictionaries(MessageSystem msgSys) throws IOException
+   {
+      msgSys.loadDictionary("/com/dickimawbooks/ziphelpset/", "tjhziphelpset");
    }
 
    @Override

@@ -44,6 +44,7 @@ import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 import com.dickimawbooks.texjavahelplib.AbstractCLI;
 import com.dickimawbooks.texjavahelplib.CLISyntaxParser;
 import com.dickimawbooks.texjavahelplib.CLIArgValue;
+import com.dickimawbooks.texjavahelplib.MessageSystem;
 
 public class Xml2Bib extends AbstractCLI
 {
@@ -767,6 +768,12 @@ public class Xml2Bib extends AbstractCLI
       {
          return null;
       }
+   }
+
+   @Override
+   protected void loadDictionaries(MessageSystem msgSys) throws IOException
+   {
+      msgSys.loadDictionary("/com/dickimawbooks/xml2bib/", "tjhxml2bib");
    }
 
    public static void main(String[] args)

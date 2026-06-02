@@ -533,8 +533,13 @@ public abstract class AbstractCLI
 
       helpLibApp.setHelpLib(helpLib);
 
+      loadDictionaries(helpLib.getMessageSystem());
+
       return helpLib;
    }
+
+   protected abstract void loadDictionaries(MessageSystem msgSys)
+     throws IOException;
 
    protected void initHelpLibrary() throws IOException
    {

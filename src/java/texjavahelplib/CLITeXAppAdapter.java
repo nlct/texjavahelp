@@ -35,6 +35,12 @@ import com.dickimawbooks.texparserlib.*;
 
 public abstract class CLITeXAppAdapter extends TeXAppAdapter
 {
+   protected void loadDictionaries(MessageSystem msgSys)
+     throws IOException
+   {
+      msgSys.loadDictionary("/com/dickimawbooks/texparserlib/", "texjavaparserlib");
+   }
+
    public void initialiseHelpAndParse(String[] args)
      throws IOException,InvalidSyntaxException
    {
@@ -697,6 +703,13 @@ class CLITeXHelpLib extends AbstractCLI
    public CLITeXHelpLib(CLITeXAppAdapter cliTeXApp)
    {
       this.cliTeXApp = cliTeXApp;
+   }
+
+   @Override
+   protected void loadDictionaries(MessageSystem msgSys)
+     throws IOException
+   {
+      cliTeXApp.loadDictionaries(msgSys);
    }
 
    @Override

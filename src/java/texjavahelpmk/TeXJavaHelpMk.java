@@ -46,9 +46,17 @@ import com.dickimawbooks.texjavahelplib.CLITeXAppAdapter;
 import com.dickimawbooks.texjavahelplib.CLISyntaxParser;
 import com.dickimawbooks.texjavahelplib.CLIArgValue;
 import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
+import com.dickimawbooks.texjavahelplib.MessageSystem;
 
 public class TeXJavaHelpMk extends CLITeXAppAdapter
 {
+   @Override
+   protected void loadDictionaries(MessageSystem msgSys) throws IOException
+   {
+      super.loadDictionaries(msgSys);
+      msgSys.loadDictionary("/com/dickimawbooks/texjavahelpmk/", "texjavahelpmk");
+   }
+
    @Override
    protected void parseNoSwitchCLIArg(String arg)
      throws InvalidSyntaxException
@@ -569,7 +577,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
 
       printCommonCLISyntax();
 
-      printSyntaxItem(getMessage("clisyntax.debug-mode", "--debug-mode"));
+      printSyntaxItem(getMessage("texparser.syntax.debug-mode", "--debug-mode"));
 
       System.out.println();
 

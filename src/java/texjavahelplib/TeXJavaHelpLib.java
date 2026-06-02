@@ -95,49 +95,39 @@ public class TeXJavaHelpLib
      throws IOException
    {
       this(application, application.getApplicationName(),
-         "/resources", msgLocale, hsLocale,
-         application.getApplicationName().toLowerCase().replaceAll(" ", ""));
+         "", msgLocale, hsLocale);
    }
 
    public TeXJavaHelpLib(TeXJavaHelpLibApp application,
       String applicationName, String resourcebase,
-      Locale msgLocale, Locale hsLocale, String... dictPrefixes)
+      Locale msgLocale, Locale hsLocale)
     throws IOException
    {
       this(application, applicationName, resourcebase,
-       resourcebase, msgLocale, hsLocale, dictPrefixes);
+       resourcebase, msgLocale, hsLocale);
    }
 
    public TeXJavaHelpLib(TeXJavaHelpLibApp application,
       String applicationName, String resourcebase,
       String dictionaryBase,
-      Locale msgLocale, Locale hsLocale, String... dictPrefixes)
+      Locale msgLocale, Locale hsLocale)
     throws IOException
    {
       this(application, applicationName, resourcebase, dictionaryBase,
        msgLocale == null ? null : new HelpSetLocale(msgLocale),
-       hsLocale == null ? null : new HelpSetLocale(hsLocale),
-       dictPrefixes);
+       hsLocale == null ? null : new HelpSetLocale(hsLocale));
    }
 
    public TeXJavaHelpLib(TeXJavaHelpLibApp application,
       String applicationName, String resourcebase,
       String dictionaryBase,
-      HelpSetLocale messagesLocale, HelpSetLocale helpsetLocale,
-      String... dictPrefixes)
+      HelpSetLocale messagesLocale, HelpSetLocale helpsetLocale)
     throws IOException
    {
       this.application = application;
       this.applicationName = applicationName;
 
-      if (resourcebase.endsWith("/"))
-      {
-         this.resourcebase = resourcebase.substring(0, resourcebase.length()-1);
-      }
-      else
-      {
-         this.resourcebase = resourcebase;
-      }
+      this.resourcebase = resourcebase;
 
       if (dictionaryBase.endsWith("/"))
       {
@@ -153,15 +143,7 @@ public class TeXJavaHelpLib
 
       messages = new MessageSystem(this, "texjavahelplib", messagesLocale);
 
-      for (String dictPrefix : dictPrefixes)
-      {
-         if (dictPrefix.endsWith("-"))
-         {
-            dictPrefix = dictPrefix.substring(0, dictPrefix.length()-1);
-         }
-
-         messages.loadDictionary(dictPrefix);
-      }
+      messages.loadDictionary("/com/dickimawbooks/texjavahelplib/", "texjavahelplib");
 
       helpFontSettings = new HelpFontSettings();
    }
