@@ -17,7 +17,7 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-package com.dickimawbooks.flattendocsrc;
+package com.dickimawbooks.tjhflattendocsrc;
 
 import java.util.Vector;
 
@@ -48,7 +48,7 @@ public class FlattenDocSrc extends CLITeXAppAdapter
    protected void loadDictionaries(MessageSystem msgSys) throws IOException
    {
       super.loadDictionaries(msgSys);
-      msgSys.loadDictionary("/com/dickimawbooks/flattendocsrc/", "tjhflattendocsrc");
+      msgSys.loadDictionary("/com/dickimawbooks/tjhflattendocsrc/", "tjhflattendocsrc");
    }
 
    @Override

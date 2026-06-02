@@ -1,0 +1,2 @@
+Main-Class: com/dickimawbooks/tjhflattendocsrc/FlattenDocSrc
+Class-Path: . texjavaparserlib.jar texjavahelplib.jar

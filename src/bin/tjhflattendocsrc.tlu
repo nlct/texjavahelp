@@ -193,7 +193,7 @@ function dirname(path)
 end
 
 run_jar(  
-         'com.dickimawbooks.flattendocsrc.FlattenDocSrc' ,
+         'com.dickimawbooks.tjhflattendocsrc.FlattenDocSrc' ,
          {
           'texjavaparserlib.jar' ,
           'texjavahelplib.jar'

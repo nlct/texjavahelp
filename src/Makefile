@@ -121,24 +121,24 @@ classes/com/dickimawbooks/xml2bib/Xml2Bib.class	: classes/com/dickimawbooks/xml2
 classes/com/dickimawbooks/xml2bib	:
 	mkdir -p classes/com/dickimawbooks/xml2bib
 
-lib/tjhflattendocsrc.jar	: java/flattendocsrc/Manifest.txt \
-	classes/com/dickimawbooks/flattendocsrc/FlattenDocSrc.class
-	cp dictionaries/tjhflattendocsrc-*.xml classes/com/dickimawbooks/flattendocsrc/
+lib/tjhflattendocsrc.jar	: java/tjhflattendocsrc/Manifest.txt \
+	classes/com/dickimawbooks/tjhflattendocsrc/FlattenDocSrc.class
+	cp dictionaries/tjhflattendocsrc-*.xml classes/com/dickimawbooks/tjhflattendocsrc/
 	cd classes; \
-	jar cmf ../java/flattendocsrc/Manifest.txt ../lib/tjhflattendocsrc.jar \
-	com/dickimawbooks/flattendocsrc/*.class \
-	com/dickimawbooks/flattendocsrc/*.xml
+	jar cmf ../java/tjhflattendocsrc/Manifest.txt ../lib/tjhflattendocsrc.jar \
+	com/dickimawbooks/tjhflattendocsrc/*.class \
+	com/dickimawbooks/tjhflattendocsrc/*.xml
 
-classes/com/dickimawbooks/flattendocsrc/FlattenDocSrc.class	: classes/com/dickimawbooks/flattendocsrc \
-	java/flattendocsrc/*.java lib/texjavahelplib.jar
-	cd java/flattendocsrc; \
+classes/com/dickimawbooks/tjhflattendocsrc/FlattenDocSrc.class	: classes/com/dickimawbooks/tjhflattendocsrc \
+	java/tjhflattendocsrc/*.java lib/texjavahelplib.jar
+	cd java/tjhflattendocsrc; \
 	javac $(target_version) -d ../../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
 	-cp $(texjavaparserlib):../../lib/texjavahelplib.jar \
 	*.java
 
-classes/com/dickimawbooks/flattendocsrc	:
-	mkdir -p classes/com/dickimawbooks/flattendocsrc
+classes/com/dickimawbooks/tjhflattendocsrc	:
+	mkdir -p classes/com/dickimawbooks/tjhflattendocsrc
 
 lib/tjhziphelpset.jar	: java/ziphelpset/Manifest.txt \
 	classes/com/dickimawbooks/ziphelpset/ZipHelpset.class
