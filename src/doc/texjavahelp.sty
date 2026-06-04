@@ -2,14 +2,13 @@
 % in the TeX Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{texjavahelp}[2026/05/19 v1.3 (NLCT)]
+\ProvidesPackage{texjavahelp}[2026/06/04 v1.3 (NLCT)]
 
 \RequirePackage{pifont}
 \RequirePackage{fontawesome}
 \RequirePackage{twemojis}
 \RequirePackage{upquote}
 \RequirePackage{hologo}
-\RequirePackage{varioref}
 \RequirePackage{xcolor}
 \RequirePackage{graphicx}
 \RequirePackage{accsupp}
@@ -56,9 +55,18 @@
 \DeclareOption{fnsymright}{\renewcommand{\fnsymmark}[1]{\rlap{#1}}}
 
 \newcommand{\nlct@ns@ref@cs}{\ref}
+\newcommand{\nlct@loadvarioref}{}
   
-\newcommand{\nlctnovref}{\renewcommand{\nlct@ns@ref@cs}{\ref}}
-\newcommand{\nlctusevref}{\renewcommand{\nlct@ns@ref@cs}{\vref}}
+\newcommand{\nlctnovref}{%
+ \renewcommand{\nlct@ns@ref@cs}{\ref}%
+ \renewcommand{\nlct@loadvarioref}{}%
+}
+\newcommand{\nlctusevref}{%
+ \renewcommand{\nlct@ns@ref@cs}{\vref}%
+ \renewcommand{\nlct@loadvarioref}{%
+  \RequirePackage{varioref}%
+ }%
+}
     
 \DeclareOption{vref}{\nlctusevref}
 \DeclareOption{novref}{\nlctnovref}
@@ -226,6 +234,7 @@
 \ProcessOptions*
 
 \nlct@definesymbols
+\nlct@loadvarioref
 
 \PassOptionsToPackage{hidelinks}{hyperref}
 \RequirePackage{hyperref}
