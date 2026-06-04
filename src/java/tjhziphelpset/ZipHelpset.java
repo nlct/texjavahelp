@@ -56,10 +56,10 @@ public class ZipHelpset extends AbstractCLI
    {
       System.out.println(getHelpLib().getAboutInfo(false,
         TeXJavaHelpLib.VERSION,
-        getCopyrightDate(),
+        TeXJavaHelpLib.VERSION_DATE,
         String.format(
          "Copyright (C) %s Nicola L. C. Talbot (%s)",
-          TeXJavaHelpLib.VERSION_DATE.substring(0, 4),
+          getCopyrightDate(),
           getHelpLib().getInfoUrl(false, "www.dickimaw-books.com")),
          TeXJavaHelpLib.LICENSE_GPL3,
          true, null
