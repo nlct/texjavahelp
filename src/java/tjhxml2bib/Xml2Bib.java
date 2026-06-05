@@ -121,6 +121,8 @@ public class Xml2Bib extends AbstractCLI
 
       printSyntaxItem(getMessage("syntax.prop", "--prop"));
 
+      printSyntaxItem(getMessage("syntax.resource", "--resource", "-r"));
+
       printSyntaxItem(getMessage("syntax.out", "--output", "-o"));
 
       printSyntaxItem(getMessage("syntax.out.charset", "--out-charset"));
@@ -151,6 +153,7 @@ public class Xml2Bib extends AbstractCLI
        || arg.equals("--in") || arg.equals("-i")
        || arg.equals("--output") || arg.equals("-o")
        || arg.equals("--prop")
+       || arg.equals("--resource") || arg.equals("-r")
        || arg.equals("--out-charset")
          )
       {
@@ -226,6 +229,21 @@ public class Xml2Bib extends AbstractCLI
          }
 
          propFileNames.add(returnVals[0].toString());
+      }
+      else if (isArg(arg, "--resource", "-r", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing.value", arg));
+         }
+
+         if (resourceFileNames == null)
+         {
+            resourceFileNames = new Vector<String>();
+         }
+
+         resourceFileNames.add(returnVals[0].toString());
       }
       else if (isArg(arg, "--output", "-o", returnVals))
       {
@@ -353,6 +371,18 @@ public class Xml2Bib extends AbstractCLI
           first and the application's resource file next, which can override
           default values.
           */
+
+         if (resourceFileNames != null)
+         {
+            for (String name : resourceFileNames)
+            {
+               in = getClass().getResourceAsStream(name);
+               props.loadFromXML(in);
+               in.close();
+               in = null;
+            }
+         }
+
          for (String filename : inFileNames)
          {
             in = new FileInputStream(getXmlFile(filename));
@@ -798,7 +828,7 @@ public class Xml2Bib extends AbstractCLI
    }
 
    protected File outFile;
-   protected Vector<String> inFileNames, propFileNames;
+   protected Vector<String> inFileNames, propFileNames, resourceFileNames;
    private Charset outCharset = Charset.defaultCharset();
    protected boolean copyXml = false, replaceXml = false;
    protected String noEncapField=null;// field to save non-encapsulated value
