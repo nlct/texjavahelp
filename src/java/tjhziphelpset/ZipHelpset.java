@@ -115,9 +115,10 @@ public class ZipHelpset extends AbstractCLI
 
       System.out.println();
 
-      printSyntaxItem(getMessage("syntax.in", "--lib", "-i"));
+      printSyntaxItem(getMessage("syntax.in", "--in-dir", "-i"));
 
-      printSyntaxItem(getMessage("syntax.helpset", "--helpset"));
+      printSyntaxItem(getMessage("syntax.helpset", "--helpset",
+         getHelpLib().getHelpsetDirName()));
 
       printSyntaxItem(getMessage("syntax.out", "--output", "-o"));
 
@@ -140,7 +141,7 @@ public class ZipHelpset extends AbstractCLI
    @Override
    protected int getCLIArgCount(String arg)
    {
-      if (arg.equals("--lib") || arg.equals("-i")
+      if (arg.equals("--in-dir") || arg.equals("-i")
        || arg.equals("--output") || arg.equals("-o")
        || arg.equals("--helpset")
        || arg.equals("--locales") || arg.equals("-l")
@@ -186,7 +187,7 @@ public class ZipHelpset extends AbstractCLI
    protected boolean parseCLIArg(String arg, CLIArgValue[] returnVals)
      throws InvalidSyntaxException
    {
-      if (isArg(arg, "--lib", "-i", returnVals))
+      if (isArg(arg, "--in-dir", "-i", returnVals))
       {
          if (resourcePathName != null)
          {
