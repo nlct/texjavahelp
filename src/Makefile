@@ -24,7 +24,7 @@ all:	lib/texjavahelplib.jar \
 
 lib/texjavahelpdemo.jar	: java/texjavahelpdemo/Manifest.txt \
 	classes/com/dickimawbooks/texjavahelpdemo/TeXJavaHelpDemo.class \
-	dictionaries/texjavahelpdemo-en.xml
+	dictionaries/texjavahelpdemo-en.xml \
 	lib/helpset.zip
 	cp dictionaries/texjavahelpdemo-*.xml classes/com/dickimawbooks/texjavahelpdemo/
 	cd classes; \
