@@ -35,6 +35,7 @@ import com.dickimawbooks.texjavahelplib.AbstractCLI;
 import com.dickimawbooks.texjavahelplib.CLIArgValue;
 import com.dickimawbooks.texjavahelplib.HelpsetFile;
 import com.dickimawbooks.texjavahelplib.Helpset;
+import com.dickimawbooks.texjavahelplib.HelpSetLocale;
 import com.dickimawbooks.texjavahelplib.MessageSystem;
 
 public class ZipHelpset extends AbstractCLI
@@ -46,9 +47,11 @@ public class ZipHelpset extends AbstractCLI
    @Override
    protected void loadDictionaries(MessageSystem msgSys) throws IOException
    {
-      msgSys.loadDictionary("/com/dickimawbooks/texparserlib/", "texjavaparserlib");
+      msgSys.loadDictionary(
+         "/com/dickimawbooks/texparserlib/dictionaries/", "texjavaparserlib");
 
-      msgSys.loadDictionary("/com/dickimawbooks/tjhziphelpset/", "tjhziphelpset");
+      msgSys.loadDictionary(
+         "/com/dickimawbooks/tjhziphelpset/dictionaries/", "tjhziphelpset");
    }
 
    @Override
@@ -301,8 +304,15 @@ public class ZipHelpset extends AbstractCLI
             licenseFiles = new Vector<HelpsetFile>();
          }
 
+         HelpSetLocale hsl = null;
+
+         if (localeTag != null)
+         {
+            hsl = new HelpSetLocale(localeTag, locale);
+         }
+
          HelpsetFile hsf = new HelpsetFile(getHelpLib(), ref, HelpsetFile.TYPE_HTML, 
-            locale, true);
+            hsl, true);
 
          hsf.setPath(file.toPath());
          hsf.setName(file.getName());
@@ -435,7 +445,7 @@ public class ZipHelpset extends AbstractCLI
 
                    URI rUri = baseUri.relativize(uri);
 
-                   Locale locale = null;
+                   HelpSetLocale hsl = null;
 
                    if (localeNames != null)
                    {
@@ -448,7 +458,7 @@ public class ZipHelpset extends AbstractCLI
                          {
                             if (path.getName(i).toString().equals(name))
                             {
-                               locale = Locale.forLanguageTag(tag);
+                               hsl = new HelpSetLocale(tag);
 
                                break;
                             }
@@ -457,7 +467,7 @@ public class ZipHelpset extends AbstractCLI
                    }
 
                    HelpsetFile hsFile = new HelpsetFile(getHelpLib(),
-                     rUri.toString(), type, locale);
+                     rUri.toString(), type, hsl);
 
                    hsFile.setPath(path);
                    hsFile.setNameFrom(inPath.relativize(path));

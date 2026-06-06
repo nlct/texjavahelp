@@ -103,7 +103,7 @@ public class TeXJavaHelpDemo extends JFrame
       helpLibApp.setHelpLib(helpLib);
 
       helpLib.getMessageSystem().loadDictionary(
-        "/com/dickimawbooks/texjavahelpdemo/", "texjavahelpdemo");
+        "/com/dickimawbooks/texjavahelpdemo/dictionaries/", "texjavahelpdemo");
 
       helpLib.initHelpSet();
 

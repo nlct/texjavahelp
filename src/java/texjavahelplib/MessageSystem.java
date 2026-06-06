@@ -20,12 +20,15 @@ package com.dickimawbooks.texjavahelplib;
 
 import java.util.ArrayDeque;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Vector;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import java.util.stream.Stream;
 
 import java.text.ChoiceFormat;
 import java.text.MessageFormat;
@@ -34,6 +37,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.Path;
 
 import java.net.URL;
 import java.net.URISyntaxException;
@@ -90,45 +97,60 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
    }
 
    public Vector<HelpSetLocale> getDictionaries()
-    throws URISyntaxException,FileNotFoundException
+    throws URISyntaxException,IOException
    {
       if (availableDictionaries == null)
       {
-         String path = helpLib.getDictionaryPath();
-         URL url = getClass().getResource(path);
+         String pathStr = helpLib.getDictionaryPath()+"/";
+
+         URL url = getClass().getResource(pathStr);
 
          if (url == null)
          {
             throw new FileNotFoundException(getMessageWithFallback(
              "error.resource_not_found", "Resource file ''{0}'' not found",
-             path));
+             pathStr));
          }
 
-         File dir = new File(url.toURI());
-
-         String[] list = dir.list();
-
-         availableDictionaries = new Vector<HelpSetLocale>();
-
-         for (String filename : list)
-         {
-            Matcher m = getDictionaryPattern().matcher(filename);
-
-            if (m.matches())
-            {
-               HelpSetLocale hs = new HelpSetLocale(m.group(1));
-
-               if (!availableDictionaries.contains(hs))
-               {
-                  availableDictionaries.add(hs);
-               }
-            }
-         }
-
-         availableDictionaries.sort(null);
+         availableDictionaries = getDictionaries(url);
       }
 
       return availableDictionaries;
+   }
+
+   public Vector<HelpSetLocale> getDictionaries(URL url)
+    throws URISyntaxException,IOException
+   {
+      Path path = Paths.get(url.toURI());
+System.out.println("SEARCHING "+path);
+
+      Vector<HelpSetLocale> dictionaries = new Vector<HelpSetLocale>();
+
+      Stream<Path> walk = Files.walk(path, 1);
+
+      for (Iterator<Path> it = walk.iterator(); it.hasNext(); )
+      {
+         Path p = it.next();
+System.out.println("NEXT: "+p);
+         String filename = p.getFileName().toString();
+System.out.println("filename: "+filename);
+
+         Matcher m = getDictionaryPattern().matcher(filename);
+
+         if (m.matches())
+         {
+            HelpSetLocale hs = new HelpSetLocale(m.group(1));
+
+            if (!dictionaries.contains(hs))
+            {
+               dictionaries.add(hs);
+            }
+         }
+      }
+
+      dictionaries.sort(null);
+
+      return dictionaries;
    }
 
    protected String getLanguageFileName(String resourcePath, String tag)

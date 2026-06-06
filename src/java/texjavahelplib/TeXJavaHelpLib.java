@@ -104,7 +104,7 @@ public class TeXJavaHelpLib
     throws IOException
    {
       this(application, applicationName, resourcebase,
-       resourcebase, msgLocale, hsLocale);
+       "dictionaries/", msgLocale, hsLocale);
    }
 
    public TeXJavaHelpLib(TeXJavaHelpLibApp application,
@@ -137,21 +137,24 @@ public class TeXJavaHelpLib
 
       this.resourcebase = resourcebase;
 
-      if (dictionaryBase.endsWith("/"))
+      this.dictionaryBase = dictionaryBase;
+
+      if (resourcebase.isEmpty())
       {
-         this.dictionaryBase = dictionaryBase.substring(0, dictionaryBase.length()-1);
+         this.resourceIconBase = "icons";
       }
       else
       {
-         this.dictionaryBase = dictionaryBase;
+         this.resourceIconBase = resourcebase + "/icons";
       }
 
-      this.resourceIconBase = resourcebase + "/icons";
       this.helpsetLocale = helpsetLocale;
 
       messages = new MessageSystem(this, "texjavahelplib", messagesLocale);
 
-      messages.loadDictionary("/com/dickimawbooks/texjavahelplib/", "texjavahelplib");
+      messages.loadDictionary(
+       "/com/dickimawbooks/texjavahelplib/dictionaries/",
+       "texjavahelplib");
 
       helpFontSettings = new HelpFontSettings();
    }
@@ -1659,7 +1662,7 @@ public class TeXJavaHelpLib
 
          String path;
 
-         Vector<Locale> filteredLocales = helpSet.getFilteredLocales();
+         Vector<HelpSetLocale> filteredLocales = helpSet.getFilteredLocales();
 
          if (
                helpsetsubdir != null // already found
@@ -1681,9 +1684,9 @@ public class TeXJavaHelpLib
          {
             String base = resourcebase + "/" + helpsetdir;
 
-            for (Locale l : filteredLocales)
+            for (HelpSetLocale l : filteredLocales)
             {
-               String dir = l.toLanguageTag();
+               String dir = l.getTag();
 
                path = base + "/" + helpsetSubdirPrefix+dir
                   + "/" + filename;
@@ -4192,9 +4195,9 @@ public class TeXJavaHelpLib
       NORMAL, WARNING, ERROR, DEBUG, SILENT;
    }
 
-   protected String resourcebase = "/resources";
-   protected String dictionaryBase = resourcebase;
-   protected String resourceIconBase = "/resources/icons";
+   protected String resourcebase = "";
+   protected String dictionaryBase;
+   protected String resourceIconBase = "icons";
    protected String smallIconSuffix = "-16";
    protected String largeIconSuffix = "-32";
 
@@ -4277,6 +4280,6 @@ public class TeXJavaHelpLib
    public static final String LICENSE_GPL3 = String.format(
    "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>%nThis is free software: you are free to change and redistribute it.%nThere is NO WARRANTY, to the extent permitted by law.");
 
-   public static final String VERSION = "1.3.20260604";
-   public static final String VERSION_DATE = "2026-06-04";
+   public static final String VERSION = "1.3.20260606";
+   public static final String VERSION_DATE = "2026-06-06";
 }

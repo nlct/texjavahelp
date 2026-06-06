@@ -803,7 +803,9 @@ public class Xml2Bib extends AbstractCLI
    @Override
    protected void loadDictionaries(MessageSystem msgSys) throws IOException
    {
-      msgSys.loadDictionary("/com/dickimawbooks/tjhxml2bib/", "tjhxml2bib");
+      msgSys.loadDictionary(
+       "/com/dickimawbooks/tjhxml2bib/dictionaries/",
+       "tjhxml2bib");
    }
 
    public static void main(String[] args)

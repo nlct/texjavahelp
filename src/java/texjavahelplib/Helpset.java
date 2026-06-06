@@ -118,11 +118,11 @@ public class Helpset
 
       if (hsl != null && hsf.hasLocale())
       {
-         Locale locale = hsf.getLocale();
+         HelpSetLocale locale = hsf.getHelpSetLocale();
 
          if (supportedLocales == null)
          {
-            supportedLocales = new Vector<Locale>();
+            supportedLocales = new Vector<HelpSetLocale>();
             supportedLocales.add(locale);
          }
          else if (!supportedLocales.contains(locale))
@@ -508,7 +508,7 @@ public class Helpset
       if (hsf != null)
       {
          if (hsf.hasLocale() && filteredLocales != null
-               && !filteredLocales.contains(hsf.getLocale()))
+               && !filteredLocales.contains(hsf.getHelpSetLocale()))
          {
             if (license)
             {
@@ -571,12 +571,12 @@ public class Helpset
       }
    }
 
-   public Vector<Locale> getSupportedLocales()
+   public Vector<HelpSetLocale> getSupportedLocales()
    {
       return supportedLocales;
    }
 
-   public Vector<Locale> getFilteredLocales()
+   public Vector<HelpSetLocale> getFilteredLocales()
    {
       return filteredLocales;
    }
@@ -590,25 +590,25 @@ public class Helpset
          Locale fallback = helpLib.getFallbackLocale();
          boolean foundFallback = false;
 
-         filteredLocales = new Vector<Locale>();
+         filteredLocales = new Vector<HelpSetLocale>();
 
-         for (Locale locale : supportedLocales)
+         for (HelpSetLocale locale : supportedLocales)
          {
             if (hsl.matchesLanguage(locale))
             {
                filteredLocales.add(locale);
             }
-            else if (locale.equals(fallback))
+            else if (locale.getLocale().equals(fallback))
             {
                foundFallback = true;
             }
          }
 
-         filteredLocales.sort(new LocaleComparator());
+         filteredLocales.sort(new HelpSetLocaleComparator());
 
           if (foundFallback && filteredLocales.isEmpty())
           {
-             filteredLocales.add(fallback);
+             filteredLocales.add(new HelpSetLocale(fallback));
           }
       }
 
@@ -621,9 +621,9 @@ public class Helpset
 
          if (filteredLocales != null)
          {
-            for (Locale l : filteredLocales)
+            for (HelpSetLocale l : filteredLocales)
             {
-               helpLib.debug(l.toLanguageTag());
+               helpLib.debug(l.toString());
             }
          }
       }
@@ -678,8 +678,8 @@ public class Helpset
    HashMap<String,HelpsetFile> map;
    Vector<String> manifest;
 
-   Vector<Locale> supportedLocales;
-   Vector<Locale> filteredLocales;
+   Vector<HelpSetLocale> supportedLocales;
+   Vector<HelpSetLocale> filteredLocales;
 
    Vector<HelpsetFile> cssFiles;
    Dictionary<URL,Image> imageCache;
@@ -764,8 +764,14 @@ class ManifestReader extends XMLReaderAdapter
 
          String localeTag = attrs.getValue("locale");
 
-         HelpsetFile hsf = new HelpsetFile(helpLib, ref, type,  
-           localeTag == null ? null : Locale.forLanguageTag(localeTag));
+         HelpSetLocale hsl = null;
+
+         if (localeTag != null)
+         {
+            hsl = new HelpSetLocale(localeTag);
+         }
+
+         HelpsetFile hsf = new HelpsetFile(helpLib, ref, type, hsl);
 
          String encoding = attrs.getValue("encoding");
 
@@ -822,8 +828,14 @@ class ManifestReader extends XMLReaderAdapter
 
          String localeTag = attrs.getValue("locale");
 
-         HelpsetFile hsf = new HelpsetFile(helpLib, ref, type,  
-           localeTag == null ? null : Locale.forLanguageTag(localeTag), true);
+         HelpSetLocale hsl = null;
+
+         if (localeTag != null)
+         {
+            hsl = new HelpSetLocale(localeTag);
+         }
+
+         HelpsetFile hsf = new HelpsetFile(helpLib, ref, type, hsl, true);
 
          String encoding = attrs.getValue("encoding");
 

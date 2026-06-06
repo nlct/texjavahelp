@@ -54,7 +54,10 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    protected void loadDictionaries(MessageSystem msgSys) throws IOException
    {
       super.loadDictionaries(msgSys);
-      msgSys.loadDictionary("/com/dickimawbooks/texjavahelpmk/", "texjavahelpmk");
+
+      msgSys.loadDictionary(
+        "/com/dickimawbooks/texjavahelpmk/dictionaries/",
+        "texjavahelpmk");
    }
 
    @Override

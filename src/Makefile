@@ -24,13 +24,17 @@ all:	lib/texjavahelplib.jar \
 
 lib/texjavahelpdemo.jar	: java/texjavahelpdemo/Manifest.txt \
 	classes/com/dickimawbooks/texjavahelpdemo/TeXJavaHelpDemo.class \
+	classes/com/dickimawbooks/texjavahelpdemo/dictionaries/ \
 	dictionaries/texjavahelpdemo-en.xml \
 	lib/helpset.zip
-	cp dictionaries/texjavahelpdemo-*.xml classes/com/dickimawbooks/texjavahelpdemo/
+	cp dictionaries/texjavahelpdemo-*.xml classes/com/dickimawbooks/texjavahelpdemo/dictionaries/
 	cd classes; \
 	jar cmf ../java/texjavahelpdemo/Manifest.txt ../lib/texjavahelpdemo.jar \
 	com/dickimawbooks/texjavahelpdemo/*.class \
-	com/dickimawbooks/texjavahelpdemo/*.xml
+	com/dickimawbooks/texjavahelpdemo/dictionaries/*.xml
+
+classes/com/dickimawbooks/texjavahelpdemo/dictionaries/	:
+	mkdir -p classes/com/dickimawbooks/texjavahelpdemo/dictionaries/
 
 classes/com/dickimawbooks/texjavahelpdemo/TeXJavaHelpDemo.class	: classes/com/dickimawbooks/texjavahelpdemo \
 	java/texjavahelpdemo/*.java lib/texjavahelplib.jar 
@@ -66,12 +70,16 @@ doc/texjavahelplib.bib	: lib/tjhxml2bib.jar \
 
 lib/texjavahelpmk.jar	: java/texjavahelpmk/Manifest.txt \
 	classes/com/dickimawbooks/texjavahelpmk/TeXJavaHelpMk.class \
+	classes/com/dickimawbooks/texjavahelpmk/dictionaries/ \
 	dictionaries/texjavahelpmk-en.xml
-	cp dictionaries/texjavahelpmk-*.xml classes/com/dickimawbooks/texjavahelpmk/
+	cp dictionaries/texjavahelpmk-*.xml classes/com/dickimawbooks/texjavahelpmk/dictionaries/
 	cd classes; \
 	jar cmf ../java/texjavahelpmk/Manifest.txt ../lib/texjavahelpmk.jar \
 	com/dickimawbooks/texjavahelpmk/*.class \
-	com/dickimawbooks/texjavahelpmk/*.xml
+	com/dickimawbooks/texjavahelpmk/dictionaries/*.xml
+
+classes/com/dickimawbooks/texjavahelpmk/dictionaries/	:
+	mkdir -p classes/com/dickimawbooks/texjavahelpmk/dictionaries/
 
 classes/com/dickimawbooks/texjavahelpmk/TeXJavaHelpMk.class	: classes/com/dickimawbooks/texjavahelpmk \
 	java/texjavahelpmk/*.java lib/texjavahelplib.jar 
@@ -85,14 +93,18 @@ classes/com/dickimawbooks/texjavahelpmk	:
 	mkdir -p classes/com/dickimawbooks/texjavahelpmk
 
 lib/texjavahelplib.jar	: classes/com/dickimawbooks/texjavahelplib/TeXJavaHelpLib.class \
+	classes/com/dickimawbooks/texjavahelplib/dictionaries/ \
 	dictionaries/texjavahelplib-en.xml
 	cp -u -r java/texjavahelplib/icons classes/com/dickimawbooks/texjavahelplib/
-	cp dictionaries/texjavahelplib-*.xml classes/com/dickimawbooks/texjavahelplib/ 
+	cp dictionaries/texjavahelplib-*.xml classes/com/dickimawbooks/texjavahelplib/dictionaries/ 
 	cd classes; \
 	jar cf ../lib/texjavahelplib.jar \
 	com/dickimawbooks/texjavahelplib/*.class \
-	com/dickimawbooks/texjavahelplib/*.xml \
+	com/dickimawbooks/texjavahelplib/dictionaries/*.xml \
 	com/dickimawbooks/texjavahelplib/icons/*
+
+classes/com/dickimawbooks/texjavahelplib/dictionaries/	:
+	mkdir -p classes/com/dickimawbooks/texjavahelplib/dictionaries/
 
 classes/com/dickimawbooks/texjavahelplib/TeXJavaHelpLib.class	: classes/com/dickimawbooks/texjavahelplib \
 	java/texjavahelplib/*.java java/texjavahelplib/icons/*.png
@@ -107,12 +119,16 @@ classes/com/dickimawbooks/texjavahelplib	:
 
 lib/tjhxml2bib.jar	: java/tjhxml2bib/Manifest.txt \
 	classes/com/dickimawbooks/tjhxml2bib/Xml2Bib.class \
+	classes/com/dickimawbooks/tjhxml2bib/dictionaries/ \
 	dictionaries/tjhxml2bib-en.xml
-	cp dictionaries/tjhxml2bib-*.xml classes/com/dickimawbooks/tjhxml2bib/
+	cp dictionaries/tjhxml2bib-*.xml classes/com/dickimawbooks/tjhxml2bib/dictionaries/
 	cd classes; \
 	jar cmf ../java/tjhxml2bib/Manifest.txt ../lib/tjhxml2bib.jar \
 	com/dickimawbooks/tjhxml2bib/*.class \
-	com/dickimawbooks/tjhxml2bib/*.xml
+	com/dickimawbooks/tjhxml2bib/dictionaries//*.xml
+
+classes/com/dickimawbooks/tjhxml2bib/dictionaries/	:
+	mkdir -p classes/com/dickimawbooks/tjhxml2bib/dictionaries/
 
 classes/com/dickimawbooks/tjhxml2bib/Xml2Bib.class	: classes/com/dickimawbooks/tjhxml2bib \
 	java/tjhxml2bib/*.java lib/texjavahelplib.jar
@@ -127,12 +143,16 @@ classes/com/dickimawbooks/tjhxml2bib	:
 
 lib/tjhflattendocsrc.jar	: java/tjhflattendocsrc/Manifest.txt \
 	classes/com/dickimawbooks/tjhflattendocsrc/FlattenDocSrc.class \
+	classes/com/dickimawbooks/tjhflattendocsrc/dictionaries/ \
 	dictionaries/tjhflattendocsrc-en.xml
-	cp dictionaries/tjhflattendocsrc-*.xml classes/com/dickimawbooks/tjhflattendocsrc/
+	cp dictionaries/tjhflattendocsrc-*.xml classes/com/dickimawbooks/tjhflattendocsrc/dictionaries/
 	cd classes; \
 	jar cmf ../java/tjhflattendocsrc/Manifest.txt ../lib/tjhflattendocsrc.jar \
 	com/dickimawbooks/tjhflattendocsrc/*.class \
-	com/dickimawbooks/tjhflattendocsrc/*.xml
+	com/dickimawbooks/tjhflattendocsrc/dictionaries/*.xml
+
+classes/com/dickimawbooks/tjhflattendocsrc/dictionaries/	:
+	mkdir -p classes/com/dickimawbooks/tjhflattendocsrc/dictionaries/
 
 classes/com/dickimawbooks/tjhflattendocsrc/FlattenDocSrc.class	: classes/com/dickimawbooks/tjhflattendocsrc \
 	java/tjhflattendocsrc/*.java lib/texjavahelplib.jar
@@ -147,12 +167,15 @@ classes/com/dickimawbooks/tjhflattendocsrc	:
 
 lib/tjhziphelpset.jar	: java/tjhziphelpset/Manifest.txt \
 	classes/com/dickimawbooks/tjhziphelpset/ZipHelpset.class \
-	dictionaries/tjhziphelpset-en.xml
-	cp dictionaries/tjhziphelpset-*.xml classes/com/dickimawbooks/tjhziphelpset/
+	classes/com/dickimawbooks/tjhziphelpset/dictionaries/
+	cp dictionaries/tjhziphelpset-*.xml classes/com/dickimawbooks/tjhziphelpset/dictionaries/
 	cd classes; \
 	jar cmf ../java/tjhziphelpset/Manifest.txt ../lib/tjhziphelpset.jar \
 	com/dickimawbooks/tjhziphelpset/*.class \
-	com/dickimawbooks/tjhziphelpset/*.xml
+	com/dickimawbooks/tjhziphelpset/dictionaries/*.xml
+
+classes/com/dickimawbooks/tjhziphelpset/dictionaries/	:
+	mkdir -p classes/com/dickimawbooks/tjhziphelpset/dictionaries/
 
 classes/com/dickimawbooks/tjhziphelpset/ZipHelpset.class	: classes/com/dickimawbooks/tjhziphelpset \
 	java/tjhziphelpset/*.java lib/texjavahelplib.jar

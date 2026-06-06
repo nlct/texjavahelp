@@ -27,13 +27,13 @@ import java.util.Locale;
 
 public class HelpSetLocaleComparator implements Comparator<HelpSetLocale>
 {
-   public HelpSetLocaleLocaleComparator()
+   public HelpSetLocaleComparator()
    {
       localeComparator = new LocaleComparator();
    }
 
    @Override
-   public int compare(HelpSetLocaleLocale hsl1, HelpSetLocaleLocale hsl2)
+   public int compare(HelpSetLocale hsl1, HelpSetLocale hsl2)
    {
       return localeComparator.compare(hsl1.getLocale(), hsl2.getLocale());
    }

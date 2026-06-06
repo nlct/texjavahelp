@@ -48,7 +48,10 @@ public class FlattenDocSrc extends CLITeXAppAdapter
    protected void loadDictionaries(MessageSystem msgSys) throws IOException
    {
       super.loadDictionaries(msgSys);
-      msgSys.loadDictionary("/com/dickimawbooks/tjhflattendocsrc/", "tjhflattendocsrc");
+
+      msgSys.loadDictionary(
+       "/com/dickimawbooks/tjhflattendocsrc/dictionaries/",
+       "tjhflattendocsrc");
    }
 
    @Override

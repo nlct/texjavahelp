@@ -59,12 +59,12 @@ public class HelpsetFile
       this(helpLib, ref, type, null);
    }
 
-   public HelpsetFile(TeXJavaHelpLib helpLib, String ref, String type, Locale locale)
+   public HelpsetFile(TeXJavaHelpLib helpLib, String ref, String type, HelpSetLocale locale)
    {
       this(helpLib, ref, type, locale, false);
    }
 
-   public HelpsetFile(TeXJavaHelpLib helpLib, String ref, String type, Locale locale, boolean isLicense)
+   public HelpsetFile(TeXJavaHelpLib helpLib, String ref, String type, HelpSetLocale locale, boolean isLicense)
    {
       if (ref == null || type == null)
       {
@@ -100,9 +100,14 @@ public class HelpsetFile
       return type;
    }
 
-   public Locale getLocale()
+   public HelpSetLocale getHelpSetLocale()
    {
       return locale;
+   }
+
+   public Locale getLocale()
+   {
+      return locale == null ? null : locale.getLocale();
    }
 
    public boolean hasLocale()
@@ -446,7 +451,7 @@ public class HelpsetFile
       if (locale != null)
       {
          str += String.format("locale=\"%s\" ", 
-                 HtmlTag.encodeAttributeValue(locale.toLanguageTag(), false, false));
+                 HtmlTag.encodeAttributeValue(locale.getTag(), false, false));
       }
 
       if (encoding != null)
@@ -469,7 +474,7 @@ public class HelpsetFile
 
    String ref;
    String type, name, encoding;
-   Locale locale;
+   HelpSetLocale locale;
    boolean isLicense = false;
 
    Path path;

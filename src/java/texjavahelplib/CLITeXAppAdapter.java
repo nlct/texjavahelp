@@ -38,7 +38,9 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
    protected void loadDictionaries(MessageSystem msgSys)
      throws IOException
    {
-      msgSys.loadDictionary("/com/dickimawbooks/texparserlib/", "texjavaparserlib");
+      msgSys.loadDictionary(
+         "/com/dickimawbooks/texparserlib/dictionaries/",
+         "texjavaparserlib");
    }
 
    public void initialiseHelpAndParse(String[] args)
@@ -613,12 +615,6 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
    }
 
    @Override
-   public Charset getDefaultCharset()
-   {
-      return defaultCharset;
-   }
-
-   @Override
    public void copyFile(File src, File dest)
    throws IOException
    {
@@ -695,7 +691,6 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
    public static final long MAX_PROCESS_TIME = 360000L; // millisecs
 
    protected File texmf;
-   protected Charset defaultCharset = StandardCharsets.UTF_8;
 }
 
 class CLITeXHelpLib extends AbstractCLI
