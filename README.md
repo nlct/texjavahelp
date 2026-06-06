@@ -7,6 +7,23 @@ The accompanying TJH command line applications and the
 `texjavahelp.sty` package are used to create the documentation and
 in-application help.
 
+ - `texjavahelplib.jar` : Java library to manage localisation and
+   helpset files.
+ - `tjhxml2bib` : converts localisation `xml` files to Bib2Gls `bib`
+   files.
+ - `texjavahelp.sty` : LaTeX package to integrate with `tjhxml2bib`
+   and `texjavahelpmk`.
+ - `texjavahelpmk` : creates HTML and XML helpset files from the
+   LaTeX `.tex` source and the `.toc`, `.aux`, and `.glstex`
+   files created during the document build.
+ - `tjhziphelpset` : bundles the HTML and XML helpset files into a
+   zip file.
+ - `tjhflattendocsrc` : may optionally be used to create a
+   flattened document source for easier distribution. (That is, 
+   a copy will be made with any instance of `\input` replaced with
+   the referenced file's content.) Referenced bib and image files
+   will be copied over to the destination directory as well.
+
 The library also provides methods to implement localisation support
 for both GUI and CLI applications, and a TeXApp class
 for applications that use the TeX Java Parser library.
@@ -74,9 +91,9 @@ The `.tlu` texlua scripts search for `texjavaparserlib.jar` and add
 it to the Java class path. 
 
 ```bash
-texjavahelpmk.tlu [<options>] <in-tex> <out-dir>
-tjhziphelpset.tlu [<options>] <in-dir>
-tjhflattendocsrc.tlu [<options>] <in-tex> <out-dir>
+texjavahelpmk.tlu [options] in-tex out-dir
+tjhziphelpset.tlu [options] in-dir
+tjhflattendocsrc.tlu [options] in-tex out-dir
 ```
 
 The `tjhxml2bib` application doesn't require `texjavaparserlib.jar`
@@ -84,7 +101,7 @@ so the invocation is simpler (`path/to/` is the path to
 *TEXMF*`/scripts/texjavahelp/`): 
 
 ```bash
-java -jar path/to/tjhxml2bib.jar [<options>] <xml>... -o <bib>
+java -jar path/to/tjhxml2bib.jar [options] xml-file... -o bib-file
 ```
 
 Localisation support is contained within the applicable `.jar` file.
@@ -345,4 +362,6 @@ effects from the PDF can't be replicated in the HTML files.
 
 Finish documentation.
 
-Home: https://github.com/nlct/texjavahelp
+Repository: https://github.com/nlct/texjavahelp  
+License: GPL-3  
+Author: Nicola L. C. Talbot [dickimaw-books.com](https://www.dickimaw-books.com/)
