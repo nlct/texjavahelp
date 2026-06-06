@@ -123,7 +123,7 @@ public class TeXJavaHelpLib
      throws IOException
    {
       this(application, application.getApplicationName(),
-            "", "", msgLocale, hsLocale);
+            "", "dictionaries/", msgLocale, hsLocale);
    }
 
    public TeXJavaHelpLib(TeXJavaHelpLibApp application,
@@ -150,7 +150,7 @@ public class TeXJavaHelpLib
 
       this.helpsetLocale = helpsetLocale;
 
-      messages = new MessageSystem(this, "texjavahelplib", messagesLocale);
+      messages = new MessageSystem(this, messagesLocale);
 
       messages.loadDictionary(
        "/com/dickimawbooks/texjavahelplib/dictionaries/",

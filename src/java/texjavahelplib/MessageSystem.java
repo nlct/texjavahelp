@@ -19,9 +19,11 @@
 package com.dickimawbooks.texjavahelplib;
 
 import java.util.ArrayDeque;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -39,39 +41,39 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.nio.file.Files;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.nio.file.Path;
 
 import java.net.URL;
 import java.net.URISyntaxException;
+import java.net.URI;
 
 /**
  * Class for localised messages.
  */
 public class MessageSystem extends Hashtable<String,MessageFormat>
 {
-   public MessageSystem(TeXJavaHelpLib helpLib, String tagPrefix)
+   public MessageSystem(TeXJavaHelpLib helpLib)
        throws IOException
    {
-      this(helpLib, tagPrefix, Locale.getDefault());
+      this(helpLib, Locale.getDefault());
    }
 
-   public MessageSystem(TeXJavaHelpLib helpLib, String tagPrefix, Locale locale)
+   public MessageSystem(TeXJavaHelpLib helpLib, Locale locale)
      throws IOException
    {
-      this(helpLib, tagPrefix, new HelpSetLocale(locale));
+      this(helpLib, new HelpSetLocale(locale));
    }
 
-   public MessageSystem(TeXJavaHelpLib helpLib, String tagPrefix, 
-      HelpSetLocale hsLocale)
+   public MessageSystem(TeXJavaHelpLib helpLib,  HelpSetLocale hsLocale)
      throws IOException
    {
       super();
 
       this.helpLib = helpLib;
       this.hsLocale = hsLocale;
-
-      loadDictionary(tagPrefix);
    }
 
    protected void initDictPattern()
@@ -101,29 +103,54 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
    {
       if (availableDictionaries == null)
       {
-         String pathStr = helpLib.getDictionaryPath()+"/";
-
-         URL url = getClass().getResource(pathStr);
-
-         if (url == null)
-         {
-            throw new FileNotFoundException(getMessageWithFallback(
-             "error.resource_not_found", "Resource file ''{0}'' not found",
-             pathStr));
-         }
-
-         availableDictionaries = getDictionaries(url);
+         availableDictionaries = getDictionaries(helpLib.getDictionaryPath());
       }
 
       return availableDictionaries;
    }
 
-   public Vector<HelpSetLocale> getDictionaries(URL url)
+   public Vector<HelpSetLocale> getDictionaries(String pathStr)
     throws URISyntaxException,IOException
    {
-      Path path = Paths.get(url.toURI());
-System.out.println("SEARCHING "+path);
+      Vector<HelpSetLocale> dictionaries = null;
 
+      URL url = getClass().getResource(pathStr);
+
+      if (url == null)
+      {
+         throw new FileNotFoundException(getMessageWithFallback(
+          "error.resource_not_found", "Resource file ''{0}'' not found",
+          pathStr));
+      }
+
+      Path path = null;
+      FileSystem fs = null;
+
+      try
+      {
+         URI uri = url.toURI();
+
+         Map<String,String> env = new HashMap<>();
+         env.put("create", "true");
+         fs = FileSystems.newFileSystem(uri, env);
+         path = Paths.get(uri);
+
+         dictionaries = getDictionaries(path);
+      }
+      finally
+      {
+         if (fs != null)
+         {
+            fs.close();
+         }
+      }
+
+      return dictionaries;
+   }
+
+   public Vector<HelpSetLocale> getDictionaries(Path path)
+    throws URISyntaxException,IOException
+   {
       Vector<HelpSetLocale> dictionaries = new Vector<HelpSetLocale>();
 
       Stream<Path> walk = Files.walk(path, 1);
@@ -131,9 +158,7 @@ System.out.println("SEARCHING "+path);
       for (Iterator<Path> it = walk.iterator(); it.hasNext(); )
       {
          Path p = it.next();
-System.out.println("NEXT: "+p);
          String filename = p.getFileName().toString();
-System.out.println("filename: "+filename);
 
          Matcher m = getDictionaryPattern().matcher(filename);
 
