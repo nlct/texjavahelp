@@ -143,6 +143,12 @@ Nicola Talbot
 <entry key="menu.helpframe.navigation.historyforward.tooltip">History Forward</entry>
 <entry key="menu.helpframe.navigation.historyforward.description">Go forward</entry>
 
+<entry key="menu.helpframe.navigation.close">Close</entry>
+<entry key="menu.helpframe.navigation.close.mnemonic">C</entry>
+<entry key="menu.helpframe.navigation.close.tooltip">Close help window</entry>
+<entry key="menu.helpframe.navigation.close.iconimage">close</entry>
+<entry key="menu.helpframe.navigation.close.keystroke">ctrl W</entry>
+
 <!-- Navigation -->
 
 <entry key="menu.helpframe.settings">Settings</entry>
@@ -267,6 +273,12 @@ Nicola Talbot
 <entry key="menu.helpdialog.navigation.up.tooltip">Up</entry>
 <entry key="menu.helpdialog.navigation.up.description">Go up a section</entry>
 <entry key="menu.helpdialog.navigation.up.keystroke">alt UP</entry>
+
+<entry key="menu.helpdialog.navigation.close">Close</entry>
+<entry key="menu.helpdialog.navigation.close.mnemonic">C</entry>
+<entry key="menu.helpdialog.navigation.close.tooltip">Close help window</entry>
+<entry key="menu.helpdialog.navigation.close.iconimage">close</entry>
+<entry key="menu.helpdialog.navigation.close.keystroke">ctrl W</entry>
 
 <!-- Index Frame -->
 

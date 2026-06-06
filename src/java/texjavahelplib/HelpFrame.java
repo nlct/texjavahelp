@@ -280,14 +280,16 @@ public class HelpFrame extends JFrame
       navMenu.add(historyForwardAction);
 
       navMenu.addSeparator();
-      navMenu.add(new TJHAbstractAction(helpLib, "button", "close")
-        {
-           @Override
-           public void doAction()
-           {
-              setVisible(false);
-           }
-        });
+
+      navMenu.add(new TJHAbstractAction(helpLib,
+        "menu.helpframe.navigation", "close")
+       {
+         @Override
+         public void doAction()
+         {
+            setVisible(false);
+         }
+       });
 
       // lower navigation panel
 

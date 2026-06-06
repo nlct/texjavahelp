@@ -284,14 +284,16 @@ public class HelpDialog extends JDialog
       }
 
       navMenu.addSeparator();
-      navMenu.add(new TJHAbstractAction(helpLib, "button", "close")
-        {
-           @Override
-           public void doAction()
-           {
-              setVisible(false);
-           }
-        });
+
+      navMenu.add(new TJHAbstractAction(helpLib,
+        "menu.helpdialog.navigation", "close")
+       {
+         @Override
+         public void doAction()
+         {
+            setVisible(false);
+         }
+       });
 
       if (pageTargetRef != null)
       {
