@@ -88,6 +88,25 @@ directory if missing or if \app{tjhxml2bib}['s] file is newer}
   description={switch off debug mode (default)}
 }
 
+@application{app.tjhcreateiconpdf,
+ name={\appfmt{tjh\-create\-icon\-pdf}},
+ syntax={\oargm{options} \meta{files or in-dir}}
+}
+
+@switch{switch.tjhcreateiconpdf.help,
+  parent={app.tjhcreateiconpdf},
+  name={\longargfmt{help}},
+  shortswitch={h},
+  description={Prints help and exits}
+}
+
+@switch{switch.tjhcreateiconpdf.version,
+  parent={app.tjhcreateiconpdf},
+  name={\longargfmt{version}},
+  shortswitch={v},
+  description={Prints version information and exits}
+}
+
 @application{app.tjhflattendocsrc,
  name={\appfmt{tjh\-flatten\-doc\-src}},
  syntax={\oargm{options} \meta{tex-file} \meta{out-dir}}

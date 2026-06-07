@@ -1,0 +1,2 @@
+Main-Class: com/dickimawbooks/tjhcreateiconpdf/CreateIconPdf
+Class-Path: . texjavaparserlib.jar texjavahelplib.jar

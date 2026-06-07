@@ -8,3 +8,6 @@
 *.lot
 texjavahelp.pdf
 texjavahelplib.bib
+texjavahelplibicons-*.def
+texjavahelplibicons-*.pdf
+texjavahelplibicons-*.tex

@@ -132,6 +132,8 @@ public class ZipHelpset extends AbstractCLI
       printSyntaxItem(getMessage("syntax.license-file", "--license-file", "-L"));
 
       System.out.println();
+      System.out.println(getMessage("clisyntax.other.options"));
+      System.out.println();
 
       printCommonCLISyntax();
 

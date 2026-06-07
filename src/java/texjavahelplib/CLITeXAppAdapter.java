@@ -29,12 +29,30 @@ import java.nio.charset.StandardCharsets;
 
 import java.text.MessageFormat;
 
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
 import java.awt.Component;
+import java.awt.Dimension;
+
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 
 import com.dickimawbooks.texparserlib.*;
+import com.dickimawbooks.texparserlib.html.L2HConverter;
 
 public abstract class CLITeXAppAdapter extends TeXAppAdapter
 {
+   public CLITeXAppAdapter()
+   {
+      this(true);
+   }
+
+   public CLITeXAppAdapter(boolean mayRequireTmpDir)
+   {
+      this.mayRequireTmpDir = mayRequireTmpDir;
+   }
+
    protected void loadDictionaries(MessageSystem msgSys)
      throws IOException
    {
@@ -76,13 +94,68 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
 
    public abstract void printCLIAbout();
 
-   protected abstract int getCLIArgCount(String arg);
+   public String getCharsetShortSwitch() { return "-c"; }
+
+   protected int getCLIArgCount(String arg)
+   {
+      if (arg.equals("--debug-mode")
+       || arg.equals("--log")
+       || arg.equals("--charset") || arg.equals(getCharsetShortSwitch())
+         )
+      {
+         return 1;
+      }
+
+      return 0;
+   }
 
    protected abstract void parseNoSwitchCLIArg(String arg)
       throws InvalidSyntaxException;
 
-   protected abstract boolean parseCLIArg(String arg, CLIArgValue[] returnVals)
-     throws InvalidSyntaxException;
+   protected boolean parseCLIArg(String arg, CLIArgValue[] returnVals)
+     throws InvalidSyntaxException
+   {
+      CLISyntaxParser cliParser = getSyntaxParser();
+
+      if (mayRequireTmpDir && arg.equals("--no-rm-tmp-dir"))
+      {
+         deleteTempDirOnExit = false;
+      }
+      else if (mayRequireTmpDir && arg.equals("--rm-tmp-dir"))
+      {
+         deleteTempDirOnExit = true;
+      }
+      else if (arg.equals("--nolog"))
+      {
+         logFile = null;
+      }
+      else if (cliParser.isArg(arg, "--log", returnVals))
+      {
+         if (logFile != null)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.syntax.only_one", arg));
+         }
+      
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing.value", arg));
+         } 
+      
+         logFile = new File(returnVals[0].toString());
+      }
+      else if (cliParser.isArg("--charset", getCharsetShortSwitch(), returnVals))
+      {
+         defaultCharset = Charset.forName(returnVals[0].toString());
+      }
+      else
+      {
+         return false;
+      }
+
+      return true;
+   }
 
    protected abstract void postCLIProcess()
      throws InvalidSyntaxException;
@@ -104,6 +177,19 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
    public void printCommonCLISyntax()
    {
       cliTeXHelpLib.printCommonCLISyntax();
+
+      printSyntaxItem(getMessage("texparser.syntax.debug-mode", "--debug-mode"));
+      
+      System.out.println();
+      
+      printSyntaxItem(getMessage("clisyntax.log", "--log"));
+      printSyntaxItem(getMessage("clisyntax.nolog", "--nolog"));
+      printSyntaxItem(getMessage("clisyntax.charset", "--charset", getCharsetShortSwitch()));
+
+      if (mayRequireTmpDir)
+      {
+         printSyntaxItem(getMessage("clisyntax.rmtmpdir", "--[no-]rm-tmp-dir"));
+      }
    }
 
    public URL getHelpLibResource(File file)
@@ -345,6 +431,137 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
    public boolean isDebuggingOn()
    {
       return cliTeXHelpLib.isDebuggingModeOn();
+   }
+
+   public Dimension getImageFileDimensions(TeXParser parser, File file,
+     String type)
+     throws IOException,InterruptedException
+   {
+      String invoker = "file";
+
+      boolean isPdf = L2HConverter.MIME_TYPE_PDF.equals(type);
+
+      if (isPdf)
+      {
+         invoker = "pdfinfo";
+      }
+      else
+      {
+         try
+         {
+            BufferedImage image = ImageIO.read(file);
+
+            if (image != null)
+            {
+               return new Dimension(image.getWidth(), image.getHeight());
+            }
+         }
+         catch (Throwable e)
+         {
+            getHelpLib().debug(e);
+         }
+      }
+
+      String line = null;
+      StringBuilder result = new StringBuilder();
+
+      int exitCode = getHelpLib().execCommandAndWaitFor(result,
+       MAX_PROCESS_TIME,
+       invoker, file.getAbsolutePath());
+
+      Pattern pat = null;
+
+      if (L2HConverter.MIME_TYPE_PNG.equals(type))
+      {
+         pat = PNG_INFO;
+      }
+      else if (L2HConverter.MIME_TYPE_JPEG.equals(type))
+      {
+         pat = JPEG_INFO;
+      }
+      else if (isPdf)
+      {
+         pat = PDF_INFO;
+      }
+      else
+      {
+         return null;
+      }
+
+      if (exitCode == 0)
+      {
+         line = result.toString();
+
+         if (line == null || line.isEmpty())
+         {
+            return null;
+         }
+
+         Matcher m = pat.matcher(line);
+
+         if (m.matches())
+         {
+            try
+            {
+               int width, height;
+
+               if (isPdf)
+               {
+                  width = (int)Math.round(Float.parseFloat(m.group(1)));
+                  height = (int)Math.round(Float.parseFloat(m.group(2)));
+               }
+               else
+               {
+                  width = Integer.parseInt(m.group(1));
+                  height = Integer.parseInt(m.group(2));
+               }
+
+               return new Dimension(width, height);
+            }
+            catch (NumberFormatException e)
+            {// shouldn't happen, pattern ensures format correct
+               getHelpLib().debug(e);
+            }
+         }
+      }
+      else
+      {
+         warning(parser, getMessage("error.app_failed",
+           String.format("%s \"%s\"", invoker, file.getName()),
+           exitCode));
+      }
+
+      return null;
+   }
+
+   protected File createTempFile(String name, boolean usePrefix)
+     throws IOException
+   {
+      if (tmpDir == null)
+      {
+         tmpDir = Files.createTempDirectory(getApplicationName()).toFile();
+      }
+
+      if (usePrefix)
+      {
+         name = tmpDir.getName() + name;
+      }
+
+      return new File(tmpDir, name);
+   }
+
+   protected void deleteTempDir() throws IOException
+   {  
+      if (tmpDir == null) return;
+      
+      File[] files = tmpDir.listFiles();
+      
+      for (File f : files)
+      {  
+         f.delete();
+      }
+      
+      tmpDir.delete();
    }
 
    @Override
@@ -687,10 +904,21 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
 
    protected File logFile = null;
    protected PrintWriter logWriter = null;
+   protected boolean deleteTempDirOnExit = true;
+   protected boolean mayRequireTmpDir;
+   protected File tmpDir;
 
    public static final long MAX_PROCESS_TIME = 360000L; // millisecs
 
    protected File texmf;
+
+   public static final Pattern PNG_INFO =
+    Pattern.compile(".*: PNG image data, (\\d+) x (\\d+),.*");
+   public static final Pattern JPEG_INFO =
+    Pattern.compile(".*: JPEG image data, .*, (\\d+)x(\\d+),.*");
+   public static final Pattern PDF_INFO =
+    Pattern.compile(".*Page size:\\s+(\\d*\\.?\\d+) x (\\d*\\.?\\d+) pts.*", Pattern.DOTALL);
+
 }
 
 class CLITeXHelpLib extends AbstractCLI

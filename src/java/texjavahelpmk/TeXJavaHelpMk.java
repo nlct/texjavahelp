@@ -84,8 +84,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    @Override
    protected int getCLIArgCount(String arg)
    {
-      if (arg.equals("--log")
-       || arg.equals("--split")
+      if (arg.equals("--split")
        || arg.equals("--head")
        || arg.equals("--head-from-file")
        || arg.equals("--html-ext")
@@ -112,19 +111,16 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
        || arg.equals("--minitoc-postamble-from-file")
        || arg.equals("--in") || arg.equals("-i")
        || arg.equals("--output") || arg.equals("-o")
-       || arg.equals("--charset")
        || arg.equals("--out-charset")
        || arg.equals("--image-dest")
        || arg.equals("--image-preamble")
        || arg.equals("--image-preamble-from-file")
-       || arg.equals("--debug")
-       || arg.equals("--debug-mode")
          )
       {
          return 1;
       }
 
-      return 0;
+      return super.getCLIArgCount(arg);
    }
 
    @Override
@@ -133,11 +129,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    {
       CLISyntaxParser cliParser = getSyntaxParser();
 
-      if (arg.equals("--nolog"))
-      {
-         logFile = null;
-      }
-      else if (arg.equals("--nomathjax"))
+      if (arg.equals("--nomathjax"))
       {
          mathJax = false;
       }
@@ -206,14 +198,6 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       {
          splitUseBaseNamePrefix = false;
       }
-      else if (arg.equals("--no-rm-tmp-dir"))
-      {
-         deleteTempDirOnExit = false;
-      }
-      else if (arg.equals("--rm-tmp-dir"))
-      {
-         deleteTempDirOnExit = true;
-      }
       else if (arg.equals("--no-convert-images"))
       {
          convertImages = false;
@@ -221,22 +205,6 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       else if (arg.equals("--convert-images"))
       {
          convertImages = true;
-      }
-      else if (cliParser.isArg(arg, "--log", returnVals))
-      {
-         if (logFile != null)
-         {
-            throw new InvalidSyntaxException(
-              getMessage("error.syntax.only_one", arg));
-         }
-
-         if (returnVals[0] == null)
-         {
-            throw new InvalidSyntaxException(
-               getMessage("error.clisyntax.missing.value", arg));
-         }
-
-         logFile = new File(returnVals[0].toString());
       }
       else if (cliParser.isIntArg(arg, "--split", returnVals))
       {
@@ -458,10 +426,6 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
 
          outDir = new File(returnVals[0].toString());
       }
-      else if (cliParser.isArg(arg, "--charset", returnVals))
-      {
-         defaultCharset = Charset.forName(returnVals[0].toString());
-      }
       else if (cliParser.isArg(arg, "--out-charset", returnVals))
       {
          outCharset = Charset.forName(returnVals[0].toString());
@@ -499,7 +463,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       }
       else
       {
-         return false;
+         return super.parseCLIArg(arg, returnVals);
       }
 
       return true;
@@ -549,7 +513,6 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       System.out.println();
       printSyntaxItem(getMessage("syntax.general"));
       printSyntaxItem(getMessage("syntax.in", "--in", "-i", getApplicationName()));
-      printSyntaxItem(getMessage("syntax.charset", "--charset"));
       System.out.println();
       printSyntaxItem(getMessage("syntax.output.options"));
       System.out.println();
@@ -579,14 +542,6 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       System.out.println();
 
       printCommonCLISyntax();
-
-      printSyntaxItem(getMessage("texparser.syntax.debug-mode", "--debug-mode"));
-
-      System.out.println();
-
-      printSyntaxItem(getMessage("clisyntax.log", "--log"));
-      printSyntaxItem(getMessage("clisyntax.nolog", "--nolog"));
-      printSyntaxItem(getMessage("syntax.rmtmpdir", "--[no-]rm-tmp-dir"));
 
       System.out.println();
 
@@ -753,20 +708,6 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       }
    }
 
-   private void deleteTempDir() throws IOException
-   {
-      if (tmpDir == null) return;
-
-      File[] files = tmpDir.listFiles();
-
-      for (File f : files)
-      {
-         f.delete();
-      }
-
-      tmpDir.delete();
-   }
-
    public String getImagePreamble()
    {
       return imagePreamble;
@@ -791,12 +732,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
 
       try
       {
-         if (tmpDir == null)
-         {
-            tmpDir = Files.createTempDirectory(NAME).toFile();
-         }
-
-         File file = new File(tmpDir, tmpDir.getName()+name+".tex");
+         File file = createTempFile(name+".tex", true);
 
          if (charset == null)
          {
@@ -1012,91 +948,6 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       return image;
    }
 
-   public Dimension getImageFileDimensions(TeXParser parser, File file,
-     String type)
-     throws IOException,InterruptedException
-   {
-      String invoker = "file";
-
-      boolean isPdf = L2HConverter.MIME_TYPE_PDF.equals(type);
-
-      if (isPdf)
-      {
-         invoker = "pdfinfo";
-      }
-
-      String line = null;
-      StringBuilder result = new StringBuilder();
-
-      int exitCode = getHelpLib().execCommandAndWaitFor(result,
-       MAX_PROCESS_TIME,
-       invoker, file.getAbsolutePath());
-
-      Pattern pat = null;
-
-      if (L2HConverter.MIME_TYPE_PNG.equals(type))
-      {
-         pat = PNG_INFO;
-      }
-      else if (L2HConverter.MIME_TYPE_JPEG.equals(type))
-      {
-         pat = JPEG_INFO;
-      }
-      else if (isPdf)
-      {
-         pat = PDF_INFO;
-      }
-      else
-      {
-         return null;
-      }
-
-      if (exitCode == 0)
-      {
-         line = result.toString();
-
-         if (line == null || line.isEmpty())
-         {
-            return null;
-         }
-
-         Matcher m = pat.matcher(line);
-
-         if (m.matches())
-         {
-            try
-            {
-               int width, height;
-
-               if (isPdf)
-               {
-                  width = (int)Math.round(Float.parseFloat(m.group(1)));
-                  height = (int)Math.round(Float.parseFloat(m.group(2)));
-               }
-               else
-               {
-                  width = Integer.parseInt(m.group(1));
-                  height = Integer.parseInt(m.group(2));
-               }
-
-               return new Dimension(width, height);
-            }
-            catch (NumberFormatException e)
-            {// shouldn't happen, pattern ensures format correct
-               getHelpLib().debug(e);
-            }
-         }
-      }
-      else
-      {
-         warning(parser, getMessage("error.app_failed",
-           String.format("%s \"%s\"", invoker, file.getName()),
-           exitCode));
-      }
-
-      return null;
-   }
-
    protected File pdfToImage(File pdfFile, String basename, String format)
      throws IOException,InterruptedException
    {
@@ -1198,9 +1049,6 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    private int splitLevel=8;
    private Charset outCharset;
 
-   private File tmpDir = null;
-
-   private boolean deleteTempDirOnExit = true;
    private boolean convertImages = true;
    private boolean splitUseBaseNamePrefix = false;
    private DocumentTargetType docTargetType = DocumentTargetType.HELPSET;
@@ -1231,13 +1079,6 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    private String htmlSuffix = "html";
 
    private String imagePreamble = null;
-
-   public static final Pattern PNG_INFO =
-    Pattern.compile(".*: PNG image data, (\\d+) x (\\d+),.*");
-   public static final Pattern JPEG_INFO =
-    Pattern.compile(".*: JPEG image data, .*, (\\d+)x(\\d+),.*");
-   public static final Pattern PDF_INFO =
-    Pattern.compile(".*Page size:\\s+(\\d*\\.?\\d+) x (\\d*\\.?\\d+) pts.*", Pattern.DOTALL);
 
    public static final String NAME = "texjavahelpmk";
 }

@@ -1284,7 +1284,7 @@
 \newcommand\@btnicon[1]{%
  \glsxtrifhasfield{iconimage}{#1}%
  {%
-   \includegraphics[height=2ex]{\glscurrentfieldvalue}%
+   \tjhSmallIcon{\glscurrentfieldvalue}%
    \btniconsep
  }%
  {}%
@@ -2275,7 +2275,7 @@
  \glsadd[format=main]{#2}%
  \glsxtrifhasfield{iconimage}{#2}%
  {%
-   \includegraphics{\glscurrentfieldvalue}%
+   \tjhLargeIcon{\glscurrentfieldvalue}%
    \menuiconsep
  }
  {}%
@@ -2319,7 +2319,7 @@
  \glsadd[format=main]{#3}%
  \glsxtrifhasfield{iconimage}{#3}%
  {%
-   \includegraphics{\glscurrentfieldvalue}%
+   \tjhLargeIcon{\glscurrentfieldvalue}%
    \menuiconsep
  }
  {}%
@@ -3486,6 +3486,187 @@ halign upper=flush left,halign lower=justify,
       }
     }
  }
+
+\tl_new:N \g__texjavahelp_small_icon_suffix_tl
+\tl_new:N \g__texjavahelp_large_icon_suffix_tl
+\tl_new:N \l__texjavahelp_icon_name_tl
+\tl_new:N \l__texjavahelp_icon_img_tl
+
+\prop_new:N \g__texjavahelp_small_icon_map_prop
+\prop_new:N \g__texjavahelp_large_icon_map_prop
+\prop_new:N \g__texjavahelp_icon_map_prop
+
+\cs_new:Nn \__texjavahelp_include_icon_img:nn
+ {
+    \includegraphics [ page = { #1 } ] { #2 } 
+ }
+
+\cs_new:Nn \texjavahelp_include_icon_img:n
+ {
+   \prop_get:NnN \g__texjavahelp_icon_map_prop { #1 }
+     \l__texjavahelp_icon_img_tl
+   \quark_if_no_value:NTF
+     \l__texjavahelp_icon_img_tl
+    {
+      \prop_get:NnN \g__texjavahelp_icon_map_prop { #1 . png }
+        \l__texjavahelp_icon_img_tl
+      \quark_if_no_value:NTF
+        \l__texjavahelp_icon_img_tl
+       {
+         \prop_get:NnN \g__texjavahelp_icon_map_prop { #1 . jpeg }
+           \l__texjavahelp_icon_img_tl
+         \quark_if_no_value:NTF
+           \l__texjavahelp_icon_img_tl
+          {
+            \prop_get:NnN \g__texjavahelp_icon_map_prop { #1 . jpg }
+              \l__texjavahelp_icon_img_tl
+            \quark_if_no_value:NTF
+              \l__texjavahelp_icon_img_tl
+             {
+               \prop_get:NnN \g__texjavahelp_large_icon_map_prop { #1 }
+                 \l__texjavahelp_icon_img_tl
+               \quark_if_no_value:NTF
+                 \l__texjavahelp_icon_img_tl
+                {
+                  \includegraphics { #1 }
+                }
+                {
+                  \l__texjavahelp_icon_img_tl
+                }
+             }
+             {
+               \l__texjavahelp_icon_img_tl
+             }
+          }
+          {
+            \l__texjavahelp_icon_img_tl
+          }
+       }
+       {
+         \l__texjavahelp_icon_img_tl
+       }
+    }
+    {
+      \l__texjavahelp_icon_img_tl
+    }
+ }
+
+\cs_new:Nn \texjavahelp_include_large_icon_img:n
+ {
+   \prop_get:NnN \g__texjavahelp_large_icon_map_prop { #1 }
+     \l__texjavahelp_icon_img_tl
+   \quark_if_no_value:NTF
+     \l__texjavahelp_icon_img_tl
+    {
+      \tl_if_empty:NTF \g__texjavahelp_large_icon_suffix_tl
+       {
+         \includegraphics { #1 }
+       }
+       {
+         \includegraphics { #1 - \g__texjavahelp_large_icon_suffix_tl }
+       }
+    }
+    {
+      \l__texjavahelp_icon_img_tl
+    }
+ }
+
+\cs_new:Nn \texjavahelp_include_small_icon_img:n
+ {
+   \prop_get:NnN \g__texjavahelp_small_icon_map_prop { #1 }
+     \l__texjavahelp_icon_img_tl
+   \quark_if_no_value:NTF
+     \l__texjavahelp_icon_img_tl
+    {
+      \tl_if_empty:NTF \g__texjavahelp_small_icon_suffix_tl
+       {
+         \includegraphics [ height = 2ex ] { #1 }
+       }
+       {
+         \includegraphics [ height = 2ex ] { #1 - \g__texjavahelp_small_icon_suffix_tl }
+       }
+    }
+    {
+      \l__texjavahelp_icon_img_tl
+    }
+ }
+
+\NewDocumentCommand \TJHLargeIconImageFrame { m } { \fbox { #1 } }
+
+\NewDocumentCommand \TJHSmallIconImageFrame { m }
+ {
+   \TJHLargeIconImageFrame { #1 }
+ }
+
+\NewDocumentCommand \tjhLargeIcon { m }
+ {
+   \TJHLargeIconImageFrame
+    { 
+      \exp_args:Ne \texjavahelp_include_large_icon_img:n { #1 }
+    }
+ }
+
+\NewDocumentCommand \tjhSmallIcon { m }
+ {
+   \TJHLargeIconImageFrame
+    { 
+      \exp_args:Ne \texjavahelp_include_small_icon_img:n { #1 }
+    }
+ }
+
+% { name } { suffix } { ext } { pdf } { page }
+\NewDocumentCommand \tjhmapiconimage { m m m m m }
+ {
+   \tl_set:Nn \l__texjavahelp_icon_name_tl { #1 }
+   \tl_if_eq:NnTF \g__texjavahelp_small_icon_suffix_tl { #2 }
+    {
+      \prop_gput:NVn \g__texjavahelp_small_icon_map_prop
+        \l__texjavahelp_icon_name_tl
+        {
+          \__texjavahelp_include_icon_img:nn { #5 } { #4 }
+        }
+    }
+    {
+      \tl_if_eq:NnT \g__texjavahelp_large_icon_suffix_tl { #2 }
+       {
+         \prop_gput:NVn \g__texjavahelp_large_icon_map_prop
+           \l__texjavahelp_icon_name_tl
+           {
+             \__texjavahelp_include_icon_img:nn { #5 } { #4 }
+           }
+       }
+    }
+   \tl_if_empty:nF { #2 }
+     {
+       \tl_put_right:Nn \l__texjavahelp_icon_name_tl { - #2 }
+     }
+   \prop_gput:NVn \g__texjavahelp_icon_map_prop
+     \l__texjavahelp_icon_name_tl
+     {
+       \__texjavahelp_include_icon_img:nn { #5 } { #4 }
+     }
+   \tl_if_empty:nF { #3 }
+     {
+       \tl_put_right:Nn \l__texjavahelp_icon_name_tl { . #3 }
+     }
+   \prop_gput:NVn \g__texjavahelp_icon_map_prop
+     \l__texjavahelp_icon_name_tl
+     {
+       \__texjavahelp_include_icon_img:nn { #5 } { #4 }
+     }
+ }
+
+\NewDocumentCommand \TJHRequireIcons { m m m }
+ {
+    \tl_gset:Nn \g__texjavahelp_small_icon_suffix_tl { #2 }
+    \tl_gset:Nn \g__texjavahelp_large_icon_suffix_tl { #3 }
+    \clist_map_inline:nn
+     { #1 }
+     {
+       \input { ##1 - #2 . def }
+       \input { ##1 - #3 . def }
+     }
+ }
 \ExplSyntaxOff
 
 \newlength\iconheight
@@ -3506,7 +3687,7 @@ halign upper=flush left,halign lower=justify,
     \@for\this@icon:=#2\do
     {%
       \@iconstartparsep
-      \includegraphics[#1]{\this@icon}%
+      \includeimg[#1]{\this@icon}%
       \let\@iconstartparsep\iconstartparsep
     }%
    }%

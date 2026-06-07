@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>English language file for tjhcreateiconpdf
+https://github.com/nlct/texjavahelp
+GPL-3.0
+Nicola Talbot
+</comment>
+
+<!--  Syntax -->
+<entry key="syntax.title">Syntax:</entry>
+<entry key="syntax.opt_in">{0} [&lt;option&gt;]+ &lt;file&gt;...</entry>
+<entry key="syntax.in">{0} (or {1}) &lt;file&gt;...    Source image files or directory containing image files.</entry>
+<entry key="syntax.size">{0} (or {1}) &lt;size&gt; Image size which may be a single integer (width and height) or in the form &lt;width&gt;x&lt;height&gt;. The image file names should be in the form &lt;base&gt;-&lt;size&gt;.&lt;ext&gt; where the file extension may be png, jpeg or jpg.</entry>
+<entry key="syntax.base">{0} (or {1}) &lt;name&gt;  Base name.</entry>
+<entry key="syntax.keep-doc-src">{0} (or {1})  Keep a copy the document source from which the pdf is created.</entry>
+<entry key="syntax.out">{0} (or {1}) &lt;dir&gt;  Destination directory.</entry>
+
+<!--  Error messages -->
+
+<entry key="error.syntax.missing_in">Missing input file</entry>
+<entry key="error.syntax.missing_option">Missing {0}</entry>
+<entry key="error.syntax.not_directory">Not a directory: {0}</entry>
+<entry key="error.syntax.invalid.size_value">Invalid ''{0}'' value: {1} (size required)</entry>
+
+<entry key="error.syntax.positive_value_required">Invalid ''{0}'' value: {1} (positive value required)</entry>
+
+<entry key="error.no_image_files_matching">No image files found matching {0}.</entry>
+
+</properties>
+

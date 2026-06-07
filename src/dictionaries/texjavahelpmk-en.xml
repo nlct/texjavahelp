@@ -28,8 +28,6 @@ has have</entry>
 <entry key="syntax.opt_in">{0} [&lt;option&gt;]+ &lt;TeX file&gt; &lt;out-dir&gt;</entry>
 <entry key="syntax.general">General Options:</entry>
 <entry key="syntax.in">{0} (or {1}) &lt;TeX file&gt;	Parse &lt;TeX file&gt;.</entry>
-<entry key="syntax.charset">{0} &lt;charset&gt;	Set the default character encoding.</entry>
-<entry key="syntax.rmtmpdir">{0}	Remove temporary files on exit.</entry>
 <entry key="syntax.timeout">{0} &lt;n&gt;	Timeout processes after &lt;n&gt; milliseconds.</entry>
 <entry key="syntax.output.options">Output Options:</entry>
 <entry key="syntax.out">{0} (or {1}) &lt;directory&gt;	Save output in &lt;directory&gt;.</entry>
@@ -59,9 +57,6 @@ has have</entry>
 <entry key="error.stacktrace">Stack Trace</entry>
 <entry key="error.line_with_code">Line {0}: {1} (error code {2}).</entry>
 <entry key="error.unknown">Unknown error</entry>
-<entry key="error.exec_failed">Failed to execute: {0}</entry>
-<entry key="error.app_failed">{0} failed with exit code {1}</entry>
-<entry key="error.interrupted">Process interrupted</entry>
 <entry key="error.no_aux_data">No aux data found! The document must be fully compiled first to ensure all auxiliary files are present.</entry>
 <entry key="error.no_current_node">No current node. The auxiliary files may be missing or not up-to-date.</entry>
 <entry key="error.no_division_data">No division data. The auxiliary files may be missing or not up-to-date or sectioning units may be missing a label.</entry>

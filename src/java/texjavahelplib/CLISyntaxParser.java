@@ -84,8 +84,8 @@ public abstract class CLISyntaxParser
 
    /**
     * Gets the number of required arguments for a command line
-    * switch. This should return the number or -1 for a single
-    * optional argument (which should not start with "-").
+    * switch. This should return the number of mandatory arguments
+    * or -1 for a single optional argument (which should not start with "-").
     * @param arg switch
     * @return number of required arguments or -1 for a single
     * optional argument

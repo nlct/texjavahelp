@@ -8,6 +8,7 @@ arara = arara --verbose
 texjavahelpmk=bin/texjavahelpmk.tlu #--debug-mode sty-data --log texparser.log
 tjhflattendocsrc=bin/tjhflattendocsrc.tlu 
 tjhziphelpset=bin/tjhziphelpset.tlu 
+tjhcreateiconpdf=bin/tjhcreateiconpdf.tlu 
 
 texjavaparserlib=$(shell kpsewhich --format=texmfscripts texjavaparserlib.jar)
 
@@ -16,9 +17,10 @@ ifeq ($(texjavaparserlib),)
 endif
 
 all:	lib/texjavahelplib.jar \
-	lib/tjhziphelpset.jar \
+	lib/tjhcreateiconpdf.jar \
 	lib/tjhxml2bib.jar \
 	lib/texjavahelpmk.jar \
+	lib/tjhziphelpset.jar \
 	lib/tjhflattendocsrc.jar \
 	lib/texjavahelpdemo.jar
 
@@ -58,7 +60,18 @@ lib/helpset/index.xml	: lib/texjavahelpmk.jar doc/texjavahelp.pdf
 	$(texjavahelpmk) doc/texjavahelp.tex lib/helpset
 	@grep -E 'Package glossaries(-extra)? Warning' doc/texjavahelp.log || true
 
-doc/texjavahelp.pdf	: doc/texjavahelplib.bib doc/texjavahelp.tex doc/helpinterface.tex doc/texjavahelp.sty doc/texjavahelp.bib doc/images/*.tex doc/images/*.png
+doc/texjavahelp.pdf	: doc/texjavahelplib.bib \
+			  doc/texjavahelp.tex \
+			  doc/helpinterface.tex \
+			  doc/texjavahelp.sty \
+			  doc/texjavahelp.bib \
+			  doc/images/*.tex \
+			  doc/images/*.png \
+			  doc/texjavahelplibicons-16.pdf \
+			  doc/texjavahelplibicons-20.pdf \
+			  doc/texjavahelplibicons-24.pdf \
+			  doc/texjavahelplibicons-32.pdf \
+			  doc/texjavahelplibicons-64.pdf 
 	$(arara) -d doc texjavahelp
 
 doc/texjavahelplib.bib	: lib/tjhxml2bib.jar \
@@ -68,6 +81,41 @@ doc/texjavahelplib.bib	: lib/tjhxml2bib.jar \
 		dictionaries/texjavahelplib-en.xml \
 		dictionaries/texjavahelpdemo-en.xml \
 		-o doc/texjavahelplib.bib
+
+doc/texjavahelplibicons-16.pdf	: lib/tjhcreateiconpdf.jar
+	$(tjhcreateiconpdf) java/texjavahelplib/icons \
+	--base texjavahelplibicons \
+	--size 16 \
+	--keep-doc-src \
+	--out-dir doc
+
+doc/texjavahelplibicons-20.pdf	: lib/tjhcreateiconpdf.jar
+	$(tjhcreateiconpdf) java/texjavahelplib/icons \
+	--base texjavahelplibicons \
+	--size 20 \
+	--keep-doc-src \
+	--out-dir doc
+
+doc/texjavahelplibicons-24.pdf	: lib/tjhcreateiconpdf.jar
+	$(tjhcreateiconpdf) java/texjavahelplib/icons \
+	--base texjavahelplibicons \
+	--size 24 \
+	--keep-doc-src \
+	--out-dir doc
+
+doc/texjavahelplibicons-32.pdf	: lib/tjhcreateiconpdf.jar
+	$(tjhcreateiconpdf) java/texjavahelplib/icons \
+	--base texjavahelplibicons \
+	--size 32 \
+	--keep-doc-src \
+	--out-dir doc
+
+doc/texjavahelplibicons-64.pdf	: lib/tjhcreateiconpdf.jar
+	$(tjhcreateiconpdf) java/texjavahelplib/icons \
+	--base texjavahelplibicons \
+	--size 64 \
+	--keep-doc-src \
+	--out-dir doc
 
 lib/texjavahelpmk.jar	: java/texjavahelpmk/Manifest.txt \
 	classes/com/dickimawbooks/texjavahelpmk/TeXJavaHelpMk.class \
@@ -93,6 +141,31 @@ classes/com/dickimawbooks/texjavahelpmk/TeXJavaHelpMk.class	: classes/com/dickim
 
 classes/com/dickimawbooks/texjavahelpmk	:
 	mkdir -p classes/com/dickimawbooks/texjavahelpmk
+
+lib/tjhcreateiconpdf.jar	: java/tjhcreateiconpdf/Manifest.txt \
+	classes/com/dickimawbooks/tjhcreateiconpdf/CreateIconPdf.class \
+	classes/com/dickimawbooks/tjhcreateiconpdf/dictionaries/ \
+	dictionaries/tjhcreateiconpdf-en.xml
+	cp dictionaries/tjhcreateiconpdf-*.xml classes/com/dickimawbooks/tjhcreateiconpdf/dictionaries/
+	cd classes; \
+	jar cmf ../java/tjhcreateiconpdf/Manifest.txt ../lib/tjhcreateiconpdf.jar \
+	com/dickimawbooks/tjhcreateiconpdf/*.class \
+	com/dickimawbooks/tjhcreateiconpdf/dictionaries \
+	com/dickimawbooks/tjhcreateiconpdf/dictionaries/*.xml
+
+classes/com/dickimawbooks/tjhcreateiconpdf/dictionaries/	:
+	mkdir -p classes/com/dickimawbooks/tjhcreateiconpdf/dictionaries/
+
+classes/com/dickimawbooks/tjhcreateiconpdf/CreateIconPdf.class	: classes/com/dickimawbooks/tjhcreateiconpdf \
+	java/tjhcreateiconpdf/*.java lib/texjavahelplib.jar 
+	cd java/tjhcreateiconpdf; \
+	javac $(target_version) -d ../../classes \
+	 -Xlint:unchecked -Xlint:deprecation \
+	-cp $(texjavaparserlib):../../lib/texjavahelplib.jar \
+	*.java
+
+classes/com/dickimawbooks/tjhcreateiconpdf	:
+	mkdir -p classes/com/dickimawbooks/tjhcreateiconpdf
 
 lib/texjavahelplib.jar	: classes/com/dickimawbooks/texjavahelplib/TeXJavaHelpLib.class \
 	classes/com/dickimawbooks/texjavahelplib/dictionaries/ \

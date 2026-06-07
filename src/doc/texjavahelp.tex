@@ -29,6 +29,8 @@
 \newcommand{\TeXJavaHelp}{\texorpdfstring{\TeX{}}{TeX} Java Help}
 \graphicspath{{images/}}
 
+\TJHRequireIcons{texjavahelplibicons}{16}{24}
+
 \title{\TeXJavaHelp}
 \author{Nicola L.C. Talbot\\\href{https://www.dickimaw-books.com/}{\nolinkurl{dickimaw-books.com}}}
 
@@ -456,9 +458,10 @@ This expands to \csfmt{space} by default. For example:
 \btn{help}
 \end{coderesult}
 Compare this with the earlier \code{\gls{widget}\marg{help}}
-example, which doesn't show the icon image. The image file will need
-to be on the graphics path so that \gls{includegraphics} can find
-it.
+example, which doesn't show the icon image. The image file will
+either need to be on the graphics path so that \gls{includegraphics} can find
+it, or in a PDF file created with \app{tjhcreateiconpdf} where the
+image mappings are loaded with \gls{TJHRequireIcons}.
 
 \cmddef{menutrail}
 Displays the menu trail that leads to the given entry (identified by

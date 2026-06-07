@@ -44,6 +44,11 @@ import com.dickimawbooks.texjavahelplib.MessageSystem;
 
 public class FlattenDocSrc extends CLITeXAppAdapter
 {
+   public FlattenDocSrc()
+   {
+      super(false);
+   }
+
    @Override
    protected void loadDictionaries(MessageSystem msgSys) throws IOException
    {
@@ -79,21 +84,17 @@ public class FlattenDocSrc extends CLITeXAppAdapter
    protected int getCLIArgCount(String arg)
    {
       if (
-             arg.equals("--log")
-          || arg.equals("--in") ||  arg.equals("-i")
+          arg.equals("--in") ||  arg.equals("-i")
           || arg.equals("--in-charset")
           || arg.equals("--output") || arg.equals("-o")
-          || arg.equals("--charset")
           || arg.equals("--out-charset")
           || arg.equals("--image-dest")
-          || arg.equals("--debug")
-          || arg.equals("--debug-mode")
          )
       {
          return 1;
       }
 
-      return 0;
+      return super.getCLIArgCount(arg);
    }
 
 
@@ -103,27 +104,7 @@ public class FlattenDocSrc extends CLITeXAppAdapter
    {
       CLISyntaxParser cliParser = getSyntaxParser();
 
-      if (arg.equals("--nolog"))
-      {
-         logFile = null;
-      }
-      else if (cliParser.isArg(arg, "--log", returnVals))
-      {
-         if (logFile != null)
-         {
-            throw new InvalidSyntaxException(
-              getMessage("error.syntax.only_one", arg));
-         }
-
-         if (returnVals[0] == null)
-         {
-            throw new InvalidSyntaxException(
-               getMessage("error.clisyntax.missing.value", arg));
-         }
-
-         logFile = new File(returnVals[0].toString());
-      }
-      else if (cliParser.isArg(arg, "--in", "-i", returnVals))
+      if (cliParser.isArg(arg, "--in", "-i", returnVals))
       {
          if (inFile != null)
          {
@@ -142,10 +123,6 @@ public class FlattenDocSrc extends CLITeXAppAdapter
          }
 
          outDir = new File(returnVals[0].toString());
-      }
-      else if (cliParser.isArg(arg, "--charset", returnVals))
-      {
-         defaultCharset = Charset.forName(returnVals[0].toString());
       }
       else if (cliParser.isArg(arg, "--out-charset", returnVals))
       {
@@ -170,7 +147,7 @@ public class FlattenDocSrc extends CLITeXAppAdapter
       }
       else
       {
-         return false;
+         return super.parseCLIArg(arg, returnVals);
       }
 
       return true;
@@ -220,6 +197,7 @@ public class FlattenDocSrc extends CLITeXAppAdapter
       System.out.println();
       printSyntaxItem(getMessage("syntax.general"));
       printSyntaxItem(getMessage("syntax.in", "--in", "-i", getApplicationName()));
+      printSyntaxItem(getMessage("syntax.in.charset", "--in-charset"));
       System.out.println();
       printSyntaxItem(getMessage("syntax.output.options"));
       System.out.println();
@@ -228,16 +206,10 @@ public class FlattenDocSrc extends CLITeXAppAdapter
       printSyntaxItem(getMessage("syntax.out.image-dest", "--image-dest"));
 
       System.out.println();
-      getMessage("clisyntax.other.options");
+      System.out.println(getMessage("clisyntax.other.options"));
       System.out.println();
 
       printCommonCLISyntax();
-
-      printSyntaxItem(getMessage("texparser.syntax.debug-mode", "--debug-mode"));
-      System.out.println();
-
-      printSyntaxItem(getMessage("clisyntax.log", "--log"));
-      printSyntaxItem(getMessage("clisyntax.nolog", "--nolog"));
 
       System.out.println();
       System.out.println(getMessage("clisyntax.bugreport",

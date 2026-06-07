@@ -146,6 +146,11 @@ public abstract class AbstractCLI
          @Override
          protected int argCount(String arg)
          {
+            if (arg.equals("--debug"))
+            {
+               return -1;
+            }
+
             return getCLIArgCount(arg);
          }
 
