@@ -136,6 +136,8 @@ public class CreateIconPdf extends CLITeXAppAdapter
 
       printSyntaxItem(getMessage("syntax.base", "--base", "-b"));
 
+      printSyntaxItem(getMessage("syntax.resource-path", "--resource-path", "-p"));
+
       printSyntaxItem(getMessage("syntax.keep-doc-src", "--[no]keep-doc-src", "-k"));
 
       printSyntaxItem(getMessage("syntax.out", "--out-dir", "-o"));
@@ -159,6 +161,7 @@ public class CreateIconPdf extends CLITeXAppAdapter
        || arg.equals("--out-dir") || arg.equals("-o")
        || arg.equals("--size") || arg.equals("-s")
        || arg.equals("--base") || arg.equals("-b")
+       || arg.equals("--resource-path") || arg.equals("-p")
          )
       {
          return 1;
@@ -206,6 +209,16 @@ public class CreateIconPdf extends CLITeXAppAdapter
          }
 
          basename = returnVals[0].toString();
+      }
+      else if (cliParser.isArg(arg, "--resource-path", "-p", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing.value", arg));
+         }
+
+         resourcePath = returnVals[0].toString();
       }
       else if (cliParser.isArg(arg, "--out-dir", "-o", returnVals))
       {
@@ -355,7 +368,7 @@ public class CreateIconPdf extends CLITeXAppAdapter
       else
       {
          imageFiles.add(new TJHIconFile(new TeXPath(parser, file.getAbsoluteFile()),
-           name, suffix, ext));
+           pdfFile, resourcePath, name, suffix, ext));
       }
    }
 
@@ -412,6 +425,7 @@ public class CreateIconPdf extends CLITeXAppAdapter
          for (int i = 0; i < imageFiles.size(); i++)
          {
             TJHIconFile icf = imageFiles.get(i);
+            icf.setPageNumber(i+i);
 
             if (i > 0)
             {
@@ -467,7 +481,7 @@ public class CreateIconPdf extends CLITeXAppAdapter
          {
             TJHIconFile icf = imageFiles.get(i);
 
-            writer.println(icf.formatMap(pdfFile.getName(), i+1));
+            writer.println(icf.formatMap());
          }
 
          writer.close();
@@ -514,6 +528,7 @@ public class CreateIconPdf extends CLITeXAppAdapter
    protected int width=0, height=0;
    protected String sizeVal;
    protected String basename;
+   protected String resourcePath="icons/";
    protected File outDir;
    protected File pdfFile;
    protected File mapFile;
@@ -523,30 +538,4 @@ public class CreateIconPdf extends CLITeXAppAdapter
    protected TeXParser parser;
 
    public static final String NAME = "tjhcreateiconpdf";
-}
-
-class TJHIconFile
-{
-   public TJHIconFile(TeXPath path, String name, String suffix, String ext)
-   {
-      this.texPath = path;
-      this.name = name;
-      this.suffix = suffix;
-      this.ext = ext;
-   }
-
-   public String formatTeXPath()
-   {
-      return texPath.getTeXPath(false);
-   }
-
-   public String formatMap(String pdfFileName, int pageNum)
-   {
-      return String.format((Locale)null,
-               "\\tjhmapiconimage{%s}{%s}{%s}{%s}{%d}",
-               name, suffix, ext, pdfFileName, pageNum);
-   }
-
-   TeXPath texPath;
-   String name, suffix, ext;
 }

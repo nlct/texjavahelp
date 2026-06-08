@@ -2526,6 +2526,27 @@ prepend \optval{gls.format}{\glscsname{glsignore}} to the options}
 text field value is used for \meta{text}}
 }
 
+@command{TJHRequireIcons,
+  name={\csfmt{TJH\-Require\-Icons}},
+  providedby={\sty{texjavahelp}},
+  syntax={\margm{list}\margm{small-suffix}\margm{large-suffix}},
+  description={sets the small and large suffix and loads the
+   corresponding icon map files (created by \app{tjhcreateiconpdf})
+   \filemetametafmt{}{base}{-}{suffix}{.def} for each \meta{base}
+   in the given \meta{list} and for each \meta{small-suffix} and
+   \meta{large-suffix}}
+}
+
+@command{tjhmapiconimage,
+  name={\csfmt{tjh\-map\-icon\-image}},
+  providedby={\sty{texjavahelp}},
+  syntax={\margm{resource
+path}\margm{name}\margm{suffix}\margm{ext}\margm{pdf}\margm{page}},
+  description={establishes an icon image mapping for the given
+\meta{pdf}. This command is used in the mapping files loaded with
+\gls{TJHRequireIcons} and created by \app{tjhcreateiconpdf}}
+}
+
 % BIB2GLS QUARKS
 @command{MGP,
   name={\csfmt{MGP} (\appfmt{bib2gls} quark)},

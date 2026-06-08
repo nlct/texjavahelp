@@ -13,6 +13,7 @@ Nicola Talbot
 <entry key="syntax.in">{0} (or {1}) &lt;file&gt;...    Source image files or directory containing image files.</entry>
 <entry key="syntax.size">{0} (or {1}) &lt;size&gt; Image size which may be a single integer (width and height) or in the form &lt;width&gt;x&lt;height&gt;. The image file names should be in the form &lt;base&gt;-&lt;size&gt;.&lt;ext&gt; where the file extension may be png, jpeg or jpg.</entry>
 <entry key="syntax.base">{0} (or {1}) &lt;name&gt;  Base name.</entry>
+<entry key="syntax.resource-path">{0} (or {1}) &lt;name&gt;  Resource path.</entry>
 <entry key="syntax.keep-doc-src">{0} (or {1})  Keep a copy the document source from which the pdf is created.</entry>
 <entry key="syntax.out">{0} (or {1}) &lt;dir&gt;  Destination directory.</entry>
 

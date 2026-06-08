@@ -52,6 +52,7 @@ import com.dickimawbooks.texparserlib.latex.FloatBoxStyle;
 import com.dickimawbooks.texparserlib.latex.FrameBox;
 import com.dickimawbooks.texparserlib.latex.KeyValList;
 import com.dickimawbooks.texparserlib.latex.LaTeXSty;
+import com.dickimawbooks.texparserlib.latex.MissingValue;
 import com.dickimawbooks.texparserlib.latex.color.ColorSty;
 import com.dickimawbooks.texparserlib.latex.glossaries.GlossariesSty;
 import com.dickimawbooks.texparserlib.latex.glossaries.GlossaryEntry;
@@ -65,6 +66,7 @@ import com.dickimawbooks.texparserlib.html.FileData;
 import com.dickimawbooks.texparserlib.html.HtmlTag;
 import com.dickimawbooks.texparserlib.html.HtmlLiteral;
 import com.dickimawbooks.texparserlib.html.StartElement;
+import com.dickimawbooks.texparserlib.html.VoidElement;
 import com.dickimawbooks.texparserlib.auxfile.DivisionInfo;
 import com.dickimawbooks.texparserlib.auxfile.LabelInfo;
 import com.dickimawbooks.texparserlib.auxfile.CiteInfo;
@@ -75,6 +77,7 @@ import com.dickimawbooks.texjavahelplib.NavigationNode;
 import com.dickimawbooks.texjavahelplib.IndexItem;
 import com.dickimawbooks.texjavahelplib.SearchItem;
 import com.dickimawbooks.texjavahelplib.SearchData;
+import com.dickimawbooks.texjavahelplib.TJHIconFile;
 
 public class TJHListener extends L2HConverter
 {
@@ -120,6 +123,7 @@ public class TJHListener extends L2HConverter
          setNavigationXmlFile(new File(outDir, "navigation.xml"));
          setIndexXmlFile(new File(outDir, "index.xml"));
          setSearchXmlFile(new File(outDir, "search.xml"));
+         setIconXmlFile(new File(outDir, "icons.xml"));
 
          String omissions = app.getMessageWithFallback("manual.no-search",
            "and the");
@@ -146,6 +150,7 @@ public class TJHListener extends L2HConverter
       addCssStyle("div.iconstartpar { float: left; padding-right: 1em;  }");
 
       addCssStyle("img.framed { border: solid 1pt; }");
+      addCssStyle("img.smallicon, img.largeicon { border: solid 1pt; }");
       addCssStyle(".scenebreak { padding-top: .5ex; padding-bottom: .5ex; }");
 
       addCssStyle(TeXJavaHelpLib.KEYSTROKE_CSS);
@@ -409,6 +414,11 @@ public class TJHListener extends L2HConverter
    public void setSearchXmlFile(File file)
    {
       searchXmlFile = file;
+   }
+
+   public void setIconXmlFile(File file)
+   {
+      iconXmlFile = file;
    }
 
    @Override
@@ -828,6 +838,30 @@ public class TJHListener extends L2HConverter
       }
    }
 
+   protected void writeIconFile(TeXObjectList stack) throws IOException
+   {
+      if (iconXmlFile == null) return;
+
+      PrintWriter out = null;
+
+      try
+      {
+         Charset charset = getHtmlCharset();
+
+         out = new PrintWriter(
+           getTeXApp().createBufferedWriter(iconXmlFile.toPath(), charset));
+
+         TJHIconFile.writeXML(iconMap, smallIconMap, largeIconMap, out, charset);
+      }
+      finally
+      {
+         if (out != null)
+         {
+            out.close();
+         }
+      }
+   }
+
    protected void writeIndexFile(TeXObjectList stack) throws IOException
    {
       if (indexXmlFile == null || indexData == null) return;
@@ -972,6 +1006,8 @@ public class TJHListener extends L2HConverter
       }
 
       writeIndexFile(stack);
+
+      writeIconFile(stack);
 
       super.endDocument(stack);
    }
@@ -1486,6 +1522,233 @@ public class TJHListener extends L2HConverter
       return image;
    }
 
+   public void addImageIconMap(String resourcePath, String name, String suffix,  
+     String ext, String pdf, int page)
+   throws IOException
+   {
+      if (iconMap == null)
+      {
+         iconMap = new HashMap<String,TJHIconFile>();
+      }
+
+      TeXPath texPath = new TeXPath(getParser(), pdf, "pdf");
+      File pdfFile = texPath.getFile();
+
+      TJHIconFile iconFile = new TJHIconFile(texPath, pdfFile,
+        resourcePath, name, suffix, ext, page);
+
+      suffix = "-"+suffix;
+
+      iconMap.put(name+suffix, iconFile);
+      iconMap.put(iconFile.toImageFileName(), iconFile);
+
+      if (suffix.equals(getHelpLib().getSmallIconSuffix()))
+      {
+         if (smallIconMap == null)
+         {
+            smallIconMap = new HashMap<String,TJHIconFile>();
+         }
+
+         smallIconMap.put(name, iconFile);
+      }
+      else if (suffix.equals(getHelpLib().getLargeIconSuffix()))
+      {
+         if (largeIconMap == null)
+         {
+            largeIconMap = new HashMap<String,TJHIconFile>();
+         }
+
+         largeIconMap.put(name, iconFile);
+      }
+   }
+
+   public TJHIconFile getSmallIcon(KeyValList options, TeXObjectList stack,
+      String filename, TeXObjectList substack)
+   throws IOException
+   {
+      return getIcon(options, stack, smallIconMap, filename, "small", substack);
+   }
+
+   public TJHIconFile getLargeIcon(KeyValList options, TeXObjectList stack,
+     String filename, TeXObjectList substack)
+   throws IOException
+   {
+      return getIcon(options, stack, largeIconMap, filename, "large", substack);
+   }
+
+   public TJHIconFile getIcon(KeyValList options, TeXObjectList stack,
+    String filename, TeXObjectList substack)
+   throws IOException
+   {
+      TJHIconFile icf = getLargeIcon(options, stack, filename, substack);
+
+      if (icf == null)
+      {
+         icf = getIcon(options, stack, iconMap, filename, null, substack);
+      }
+
+      return icf;
+   }
+
+   protected TJHIconFile getIcon(KeyValList options, TeXObjectList stack,
+     HashMap<String,TJHIconFile> map, String filename, String size,
+     TeXObjectList substack)
+   throws IOException
+   {
+      TJHIconFile iconFile = null;
+
+      if (map == null) return iconFile;
+
+      iconFile = map.get(filename);
+
+      if (iconFile == null) return iconFile;
+
+      String iconClass;
+
+      if ("large".equals(size))
+      {
+         iconClass = "largeresourceicon";
+      }
+      else if ("small".equals(size))
+      {
+         iconClass = "smallresourceicon";
+      }
+      else
+      {
+         iconClass = "resourceicon";
+      }
+
+      TeXObject alt = null;
+      String cssClass = null;
+      String cssStyle = null;
+
+      String border = null;
+
+      boolean hasOtherOptions = false;
+
+      if (options != null)
+      {
+         for (Iterator<String> it = options.getOrderedKeyIterator();
+          it.hasNext();)
+         {
+            String key = it.next();
+            TeXObject value = options.getValue(key);
+
+            if (key.equals("alt") || key.equals("actualtext"))
+            {
+               alt = value;
+            }
+            else if (key.equals("artifact"))
+            {
+               if (value instanceof MissingValue || value.isEmpty()
+                   || value.toString(parser).trim().equals("true"))
+               {
+                  alt = createStack();
+               }
+            }
+            else if (key.equals("class"))
+            {
+               cssClass = HtmlTag.encodeAttributeValue(
+                  processToString((TeXObject)value.clone(), stack), false);
+            }
+            else if (key.equals("style"))
+            {
+               cssStyle = HtmlTag.encodeAttributeValue(
+                  processToString((TeXObject)value.clone(), stack), false);
+            }
+            else if (key.equals("border"))
+            {
+               border = HtmlTag.encodeAttributeValue(
+                  processToString((TeXObject)value.clone(), stack), false);
+            }
+            else
+            {
+               hasOtherOptions = true;
+            }
+         }
+      }
+
+      if (!hasOtherOptions)
+      {
+         VoidElement imgElem = createVoidElement("img");
+
+         imgElem.putAttribute("src",
+             HtmlTag.encodeAttributeValue(filename, true,
+             isUseEntitiesEnabled()));
+
+         if (alt != null)
+         {
+            String altVal = processToString(alt, stack);
+            altVal = HtmlTag.encodeAttributeValue(altVal, false,
+                  isUseEntitiesEnabled());
+
+            imgElem.putAttribute("alt", altVal);
+         }
+
+         if (border != null)
+         {
+            imgElem.putAttribute("border", border);
+         }
+
+         if (cssStyle != null)
+         {
+            imgElem.putAttribute("style", cssStyle);
+         }
+
+         if (cssClass == null)
+         {
+            imgElem.putAttribute("class", iconClass);
+         }
+         else
+         {
+            imgElem.putAttribute("class", iconClass+" "+cssClass);
+         }
+
+         iconFile.setReferenced(true);
+
+         substack.add(imgElem);
+      }
+
+      return iconFile;
+   }
+
+   @Override
+   public void includegraphics(TeXObjectList stack,
+       KeyValList options, String filename)
+    throws IOException
+   {
+      File file = null;
+
+      TeXObjectList substack = createStack();
+      TJHIconFile iconFile = getIcon(options, stack, filename, substack);
+
+      if (iconFile != null)
+      {
+         if (!substack.isEmpty())
+         {
+            TeXParserUtils.process(substack, getParser(), stack);
+
+            return;
+         }
+
+         file = iconFile.getPdfFile();
+
+         if (options == null)
+         {
+            options = new KeyValList();
+         }
+
+         options.put("page", new UserNumber(iconFile.getPageNumber()));
+      }
+
+      if (file == null)
+      {
+         file = getImageFile(filename);
+      }
+
+      includegraphics(stack, options, file, filename);
+   }
+
    public TeXJavaHelpMk getTeXJavaHelpMk()
    {
       return (TeXJavaHelpMk)getTeXApp();
@@ -1609,6 +1872,7 @@ public class TJHListener extends L2HConverter
    protected File navigationXmlFile;
    protected File indexXmlFile;
    protected File searchXmlFile;
+   protected File iconXmlFile;
    protected TeXJavaHelpSty tjhSty;
    protected HashMap<String,IndexItem> indexData;
    protected String[] noSearchWords;
@@ -1637,6 +1901,8 @@ public class TJHListener extends L2HConverter
    protected boolean inNavigation = false;
 
    protected Vector<String> epubContents;
+
+   protected HashMap<String,TJHIconFile> iconMap, smallIconMap, largeIconMap;
 
    public static final int MIN_SEARCH_LENGTH = 3;
 

@@ -86,35 +86,30 @@ doc/texjavahelplibicons-16.pdf	: lib/tjhcreateiconpdf.jar
 	$(tjhcreateiconpdf) java/texjavahelplib/icons \
 	--base texjavahelplibicons \
 	--size 16 \
-	--keep-doc-src \
 	--out-dir doc
 
 doc/texjavahelplibicons-20.pdf	: lib/tjhcreateiconpdf.jar
 	$(tjhcreateiconpdf) java/texjavahelplib/icons \
 	--base texjavahelplibicons \
 	--size 20 \
-	--keep-doc-src \
 	--out-dir doc
 
 doc/texjavahelplibicons-24.pdf	: lib/tjhcreateiconpdf.jar
 	$(tjhcreateiconpdf) java/texjavahelplib/icons \
 	--base texjavahelplibicons \
 	--size 24 \
-	--keep-doc-src \
 	--out-dir doc
 
 doc/texjavahelplibicons-32.pdf	: lib/tjhcreateiconpdf.jar
 	$(tjhcreateiconpdf) java/texjavahelplib/icons \
 	--base texjavahelplibicons \
 	--size 32 \
-	--keep-doc-src \
 	--out-dir doc
 
 doc/texjavahelplibicons-64.pdf	: lib/tjhcreateiconpdf.jar
 	$(tjhcreateiconpdf) java/texjavahelplib/icons \
 	--base texjavahelplibicons \
 	--size 64 \
-	--keep-doc-src \
 	--out-dir doc
 
 lib/texjavahelpmk.jar	: java/texjavahelpmk/Manifest.txt \
@@ -324,5 +319,6 @@ clean	:
 	\rm -f lib/texjavahelpdemo.jar
 	\rm -f lib/tjhflattendocsrc.jar
 	\rm -f lib/tjhziphelpset.jar
+	\rm -f lib/tjhcreateiconpdf.jar
 	\rm -rf lib/helpset
 	\rm -f lib/helpset.zip

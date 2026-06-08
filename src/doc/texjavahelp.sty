@@ -3614,45 +3614,45 @@ halign upper=flush left,halign lower=justify,
     }
  }
 
-% { name } { suffix } { ext } { pdf } { page }
-\NewDocumentCommand \tjhmapiconimage { m m m m m }
+% { resource path } { name } { suffix } { ext } { pdf } { page }
+\NewDocumentCommand \tjhmapiconimage { m m m m m m }
  {
-   \tl_set:Nn \l__texjavahelp_icon_name_tl { #1 }
-   \tl_if_eq:NnTF \g__texjavahelp_small_icon_suffix_tl { #2 }
+   \tl_set:Nn \l__texjavahelp_icon_name_tl { #2 }
+   \tl_if_eq:NnTF \g__texjavahelp_small_icon_suffix_tl { #3 }
     {
       \prop_gput:NVn \g__texjavahelp_small_icon_map_prop
         \l__texjavahelp_icon_name_tl
         {
-          \__texjavahelp_include_icon_img:nn { #5 } { #4 }
+          \__texjavahelp_include_icon_img:nn { #6 } { #5 }
         }
     }
     {
-      \tl_if_eq:NnT \g__texjavahelp_large_icon_suffix_tl { #2 }
+      \tl_if_eq:NnT \g__texjavahelp_large_icon_suffix_tl { #3 }
        {
          \prop_gput:NVn \g__texjavahelp_large_icon_map_prop
            \l__texjavahelp_icon_name_tl
            {
-             \__texjavahelp_include_icon_img:nn { #5 } { #4 }
+             \__texjavahelp_include_icon_img:nn { #6 } { #5 }
            }
        }
     }
-   \tl_if_empty:nF { #2 }
-     {
-       \tl_put_right:Nn \l__texjavahelp_icon_name_tl { - #2 }
-     }
-   \prop_gput:NVn \g__texjavahelp_icon_map_prop
-     \l__texjavahelp_icon_name_tl
-     {
-       \__texjavahelp_include_icon_img:nn { #5 } { #4 }
-     }
    \tl_if_empty:nF { #3 }
      {
-       \tl_put_right:Nn \l__texjavahelp_icon_name_tl { . #3 }
+       \tl_put_right:Nn \l__texjavahelp_icon_name_tl { - #3 }
      }
    \prop_gput:NVn \g__texjavahelp_icon_map_prop
      \l__texjavahelp_icon_name_tl
      {
-       \__texjavahelp_include_icon_img:nn { #5 } { #4 }
+       \__texjavahelp_include_icon_img:nn { #6 } { #5 }
+     }
+   \tl_if_empty:nF { #4 }
+     {
+       \tl_put_right:Nn \l__texjavahelp_icon_name_tl { . #4 }
+     }
+   \prop_gput:NVn \g__texjavahelp_icon_map_prop
+     \l__texjavahelp_icon_name_tl
+     {
+       \__texjavahelp_include_icon_img:nn { #6 } { #5 }
      }
  }
 

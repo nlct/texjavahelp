@@ -82,6 +82,9 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new TeXJavaHelpLoadResources());
 
+      registerControlSequence(new TJHRequireIcons());
+      registerControlSequence(new TJHMapIconImage());
+
       // KOMA-Script commands that might occur in the document
       // preamble:
       registerControlSequence(new GobbleOpt("BeforeTOCHead", 1, 1));

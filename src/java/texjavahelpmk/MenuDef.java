@@ -61,10 +61,27 @@ public class MenuDef extends StandaloneDef
 
       if (imgName != null)
       {
-         list.add(parser.getListener().getControlSequence("includegraphics"));
-         Group grp = parser.getListener().createGroup();
-         grp.add(imgName, true);
-         list.add(grp);
+         TJHListener listener = (TJHListener)parser.getListener();
+
+         int n = list.size();
+
+         try
+         {
+            listener.getLargeIcon(null, parser, imgName.toString(parser), list);
+         }
+         catch (IOException e)
+         {
+            listener.getTeXApp().error(e);
+         }
+
+         if (list.size() == n)
+         {
+            list.add(parser.getListener().getControlSequence("includegraphics"));
+            Group grp = parser.getListener().createGroup();
+            grp.add(imgName, true);
+            list.add(grp);
+         }
+
          list.add(parser.getListener().getControlSequence("menuiconsep"));
       }
    }

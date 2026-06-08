@@ -55,19 +55,25 @@ public class Btn extends Dgls
 
       if (imgName != null)
       {
-         TeXParserListener listener = parser.getListener();
+         TJHListener listener = (TJHListener)parser.getListener();
 
          TeXObjectList list = listener.createStack();
 
-         list.add(listener.getControlSequence("includegraphics"));
-         list.add(listener.getOther('['));
-         list.add(listener.createString("scale"));
-         list.add(listener.getOther('='));
-         list.add(new TeXFloatingPoint(0.5));
-         list.add(listener.getOther(']'));
-         Group grp = listener.createGroup();
-         grp.add(imgName, true);
-         list.add(grp);
+         listener.getSmallIcon(null, stack, imgName.toString(parser), list);
+
+         if (list.isEmpty())
+         {
+            list.add(listener.getControlSequence("includegraphics"));
+            list.add(listener.getOther('['));
+            list.add(listener.createString("scale"));
+            list.add(listener.getOther('='));
+            list.add(new TeXFloatingPoint(0.5));
+            list.add(listener.getOther(']'));
+            Group grp = listener.createGroup();
+            grp.add(imgName, true);
+            list.add(grp);
+         }
+
          list.add(listener.getControlSequence("btniconsep"));
 
          TeXParserUtils.process(list, parser, stack);
