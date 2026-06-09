@@ -425,7 +425,7 @@ public class CreateIconPdf extends CLITeXAppAdapter
          for (int i = 0; i < imageFiles.size(); i++)
          {
             TJHIconFile icf = imageFiles.get(i);
-            icf.setPageNumber(i+i);
+            icf.setPageNumber(i+1);
 
             if (i > 0)
             {

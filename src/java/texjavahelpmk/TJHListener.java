@@ -1540,7 +1540,7 @@ public class TJHListener extends L2HConverter
       suffix = "-"+suffix;
 
       iconMap.put(name+suffix, iconFile);
-      iconMap.put(iconFile.toImageFileName(), iconFile);
+      iconMap.put(iconFile.toImageFileName(), new TJHIconFile(iconFile));
 
       if (suffix.equals(getHelpLib().getSmallIconSuffix()))
       {
@@ -1549,7 +1549,7 @@ public class TJHListener extends L2HConverter
             smallIconMap = new HashMap<String,TJHIconFile>();
          }
 
-         smallIconMap.put(name, iconFile);
+         smallIconMap.put(name, new TJHIconFile(iconFile));
       }
       else if (suffix.equals(getHelpLib().getLargeIconSuffix()))
       {
@@ -1558,7 +1558,7 @@ public class TJHListener extends L2HConverter
             largeIconMap = new HashMap<String,TJHIconFile>();
          }
 
-         largeIconMap.put(name, iconFile);
+         largeIconMap.put(name, new TJHIconFile(iconFile));
       }
    }
 
@@ -1673,7 +1673,7 @@ public class TJHListener extends L2HConverter
          VoidElement imgElem = createVoidElement("img");
 
          imgElem.putAttribute("src",
-             HtmlTag.encodeAttributeValue(filename, true,
+             iconFile.getResourcePath()+HtmlTag.encodeAttributeValue(filename, true,
              isUseEntitiesEnabled()));
 
          if (alt != null)

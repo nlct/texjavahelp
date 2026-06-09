@@ -18,11 +18,12 @@
 */
 package com.dickimawbooks.texjavahelplib;
 
-import java.io.InputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
 import java.util.ArrayDeque;
+
+import java.net.URL;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -265,6 +266,7 @@ public class ImageViewer extends JDialog
       String src = (String)as.getAttribute(HTML.Attribute.SRC);
       String alt = (String)as.getAttribute(HTML.Attribute.ALT);
       String title = (String)as.getAttribute(HTML.Attribute.TITLE);
+      String cssClass = (String)as.getAttribute(HTML.Attribute.CLASS);
 
       if (alt == null)
       {
@@ -290,7 +292,7 @@ public class ImageViewer extends JDialog
 
       try
       {
-         loadImage(src);
+         loadImage(src, cssClass);
       }
       catch (IOException e)
       {
@@ -317,50 +319,38 @@ public class ImageViewer extends JDialog
       }
    }
 
-   protected void loadImage(String src) throws IOException
+   protected void loadImage(String src, String cssClass) throws IOException
    {
       HelpsetFile hsf = helpLib.getHelpSetFile(src);
 
       image = null;
 
-      InputStream in = null;
-
-      try
+      if (hsf != null)
       {
-         if (hsf != null)
-         {
-            image = hsf.getImage();
-         }
-
-         if (image == null)
-         {
-            in = helpLib.getHelpSetResourceStream(src);
-
-            if (in == null)
-            {
-               throw new FileNotFoundException(
-                 helpLib.getMessageWithFallback(
-                  "error.image_not_found",
-                  "Image ''{0}'' not found", src));
-            }
-            else
-            {
-               image = ImageIO.read(in);
-            }
-         }
-
-         zoomDeque.clear();
-         previousZoom = Integer.valueOf(100);
-         zoomNumberModel.setValue(previousZoom);
-         updateImageCompSize();
+         image = hsf.getImage();
       }
-      finally
+
+      if (image == null)
       {
-         if (in != null)
+         URL url = helpLib.getHelpSetImageResource(src, cssClass);
+
+         if (url == null)
          {
-            in.close();
+            throw new FileNotFoundException(
+              helpLib.getMessageWithFallback(
+               "error.image_not_found",
+               "Image ''{0}'' not found", src));
+         }
+         else
+         {
+            image = ImageIO.read(url);
          }
       }
+
+      zoomDeque.clear();
+      previousZoom = Integer.valueOf(100);
+      zoomNumberModel.setValue(previousZoom);
+      updateImageCompSize();
    }
 
    protected void updateZoom(Number num)

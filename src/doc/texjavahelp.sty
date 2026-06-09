@@ -1677,7 +1677,7 @@
 
 % Semantic commands
 
-\NewDocumentCommand\widgetfmt{m}{\textsf{\bfseries #1}}
+\NewDocumentCommand\widgetfmt{m}{\textsf{\tjhsetrmhyphen \bfseries #1}}
 
 \glsxtraddlabelprefix{action.}
 \glsxtraddlabelprefix{button.}
@@ -1942,7 +1942,7 @@
 }
 \ExplSyntaxOff
 
-\NewDocumentCommand\appfmt{m}{\texttt{#1}}
+\NewDocumentCommand\appfmt{m}{\texttt{\tjhsetrmhyphen #1}}
 \MFUblocker{\appfmt}
 
 \NewDocumentCommand\unitfmt{m}{#1}
@@ -1951,7 +1951,7 @@
 \newcommand{\filedirsep}{\slash}
 \newcommand{\homefilefmt}[1]{\filefmt{\homedir\filedirsep#1}}
 
-\NewDocumentCommand\filefmt{m}{\texttt{#1}}
+\NewDocumentCommand\filefmt{m}{\texttt{\tjhsetrmhyphen #1}}
 \MFUblocker{\filefmt}
 
 \newcommand{\extfmt}[1]{\filefmt{#1}}
@@ -1980,13 +1980,13 @@
  \filemetametafmt{#1}{#2}{#3}{#4}{#5}%
 }
 
-\NewDocumentCommand\styfmt{m}{\texttt{#1}}
+\NewDocumentCommand\styfmt{m}{\texttt{\tjhsetrmhyphen #1}}
 \MFUblocker{\styfmt}
 
-\NewDocumentCommand\clsfmt{m}{\texttt{#1}}
+\NewDocumentCommand\clsfmt{m}{\texttt{\tjhsetrmhyphen #1}}
 \MFUblocker{\clsfmt}
 
-\NewDocumentCommand\optfmt{m}{\texttt{#1}}
+\NewDocumentCommand\optfmt{m}{\texttt{\tjhsetrmhyphen #1}}
 \MFUblocker{\optfmt}
 
 \NewDocumentCommand\styoptfmt{m}{\textcolor{styopt}{\optfmt{#1}}}
@@ -1995,20 +1995,20 @@
 \NewDocumentCommand\clsoptfmt{m}{\styopt{#1}}
 \MFUblocker{\clsoptfmt}
 
-\NewDocumentCommand\envfmt{m}{\textsf{#1}}
+\NewDocumentCommand\envfmt{m}{\textsf{\tjhsetrmhyphen #1}}
 \MFUblocker{\envfmt}
 
-\NewDocumentCommand\ctrfmt{m}{\textsf{#1}}
+\NewDocumentCommand\ctrfmt{m}{\textsf{\tjhsetrmhyphen #1}}
 \MFUblocker{\ctrfmt}
 
-\NewDocumentCommand\varfmt{m}{\textsf{#1}}
+\NewDocumentCommand\varfmt{m}{\textsf{\tjhsetrmhyphen #1}}
 \MFUblocker{\varfmt}
 
 \newcommand*{\stringxmltagfmt}[1]{\string<#1\string>}
-\NewDocumentCommand\xmltagfmt{m}{\texttt{<#1>}}
+\NewDocumentCommand\xmltagfmt{m}{\texttt{\tjhsetrmhyphen <#1>}}
 \MFUblocker{\xmltagfmt}
 
-\NewDocumentCommand\xmlattrfmt{m}{\textsf{#1}}
+\NewDocumentCommand\xmlattrfmt{m}{\textsf{\tjhsetrmhyphen #1}}
 \MFUblocker{\xmlattrfmt}
 
 \newcommand{\longswitch}{-\/-}
@@ -2016,20 +2016,20 @@
 \newcommand\pdflongswitchfmt[1]{\pdflongswitch #1}
 
 \NewDocumentCommand\longargfmt{m}{%
- \texttt{\longswitch\nolinebreak #1}%
+ \texttt{\tjhsetrmhyphen \longswitch\nolinebreak #1}%
 }
 \MFUblocker{\longargfmt}
 
 \newcommand{\shortswitch}{\string-}
 \newcommand\pdfshortswitchfmt[1]{\shortswitch #1}
 
-\NewDocumentCommand\shortargfmt{m}{\texttt{\shortswitch\nolinebreak #1}}
+\NewDocumentCommand\shortargfmt{m}{\texttt{\tjhsetrmhyphen \shortswitch\nolinebreak #1}}
 \MFUblocker{\shortargfmt}
 
-\NewDocumentCommand\bibentryfmt{m}{\textsf{@#1}}
+\NewDocumentCommand\bibentryfmt{m}{\textsf{\tjhsetrmhyphen @#1}}
 \MFUblocker{\bibentryfmt}
 
-\NewDocumentCommand\bibentryfieldfmt{m}{\textsf{#1}}
+\NewDocumentCommand\bibentryfieldfmt{m}{\textsf{\tjhsetrmhyphen #1}}
 \MFUblocker{\bibentryfieldfmt}
 
 \newcommand*{\fmtorcode}[2]{#1{#2}}
@@ -2064,10 +2064,16 @@
 
 
 \newcommand*{\qt}[1]{``#1''}
-\NewDocumentCommand\qtt{m}{\qt{\,\texttt{#1}\,}}
+\NewDocumentCommand\qtt{m}{\qt{\,\texttt{\tjhsetrmhyphen #1}\,}}
 
-\newcommand*{\csfmtfont}[1]{\ifmmode \mbox{\texttt{#1}}\else\texttt{#1}\fi}
-\newcommand*{\csfmtcolourfont}[1]{\texttt{\textcolor{cs}{#1}}}
+\newcommand*{\csfmtfont}[1]{%
+ \ifmmode
+   \mbox{\texttt{\tjhsetrmhyphen #1}}%
+ \else
+   \texttt{\tjhsetrmhyphen #1}%
+ \fi
+}
+\newcommand*{\csfmtcolourfont}[1]{\texttt{\tjhsetrmhyphen \textcolor{cs}{#1}}}
 
 \NewDocumentCommand\csfmt{m}{\csfmtfont{\codebackslash #1}}
 \NewDocumentCommand\cspuncfmt{m}{\csfmt{#1}}
@@ -2549,13 +2555,21 @@
 % switches, options etc., uses a serif hyphen to reduce confusion with an 
 % actual hyphen in the code.
 
-\renewrobustcmd{\-}{%
- \discretionary
- {{\rmfamily\char\ifnum\hyphenchar\font<0
-  \defaulthyphenchar\else\hyphenchar\font\fi
- }}%
- {}{}%
-}
+\ExplSyntaxOn
+  \newcommand\tjhsetrmhyphen{\let\-\tjhdiscretionaryhyphen}
+  \NewDocumentCommand \tjhdiscretionaryhyphen { }
+  {
+    \discretionary{\tjhromanhyphen}{}{}%
+  }
+ \sys_if_engine_opentype:TF
+  {
+     \newcommand{\tjhromanhyphen}{\textrm{\char"2010 }}
+  }
+  {
+    \newcommand{\tjhromanhyphen}{\textrm{\char\ifnum\hyphenchar\font<\z@
+      \defaulthyphenchar\else\hyphenchar\font\fi}}
+  }
+\ExplSyntaxOff
 
 \newcommand{\dequals}{%
  \texorpdfstring
@@ -3383,13 +3397,15 @@ halign upper=flush left,halign lower=justify,
   }
 }
 
+\newcommand\tjhimageframe[1]{\frame{#1}}
+
 \bool_new:N \l__texjavahelp_frameimg_bool
 \bool_set_false:N \l__texjavahelp_frameimg_bool
 
 \cs_new:Nn \__texjavahelp_img_encap:n
  {
    \bool_if:NTF \l__texjavahelp_frameimg_bool
-    { \frame { #1 } }
+    { \tjhimageframe { #1 } }
     { #1 }
  }
 
@@ -3591,11 +3607,11 @@ halign upper=flush left,halign lower=justify,
     }
  }
 
-\NewDocumentCommand \TJHLargeIconImageFrame { m } { \fbox { #1 } }
+\NewDocumentCommand \TJHLargeIconImageFrame { m } { \tjhimageframe { #1 } }
 
 \NewDocumentCommand \TJHSmallIconImageFrame { m }
  {
-   \TJHLargeIconImageFrame { #1 }
+   \tjhimageframe { #1 }
  }
 
 \NewDocumentCommand \tjhLargeIcon { m }

@@ -56,6 +56,17 @@ public class TJHIconFile
       this.pageNum = pageNum;
    }
 
+   public TJHIconFile(TJHIconFile iconFile)
+   {
+      this.texPath = iconFile.texPath;
+      this.pdfFile = iconFile.pdfFile;
+      this.resourcePath = iconFile.resourcePath;
+      this.name = iconFile.name;
+      this.suffix = iconFile.suffix;
+      this.ext = iconFile.ext;
+      this.pageNum = iconFile.pageNum;
+   }
+
    public String formatTeXPath()
    {
       return texPath.getTeXPath(false);

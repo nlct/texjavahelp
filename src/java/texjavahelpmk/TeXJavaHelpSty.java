@@ -80,6 +80,9 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new AtGobble("WriteTJHDivisionInfo", 5));
       registerControlSequence(new AtGobble("WriteTJHLabel", 1));
 
+      registerControlSequence(new AtGobble("TJHLargeIconImageFrame"));
+      registerControlSequence(new AtGobble("TJHSmallIconImageFrame"));
+
       registerControlSequence(new TeXJavaHelpLoadResources());
 
       registerControlSequence(new TJHRequireIcons());
@@ -116,6 +119,11 @@ public class TeXJavaHelpSty extends UserGuideSty
         listener.getOther('@'), null);
 
       addSemanticCommand("bibentryfieldfmt", TeXFontFamily.TT, STYLE2);
+
+      registerControlSequence(new Relax("tjhsetrmhyphen"));// ignore
+      registerControlSequence(new Relax("tjhdiscretionaryhyphen"));// ignore
+      registerControlSequence(listener.createSymbol(
+        "tjhromanhyphen", 0x2010));
 
       registerControlSequence(new FancyBreak());
       registerControlSequence(new PlainBreak());

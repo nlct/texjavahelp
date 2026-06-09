@@ -115,9 +115,12 @@ public class TJHEditorKit extends HTMLEditorKit
 
          if (src == null) return null;
 
+         String cssClass = (String)getElement().getAttributes()
+                       .getAttribute(HTML.Attribute.CLASS);
+
          try
          {
-            return helpLib.getHelpSetResource(src);
+            return helpLib.getHelpSetImageResource(src, cssClass);
          }
          catch (FileNotFoundException e)
          {

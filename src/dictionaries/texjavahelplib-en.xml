@@ -623,6 +623,12 @@ code should appear in the PDF</entry>
 <entry key="message.helpset.search_found">Found helpset file {0}</entry>
 <entry key="message.helpset.filtered_locales">{0} helpset {0,choice,0#locales|1#locale|1&lt;locales} established</entry>
 
+<entry key="message.adding_doc_image">Adding documentation image {0} (resource path={1}, filename={2}, ext={3}, size={4})</entry>
+<entry key="message.added_doc_image">Added documentation image map {0} url={1}</entry>
+<entry key="message.added_small_doc_image">Added documentation small image map {0} url={1}</entry>
+<entry key="message.added_large_doc_image">Added documentation large image map {0} url={1}</entry>
+<entry key="message.cant_find_doc_image">Can''t find documentation image map {0} (size={1})</entry>
+
 <!--  Errors -->
 <entry key="error.xml.more_than_one_tag">More than 1 &lt;{0}&gt; found</entry>
 <entry key="error.xml.missing_attr_in_tag">Missing ''{0}'' attribute in &lt;{1}&gt;</entry>
@@ -651,6 +657,8 @@ code should appear in the PDF</entry>
 <entry key="error.content_type_not_html">{0}: Content type {1} is not HTML</entry>
 
 <entry key="error.image_not_found">Image ''{0}'' not found</entry>
+
+<entry key="error.failed_to_add_doc_image_map">Failed to add documentation image map name={0}, path={1}, filename={2}, ext={3}, size={4}</entry>
 
 <entry key="error.no_texjavaparserlib_lang_support">No language support file found for texjavaparserlib</entry>
 <entry key="error.resource_not_found">Resource file ''{0}'' not found</entry>

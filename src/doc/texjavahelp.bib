@@ -578,6 +578,7 @@ the document on).}
   name={\styfmt{font\-awe\-some}}
 }
 
+@package{pkg.babel}
 @package{pkg.pifont}
 @package{pkg.twemojis}
 
@@ -707,6 +708,8 @@ the document on).}
 
 % Special bib2gls types for texjavahelp.sty
 
+@bibentry{bibentry.bibentry}
+@bibentry{bibentry.bibentryfield}
 @bibentry{bibentry.application}
 @bibentry{bibentry.commonapplication}
 @bibentry{bibentry.file}
@@ -800,6 +803,9 @@ the document on).}
 @xmlelement{xmlelement.div}
 @xmlelement{xmlelement.font}
 @xmlelement{xmlelement.img}
+@xmlelement{xmlelement.meta}
+@xmlelement{xmlelement.br}
+@xmlelement{xmlelement.hr}
 
 @xmlattribute{xmlattr.id}
 @xmlattribute{xmlattr.name}
@@ -824,6 +830,46 @@ the document on).}
 @file{file.navigation.xml}
 @file{file.search.xml}
 
+@file{file.texjavahelplibicons-16.def,
+  name={\filefmt{tex\-java\-help\-lib\-icons\dhyphen 16\dfullstop def}}
+}
+
+@file{file.texjavahelplibicons-16.pdf,
+  name={\filefmt{tex\-java\-help\-lib\-icons\dhyphen 16\dfullstop pdf}}
+}
+
+@file{file.texjavahelplibicons-20.def,
+  name={\filefmt{tex\-java\-help\-lib\-icons\dhyphen 20\dfullstop def}}
+}
+
+@file{file.texjavahelplibicons-20.pdf,
+  name={\filefmt{tex\-java\-help\-lib\-icons\dhyphen 20\dfullstop pdf}}
+}
+
+@file{file.texjavahelplibicons-24.def,
+  name={\filefmt{tex\-java\-help\-lib\-icons\dhyphen 24\dfullstop def}}
+}
+
+@file{file.texjavahelplibicons-24.pdf,
+  name={\filefmt{tex\-java\-help\-lib\-icons\dhyphen 24\dfullstop pdf}}
+}
+
+@file{file.texjavahelplibicons-32.def,
+  name={\filefmt{tex\-java\-help\-lib\-icons\dhyphen 32\dfullstop def}}
+}
+
+@file{file.texjavahelplibicons-32.pdf,
+  name={\filefmt{tex\-java\-help\-lib\-icons\dhyphen 32\dfullstop pdf}}
+}
+
+@file{file.texjavahelplibicons-64.def,
+  name={\filefmt{tex\-java\-help\-lib\-icons\dhyphen 64\dfullstop def}}
+}
+
+@file{file.texjavahelplibicons-64.pdf,
+  name={\filefmt{tex\-java\-help\-lib\-icons\dhyphen 64\dfullstop pdf}}
+}
+
 % FILE EXTENSIONS
 
 @fileext{ext.xml}
@@ -832,6 +878,7 @@ the document on).}
 @fileext{ext.aux}
 @fileext{ext.glstex}
 @fileext{ext.toc}
+@fileext{ext.jar}
 
 % ENVIRONMENTS
 
@@ -874,6 +921,9 @@ as the default for \gls{gls}-like and \gls{glstext}-like commands}
 
 % COUNTERS
 
+@counter{ctr.table}
+@counter{ctr.figure}
+
 @counter{ctr.subfigure,
   providedby={\sty{texjavahelp}},
   name={\ctrfmt{sub\-fig\-ure}},
@@ -884,8 +934,15 @@ sub-figure}
 % COMMANDS
 
 @command{jobname}
+
+@command{part}
 @command{chapter}
 @command{section}
+@command{subsection}
+@command{subsubsection}
+@command{paragraph}
+@command{subparagraph}
+
 @command{label}
 @command{ref}
 @command{vref}
@@ -909,6 +966,19 @@ sub-figure}
 @command{texttt}
 @command{slash}
 @command{verb}
+
+@command{newcommand,
+  name={\csfmt{new\-com\-mand}}
+}
+@command{renewcommand,
+  name={\csfmt{re\-new\-com\-mand}}
+}
+@command{NewDocumentCommand,
+  name={\csfmt{New\-Doc\-u\-ment\-Com\-mand}}
+}
+@command{RenewDocumentCommand,
+  name={\csfmt{Re\-new\-Doc\-u\-ment\-Com\-mand}}
+}
 
 @command{tableofcontents,
  name={\csfmt{table\-of\-contents}}
@@ -946,7 +1016,24 @@ sub-figure}
   providedby={\sty{glossaries}},
   syntax={\margm{text}},
   description={expands to \glssymbol{dblqt}\meta{text}\glssymbol{dblqt}, where
-  the \glssymbol{dblqt} is a literal straight double-quote character}
+  the \glssymbol{dblqt} is a literal straight double-quote
+character},
+  seealso={qt,qtt}
+}
+
+@command{qt,
+  providedby={\sty{texjavahelp}},
+  syntax={\margm{text}},
+  description={expands to \code{``\meta{text}''}},
+  seealso={qtt,glsquote}
+}
+
+@command{qtt,
+  providedby={\sty{texjavahelp}},
+  syntax={\margm{text}},
+  description={similar to \gls{qt} but typesets \meta{text} in
+a monospaced font with a thin space on either side},
+  seealso={qt,glsquote}
 }
 
 @command{GlsXtrSetStarModifier,
@@ -1478,7 +1565,8 @@ input path to the same as for \gls{includegraphics} and inputs
  name={\optfmt{frame}},
  parent={includeimg},
  syntax={\meta{boolean}},
- description={if true, place a frame around the image}
+ description={if true, place a frame around the image (using
+\gls{tjhimageframe})}
 }
 
 @option{opt.includeimg.alt,
@@ -1686,13 +1774,20 @@ default location format}
 @command{glssymbol,
  providedby={\sty{glossaries}},
  syntax={\oargm{options}\margm{label}\oargm{insert}},
- description={references a glossary entry's symbol}
+ description={references a glossary entry's \bibentryfield{symbol}
+field}
 }
 
 @command{glstext,
  providedby={\sty{glossaries}},
  syntax={\oargm{options}\margm{label}\oargm{insert}},
- description={references a glossary entry's text field}
+ description={references a glossary entry's \bibentryfield{text} field}
+}
+
+@command{glsname,
+ providedby={\sty{glossaries}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={references a glossary entry's \bibentryfield{name} field}
 }
 
 @command{glslink,
@@ -2121,6 +2216,36 @@ to the \meta{options}}
 \code{\gls{glsfmttext}\marg{xmlattr.\meta{label}}}}
 }
 
+@command{bibentryfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{bib\-entry\-fmt}},
+ syntax={\margm{name}},
+ description={semantic command used to format the name of a
+\ext{bib} entry}
+}
+
+@command{bibentry,
+ providedby={\sty{texjavahelp}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={equivalent to
+\code{\gls{gls}\oargm{options}\marg{bibentry.\meta{label}}\oargm{insert}}}
+}
+
+@command{bibentryfieldfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{bib\-entry\-field\-fmt}},
+ syntax={\margm{name}},
+ description={semantic command used to format the name of a
+\ext{bib} entry field}
+}
+
+@command{bibentryfield,
+ providedby={\sty{texjavahelp}},
+ syntax={\oargm{options}\margm{label}\oargm{insert}},
+ description={equivalent to
+\code{\gls{gls}\oargm{options}\marg{bibentryfield.\meta{label}}\oargm{insert}}}
+}
+
 @command{oarg,
  providedby={\sty{texjavahelp}},
  syntax={\margm{text}},
@@ -2304,6 +2429,26 @@ this expands to \gls{shortswitch}\meta{text}}
  name={\csfmt{key\-val\-list}},
  description={expands to
 \code{\gls{meta}\marg{key\gls{dequals} value list}}}
+}
+
+@command{tjhsetrmhyphen,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{tjh\-set\-rm\-hy\-phen}},
+ description={used within semantic commands like \gls{csfmt} to
+locally redefine \gls{cs.hyphen} to \gls{tjhdiscretionaryhyphen}}
+}
+
+@command{tjhromanhyphen,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{tjh\-ro\-man\-hy\-phen}},
+ description={the Roman hyphen used by \gls{tjhdiscretionaryhyphen}}
+}
+
+@command{tjhdiscretionaryhyphen,
+  providedby={\sty{texjavahelp}},
+  name={\csfmt{tjh\-dis\-cre\-tion\-ary\-hy\-phen}},
+  description={indicates a hyphenation point using
+\gls{tjhromanhyphen} for the hyphen}
 }
 
 @command{dhyphen,
@@ -2547,6 +2692,50 @@ path}\margm{name}\margm{suffix}\margm{ext}\margm{pdf}\margm{page}},
 \gls{TJHRequireIcons} and created by \app{tjhcreateiconpdf}}
 }
 
+@command{TJHLargeIconImageFrame,
+  name={\csfmt{TJH\-Large\-Icon\-Image\-Frame}},
+  providedby={\sty{texjavahelp}},
+  syntax={\margm{image}},
+  description={used by \gls{tjhLargeIcon} to place a frame around
+the image (with \gls{tjhimageframe})}
+}
+
+@command{tjhLargeIcon,
+  name={\csfmt{tjhLargeIcon}},
+  providedby={\sty{texjavahelp}},
+  syntax={\margm{image-name}},
+  description={finds the large image icon associated with
+\meta{image-name} and displays it with \gls{includegraphics}
+framed with \gls{TJHLargeIconImageFrame}}
+}
+
+@command{TJHSmallIconImageFrame,
+  name={\csfmt{TJH\-Small\-Icon\-Image\-Frame}},
+  providedby={\sty{texjavahelp}},
+  syntax={\margm{image}},
+  description={used by \gls{tjhSmallIcon} to place a frame around
+the image (with \gls{tjhimageframe})}
+}
+
+@command{tjhSmallIcon,
+  name={\csfmt{tjhSmallIcon}},
+  providedby={\sty{texjavahelp}},
+  syntax={\margm{image-name}},
+  description={finds the small image icon associated with
+\meta{image-name} and displays it with \gls{includegraphics}
+framed with \gls{TJHSmallIconImageFrame}}
+}
+
+@command{tjhimageframe,
+  name={\csfmt{tjh\-image\-frame}},
+  providedby={\sty{texjavahelp}},
+  syntax={\margm{content}},
+  description={used to place a frame around an image, this simply
+does \code{\gls{frame}\margm{content}}}
+}
+
+@command{frame}
+
 % BIB2GLS QUARKS
 @command{MGP,
   name={\csfmt{MGP} (\appfmt{bib2gls} quark)},
@@ -2583,6 +2772,11 @@ path}\margm{name}\margm{suffix}\margm{ext}\margm{pdf}\margm{page}},
 @cspunctuation{cs.hyphen,
   symbol={\cspuncfmt{\char`\- }},
   description={discretionary hyphen}
+}
+
+@cspunctuation{cs.comma,
+  symbol={\cspuncfmt{\char`\, }},
+  description={thin space}
 }
 
 % TERMS AND ABBREVIATIONS
@@ -2680,6 +2874,46 @@ class for applications that use the \gls{TeXParserLib}.}
 @punctuation{dblqt,
   symbol={\code{\char`\" }},
   description={straight double quote}
+}
+
+@punctuation{openanglebracket,
+  symbol={\code{<}},
+  description={open angle bracket}
+}
+
+@punctuation{closeanglebracket,
+  symbol={\code{>}},
+  description={close angle bracket}
+}
+
+@punctuation{hyphen-minus,
+  symbol={\code{-}},
+  description={hyphen-minus character}
+}
+
+@punctuation{hyphen,
+  symbol={\tjhromanhyphen},
+  description={hyphen character}
+}
+
+@punctuation{equal-sign,
+  symbol={\code{=}},
+  description={equal sign}
+}
+
+@punctuation{comma,
+  symbol={\code{,}},
+  description={comma}
+}
+
+@punctuation{colon,
+  symbol={\code{:}},
+  description={colon}
+}
+
+@punctuation{fullstop,
+  symbol={\code{.}},
+  description={full stop\slash period}
 }
 
 % GENERAL INDEX

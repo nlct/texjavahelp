@@ -84,30 +84,35 @@ doc/texjavahelplib.bib	: lib/tjhxml2bib.jar \
 
 doc/texjavahelplibicons-16.pdf	: lib/tjhcreateiconpdf.jar
 	$(tjhcreateiconpdf) java/texjavahelplib/icons \
+	--resource-path '/com/dickimawbooks/texjavahelplib/icons/' \
 	--base texjavahelplibicons \
 	--size 16 \
 	--out-dir doc
 
 doc/texjavahelplibicons-20.pdf	: lib/tjhcreateiconpdf.jar
 	$(tjhcreateiconpdf) java/texjavahelplib/icons \
+	--resource-path '/com/dickimawbooks/texjavahelplib/icons/' \
 	--base texjavahelplibicons \
 	--size 20 \
 	--out-dir doc
 
 doc/texjavahelplibicons-24.pdf	: lib/tjhcreateiconpdf.jar
 	$(tjhcreateiconpdf) java/texjavahelplib/icons \
+	--resource-path '/com/dickimawbooks/texjavahelplib/icons/' \
 	--base texjavahelplibicons \
 	--size 24 \
 	--out-dir doc
 
 doc/texjavahelplibicons-32.pdf	: lib/tjhcreateiconpdf.jar
 	$(tjhcreateiconpdf) java/texjavahelplib/icons \
+	--resource-path '/com/dickimawbooks/texjavahelplib/icons/' \
 	--base texjavahelplibicons \
 	--size 32 \
 	--out-dir doc
 
 doc/texjavahelplibicons-64.pdf	: lib/tjhcreateiconpdf.jar
 	$(tjhcreateiconpdf) java/texjavahelplib/icons \
+	--resource-path '/com/dickimawbooks/texjavahelplib/icons/' \
 	--base texjavahelplibicons \
 	--size 64 \
 	--out-dir doc

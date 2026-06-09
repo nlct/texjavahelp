@@ -1428,6 +1428,208 @@ public class TeXJavaHelpLib
       return getHelpIconSet(base, largeIconSuffix);
    }
 
+   public Image getDocumentationIcon(String name)
+   {
+      return getDocumentationIconImage(name, null);
+   }
+
+   public Image getDocumentationIconImage(String name, String size)
+   {
+      URL url = getDocumentationIconURL(name, size);
+      Image image = null;
+
+      if (url != null)
+      {
+         Dictionary<URL,Image> imageCache = getHelpSetImageCache();
+
+         if (imageCache != null)
+         {
+            image = imageCache.get(url);
+         }
+      }
+
+      return image;
+   }
+
+   public URL getDocumentationIconURL(String name)
+   {
+      return getDocumentationIconURL(name, null);
+   }
+
+   public URL getDocumentationIconURL(String name, String size)
+   {
+      URL url = null;
+
+      if (size == null || name.contains("."))
+      {
+         url = (helpsetIcons == null ? null : helpsetIcons.get(name));
+
+         if (url == null)
+         {
+            url = (helpsetLargeIcons == null ? null : helpsetLargeIcons.get(name));
+         }
+      }
+      else if ("small".equals(size))
+      {
+         url = (helpsetSmallIcons == null ? null : helpsetSmallIcons.get(name));
+      }
+      else if ("large".equals(size))
+      {
+         url = (helpsetLargeIcons == null ? null : helpsetLargeIcons.get(name));
+      }
+
+      if (url == null)
+      {
+         debug(getMessageWithFallback(
+           "message.cant_find_doc_image",
+           "Can''t find documentation image map {0} (size={1})",
+           name, size
+         ));
+      }
+
+      return url;
+   }
+
+   public void addDocumentationIcon(String name, String resourcePath,
+       String filename, String ext, String size)
+    throws IOException
+   {
+      Image image = null;
+      URL url = null;
+
+      Dictionary<URL,Image> imageCache = getHelpSetImageCache();
+
+      debug(getMessageWithFallback(
+         "message.adding_doc_image",
+         "Adding documentation image {0} (resource path={1}, filename={2}, ext={3}, size={4})",
+          name, resourcePath, filename, ext, size
+       ));
+
+      String filePath = resourcePath+filename;
+      String namePath = resourcePath+name;
+
+      url = getClass().getResource(filePath);
+
+      if (url != null)
+      {
+         if (imageCache != null)
+         {
+            image = ImageIO.read(url);
+
+            if (image != null)
+            {
+               imageCache.put(url, image);
+            }
+         }
+
+         if (helpsetIcons == null)
+         {
+            helpsetIcons = new HashMap<String,URL>();
+         }
+
+         helpsetIcons.put(filePath, url);
+
+         debug(getMessageWithFallback(
+           "message.added_doc_image_map",
+           "Added documentation image map {0} url={1}",
+           filePath, url
+         ));
+
+         helpsetIcons.put(namePath, url);
+
+         debug(getMessageWithFallback(
+           "message.added_doc_image_map",
+           "Added documentation image map {0} url={1}",
+           namePath, url
+         ));
+      }
+
+      if ("small".equals(size))
+      {
+         if (helpsetSmallIcons == null)
+         {
+            helpsetSmallIcons = new HashMap<String,URL>();
+         }
+
+         String smallFilePath = namePath + smallIconSuffix + "." + ext;
+
+         url = getDocumentationIconURL(smallFilePath);
+
+         if (url == null)
+         {
+            url = getClass().getResource(smallFilePath);
+         }
+
+         if (url != null)
+         {
+            if (imageCache != null)
+            {
+               image = imageCache.get(url);
+
+               if (image == null)
+               {
+                  image = ImageIO.read(url);
+
+                  if (image != null)
+                  {
+                     imageCache.put(url, image);
+                  }
+               }
+            }
+
+            helpsetSmallIcons.put(namePath, url);
+
+            debug(getMessageWithFallback(
+              "message.added_doc_small_image_map",
+              "Added documentation small image map {0} url={1}",
+              namePath, url
+            ));
+         }
+      }
+      else if ("large".equals(size))
+      {
+         if (helpsetLargeIcons == null)
+         {
+            helpsetLargeIcons = new HashMap<String,URL>();
+         }
+
+         String largeFilePath = namePath + largeIconSuffix + "." + ext;
+
+         url = getDocumentationIconURL(largeFilePath);
+
+         if (url == null)
+         {
+            url = getClass().getResource(largeFilePath);
+         }
+
+         if (url != null)
+         {
+            if (imageCache != null)
+            {
+               image = imageCache.get(url);
+
+               if (image == null)
+               {
+                  image = ImageIO.read(url);
+
+                  if (image != null)
+                  {
+                     imageCache.put(url, image);
+                  }
+               }
+            }
+
+            helpsetLargeIcons.put(namePath, url);
+
+            debug(getMessageWithFallback(
+              "message.added_doc_large_image_map",
+              "Added documentation large image map {0} url={1}",
+              namePath, url
+            ));
+         }
+      }
+   }
+
    public void setHelpsetSubDirPrefix(String prefix)
    {
       if (prefix == null)
@@ -1524,6 +1726,53 @@ public class TeXJavaHelpLib
    public Dictionary<URL,Image> getHelpSetImageCache()
    {
       return helpSet == null ? null : helpSet.getImageCache();
+   }
+
+   public URL getHelpSetImageResource(String imgPath, String cssClass)
+    throws FileNotFoundException
+   {
+      boolean isResource = false;
+      String size = null;
+
+      if (cssClass != null)
+      {
+         String[] split = cssClass.trim().split(" +");
+
+         for (String s : split)
+         {
+            if (s.equals("resourceicon"))
+            {
+               isResource = true;
+               break;
+            }
+            else if (s.equals("smallresourceicon"))
+            {
+               isResource = true;
+               size = "small";
+               break;
+            }
+            else if (s.equals("largeresourceicon"))
+            {
+               isResource = true;
+               size = "large";
+               break;
+            }
+         }
+      }
+
+      URL url = null;
+
+      if (isResource)
+      {
+         url = getDocumentationIconURL(imgPath, size);
+      }
+
+      if (url == null)
+      {
+         return getHelpSetResource(imgPath);
+      }
+
+      return url;
    }
 
    public URL getHelpSetResource(String filename)
@@ -2081,6 +2330,120 @@ public class TeXJavaHelpLib
       return stream;
    }
 
+   public Reader getHelpsetIconsXMLReader()
+     throws IOException
+   {
+      HelpsetFile hsf = findHelpSetFile(helpsetIconsXmlFilename);
+
+      if (hsf == null)
+      {
+         return new BufferedReader(new InputStreamReader(getHelpsetIconsXMLInputStream()));
+      }
+      else
+      {
+         debug(getMessageWithFallback(
+           "message.reading", "Reading {0}...", hsf));
+
+         return hsf.getStringReader();
+      }
+   }
+
+   public InputStream getHelpsetIconsXMLInputStream()
+     throws FileNotFoundException
+   {
+      String path;
+      InputStream stream = null;
+
+      if (helpsetLocale == null || helpsetsubdir != null)
+      {
+         path = getHelpSetResourcePath() + "/" + helpsetIconsXmlFilename;
+         stream = getClass().getResourceAsStream(path);
+      }
+      else
+      {
+         String base = resourcebase + "/" + helpsetdir;
+
+         Locale locale = helpsetLocale.getLocale();
+         helpsetsubdir = helpsetLocale.getTag();
+
+         path = base + "/" + helpsetsubdir + "/" + helpsetIconsXmlFilename;
+
+         stream = getClass().getResourceAsStream(path);
+
+         if (stream == null)
+         {
+            helpsetsubdir = locale.toLanguageTag();
+            path = base + "/" + helpsetsubdir + "/" + helpsetIconsXmlFilename;
+            stream = getClass().getResourceAsStream(path);
+         }
+
+         if (stream == null)
+         {
+            String lang = locale.getLanguage();
+            String country = locale.getCountry();
+            String tag = lang + "-" + country;
+
+            if (country == null || country.isEmpty() || helpsetsubdir.equals(tag))
+            {
+               helpsetsubdir = lang;
+
+               path = base + "/" + helpsetsubdir + "/" + helpsetIconsXmlFilename;
+            }
+            else
+            {
+               helpsetsubdir = tag;
+
+               path = base + "/" + helpsetsubdir + "/" + helpsetIconsXmlFilename;
+
+               stream = getClass().getResourceAsStream(path);
+
+               if (stream == null)
+               {
+                  helpsetsubdir = lang;
+
+                  path = base + "/" + helpsetsubdir + "/" + helpsetIconsXmlFilename;
+               }
+            }
+
+            stream = getClass().getResourceAsStream(path);
+
+            if (stream == null)
+            {
+               String script = locale.getScript();
+
+               if (script != null && !script.isEmpty())
+               {
+                  helpsetsubdir = lang + "-" + script;
+
+                  path = base + "/" + helpsetsubdir
+                     + "/" + helpsetIconsXmlFilename;
+
+                  stream = getClass().getResourceAsStream(path);
+               }
+
+               if (stream == null)
+               {
+                  path = base + "/" + helpsetIconsXmlFilename;
+                  helpsetsubdir = "";
+
+                  stream = getClass().getResourceAsStream(path);
+               }
+            }
+         }
+      }
+
+      if (stream == null)
+      {
+         throw new FileNotFoundException(
+           getMessage("error.resource_not_found", path));
+      }
+
+      debug(getMessageWithFallback(
+        "message.reading", "Reading {0}...", path));
+
+      return stream;
+   }
+
    public void initHelpSet()
     throws IOException,SAXException
    {
@@ -2203,6 +2566,8 @@ public class TeXJavaHelpLib
       }
 
       searchData = SearchData.load(this);
+
+      TJHIconFileReader.load(this);
 
       helpFrame = new HelpFrame(this, title);
    }
@@ -4226,6 +4591,11 @@ public class TeXJavaHelpLib
    protected Helpset helpSet;
    protected String helpsetZipName = null;
 
+   protected String helpsetIconsXmlFilename = "icons.xml";
+   protected HashMap<String,URL> helpsetIcons;
+   protected HashMap<String,URL> helpsetSmallIcons;
+   protected HashMap<String,URL> helpsetLargeIcons;
+
    protected String indexXmlFilename = "index.xml";
    protected Vector<IndexItem> indexData;
    protected TreeSet<IndexItem> indexGroupList;
@@ -4280,6 +4650,6 @@ public class TeXJavaHelpLib
    public static final String LICENSE_GPL3 = String.format(
    "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>%nThis is free software: you are free to change and redistribute it.%nThere is NO WARRANTY, to the extent permitted by law.");
 
-   public static final String VERSION = "1.3.20260606";
-   public static final String VERSION_DATE = "2026-06-06";
+   public static final String VERSION = "1.3.20260609";
+   public static final String VERSION_DATE = "2026-06-09";
 }
