@@ -82,6 +82,7 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new AtGobble("TJHLargeIconImageFrame"));
       registerControlSequence(new AtGobble("TJHSmallIconImageFrame"));
+      registerControlSequence(new TextualContentCommand("tjhsmalliconheight", "2ex"));
 
       registerControlSequence(new TeXJavaHelpLoadResources());
 
@@ -785,6 +786,7 @@ public class TeXJavaHelpSty extends UserGuideSty
       getListener().requirepackage(null, "textcomp", false, stack);
       getListener().requirepackage(null, "twemojis", false, stack);
       getListener().requirepackage(null, "fontawesome", false, stack);
+      getListener().requirepackage(null, "pifont", false, stack);
       getListener().requirepackage(null, "hyperref", false, stack);
 
       KeyValList options = new KeyValList();

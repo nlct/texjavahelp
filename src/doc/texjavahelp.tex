@@ -410,19 +410,21 @@ the following symbols in this document:
 
 Semantic commands are commands that relate to a particular idea or meaning.
 For example, \code{\gls{emph}\margm{text}} is a semantic command that indicates
-emphasis. This may render \meta{text} in an italic font, but this isn't always the
+emphasis. This may render \meta{text} in an italic or slanted font, but this isn't always the
 case. In \gls{html}, this is equivalent to using
 \code{\xmlelem{em}\meta{text}\xmlEndElem{em}}.
 The style may be changed, but the meaning remains.
 
-As with other commands, semantic commands still have a defined syntax, but
-there is no meaning associated with purely syntactic commands, such as
-\gls{textit}. The commands \gls{emph} and \gls{textit} have the same syntax, in that
-they both take a single argument, but \gls{emph} specifically means that the
-argument should be emphasized, whereas \gls{textit} is a font changing
-instruction. Font declarations should be avoided, except where
-\gls{bfseries} is used at the start of a \env{tabular} cell, which
-will be interpreted as a header cell.
+Both semantic and syntactic commands have a defined syntax, but
+there is no meaning associated with purely syntactic commands, such
+as \gls{textit}. For example, the commands \gls{emph} and
+\gls{textit} have the same syntax, in that they both take a single
+argument, but \gls{emph} specifically means that the argument should
+be emphasized, whereas \gls{textit} is a font changing instruction.
+
+Font declarations should be avoided with \app{texjavahelpmk}, except where \gls{bfseries} is
+used at the start of a \env{tabular} cell, which will be interpreted
+as a header cell.
 
 The \sty{texjavahelp} package provides a number of semantic commands, not only
 because it's good practice but also because it helps the \gls{TeXParserLib} to
@@ -430,10 +432,8 @@ produce more accessible \gls{html} with as little inline styling as possible.
 The other reason is to allow the use of label prefixes to help disambiguate
 closely related labels.  For example, the label \qtt{switch.help} is for the
 command line switch \switch{help} whereas \qtt{menu.help} is for a \menu{help}
-menu and \qtt{button.help} is for a \widget{help} button.
-Buttons and menu items may have mnemonics, such as
-\mnemonic{help} for the help button or \mnemonictrail{help.manual}
-for the \menu{help.manual} menu item.
+menu and \qtt{button.help} is for a button (\widget{help} or
+\btn{help}).
 
 Commands that specifically relate to entries that have been defined
 in a \ext{bib} file are described in \sectionref{sec:tjhglscmds}.
@@ -453,10 +453,10 @@ In the event that \gls{strong} hasn't been defined, the
 \end{coderesult}
 
 The \app{texjavahelpmk} application on parsing this will create the HTML code:
-\begin{codebox*}
+\begin{compactcodebox*}
 \xmlelem{em}emphasized\xmlEndElem{em},
 \xmlelem{strong}strong\xmlEndElem{strong}.
-\end{codebox*}
+\end{compactcodebox*}
 
 A similar command is:
 \cmddef{code}
@@ -465,15 +465,35 @@ verbatim) in the PDF but \app{texjavahelpmk} will use the
 \xmlelem{code} element. You can use \gls{verb} or a similar command for
 verbatim inline content but be aware of its limitations.
 \begin{coderesult}
-\gls{code}\marg{@ \glssymbol{cs.hash} \glssymbol{cs.percent} \glssymbol{cs.underscore}}
+\gls{code}\marg{\glssymbol{atchar} \glssymbol{cs.hash} \glssymbol{cs.percent} \glssymbol{cs.underscore}}
+\codepar
 \gls{verb}|@ \glssymbol{hashchar} \glssymbol{percentchar} \glssymbol{underscorechar}|
 \tcblower
 \code{@ \# \% \_}
+
 \verb|@ # % _|
 \end{coderesult}
 The difference in the HTML file is that the \gls{code} content will
 be marked up with \xmlelem{code} but the \gls{verb} content won't
 have any markup.
+
+The other advantage with \gls{code} is that you can reference
+entries in it. For example:
+\begin{coderesult}
+\gls{code}\marg{\gls{glssymbol}\marg{atchar}
+\gls{glssymbol}\marg{cs.hash}
+\gls{glssymbol}\marg{cs.percent}
+\gls{glssymbol}\marg{cs.underscore}}
+\tcblower
+\code{\glssymbol{atchar}
+\glssymbol{cs.hash}
+\glssymbol{cs.percent}
+\glssymbol{cs.underscore}}
+\end{coderesult}
+The records are ignored by default for references within \gls{code}
+which causes \app{bib2gls} to ensure the entries are selected but
+won't add the location to the entry's location list. This helps to
+avoid overly long location lists.
 
 Other semantic commands will usually be written with a
 \xmlelem{span} tag, but as Java's HTML and CSS support is quite
@@ -482,55 +502,8 @@ limited, the default \TJHMKswitch{helpset} setting will sometimes use
 The \TJHMKswitch{html} setting switches on \app{texjavahelpmk}['s] HTML5
 mode so in that case \xmlelem{font} won't be used.
 
-A semantic command can be defined with:
-\cmddef{defsemanticcmd}
-where \meta{colour} (if present) indicates a colour specification
-that can be used in the argument of \gls{color}, \meta{cs} is the
-command that needs to be defined (which will take a single argument), 
-\meta{font-cs} (which may be empty if not applicable) should be a 
-text-block font command to apply to the argument of \meta{cs}, and
-\meta{prefix} (which may be empty) is a prefix to insert in front of
-the argument of \meta{cs}.
-
-Some predefined colours are provided: 
-\optfmt{cs} (dark green), 
-\optfmt{csopt} (DarkOrchid4), 
-\optfmt{styopt} (DarkOrchid4), 
-\optfmt{comment} (grey), 
-\optfmt{faded} (grey), 
-\optfmt{banned} (red),
-\optfmt{style1} (DarkSlateGray4),
-\optfmt{style2} (SteelBlue4),
-\optfmt{style3} (Blue4),
-\optfmt{style4} (Purple4),
-\optfmt{style5} (SlateBlue4),
-\optfmt{style6} (Tan4).
-These are all recognised by \app{texjavahelpmk} so they can be
-referenced, but you will need to change the CSS file to modify the
-associated classes if you want the style changed.
-
-For example:
-\begin{codebox*}
-\gls{defsemanticcmd}\oarg{purple}\marg{\csfmt{hashtag}}\marg{\gls{texttt}}\marg{\glssymbol{cs.hash}}
-\end{codebox*}
-This defines the command \csfmt{hashtag} with a single argument
-where \code{\csfmt{hashtag}\margm{text}} will be typeset in the PDF
-using:
-\begin{compactcodebox}
-\gls{fmtorcode}\gls{texttt}\marg{\gls{color}\marg{purple}\glssymbol{cs.hash}\meta{text}}
-\end{compactcodebox}
-However, \app{texjavahelpmk} will behave differently. It will create
-a CSS class associated with this command and \csfmt{hashtag} will
-create an element that references that class.
-
-Note that if the \meta{font-cs} argument is not empty, the
-\meta{font-cs} command will be preceded by:
-\cmddef{fmtorcode}
-This normally just expands to \code{\meta{cs}\margm{text}} but in a
-code context, such as with the argument of \gls{code} or in the body
-of \env{codebox}, this just expands to \meta{text}. That is, the
-formatting command \meta{cs} is stripped and the braces are removed
-from \code{\margm{text}}.
+\subsection{Predefined Semantic Commands}
+\label{sec:predefinedsemanticcmds}
 
 The following semantic commands are predefined.
 \cmddef{faded}
@@ -568,8 +541,101 @@ You can then reference this entry with \gls{app} for example:
 You will need to use \gls{app}\marg{bib2gls}.
 \end{codebox}
 
+\cmddef{widgetfmt}
+Formats the name of a widget.
+\begin{coderesult}
+\gls{widgetfmt}\marg{Widget Text}
+\tcblower
+\widgetfmt{Widget Text}
+\end{coderesult}
+
+\cmddef{buttonfmt}
+Formats the name of a button.
+The default definition simply uses \gls{widgetfmt}.
+\begin{coderesult}
+\gls{buttonfmt}\marg{Help}
+\tcblower
+\buttonfmt{Help}
+\end{coderesult}
+
+\cmddef{menufmt}
+Formats the name of a menu.
+The default definition simply uses \gls{widgetfmt}.
+\begin{coderesult}
+\gls{menufmt}\marg{Help}
+\tcblower
+\menufmt{Help}
+\end{coderesult}
+
+\cmddef{dialogfmt}
+Formats the name of a window title (typically a dialog box).
+The default definition simply uses \gls{widgetfmt}.
+\begin{coderesult}
+\gls{dialogfmt}\marg{Preferences}
+\tcblower
+\dialogfmt{Preferences}
+\end{coderesult}
+
+\cmddef{keystrokefmt}
+Formats a keystroke.
+\begin{coderesult}
+\gls{keystrokefmt}\marg{A}
+\tcblower
+\keystrokefmt{A}
+\end{coderesult}
+
+\cmddef{keystrokefont}
+The font declaration used by \gls{keystrokefmt}.
+
+\cmddef{keys}
+Formats the \code{+} separated list of keys, encapsulating each item
+in the list with \gls{keystrokefmt} and separating the keys with
+\gls{keysep}. The \meta{key list}
+should have a literal \code{+} as the separator. The separator for
+the formatted list may be different.
+\begin{coderesult}
+\gls{keys}\marg{Shift+A}
+\tcblower
+\keys{Shift+A}
+\end{coderesult}
+
+\cmddef{keysep}
+The separator in the key sequence formatted with \gls{keys}.
+\begin{coderesult}
+\cmd{renewcommand}\gls{keysep}\marg{\gls{ding}\marg{58}}
+\gls{keys}\marg{Shift+A}
+\tcblower
+\renewcommand\keysep{\ding{58}}
+\keys{Shift+A}
+\end{coderesult}
+(The \sty{pifont} package, which provides \gls{ding}, is automatically loaded.)
+
+When \app{tjhxml2bib} constructs the \bibentryfield{keystroke}
+field, it encapsulates items in the list that aren't references
+with:
+\cmddef{actualkey}
+This simply expands to \meta{text} by default.
+For example, \app{tjhxml2bib} may create the field value:
+\begin{compactcodebox}
+\bibentryfield{keystroke}=\marg{\gls{keys}\marg{\gls{keyref}\marg{shift}+\gls{actualkey}\marg{F1}}}
+\end{compactcodebox}
+
+This references an entry with the label \qtt{manual.keystroke.shift} for
+the first item but just has text for the second item.
+Using this field produces:
+\begin{resultbox}
+\keys{\keyref{shift}+\actualkey{F1}}
+\end{resultbox}
+
+
+The \app{tjhxml2bib} application can be used to create a \ext{bib}
+file that contains entry definitions for all widgets such as menus, buttons.
+The \bibentryfield{name} fields will have the
+applicable semantic command.
+
 \cmddef{bibentryfmt}
-Formats the name of a \ext{bib} entry.
+Formats the name of a \ext{bib} entry. This inserts \gls{atchar} at
+the start \meta{name} as well as changing the font.
 \begin{coderesult}
 \gls{bibentryfmt}\marg{abbreviation}
 \tcblower
@@ -1281,7 +1347,64 @@ with \gls{varfmt}. So the above would become:
 There's no designated prefix. The entry can be referenced in the
 usual way with \gls{gls}.
 
-The following add delimiters.
+\subsection{Custom Semantic Commands}
+\label{sec:customsemanticcmds}
+
+If the provided commands are insufficient, you can define your own
+custom semantic command with:
+\cmddef{defsemanticcmd}
+where \meta{colour} (if present) indicates a colour specification
+that can be used in the argument of \gls{color}, \meta{cs} is the
+command that needs to be defined (which will take a single argument), 
+\meta{font-cs} (which may be empty if not applicable) should be a 
+text-block font command to apply to the argument of \meta{cs}, and
+\meta{prefix} (which may be empty) is a prefix to insert in front of
+the argument of \meta{cs}.
+
+Some predefined colours are provided: 
+\optfmt{cs} (dark green), 
+\optfmt{csopt} (DarkOrchid4), 
+\optfmt{styopt} (DarkOrchid4), 
+\optfmt{comment} (grey), 
+\optfmt{faded} (grey), 
+\optfmt{banned} (red),
+\optfmt{style1} (DarkSlateGray4),
+\optfmt{style2} (SteelBlue4),
+\optfmt{style3} (Blue4),
+\optfmt{style4} (Purple4),
+\optfmt{style5} (SlateBlue4),
+\optfmt{style6} (Tan4).
+These are all recognised by \app{texjavahelpmk} so they can be
+referenced, but you will need to change the CSS file to modify the
+associated classes if you want the style changed.
+
+For example:
+\begin{codebox*}
+\gls{defsemanticcmd}\oarg{purple}\marg{\csfmt{hashtag}}\marg{\gls{texttt}}\marg{\glssymbol{cs.hash}}
+\end{codebox*}
+This defines the command \csfmt{hashtag} with a single argument
+where \code{\csfmt{hashtag}\margm{text}} will be typeset in the PDF
+using:
+\begin{compactcodebox}
+\gls{fmtorcode}\gls{texttt}\marg{\gls{color}\marg{purple}\glssymbol{cs.hash}\meta{text}}
+\end{compactcodebox}
+However, \app{texjavahelpmk} will behave differently. It will create
+a CSS class associated with this command and \csfmt{hashtag} will
+create an element that references that class.
+
+Note that if the \meta{font-cs} argument is not empty, the
+\meta{font-cs} command will be preceded by:
+\cmddef{fmtorcode}
+This normally just expands to \code{\meta{cs}\margm{text}} but in a
+code context, such as with the argument of \gls{code} or in the body
+of \env{codebox}, this just expands to \meta{text}. That is, the
+formatting command \meta{cs} is stripped and the braces are removed
+from \code{\margm{text}}.
+
+\subsection{Delimiting Semantic Commands}
+\label{sec:delimsemanticcmds}
+
+The following commands add delimiters.
 \cmddef{meta}
 Formats \meta{text} in emphasis between angle brackets.
 Note that these angle brackets are different from the delimiters
@@ -1318,6 +1441,9 @@ A shortcut that expands to
 That is, quoted monospaced content padded on either side with
 \gls{cs.comma}.
 
+\subsection{Other Commands}
+\label{sec:othercmds}
+
 \cmddef{longswitch}
 Used as a prefix for \gls{longargfmt} this expands to two hyphens
 separated by a thin space to visually distinguish them (and prevents
@@ -1336,6 +1462,18 @@ forms part of the name and a hyphen introduced by breaking the name. If a suitab
 provided to allow \gls{texttt} (used by \gls{filefmt}) to hyphenate
 its argument, then you can use \gls{dhyphen} to clearly mark
 actual hyphens that form part of the name.
+
+The following commands are shortcuts for use in the \bibentryfield{syntax}
+field.
+\cmddef{metaboolean}
+Expands to \code{\gls{meta}\marg{boolean}}.
+
+\cmddef{keyval}
+Expands to
+\code{\gls{meta}\marg{key}\gls{dequals}\gls{meta}\marg{value}}.
+
+\cmddef{keyvallist}
+Expands to \code{\gls{meta}\marg{key\gls{dequals} value list}}.
 
 The following commands are designed for filenames, command names or
 options with punctuation but no spaces that may occur inline but
@@ -1374,18 +1512,6 @@ is typically shorter than a monospaced \gls{hyphen-minus}.
 The \gls{tjhsetrmhyphen} command may be redefined to do nothing if
 this behaviour is not wanted. (It is defined by \app{texjavahelpmk}
 but has no function.) 
-
-The following commands are shortcuts for use in the \bibentryfield{syntax}
-field.
-\cmddef{metaboolean}
-Expands to \code{\gls{meta}\marg{boolean}}.
-
-\cmddef{keyval}
-Expands to
-\code{\gls{meta}\marg{key}\gls{dequals}\gls{meta}\marg{value}}.
-
-\cmddef{keyvallist}
-Expands to \code{\gls{meta}\marg{key\gls{dequals} value list}}.
 
 \section{Document Division Commands}
 \label{sec:docdivisioncmds}
@@ -1941,7 +2067,10 @@ image mappings are loaded with \gls{TJHRequireIcons}.
 The frame around the icon images is added by \gls{TJHLargeIconImageFrame}
 or \gls{TJHSmallIconImageFrame}, depending on whether
 \gls{tjhLargeIcon} or \gls{tjhSmallIcon} was used to show the icon
-image.
+image. Note that \gls{TJHSmallIconImageFrame} not only puts a frame
+around the image, but will also resize the image if the definition of
+\gls{tjhsmalliconheight} is not empty.
+
 These frame commands may be redefined but they are not used by \app{texjavahelpmk}.
 Instead the CSS style determines whether or not any border should be
 added. However, bear in mind Java's limited CSS support.

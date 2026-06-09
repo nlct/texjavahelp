@@ -967,6 +967,8 @@ sub-figure}
 @command{slash}
 @command{verb}
 
+@command{ding}
+
 @command{newcommand,
   name={\csfmt{new\-com\-mand}}
 }
@@ -1153,6 +1155,11 @@ the formatted list may be different}
   syntax={\meta{symbol}},
   description={uses \sty{tikz} to render \meta{symbol} inside a
 rectangle with rounded corners}
+}
+
+@command{keystrokefont,
+  providedby={\sty{texjavahelp}},
+  description={the font declaration used by \gls{keystrokefmt}}
 }
 
 @command{actualkey,
@@ -2503,6 +2510,14 @@ text}
 a button}
 }
 
+@command{dialogfmt,
+ providedby={\sty{texjavahelp}},
+ name={\csfmt{dialog\-fmt}},
+ syntax={\margm{text}},
+ description={semantic command used to format a window's title
+(typically for dialog boxes)}
+}
+
 @command{widgetfmt,
  providedby={\sty{texjavahelp}},
  name={\csfmt{widget\-fmt}},
@@ -2714,7 +2729,16 @@ framed with \gls{TJHLargeIconImageFrame}}
   providedby={\sty{texjavahelp}},
   syntax={\margm{image}},
   description={used by \gls{tjhSmallIcon} to place a frame around
-the image (with \gls{tjhimageframe})}
+the image (with \gls{tjhimageframe}) but will also scale
+\meta{image} if \gls{tjhsmalliconheight} is non-empty}
+}
+
+@command{tjhsmalliconheight,
+  providedby={\sty{texjavahelp}},
+  initval={2ex},
+  name={\csfmt{tjh\-small\-icon\-height}},
+  description={used by \gls{TJHSmallIconImageFrame}, this command should either expand to empty (no
+resizing) or to a dimension}
 }
 
 @command{tjhSmallIcon,
@@ -2914,6 +2938,11 @@ class for applications that use the \gls{TeXParserLib}.}
 @punctuation{fullstop,
   symbol={\code{.}},
   description={full stop\slash period}
+}
+
+@punctuation{atchar,
+  symbol={\code{@}},
+  description={at character}
 }
 
 % GENERAL INDEX

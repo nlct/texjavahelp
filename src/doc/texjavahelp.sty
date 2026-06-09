@@ -3609,9 +3609,18 @@ halign upper=flush left,halign lower=justify,
 
 \NewDocumentCommand \TJHLargeIconImageFrame { m } { \tjhimageframe { #1 } }
 
+\newcommand\tjhsmalliconheight{2ex}
+
 \NewDocumentCommand \TJHSmallIconImageFrame { m }
  {
-   \tjhimageframe { #1 }
+   \tjhimageframe
+     {
+       \tl_if_empty:NTF \tjhsmalliconheight
+        { #1 }
+        {
+          \resizebox { ! } { \tjhsmalliconheight } { #1 }
+        }
+     }
  }
 
 \NewDocumentCommand \tjhLargeIcon { m }
@@ -3624,7 +3633,7 @@ halign upper=flush left,halign lower=justify,
 
 \NewDocumentCommand \tjhSmallIcon { m }
  {
-   \TJHLargeIconImageFrame
+   \TJHSmallIconImageFrame
     { 
       \exp_args:Ne \texjavahelp_include_small_icon_img:n { #1 }
     }
