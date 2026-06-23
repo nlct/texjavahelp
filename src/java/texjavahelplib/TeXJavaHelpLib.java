@@ -325,7 +325,7 @@ public class TeXJavaHelpLib
       return messages.getChoiceMessage(label, argIdx, choiceLabel, numChoices, args);
    }
 
-   private void printSyntaxItem(String syntax, int syntaxLength, String description)
+   protected void printSyntaxItem(String syntax, int syntaxLength, String description)
    {
       String desc = description.replaceAll(" *\\n", " ");
 

@@ -1,8 +1,8 @@
 % This is adapted from nlctuserguide.sty which already has some support
-% in the TeX Parser Library.
+% in the TeX Java Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{texjavahelp}[2026/06/04 v1.3 (NLCT)]
+\ProvidesPackage{texjavahelp}[2026/06/23 v1.3 (NLCT)]
 
 \RequirePackage{pifont}
 \RequirePackage{fontawesome}
@@ -275,7 +275,41 @@
 \newcommand{\thedocversion}{\nlct@version}
 \newcommand{\thedocdate}{\nlct@date}
 
-\renewcommand{\title}[1]{\gdef\@title{#1}\hypersetup{pdftitle={\text_purify:n{#1}}}}
+\newcommand\TeXParser@opttitle{}
+
+\RenewDocumentCommand \title { o m }
+{
+ \IfValueTF { #1 }
+ {
+   \gdef\TeXParser@opttitle{#1}
+ }
+ {
+   \gdef\TeXParser@opttitle{#2}
+ }
+ \gdef \@title { #2 }
+ \hypersetup
+  {
+    pdftitle = { \text_purify:n { #2 } }
+  }
+}
+
+\newcommand\TeXParser@optauthor{}
+
+\RenewDocumentCommand \author { o m }
+{
+ \IfValueTF { #1 }
+ {
+   \gdef \TeXParser@optauthor { #1 }
+ }
+ {
+   \gdef \TeXParser@optauthor { #2 }
+ }
+ \gdef \@author { #2 }
+ \hypersetup
+  {
+    pdfauthor = { \text_purify:n { #2 } }
+  }
+}
 
 % Syntax: {unit}{prefix}{title}{target}{location}
 \providecommand \texparser@divisioninfo [ 5 ] { }
@@ -316,6 +350,8 @@
    \int_set_eq:NN \l_texjavahelp_base_bookmark_level_int \c_one_int
  }
 \ExplSyntaxOff
+
+\providecommand{\scenebreak}{\par\medskip\par\@afterheading}
 
 \newrobustcmd{\visiblespace}{%
   \texttt{\verbvisiblespace}%
@@ -3747,6 +3783,17 @@ halign upper=flush left,halign lower=justify,
 \newcommand\IfHelpSetTF[2]{#2}
 \newcommand\IfHelpSetT[1]{}
 \newcommand\IfHelpSetF[1]{#1}
+
+% start and end HTML element
+%[elem attributes][LaTeX code]{element name}
+\NewDocumentCommand\BeginHTMLElement{O{}O{}m}{#2}
+%[LaTeX code]{element name}
+\NewDocumentCommand\EndHTMLElement{O{}m}{#1}
+
+% start and end div
+%[elem attributes]
+\NewDocumentCommand\BeginHTMLBlock{O{}}{\par}
+\NewDocumentCommand\EndHTMLBlock{}{\par}
 
 \newenvironment{numbered}%
 {%

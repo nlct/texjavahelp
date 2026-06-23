@@ -339,9 +339,10 @@ public class TJHListener extends L2HConverter
       descriptionProperty = description;
    }
 
-   public void setTitle(String title)
+   public void setTitle(String title, String titleFileAs)
    {
       titleProperty = title;
+      titleFileAsProperty = titleFileAs;
    }
 
    public void setAuthor(String author, String authorFileAs)
@@ -1057,7 +1058,34 @@ public class TJHListener extends L2HConverter
 
          if (title != null)
          {
-            out.format("  <dc:title>%s</dc:title>%n", title);
+            out.format("  <dc:title id=\"title\">%s</dc:title>%n", title);
+
+            String titleFileAs = titleFileAsProperty;
+
+            if (titleFileAs == null)
+            {
+               try
+               {
+                  titleFileAs = getParser().expandToString(
+                    getControlSequence("TeXParser@opttitle"), null);
+               }
+               catch (IOException e)
+               {
+                  getParser().warning(e);
+               }
+
+               if (titleFileAs == null || titleFileAs.isEmpty())
+               {
+                  titleFileAs = title;
+               }
+            }
+
+            if (!titleFileAs.equals(title))
+            {
+               out.format(" <meta refines=\"#title\" property=\"file-as\">%s</meta>%n",
+                  titleFileAs);
+            }
+
          }
 
          String author = authorProperty;
@@ -1071,19 +1099,33 @@ public class TJHListener extends L2HConverter
 
          if (authorFileAs == null)
          {
-            authorFileAs = author;
+            try
+            {
+               authorFileAs = getParser().expandToString(
+                 getControlSequence("TeXParser@optauthor"), null);
+            }
+            catch (IOException e)
+            {
+               getParser().warning(e);
+            }
+
+            if (authorFileAs == null || authorFileAs.isEmpty())
+            {
+               authorFileAs = author;
+            }
          }
 
          if (author != null)
          {
-            out.print("  <dc:creator");
+            out.print("  <dc:creator id=\"author\"");
+
+            out.format(" opf:role=\"aut\">%s</dc:creator>%n", author);
 
             if (!authorFileAs.equals(author))
             {
-               out.format(" opf:file-as=\"%s\"", authorFileAs);
+               out.format(" <meta refines=\"#author\" property=\"file-as\">%s</meta>%n",
+                  authorFileAs);
             }
-
-            out.format(" opf:role=\"aut\">%s</dc:creator>%n", author);
          }
 
          Locale locale = getMainLanguage();
@@ -1894,6 +1936,7 @@ public class TJHListener extends L2HConverter
    protected String descriptionProperty=null;
    protected String subjectProperty=null;
    protected String titleProperty=null;
+   protected String titleFileAsProperty=null;
    protected String authorProperty=null;
    protected String authorFileAsProperty=null;
    protected String isbnProperty=null;

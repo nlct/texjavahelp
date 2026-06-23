@@ -89,6 +89,11 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new TJHRequireIcons());
       registerControlSequence(new TJHMapIconImage());
 
+      registerControlSequence(new BeginHTMLElement());
+      registerControlSequence(new EndHTMLElement());
+      registerControlSequence(new BeginHTMLBlock());
+      registerControlSequence(new EndHTMLBlock());
+
       // KOMA-Script commands that might occur in the document
       // preamble:
       registerControlSequence(new GobbleOpt("BeforeTOCHead", 1, 1));
@@ -132,6 +137,16 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new Relax("pfbreakskip"));// ignore
       registerControlSequence(new TextualContentCommand("pfbreakdisplay", "* * *"));
       registerControlSequence(new PFBreak());
+
+      if (getParser().getControlSequence("scenebreak") == null)
+      {
+         registerControlSequence(new GenericCommand(true, "scenebreak", null,
+           TeXParserUtils.createStack(listener,
+             new TeXCsRef("fancybreak"), 
+             TeXParserUtils.createGroup(listener, new TeXCsRef("pfbreakdisplay"))
+           )
+         ));
+      }
 
       registerControlSequence(new LaTeXGenericCommand(true,
        "fileext", "m", 

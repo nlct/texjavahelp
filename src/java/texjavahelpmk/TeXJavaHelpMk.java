@@ -95,6 +95,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
        || arg.equals("--author")
        || arg.equals("--author-file-as")
        || arg.equals("--title")
+       || arg.equals("--title-file-as")
        || arg.equals("--isbn")
        || arg.equals("--root-name")
        || arg.equals("--root-page-preamble")
@@ -275,6 +276,15 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
          if (title.isEmpty())
          {
             title = null;
+         }
+      }
+      else if (cliParser.isArg(arg, "--title-file-as", returnVals))
+      {
+         titleFileAs = returnVals[0].toString();
+
+         if (titleFileAs.isEmpty())
+         {
+            titleFileAs = null;
          }
       }
       else if (cliParser.isArg(arg, "--author", returnVals))
@@ -652,7 +662,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       listener.setKeywords(keywords);
       listener.setSubject(subject);
       listener.setDescription(description);
-      listener.setTitle(title);
+      listener.setTitle(title, titleFileAs);
       listener.setAuthor(author, authorFileAs);
       listener.setISBN(isbn);
 
@@ -1069,6 +1079,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    private String author = null;
    private String authorFileAs = null;
    private String title = null;
+   private String titleFileAs = null;
    private String isbn = null;
 
    private String outputFormat = "latex";
