@@ -29,6 +29,10 @@ import java.util.zip.*;
 
 import java.util.regex.Pattern;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -44,12 +48,15 @@ import java.nio.file.Path;
 import java.awt.Dimension;
 
 import com.dickimawbooks.texparserlib.*;
+import com.dickimawbooks.texparserlib.primitives.Relax;
+import com.dickimawbooks.texparserlib.primitives.Undefined;
 import com.dickimawbooks.texparserlib.latex.AtGobble;
 import com.dickimawbooks.texparserlib.latex.AtFirstOfOne;
 import com.dickimawbooks.texparserlib.latex.AtFirstOfTwo;
 import com.dickimawbooks.texparserlib.latex.AtSecondOfTwo;
 import com.dickimawbooks.texparserlib.latex.FloatBoxStyle;
 import com.dickimawbooks.texparserlib.latex.FrameBox;
+import com.dickimawbooks.texparserlib.latex.GobbleOpt;
 import com.dickimawbooks.texparserlib.latex.KeyValList;
 import com.dickimawbooks.texparserlib.latex.LaTeXSty;
 import com.dickimawbooks.texparserlib.latex.MissingValue;
@@ -208,6 +215,13 @@ public class TJHListener extends L2HConverter
          putControlSequence(new AtGobble("IfHelpSetT"));
          putControlSequence(new AtFirstOfOne("IfHelpSetF"));
       }
+
+      putControlSequence(new Relax("break"));
+      putControlSequence(new Relax("nobreak"));
+      putControlSequence(new Relax("clearpage"));
+      putControlSequence(new Relax("cleardoublepage"));
+      putControlSequence(new GobbleOpt("pagebreak"));
+      putControlSequence(new GobbleOpt("nopagebreak"));
    }
 
    public boolean isWriteOGMarkupOn()
@@ -258,6 +272,16 @@ public class TJHListener extends L2HConverter
          }
       }
    }
+
+   @Override
+   protected void writeDocType()
+     throws IOException
+   {
+      setCurrentBlockType(DocumentBlockType.HEAD);
+
+      writeliteralln("<!DOCTYPE html>");
+   }
+
 
    public void setBreadCrumbTrailEnabled(boolean on)
    {
@@ -353,7 +377,68 @@ public class TJHListener extends L2HConverter
 
    public void setISBN(String isbn)
    {
-      isbnProperty = isbn;
+      setIdentifier("onix:codelist5", "15", isbn);
+   }
+
+   public void setIdentifier(String scheme, String type, String id)
+   {
+      dcIdentifierScheme = scheme;
+      dcIdentifierType = type;
+      dcIdentifier = id;
+   }
+
+   @Override
+   protected void assignMetaData(TeXObjectList stack)
+     throws IOException
+   {
+      super.assignMetaData(stack);
+
+      if (authorProperty == null || authorProperty.isEmpty())
+      {
+         ControlSequence cs = getControlSequence("TeXParser@optauthor");
+
+         if (!(cs instanceof Undefined) && !cs.isEmpty())
+         {
+            parser.startGroup();
+            parser.putControlSequence(true, new AtSecondOfTwo("texorpdfstring"));
+            authorProperty = stripTags(processToString(cs, stack));
+            parser.endGroup();
+         }
+      }
+
+      if (authorFileAsProperty == null || authorFileAsProperty.isEmpty())
+      {
+         ControlSequence cs = getControlSequence("TeXParser@optauthor");
+
+         if (!(cs instanceof Undefined) && !cs.isEmpty())
+         {
+            parser.startGroup();
+            parser.putControlSequence(true, new AtSecondOfTwo("texorpdfstring"));
+            authorFileAsProperty = stripTags(processToString(cs, stack));
+            parser.endGroup();
+         }
+         else
+         {
+            authorFileAsProperty = authorProperty;
+         }
+      }
+
+      if (titleFileAsProperty == null || titleFileAsProperty.isEmpty())
+      {
+         ControlSequence cs = getControlSequence("TeXParser@opttitle");
+
+         if (!(cs instanceof Undefined) && !cs.isEmpty())
+         {
+            parser.startGroup();
+            parser.putControlSequence(true, new AtSecondOfTwo("texorpdfstring"));
+            titleFileAsProperty = stripTags(processToString(cs, stack));
+            parser.endGroup();
+         }
+         else
+         {
+            titleFileAsProperty = titleProperty;
+         }
+      }
    }
 
    public void parseAux(String prefix, File auxFile) throws IOException
@@ -628,11 +713,17 @@ public class TJHListener extends L2HConverter
 
       out.println("  <head>");
 
-      if (isbnProperty != null)
+      if (dcIdentifier != null)
       {
-         out.format("  <meta content=\"%s\" name=\"dtb:isbn\" />%n",
-            isbnProperty);
+         out.format("  <meta content=\"%s\" name=\"dtb:uid\" />%n",
+            dcIdentifier);
       }
+
+      out.format((Locale)null,
+       "<meta name=\"dtb:depth\" content=\"%d\"/>%n", tocDepth);
+
+      out.println("<meta name=\"dtb:totalPageCount\" content=\"0\" />");
+      out.println("<meta name=\"dtb:maxPageNumber\" content=\"0\" />");
 
       out.println("  </head>");
 
@@ -1043,7 +1134,7 @@ public class TJHListener extends L2HConverter
 
          out.println("<?xml version='1.0' encoding='utf-8'?>");
          out.println("<package xmlns=\"http://www.idpf.org/2007/opf\"");
-         out.println("   unique-identifier=\"isbn\" version=\"2.0\">");
+         out.println("   unique-identifier=\"pub-id\" version=\"3.0\">");
          out.println("<metadata xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
          out.println("           xmlns:opf=\"http://www.idpf.org/2007/opf\"");
          out.println("           xmlns:dcterms=\"http://purl.org/dc/terms/\"");
@@ -1062,27 +1153,14 @@ public class TJHListener extends L2HConverter
 
             String titleFileAs = titleFileAsProperty;
 
-            if (titleFileAs == null)
+            if (titleFileAs == null || titleFileAs.isEmpty())
             {
-               try
-               {
-                  titleFileAs = getParser().expandToString(
-                    getControlSequence("TeXParser@opttitle"), null);
-               }
-               catch (IOException e)
-               {
-                  getParser().warning(e);
-               }
-
-               if (titleFileAs == null || titleFileAs.isEmpty())
-               {
-                  titleFileAs = title;
-               }
+               titleFileAs = title;
             }
 
             if (!titleFileAs.equals(title))
             {
-               out.format(" <meta refines=\"#title\" property=\"file-as\">%s</meta>%n",
+               out.format("  <meta refines=\"#title\" property=\"file-as\">%s</meta>%n",
                   titleFileAs);
             }
 
@@ -1097,45 +1175,43 @@ public class TJHListener extends L2HConverter
 
          String authorFileAs = authorFileAsProperty;
 
-         if (authorFileAs == null)
+         if (authorFileAs == null || authorFileAs.isEmpty())
          {
-            try
-            {
-               authorFileAs = getParser().expandToString(
-                 getControlSequence("TeXParser@optauthor"), null);
-            }
-            catch (IOException e)
-            {
-               getParser().warning(e);
-            }
-
-            if (authorFileAs == null || authorFileAs.isEmpty())
-            {
-               authorFileAs = author;
-            }
+            authorFileAs = author;
          }
 
          if (author != null)
          {
-            out.print("  <dc:creator id=\"author\"");
-
-            out.format(" opf:role=\"aut\">%s</dc:creator>%n", author);
+            out.format("  <dc:creator id=\"author\">%s</dc:creator>%n", author);
 
             if (!authorFileAs.equals(author))
             {
-               out.format(" <meta refines=\"#author\" property=\"file-as\">%s</meta>%n",
+               out.format("  <meta refines=\"#author\" property=\"file-as\">%s</meta>%n",
                   authorFileAs);
             }
+
+            out.println("  <meta refines=\"#author\" property=\"role\" scheme=\"marc:relators\">aut</meta>");
          }
 
          Locale locale = getMainLanguage();
 
          out.format("  <dc:language>%s</dc:language>%n", locale.toLanguageTag());
 
-         if (isbnProperty != null)
+         if (dcIdentifier != null)
          {
-            out.format("  <dc:identifier id=\"isbn\" opf:scheme=\"isbn\" >%s</dc:identifier>%n",
-               isbnProperty);
+            out.format("  <dc:identifier id=\"pub-id\" >%s</dc:identifier>%n",
+               dcIdentifier);
+
+            if (dcIdentifierScheme != null && dcIdentifierType != null)
+            {
+               out.format(
+                 " <meta refines=\"#pub-id\" property=\"identifier-type\" scheme=\"%s\">%s",
+                 dcIdentifierScheme, dcIdentifierType
+               );
+            }
+
+            out.format(">");
+            out.println("</meta>");
          }
 
          String desc = descriptionProperty;
@@ -1166,6 +1242,12 @@ public class TJHListener extends L2HConverter
             out.println("</dc:subject>");
          }
 
+         OffsetDateTime oft = OffsetDateTime.now(ZoneOffset.UTC);
+
+         out.format("<meta property=\"dcterms:modified\">%s</meta>%n",
+            oft.format(DateTimeFormatter.ISO_INSTANT)
+          );
+
          out.println("</metadata>");
 
          out.println("<manifest>");
@@ -1190,8 +1272,15 @@ public class TJHListener extends L2HConverter
 
             String id = processAnchorName(fileData.getId());
 
-            out.format("   <item href=\"%s\" id=\"%s\" media-type=\"%s\" />%n",
+            out.format("   <item href=\"%s\" id=\"%s\" media-type=\"%s\" ",
               path, id, fileData.getMimeType());
+
+            if (id.equals("toc"))
+            {
+               out.print("properties=\"nav\" ");
+            }
+
+            out.println("/>");
 
             if (fileData.getNode() != null)
             {
@@ -1939,7 +2028,10 @@ public class TJHListener extends L2HConverter
    protected String titleFileAsProperty=null;
    protected String authorProperty=null;
    protected String authorFileAsProperty=null;
-   protected String isbnProperty=null;
+   protected String dcIdentifier=null;
+   protected String dcIdentifierType=null;
+   protected String dcIdentifierScheme=null;
+   protected int tocDepth = 1;// TODO
    protected String rootPagePreMainContent = null;
    protected boolean inNavigation = false;
 

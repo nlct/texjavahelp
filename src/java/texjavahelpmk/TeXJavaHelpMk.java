@@ -97,6 +97,9 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
        || arg.equals("--title")
        || arg.equals("--title-file-as")
        || arg.equals("--isbn")
+       || arg.equals("--identifier")
+       || arg.equals("--identifier-type")
+       || arg.equals("--identifier-scheme")
        || arg.equals("--root-name")
        || arg.equals("--root-page-preamble")
        || arg.equals("--root-page-preamble-from-file")
@@ -307,12 +310,31 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       }
       else if (cliParser.isArg(arg, "--isbn", returnVals))
       {
-         isbn = returnVals[0].toString();
+         String isbn = returnVals[0].toString();
 
          if (isbn.isEmpty())
          {
-            isbn = null;
+            dcIdentifier = null;
          }
+         else
+         {
+            dcIdentifier = isbn;
+         }
+
+         dcIdentifierType = "15";
+         dcIdentifierScheme = "onix:codelist5";
+      }
+      else if (cliParser.isArg(arg, "--identifier-type", returnVals))
+      {
+         dcIdentifierType = returnVals[0].toString();
+      }
+      else if (cliParser.isArg(arg, "--identifier-scheme", returnVals))
+      {
+         dcIdentifierType = returnVals[0].toString();
+      }
+      else if (cliParser.isArg(arg, "--identifier", returnVals))
+      {
+         dcIdentifier = returnVals[0].toString();
       }
       else if (cliParser.isArg(arg, "--root-name", returnVals))
       {
@@ -664,7 +686,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       listener.setDescription(description);
       listener.setTitle(title, titleFileAs);
       listener.setAuthor(author, authorFileAs);
-      listener.setISBN(isbn);
+      listener.setIdentifier(dcIdentifierScheme, dcIdentifierType, dcIdentifier);
 
       listener.setRootName(rootName);
       listener.setRootPagePreMain(rootPagePreMainContent);
@@ -1080,7 +1102,9 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    private String authorFileAs = null;
    private String title = null;
    private String titleFileAs = null;
-   private String isbn = null;
+   private String dcIdentifier = null;
+   private String dcIdentifierScheme = null;
+   private String dcIdentifierType = null;
 
    private String outputFormat = "latex";
 
