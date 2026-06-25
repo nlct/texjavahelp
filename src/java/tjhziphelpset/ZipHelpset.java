@@ -123,7 +123,7 @@ public class ZipHelpset extends AbstractCLI
       printSyntaxItem(getMessage("syntax.helpset", "--helpset",
          getHelpLib().getHelpsetDirName()));
 
-      printSyntaxItem(getMessage("syntax.out", "--output", "-o"));
+      printSyntaxItem(getMessage("syntax.out", "--output", "-o", "--helpset"));
 
       printSyntaxItem(getMessage("syntax.locales", "--locales", "-l"));
 

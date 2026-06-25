@@ -4,7 +4,7 @@
 *.glg
 *.toc
 *.pdf
-helpset
+*-helpset
 html
 epub
 *helpset.tjh

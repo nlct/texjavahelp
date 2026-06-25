@@ -5,7 +5,7 @@ tjhflattendocsrc=tjhflattendocsrc
 srcdir=../..
 libdir=$(srcdir)/lib
 
-all	: helpset/index.xml test-helpset.tjh html/index.shtml epub/test.epub
+all	: test-helpset/index.xml test-helpset.tjh html/index.shtml epub/test.epub
 
 test.pdf	: test.glstex
 		lualatex test
@@ -15,12 +15,15 @@ test.glstex	: test.tex test.bib
 		lualatex test
 		bib2gls test
 
-helpset/index.xml	: $(libdir)/texjavahelpmk.jar test.pdf
+test-helpset/index.xml	: $(libdir)/texjavahelpmk.jar test.pdf
 		$(texjavahelpmk) --log test-helpset.log \
-		test.tex -o helpset
+		test.tex -o test-helpset
 
-test-helpset.tjh	: $(libdir)/tjhziphelpset.jar helpset/index.xml
-		$(tjhziphelpset) -L gpl-3.0-standalone.html en . -o test-helpset.tjh
+test-helpset.tjh	: $(libdir)/tjhziphelpset.jar test-helpset/index.xml
+		$(tjhziphelpset) \
+		-L gpl-3.0-standalone.html en \
+		--in-dir . \
+		--helpset test-helpset
 
 html/index.shtml	: $(libdir)/texjavahelpmk.jar test.pdf
 		$(texjavahelpmk) --log test-html.log \
