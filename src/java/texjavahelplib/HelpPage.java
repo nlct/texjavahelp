@@ -591,7 +591,7 @@ public class HelpPage extends TJHEditorPane
                }
             }
 
-            if (text == null || text.isEmpty())
+            if (hsf != null && (text == null || text.isEmpty()))
             {
                NavigationNode node = hsf.getNode();
 
