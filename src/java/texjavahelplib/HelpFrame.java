@@ -287,7 +287,15 @@ public class HelpFrame extends JFrame
          @Override
          public void doAction()
          {
-            setVisible(false);
+            if (getDefaultCloseOperation() == JFrame.EXIT_ON_CLOSE)
+            {
+               // Allow tjhviewer to exit
+               System.exit(0);
+            }
+            else
+            {
+               setVisible(false);
+            }
          }
        });
 

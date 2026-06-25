@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>English language file for tjhxml2bib
+https://github.com/nlct/texjavahelp
+GPL-3.0
+Nicola Talbot
+</comment>
+
+<!--  Syntax -->
+<entry key="syntax.options">{0} [&lt;option&gt;]+ &lt;helpset&gt;</entry>
+<entry key="syntax.in">{0} (or {1}) &lt;helpset&gt;	The helpset file to view.</entry>
+<entry key="syntax.node">{0} (or {1}) &lt;name&gt;	The node to open on startup.</entry>
+
+</properties>

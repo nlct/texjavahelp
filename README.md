@@ -17,7 +17,10 @@ in-application help.
    LaTeX `.tex` source and the `.toc`, `.aux`, and `.glstex`
    files created during the document build.
  - `tjhziphelpset` : bundles the HTML and XML helpset files into a
-   zip file.
+   `tjh` file (which is a special type of zip file).
+ - `tjhviewer` : a `tjh` file viewer. (This allows the help to be
+    viewed on its own without the burden of loading the application
+    the helpset was created for.)
  - `tjhflattendocsrc` : may optionally be used to create a
    flattened document source for easier distribution. (That is, 
    a copy will be made with any instance of `\input` replaced with
@@ -58,37 +61,9 @@ files created during the document build are needed by
 
 ## Installing
 
-The files need to be arranged as follows, where *TEXMF* denotes the
-TEXMF tree root:
+See (`INSTALL.md`)[INSTALL.md]
 
-*TEXMF*`/scripts/texjavahelp/texjavahelplib.jar`    
-*TEXMF*`/scripts/texjavahelp/texjavahelpmk.jar`    
-*TEXMF*`/scripts/texjavahelp/texjavahelpmk.tlu`    
-*TEXMF*`/scripts/texjavahelp/tjhflattendocsrc.jar`    
-*TEXMF*`/scripts/texjavahelp/tjhflattendocsrc.tlu`    
-*TEXMF*`/scripts/texjavahelp/tjhxml2bib.jar`    
-*TEXMF*`/scripts/texjavahelp/tjhxml2bib.sh`    
-*TEXMF*`/scripts/texjavahelp/tjhziphelpset.jar`    
-*TEXMF*`/scripts/texjavahelp/tjhziphelpset.tlu`    
-
-*TEXMF*`/tex/latex/texjavahelp/texjavahelp.sty`    
-
-*TEXMF*`/doc/latex/texjavahelp/texjavahelp.pdf`    
-*TEXMF*`/doc/latex/texjavahelp/texjavahelp.tex`    
-*TEXMF*`/doc/latex/texjavahelp/texjavahelp.bib`  
-*TEXMF*`/doc/latex/texjavahelp/texjavahelplib.bib`  
-*TEXMF*`/doc/latex/texjavahelp/images/*`
-
-The `texjavahelplib.jar` file is a library. The other jar files are
-command line applications.
-
-The `texjavahelpmk`, `tjhflattendocsrc` and `tjhziphelpset` applications require the
-TeX Java Parser Library, which should be installed separately:
-
-*TEXMF*`/scripts/texjavaparser/texjavaparserlib.jar`
-
-The `.tlu` texlua scripts search for `texjavaparserlib.jar` and add
-it to the Java class path. 
+## Invocation
 
 ```bash
 texjavahelpmk.tlu [options] in-tex out-dir
@@ -96,12 +71,13 @@ tjhziphelpset.tlu [options] in-dir
 tjhflattendocsrc.tlu [options] in-tex out-dir
 ```
 
-The `tjhxml2bib` application doesn't require `texjavaparserlib.jar`
+The `tjhxml2bib` and `tjhviewer` applications don't require `texjavaparserlib.jar`
 so the invocation is simpler (`path/to/` is the path to
 *TEXMF*`/scripts/texjavahelp/`): 
 
 ```bash
 java -jar path/to/tjhxml2bib.jar [options] xml-file... -o bib-file
+java -jar path/to/tjhviewer.jar [options] tjh-file
 ```
 
 Localisation support is contained within the applicable `.jar` file.
@@ -149,13 +125,16 @@ helpLib.getMessageSystem().loadDictionary(
   "/com/example/demo/dictionaries/", "demo");
 ```
 
-The default name for the helpset archive is `helpset.zip` but if a
-different name is required this must first be set. For example, if
-the file is called `demo-helpset.zip`:
+The default name for the helpset `tjh` file is `helpset.tjh`, but
+bear in mind that TeX Live has strict requirements that don't allow generic 
+names, so typically the default `helpset.tjh` will need to be
+changed. For example, an application called `example` might
+have `example-helpset.tjh`:
 
 ```java
-helpLib.setHelpSetZipName("demo-helpset.zip");
+helpLib.setHelpSetZipName("example-helpset.tjh");
 ```
+This file is expected to be on the resource path.
 
 The helpset can then be initialised.
 
@@ -326,8 +305,9 @@ The helpset files can then be created with:
 texjavahelpmk doc/texjavahelp.tex lib/helpset
 ```
 
-This can then be bundled into an archive called `helpset.zip` that contains both the
-helpset files and the licence file which is identified as being in English:
+This can then be bundled into a file called `helpset.tjh` (a special
+type of zip file) that contains both the helpset files and the
+licence file which is identified as being in English:
 
 ```bash
 tjhziphelpset -L doc/gpl-3.0-standalone.html en lib
@@ -335,14 +315,14 @@ tjhziphelpset -L doc/gpl-3.0-standalone.html en lib
 
 If the application is to be distributed on TeX Live then a more specific
 name is required for the helpset. For example, FlowframTk has
-`flowframtk-helpset.zip` which is created using:
+`flowframtk-helpset.tjh` which is created using:
 
 ```bash
 tjhziphelpset --helpset flowframtk-helpset \
 --locales 'en,en-GB' \
 -L path/to/doc/gpl-3.0-standalone.html en \ 
 --in-dir . \
---output path/to/lib/flowframtk-helpset.zip 
+--output path/to/lib/flowframtk-helpset.tjh 
 ```
 
 But first the helpset files for `en` and `en-GB` must be created with `texjavahelpmk`:

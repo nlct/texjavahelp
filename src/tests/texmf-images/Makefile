@@ -5,7 +5,7 @@ tjhflattendocsrc=tjhflattendocsrc
 srcdir=../..
 libdir=$(srcdir)/lib
 
-all	: helpset/index.xml test-helpset.zip html/index.shtml epub/test.epub
+all	: helpset/index.xml test-helpset.tjh html/index.shtml epub/test.epub
 
 test.pdf	: test.glstex
 		lualatex test
@@ -20,8 +20,8 @@ helpset/index.xml	: $(libdir)/texjavahelpmk.jar test.pdf
 		--image-dest images \
 		test.tex -o helpset
 
-test-helpset.zip	: $(libdir)/tjhziphelpset.jar helpset/index.xml
-		$(tjhziphelpset) -L gpl-3.0-standalone.html en . -o test-helpset.zip
+test-helpset.tjh	: $(libdir)/tjhziphelpset.jar helpset/index.xml
+		$(tjhziphelpset) -L gpl-3.0-standalone.html en . -o test-helpset.tjh
 
 html/index.shtml	: $(libdir)/texjavahelpmk.jar test.pdf
 		$(texjavahelpmk) --log test-html.log \
@@ -56,4 +56,4 @@ clean	:
 	\rm -f -r helpset
 	\rm -f -r html
 	\rm -f -r epub
-	\rm -f test-helpset.zip
+	\rm -f test-helpset.tjh

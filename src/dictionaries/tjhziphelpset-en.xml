@@ -33,7 +33,6 @@ Nicola Talbot
 
 <entry key="error.illformed_locale">Ill-formed language tag: {0}</entry>
 <entry key="error.invalid_uri">Invalid URI: {0}</entry>
-<entry key="error.file_not_found">File not found: {0}</entry>
 <entry key="error.file_not_dir">Not a directory: {0}</entry>
 
 <entry key="error.unable_to_parse_encoding">Unable to parse encoding from file {0}: {1}</entry>

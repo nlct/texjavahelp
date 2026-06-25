@@ -427,7 +427,28 @@ public class Helpset
 
          hs.createFilteredLocaleList();
 
-         in = helpLib.getClass().getResourceAsStream(zipName);
+         File zipFile = helpLib.getHelpSetZipFile();
+
+         if (zipFile == null)
+         {
+            in = helpLib.getClass().getResourceAsStream(zipName);
+         }
+         else if (zipFile.exists())
+         {
+            in = new FileInputStream(zipFile);
+         }
+         else
+         {
+            throw new FileNotFoundException(
+              helpLib.getMessage("error.file_not_found", zipFile));
+         }
+
+         if (in == null)
+         {
+            throw new FileNotFoundException(
+               helpLib.getMessage("error.missing_resource", zipName));
+         }
+
          zipIn = new ZipInputStream(in);
 
          while ((zipEntry = zipIn.getNextEntry()) != null)
@@ -695,7 +716,8 @@ public class Helpset
 
    public static final String MANIFEST_CONTAINER="helpset";
 
-   public static final String ZIP_HELPSET_MIME_TYPE = "application/texjavahelp+zip";
+   public static final String ZIP_HELPSET_MIME_TYPE = "application/x-texjavahelp+zip";
+   public static final String ZIP_HELPSET_EXT = "tjh";
 }
 
 class ManifestReader extends XMLReaderAdapter

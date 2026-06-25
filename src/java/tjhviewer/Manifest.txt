@@ -1,0 +1,2 @@
+Main-Class: com/dickimawbooks/tjhviewer/TeXJavaHelpViewer
+Class-Path: . texjavahelplib.jar

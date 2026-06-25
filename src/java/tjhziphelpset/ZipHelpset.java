@@ -415,7 +415,7 @@ public class ZipHelpset extends AbstractCLI
 
       if (zipFile == null)
       {
-         zipFile = new File(inFile, helpsetDirName+".zip");
+         zipFile = new File(inFile, helpsetDirName+"."+Helpset.ZIP_HELPSET_EXT);
       }
    }
 

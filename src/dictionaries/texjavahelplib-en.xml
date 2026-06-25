@@ -713,6 +713,8 @@ Use {0} for help.</entry>
 
 <!-- Other error messages -->
 
+<entry key="error.file_not_found">File not found: {0}</entry>
+<entry key="error.missing_resource">Missing resource: {0}</entry>
 <entry key="error.exec_failed">Failed to execute: {0}</entry>
 <entry key="error.app_failed">{0} failed with exit code {1}</entry>
 <entry key="error.interrupted">Process interrupted</entry>

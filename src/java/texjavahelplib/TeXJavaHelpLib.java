@@ -37,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -746,7 +747,7 @@ public class TeXJavaHelpLib
    /**
     * Creates a MessageDialog containing the standalone license document.
     * The license document needs to have been declared with the
-    * <code>license</code> element in the helpset zip file. This is designed for
+    * <code>license</code> element in the helpset tjh file. This is designed for
     * standalone license files that are not incorporated into the
     * documentation. If the license is instead a chapter or section
     * of the helpset document, then fetch a reference to it 
@@ -1645,6 +1646,21 @@ public class TeXJavaHelpLib
       return helpsetdir;
    }
 
+   public void setHelpSetZipFile(File file)
+   {
+      helpsetZipFile = file;
+
+      if (helpsetZipFile != null)
+      {
+         helpsetZipName = file.getName();
+      }
+   }
+
+   public File getHelpSetZipFile()
+   {
+      return helpsetZipFile;
+   }
+
    public void setHelpSetZipName(String name)
    {
       helpsetZipName = name;
@@ -2476,16 +2492,27 @@ public class TeXJavaHelpLib
       this.helpsetdir = helpsetdir;
       this.helpWindowInitSize = helpWindowInitSize;
 
-      // Has the helpset been bundled into a zip file?
+      // Has the helpset been bundled into a tjh (zip) file?
 
-      if (helpsetZipName == null)
+      InputStream zipStream = null;
+      String zipName = null;
+
+      if (helpsetZipFile == null)
       {
-         helpsetZipName = helpsetdir + ".zip";
+         if (helpsetZipName == null)
+         {
+            helpsetZipName = helpsetdir + "."+Helpset.ZIP_HELPSET_EXT;
+         }
+
+         zipName = resourcebase + "/"+helpsetZipName;
+
+         zipStream = getClass().getResourceAsStream(zipName);
       }
-
-      String zipName = resourcebase + "/"+helpsetZipName;
-
-      InputStream zipStream = getClass().getResourceAsStream(zipName);
+      else
+      {
+         zipName = helpsetZipFile.getName();
+         zipStream = new FileInputStream(helpsetZipFile);
+      }
 
       if (zipStream != null)
       {
@@ -4577,6 +4604,9 @@ public class TeXJavaHelpLib
    public static final String HELP_LIB_ICON_PATH
    = "/com/dickimawbooks/texjavahelplib/icons/";
 
+   public static final int[] HELP_LIB_ICON_SIZES =
+    new int[] { 16, 20, 24, 32, 64 };
+
    protected Pattern helpsetPattern;
    protected Vector<HelpSetLocale> availableHelpsets;
 
@@ -4590,6 +4620,7 @@ public class TeXJavaHelpLib
 
    protected Helpset helpSet;
    protected String helpsetZipName = null;
+   protected File helpsetZipFile = null;
 
    protected String helpsetIconsXmlFilename = "icons.xml";
    protected HashMap<String,URL> helpsetIcons;

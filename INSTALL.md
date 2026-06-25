@@ -21,6 +21,8 @@ TEXMF/scripts/texjavahelp/tjhcreateiconpdf.jar
 TEXMF/scripts/texjavahelp/tjhcreateiconpdf.tlu
 TEXMF/scripts/texjavahelp/tjhflattendocsrc.jar
 TEXMF/scripts/texjavahelp/tjhflattendocsrc.tlu
+TEXMF/scripts/texjavahelp/tjhviewer.jar
+TEXMF/scripts/texjavahelp/tjhviewer.sh
 TEXMF/scripts/texjavahelp/tjhxml2bib.jar
 TEXMF/scripts/texjavahelp/tjhxml2bib.sh
 TEXMF/scripts/texjavahelp/tjhziphelpset.jar
@@ -53,6 +55,7 @@ cd ~/bin
 ln -s ~/texmf/scripts/texjavahelp/texjavahelpmk.tlu texjavahelpmk
 ln -s ~/texmf/scripts/texjavahelp/tjhcreateiconpdf.tlu tjhcreateiconpdf
 ln -s ~/texmf/scripts/texjavahelp/tjhflattendocsrc.tlu tjhflattendocsrc
+ln -s ~/texmf/scripts/texjavahelp/tjhviewer.sh tjhviewer
 ln -s ~/texmf/scripts/texjavahelp/tjhxml2bib.sh tjhxml2bib
 ln -s ~/texmf/scripts/texjavahelp/tjhziphelpset.tlu tjhziphelpset
 ```

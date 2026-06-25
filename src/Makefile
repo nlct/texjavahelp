@@ -21,6 +21,7 @@ all:	lib/texjavahelplib.jar \
 	lib/tjhxml2bib.jar \
 	lib/texjavahelpmk.jar \
 	lib/tjhziphelpset.jar \
+	lib/tjhviewer.jar \
 	lib/tjhflattendocsrc.jar \
 	lib/texjavahelpdemo.jar
 
@@ -28,7 +29,7 @@ lib/texjavahelpdemo.jar	: java/texjavahelpdemo/Manifest.txt \
 	classes/com/dickimawbooks/texjavahelpdemo/TeXJavaHelpDemo.class \
 	classes/com/dickimawbooks/texjavahelpdemo/dictionaries/ \
 	dictionaries/texjavahelpdemo-en.xml \
-	lib/helpset.zip
+	lib/helpset.tjh
 	cp dictionaries/texjavahelpdemo-*.xml classes/com/dickimawbooks/texjavahelpdemo/dictionaries/
 	cd classes; \
 	jar cmf ../java/texjavahelpdemo/Manifest.txt ../lib/texjavahelpdemo.jar \
@@ -47,14 +48,39 @@ classes/com/dickimawbooks/texjavahelpdemo/TeXJavaHelpDemo.class	: classes/com/di
 	-cp ../../lib/texjavahelplib.jar \
 	*.java
 
+classes/com/dickimawbooks/texjavahelpdemo	:
+	mkdir -p classes/com/dickimawbooks/texjavahelpdemo
+
 demo:	lib/texjavahelpdemo.jar
 	bin/texjavahelpdemo
 
-lib/helpset.zip	: lib/helpset/index.xml doc/gpl-3.0-standalone.html lib/tjhziphelpset.jar
-	$(tjhziphelpset) -L doc/gpl-3.0-standalone.html en lib
+lib/tjhviewer.jar	: java/tjhviewer/Manifest.txt \
+	classes/com/dickimawbooks/tjhviewer/TeXJavaHelpViewer.class \
+	classes/com/dickimawbooks/tjhviewer/dictionaries/ \
+	dictionaries/tjhviewer-en.xml
+	cp dictionaries/tjhviewer-*.xml classes/com/dickimawbooks/tjhviewer/dictionaries/
+	cd classes; \
+	jar cmf ../java/tjhviewer/Manifest.txt ../lib/tjhviewer.jar \
+	com/dickimawbooks/tjhviewer/*.class \
+	com/dickimawbooks/tjhviewer/dictionaries \
+	com/dickimawbooks/tjhviewer/dictionaries/*.xml
 
-classes/com/dickimawbooks/texjavahelpdemo	:
-	mkdir -p classes/com/dickimawbooks/texjavahelpdemo
+classes/com/dickimawbooks/tjhviewer	:
+	mkdir -p classes/com/dickimawbooks/tjhviewer
+
+classes/com/dickimawbooks/tjhviewer/dictionaries/	:
+	mkdir -p classes/com/dickimawbooks/tjhviewer/dictionaries
+
+classes/com/dickimawbooks/tjhviewer/TeXJavaHelpViewer.class	: classes/com/dickimawbooks/tjhviewer \
+	java/tjhviewer/*.java lib/texjavahelplib.jar 
+	cd java/tjhviewer; \
+	javac $(target_version) -d ../../classes \
+	 -Xlint:unchecked -Xlint:deprecation \
+	-cp ../../lib/texjavahelplib.jar \
+	*.java
+
+lib/helpset.tjh	: lib/helpset/index.xml doc/gpl-3.0-standalone.html lib/tjhziphelpset.jar
+	$(tjhziphelpset) -L doc/gpl-3.0-standalone.html en lib
 
 lib/helpset/index.xml	: lib/texjavahelpmk.jar doc/texjavahelp.pdf
 	$(texjavahelpmk) doc/texjavahelp.tex lib/helpset
@@ -303,5 +329,6 @@ clean	:
 	\rm -f lib/tjhflattendocsrc.jar
 	\rm -f lib/tjhziphelpset.jar
 	\rm -f lib/tjhcreateiconpdf.jar
+	\rm -f lib/tjhviewer.jar
 	\rm -rf lib/helpset
-	\rm -f lib/helpset.zip
+	\rm -f lib/helpset.tjh
