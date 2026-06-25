@@ -52,7 +52,7 @@ $(libdir)/tjhflattendocsrc.jar	:
 		make -C $(srcdir)
 
 clean	:
-	\rm -f test*.{aux,glstex,log,toc,pdf}
+	\rm -f test*.{aux,glstex,log,toc,pdf,glg}
 	\rm -f -r helpset
 	\rm -f -r html
 	\rm -f -r epub
