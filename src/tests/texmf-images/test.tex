@@ -28,8 +28,6 @@
  \TeXJavaHelpGlsResourceOptions
 ]
 
-\graphicspath{{images/}{images2/}}
-
 \begin{document}
 \maketitle
 
@@ -53,8 +51,29 @@ Reference \figureref{fig.sample}.
 
 \FloatFig
 {fig.sample}
-{\includegraphics[alt={Example Image}]{navbuttons}}
+{\includegraphics[alt={Example Image}]{example-image}}
 {Example Image}
+
+\section{Sample Section}
+\label{samplesection}
+
+Reference \figureref{fig.sample-a}.
+
+\FloatFig
+{fig.sample-a}
+{\includegraphics[alt={Example Image A}]{example-image-a}}
+{Example Image A}
+
+\subsection{Sample Sub-Section}
+\label{samplesubsection}
+
+Reference \figureref{fig.sample-b}.
+
+\FloatFig
+{fig.sample-b}
+{\includegraphics[alt={Example Image B}]{example-image-b}}
+{Example Image B}
+
 
 \printindex
 \end{document}
