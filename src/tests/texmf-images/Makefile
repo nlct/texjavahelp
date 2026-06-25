@@ -21,7 +21,10 @@ helpset/index.xml	: $(libdir)/texjavahelpmk.jar test.pdf
 		test.tex -o helpset
 
 test-helpset.tjh	: $(libdir)/tjhziphelpset.jar helpset/index.xml
-		$(tjhziphelpset) -L gpl-3.0-standalone.html en . -o test-helpset.tjh
+		$(tjhziphelpset) \
+		-L gpl-3.0-standalone.html en \
+		--in-dir . \
+		--helpset-dir test-helpset
 
 html/index.shtml	: $(libdir)/texjavahelpmk.jar test.pdf
 		$(texjavahelpmk) --log test-html.log \
