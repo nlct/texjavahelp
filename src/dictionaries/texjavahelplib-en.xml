@@ -698,9 +698,14 @@ Unable to open URL {0}</entry>
 
 <!-- Syntax error messages -->
 
-<entry key="error.clisyntax.missing.value">Missing value for: {0}</entry>
+<entry key="error.clisyntax.missing_value">Missing value for: {0}</entry>
+<entry key="error.clisyntax.missing_in">Missing input file</entry>
+
+<entry key="error.clisyntax.only_one">Only one {0} permitted</entry>
+<entry key="error.clisyntax.only_one_input">Only one input file permitted</entry>
 <entry key="error.clisyntax.invalid.syntax">Invalid syntax for: {0}</entry>
-<entry key="error.clisyntax.invalid.int_value">Invalid ''{0}'' value: {1} (number required)</entry>
+<entry key="error.clisyntax.invalid.int_value">Invalid ''{0}'' value: {1} (integer required)</entry>
+
 <entry key="error.clisyntax.unknown.arg">Unknown option: {0}
 Use {1} for help.</entry>
 <entry key="error.clisyntax.toomany.arg">Too many arguments.

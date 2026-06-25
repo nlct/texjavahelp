@@ -134,13 +134,13 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
          if (logFile != null)
          {
             throw new InvalidSyntaxException(
-              getMessage("error.syntax.only_one", arg));
+              getMessage("error.clisyntax.only_one", arg));
          }
       
          if (returnVals[0] == null)
          {
             throw new InvalidSyntaxException(
-               getMessage("error.clisyntax.missing.value", arg));
+               getMessage("error.clisyntax.missing_value", arg));
          } 
       
          logFile = new File(returnVals[0].toString());

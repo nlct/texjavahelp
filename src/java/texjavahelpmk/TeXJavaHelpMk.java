@@ -443,7 +443,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
          if (inFile != null)
          {
             throw new InvalidSyntaxException(
-              getMessage("error.syntax.only_one_input"));
+              getMessage("error.clisyntax.only_one_input"));
          }
 
          inFile = new File(returnVals[0].toString());
@@ -453,7 +453,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
          if (outDir != null)
          {
             throw new InvalidSyntaxException(
-              getMessage("error.syntax.only_one", arg));
+              getMessage("error.clisyntax.only_one", arg));
          }
 
          outDir = new File(returnVals[0].toString());

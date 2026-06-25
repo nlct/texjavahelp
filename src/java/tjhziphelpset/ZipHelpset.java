@@ -203,7 +203,7 @@ public class ZipHelpset extends AbstractCLI
          if (returnVals[0] == null)
          {
             throw new InvalidSyntaxException(
-               getMessage("error.clisyntax.missing.value", arg));
+               getMessage("error.clisyntax.missing_value", arg));
          }
 
          resourcePathName = returnVals[0].toString();
@@ -217,7 +217,7 @@ public class ZipHelpset extends AbstractCLI
          if (returnVals[0] == null)
          {
             throw new InvalidSyntaxException(
-               getMessage("error.clisyntax.missing.value", arg));
+               getMessage("error.clisyntax.missing_value", arg));
          }
 
          if (localeNames == null)
@@ -237,7 +237,7 @@ public class ZipHelpset extends AbstractCLI
          if (returnVals[0] == null)
          {
             throw new InvalidSyntaxException(
-               getMessage("error.clisyntax.missing.value", arg));
+               getMessage("error.clisyntax.missing_value", arg));
          }
 
          localePrefix = returnVals[0].toString();
@@ -342,7 +342,7 @@ public class ZipHelpset extends AbstractCLI
          if (returnVals[0] == null)
          {
             throw new InvalidSyntaxException(
-               getMessage("error.clisyntax.missing.value", arg));
+               getMessage("error.clisyntax.missing_value", arg));
          }
 
          zipFile = new File(returnVals[0].toString());

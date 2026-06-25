@@ -195,7 +195,7 @@ public class CreateIconPdf extends CLITeXAppAdapter
          if (returnVals[0] == null)
          {
             throw new InvalidSyntaxException(
-               getMessage("error.clisyntax.missing.value", arg));
+               getMessage("error.clisyntax.missing_value", arg));
          }
 
          inFileNames.add(returnVals[0].toString());
@@ -205,7 +205,7 @@ public class CreateIconPdf extends CLITeXAppAdapter
          if (returnVals[0] == null)
          {
             throw new InvalidSyntaxException(
-               getMessage("error.clisyntax.missing.value", arg));
+               getMessage("error.clisyntax.missing_value", arg));
          }
 
          basename = returnVals[0].toString();
@@ -215,7 +215,7 @@ public class CreateIconPdf extends CLITeXAppAdapter
          if (returnVals[0] == null)
          {
             throw new InvalidSyntaxException(
-               getMessage("error.clisyntax.missing.value", arg));
+               getMessage("error.clisyntax.missing_value", arg));
          }
 
          resourcePath = returnVals[0].toString();
@@ -225,13 +225,13 @@ public class CreateIconPdf extends CLITeXAppAdapter
          if (outDir != null)
          {
             throw new InvalidSyntaxException(
-              getMessage("error.syntax.only_one", arg));
+              getMessage("error.clisyntax.only_one", arg));
          }
 
          if (returnVals[0] == null)
          {
             throw new InvalidSyntaxException(
-               getMessage("error.clisyntax.missing.value", arg));
+               getMessage("error.clisyntax.missing_value", arg));
          }
 
          outDir = new File(returnVals[0].toString());
@@ -247,7 +247,7 @@ public class CreateIconPdf extends CLITeXAppAdapter
          if (returnVals[0] == null)
          {
             throw new InvalidSyntaxException(
-               getMessage("error.clisyntax.missing.value", arg));
+               getMessage("error.clisyntax.missing_value", arg));
          }
 
          sizeVal = returnVals[0].toString();

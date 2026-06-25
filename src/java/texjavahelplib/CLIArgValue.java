@@ -45,7 +45,7 @@ public class CLIArgValue
       if (value == null)
       {
          throw new InvalidSyntaxException(helpLib.getMessage(
-           "error.clisyntax.missing.value", option));
+           "error.clisyntax.missing_value", option));
       }
 
       CLIArgValue argValue = new CLIArgValue(value);

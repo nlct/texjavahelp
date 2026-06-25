@@ -259,7 +259,7 @@ public abstract class CLISyntaxParser
             else
             {
                throw new InvalidSyntaxException(getMessageWithFallback(
-                 "error.clisyntax.missing.value",
+                 "error.clisyntax.missing_value",
                  "Missing value for: {0}", option));
             }
          }

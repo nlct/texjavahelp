@@ -200,7 +200,7 @@ public class Xml2Bib extends AbstractCLI
          if (returnVals[0] == null)
          {
             throw new InvalidSyntaxException(
-               getMessage("error.clisyntax.missing.value", arg));
+               getMessage("error.clisyntax.missing_value", arg));
          }
 
          noEncapField = returnVals[0].toString();
@@ -210,7 +210,7 @@ public class Xml2Bib extends AbstractCLI
          if (returnVals[0] == null)
          {
             throw new InvalidSyntaxException(
-               getMessage("error.clisyntax.missing.value", arg));
+               getMessage("error.clisyntax.missing_value", arg));
          }
 
          inFileNames.add(returnVals[0].toString());
@@ -220,7 +220,7 @@ public class Xml2Bib extends AbstractCLI
          if (returnVals[0] == null)
          {
             throw new InvalidSyntaxException(
-               getMessage("error.clisyntax.missing.value", arg));
+               getMessage("error.clisyntax.missing_value", arg));
          }
 
          if (propFileNames == null)
@@ -235,7 +235,7 @@ public class Xml2Bib extends AbstractCLI
          if (returnVals[0] == null)
          {
             throw new InvalidSyntaxException(
-               getMessage("error.clisyntax.missing.value", arg));
+               getMessage("error.clisyntax.missing_value", arg));
          }
 
          if (resourceFileNames == null)
@@ -250,13 +250,13 @@ public class Xml2Bib extends AbstractCLI
          if (outFile != null)
          {
             throw new InvalidSyntaxException(
-              getMessage("error.syntax.only_one", arg));
+              getMessage("error.clisyntax.only_one", arg));
          }
 
          if (returnVals[0] == null)
          {
             throw new InvalidSyntaxException(
-               getMessage("error.clisyntax.missing.value", arg));
+               getMessage("error.clisyntax.missing_value", arg));
          }
 
          outFile = new File(returnVals[0].toString());
@@ -266,7 +266,7 @@ public class Xml2Bib extends AbstractCLI
          if (returnVals[0] == null)
          {
             throw new InvalidSyntaxException(
-               getMessage("error.clisyntax.missing.value", arg));
+               getMessage("error.clisyntax.missing_value", arg));
          }
 
          if (propFileNames == null)
