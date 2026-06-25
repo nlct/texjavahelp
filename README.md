@@ -61,7 +61,7 @@ files created during the document build are needed by
 
 ## Installing
 
-See (`INSTALL.md`)[INSTALL.md]
+See [`INSTALL.md`](INSTALL.md)
 
 ## Invocation
 
