@@ -18,7 +18,7 @@
 \hypersetup{colorlinks,linkcolor=blue}
 
 \title{Test Document}
-\author{Nicola L.C. Talbot\\\href{https://www.dickimaw-books.com/}{\nolinkurl{dickimaw-books.com}}}
+\author{Ann Author}
 
 \GlsXtrLoadResources[src={\jobname},
  \TeXJavaHelpSymbolResourceOptions
@@ -55,6 +55,27 @@ Reference \figureref{fig.sample}.
 {fig.sample}
 {\includegraphics[alt={Example Image}]{navbuttons}}
 {Example Image}
+
+\section{Sample Section}
+\label{samplesection}
+
+Reference \figureref{fig.sample-a}.
+
+\FloatFig
+{fig.sample-a}
+{\includegraphics[alt={Example Image A}]{secondaryNavButtons}}
+{Example Image A}
+
+\subsection{Sample Sub-Section}
+\label{samplesubsection}
+
+Reference \figureref{fig.sample-b}.
+
+\FloatFig
+{fig.sample-b}
+{\includegraphics[alt={Example Image B}]{historybuttons}}
+{Example Image B}
+
 
 \printindex
 \end{document}

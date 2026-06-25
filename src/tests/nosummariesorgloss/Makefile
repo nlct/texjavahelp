@@ -17,7 +17,6 @@ test.glstex	: test.tex test.bib
 
 helpset/index.xml	: $(libdir)/texjavahelpmk.jar test.pdf
 		$(texjavahelpmk) --log test-helpset.log \
-		--image-dest images \
 		test.tex -o helpset
 
 test-helpset.zip	: $(libdir)/tjhziphelpset.jar helpset/index.xml
