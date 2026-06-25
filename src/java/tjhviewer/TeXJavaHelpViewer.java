@@ -110,6 +110,7 @@ public class TeXJavaHelpViewer extends AbstractCLI
       printSyntaxItem(getMessage("syntax.in", "--in", "-i"));
       printSyntaxItem(getMessage("syntax.node", "--node", "-n"));
       printSyntaxItem(getMessage("syntax.anchor", "--anchor", "-a"));
+      printSyntaxItem(getMessage("syntax.helpsetdir", "--helpset-dir", "-d"));
 
       System.out.println();
 
@@ -128,6 +129,7 @@ public class TeXJavaHelpViewer extends AbstractCLI
            arg.equals("--in") || arg.equals("-i")
         || arg.equals("--node") || arg.equals("-n")
         || arg.equals("--anchor") || arg.equals("-a")
+        || arg.equals("--helpset-dir") || arg.equals("-d")
          )
       {
          return 1;
@@ -200,6 +202,16 @@ public class TeXJavaHelpViewer extends AbstractCLI
 
          targetRefName = returnVals[0].toString();
       }
+      else if (isArg(arg, "--helpset-dir", "-d", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         helpsetdir = returnVals[0].toString();
+      }
       else
       {
          return false;
@@ -241,7 +253,19 @@ public class TeXJavaHelpViewer extends AbstractCLI
 
       helpLib.setHelpSetZipFile(file);
 
-      helpLib.initHelpSet();
+      if (helpsetdir == null)
+      {
+         helpsetdir = file.getName();
+
+         int idx = helpsetdir.lastIndexOf(".");
+
+         if (idx > 0)
+         {
+            helpsetdir = helpsetdir.substring(0, idx);
+         }
+      }
+
+      helpLib.initHelpSet(helpsetdir);
 
       HelpFrame helpFrame = helpLib.getHelpFrame();
       helpFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -346,6 +370,7 @@ public class TeXJavaHelpViewer extends AbstractCLI
 
    String inFileName = null;
    String nodeName, targetRefName;
+   String helpsetdir = null;
 
    public static final String NAME = "tjhviewer";
 }
