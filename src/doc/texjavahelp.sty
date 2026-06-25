@@ -3663,7 +3663,10 @@ halign upper=flush left,halign lower=justify,
  {
    \TJHLargeIconImageFrame
     { 
-      \exp_args:Ne \texjavahelp_include_large_icon_img:n { #1 }
+      \exp_args:Ne \texjavahelp_include_large_icon_img:n
+       {
+         \text_purify:n { #1 }
+       }
     }
  }
 
@@ -3671,7 +3674,10 @@ halign upper=flush left,halign lower=justify,
  {
    \TJHSmallIconImageFrame
     { 
-      \exp_args:Ne \texjavahelp_include_small_icon_img:n { #1 }
+      \exp_args:Ne \texjavahelp_include_small_icon_img:n
+       {
+         \text_purify:n { #1 }
+       }
     }
  }
 
