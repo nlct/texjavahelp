@@ -1,0 +1,9 @@
+*.aux
+*.log
+*.glstex
+*.glg
+*.toc
+*.pdf
+helpset
+html
+epub

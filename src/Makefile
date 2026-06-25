@@ -287,28 +287,6 @@ classes/com/dickimawbooks/tjhziphelpset	:
 	cp ../README.md ../unstable/texjavahelp
 	cd ../unstable ; zip -r texjavahelp.zip texjavahelp
 
-../unstable/html/index.shtml	: lib/texjavahelpmk.jar \
-	doc/texjavahelp.pdf
-	$(texjavahelpmk) --nohelpset \
-	--html-ext shtml \
-	--image-dest images \
-	--root-name index \
-	--head-from-file doc/head.html \
-	--body-preamble-from-file doc/bodypreamble.html \
-	--body-postamble-from-file doc/bodypostamble.html \
-	--minitoc-div-id sidebar \
-	--minitoc-preamble-from-file doc/minitocpreamble.html \
-	doc/texjavahelp.tex -o ../unstable/html
-
-../unstable/epub/texjavahelp.epub	: lib/texjavahelpmk.jar \
-	doc/texjavahelp.pdf
-	$(texjavahelpmk) --epub \
-	--image-dest images \
-	--isbn "xxxxxxxxxxxxx" \
-	--author "Nicola L. C. Talbot" \
-	--author-file-as "Talbot, Nicola L. C." \
-	doc/texjavahelp.tex -o ../unstable/epub
-
 clean	:
 	\rm -rf classes
 	\rm -f doc/*.glstex
