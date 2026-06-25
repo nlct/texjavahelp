@@ -292,8 +292,20 @@ public class HelpFontSettingsFrame extends JFrame
       cancelButton = helpLib.createCancelButton((JFrame)this);
       closeCancelPanel.add(cancelButton);
 
-      closeCancelPanel.add(
-        helpLib.createHelpDialogButton(this, "sec:helpfontdialog"));
+      String label = helpLib.getHelpFontDialogLabel();
+
+      if (label != null)
+      {
+         try
+         {
+            closeCancelPanel.add(
+               helpLib.createHelpDialogButton(this, label));
+         }
+         catch (Throwable e)
+         {
+            helpLib.debug(e);
+         }
+      }
 
       JPanel applyOkayPanel = new JPanel();
       btnPanel.add(applyOkayPanel, "East");

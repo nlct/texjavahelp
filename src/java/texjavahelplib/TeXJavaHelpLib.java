@@ -2883,6 +2883,16 @@ public class TeXJavaHelpLib
       lowerNavSettingsChangeListeners.add(listener);
    }
 
+   public String getHelpFontDialogLabel()
+   {
+      return helpFontDialogLabel;
+   }
+
+   public void setHelpFontDialogLabel(String label)
+   {
+      helpFontDialogLabel = label;
+   }
+
    /**
     * Action to open the main help window. Designed for the
     * "menu.help.manual" menu item with the "manual" icon prefix.
@@ -4609,6 +4619,8 @@ public class TeXJavaHelpLib
 
    protected Pattern helpsetPattern;
    protected Vector<HelpSetLocale> availableHelpsets;
+
+   protected String helpFontDialogLabel = "sec:helpfontdialog";
 
    protected String helpsetdir = "helpset";
    protected String helpsetsubdir = null;
