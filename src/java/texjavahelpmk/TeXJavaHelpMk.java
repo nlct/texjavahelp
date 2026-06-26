@@ -116,6 +116,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
        || arg.equals("--in") || arg.equals("-i")
        || arg.equals("--output") || arg.equals("-o")
        || arg.equals("--out-charset")
+       || arg.equals("--pdf-to-image-converter")
        || arg.equals("--image-dest")
        || arg.equals("--image-preamble")
        || arg.equals("--image-preamble-from-file")
@@ -461,6 +462,10 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       else if (cliParser.isArg(arg, "--out-charset", returnVals))
       {
          outCharset = Charset.forName(returnVals[0].toString());
+      }
+      else if (cliParser.isArg(arg, "--pdf-to-image-converter", returnVals))
+      {
+         imageConverter = returnVals[0].toString();
       }
       else if (cliParser.isArg(arg, "--image-dest", returnVals))
       {
@@ -907,21 +912,17 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
          }
          else if (mimetype.equals(L2HConverter.MIME_TYPE_PNG))
          {
-            File pngFile = pdfToImage(pdfFile, name, "png");
+            File pngFile = new File(outPath.toFile(), name+".png");
+            pdfToImage(pdfFile, pngFile);
 
             imageDim = getImageFileDimensions(parser, pngFile, mimetype);
-
-            destFile = new File(outPath.toFile(), pngFile.getName());
-            copyFile(pngFile, destFile);
          }
          else if (mimetype.equals(L2HConverter.MIME_TYPE_JPEG))
          {
-            File jpegFile = pdfToImage(pdfFile, name, "jpeg");
+            File jpegFile = new File(outPath.toFile(), name+".jpeg");
+            pdfToImage(pdfFile, jpegFile);
 
             imageDim = getImageFileDimensions(parser, jpegFile, mimetype);
-
-            destFile = new File(outPath.toFile(), jpegFile.getName());
-            copyFile(jpegFile, destFile);
          }
          else
          {
@@ -946,7 +947,8 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
             destFile = (new File(outPath.toFile(), name+".pdf"));
             copyFile(pdfFile, destFile);
 
-            File pngFile = pdfToImage(pdfFile, name, "png");
+            File pngFile = new File(outPath.toFile(), name+".png");
+            pdfToImage(pdfFile, pngFile);
 
             imageDim = getImageFileDimensions(parser, pngFile,
                L2HConverter.MIME_TYPE_PNG);
@@ -978,6 +980,44 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       }
 
       return image;
+   }
+
+   protected void pdfToImage(File pdfFile, File destFile)
+     throws IOException,InterruptedException
+   {
+      if (imageConverter.equals("pdftoppm"))
+      {
+         String name = destFile.getName();
+
+         int idx = name.lastIndexOf(".");
+
+         String ext = "png";
+
+         if (idx > -1)
+         {
+            name = name.substring(0, idx);
+            ext = name.substring(idx+1);
+         }
+
+         File tmpFile = pdfToImage(pdfFile, name, ext);
+
+         Files.move(tmpFile.toPath(), destFile.toPath());
+      }
+      else
+      {
+         int exitCode = getHelpLib().execCommandAndWaitFor(tmpDir,
+          MAX_PROCESS_TIME, 
+          imageConverter, 
+          pdfFile.getAbsolutePath().toString(), 
+          destFile.getAbsolutePath().toString());
+
+         if (exitCode != 0)
+         {
+            throw new IOException(getMessage("error.app_failed",
+              String.format("%s \"%s\" \"%s\"", imageConverter,
+                pdfFile.getAbsolutePath(), destFile.getAbsolutePath()), exitCode));
+         }
+      }
    }
 
    protected File pdfToImage(File pdfFile, String basename, String format)
@@ -1107,6 +1147,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    private String dcIdentifierType = null;
 
    private String outputFormat = "latex";
+   private String imageConverter = "magick";
 
    private int nameIdx=0;
    

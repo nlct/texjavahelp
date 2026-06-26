@@ -66,3 +66,4 @@ clean	:
 	\rm -f -r html
 	\rm -f -r epub
 	\rm -f test-helpset.tjh
+	\rm -f -r flattened

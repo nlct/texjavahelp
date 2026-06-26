@@ -1528,29 +1528,9 @@ public class TJHListener extends L2HConverter
       Path relPath = null;
       Path parent = imagePath.getParent();
 
-      if (parent != null)
+      if (parent != null && !imagePath.isAbsolute())
       {
-         if (parent.isAbsolute())
-         {
-            try
-            {
-               if (getBasePath().isAbsolute())
-               {
-                  relPath = getBasePath().relativize(parent);
-               }
-               else
-               {
-                  relPath = getBasePath().toAbsolutePath().relativize(parent);
-               }
-            } 
-            catch (IllegalArgumentException e)
-            {// ignore
-            }
-         }
-         else
-         {
-            relPath = parent;
-         }
+         relPath = parent;
       }
 
       if (MIME_TYPE_PDF.equals(type))
@@ -1565,11 +1545,18 @@ public class TJHListener extends L2HConverter
             name = name.substring(0, idx);
          }
 
-         File pngFile;
+         Path outPath = getTeXJavaHelpMk().getOutDirectory().toPath();
+
+         if (relPath != null)
+         {
+            outPath = outPath.resolve(relPath);
+         }
+         
+         File pngFile = new File(outPath.toFile(), name+".png");
 
          try
          {
-            pngFile = getTeXJavaHelpMk().pdfToImage(pdfFile, name, "png");
+            getTeXJavaHelpMk().pdfToImage(pdfFile, pngFile);
          }
          catch (InterruptedException e)
          {
@@ -1578,20 +1565,7 @@ public class TJHListener extends L2HConverter
               e);
          }
 
-         Path pngPath = pngFile.toPath();
-         
          Dimension imageDim = getImageSize(pngFile, MIME_TYPE_PNG);
-
-         Path outPath = getTeXJavaHelpMk().getOutDirectory().toPath();
-
-         if (relPath != null)
-         {
-            outPath = outPath.resolve(relPath);
-         }
-            
-         Path destPath = (new File(outPath.toFile(), name)).toPath();
-         
-         Files.copy(pngPath, destPath);
 
          int width=0;
          int height=0;
@@ -1602,8 +1576,28 @@ public class TJHListener extends L2HConverter
             height = imageDim.height;
          }
 
-         image = new L2HImage(outPath.relativize(destPath),
-          MIME_TYPE_PNG, width, height, name, alt);
+         image = new L2HImage(outPath.relativize(pngFile.toPath()),
+             MIME_TYPE_PNG, width, height, null, alt, true);
+
+         if (documentTargetType == DocumentTargetType.HTML)
+         {
+            try
+            {
+               File destFile = new File(outPath.toFile(), pdfFile.getName());
+
+               getTeXApp().copyFile(pdfFile, destFile);
+               alt = image;
+
+               image = new L2HImage(outPath.relativize(destFile.toPath()),
+                 MIME_TYPE_PDF, width, height, null, alt, false);
+            }
+            catch (InterruptedException e)
+            {
+               throw new IOException(
+                 getTeXJavaHelpMk().getMessage("error.interrupted"),
+                 e);
+            }
+         }
       }
       else if (MIME_TYPE_TEX.equals(type))
       {
@@ -1848,7 +1842,7 @@ public class TJHListener extends L2HConverter
        KeyValList options, String filename)
     throws IOException
    {
-      File file = null;
+      TeXPath texPath = null;
 
       TeXObjectList substack = createStack();
       TJHIconFile iconFile = getIcon(options, stack, filename, substack);
@@ -1862,7 +1856,12 @@ public class TJHListener extends L2HConverter
             return;
          }
 
-         file = iconFile.getPdfFile();
+         texPath = iconFile.getTeXPath();
+
+         if (texPath == null)
+         {
+            texPath = new TeXPath(getParser(), iconFile.getPdfFile());
+         }
 
          if (options == null)
          {
@@ -1872,12 +1871,12 @@ public class TJHListener extends L2HConverter
          options.put("page", new UserNumber(iconFile.getPageNumber()));
       }
 
-      if (file == null)
+      if (texPath == null)
       {
-         file = getImageFile(filename);
+         texPath = getImagePath(filename);
       }
 
-      includegraphics(stack, options, file, filename);
+      includegraphics(stack, options, texPath, filename);
    }
 
    public TeXJavaHelpMk getTeXJavaHelpMk()

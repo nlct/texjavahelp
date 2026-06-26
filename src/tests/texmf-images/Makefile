@@ -4,27 +4,28 @@ tjhziphelpset=tjhziphelpset
 tjhflattendocsrc=tjhflattendocsrc
 srcdir=../..
 libdir=$(srcdir)/lib
+testfiles=test.tex test.bib
 
-all	: helpset/index.xml test-helpset.tjh html/index.shtml epub/test.epub
+all	: test-helpset/index.xml test-helpset.tjh html/index.shtml epub/test.epub flattened/test.tex
 
 test.pdf	: test.glstex
 		lualatex test
 		lualatex test
 
-test.glstex	: test.tex test.bib
+test.glstex	: $(testfiles)
 		lualatex test
 		bib2gls test
 
-helpset/index.xml	: $(libdir)/texjavahelpmk.jar test.pdf
+test-helpset/index.xml	: $(libdir)/texjavahelpmk.jar test.pdf
 		$(texjavahelpmk) --log test-helpset.log \
 		--image-dest images \
-		test.tex -o helpset
+		test.tex -o test-helpset
 
-test-helpset.tjh	: $(libdir)/tjhziphelpset.jar helpset/index.xml
+test-helpset.tjh	: $(libdir)/tjhziphelpset.jar test-helpset/index.xml
 		$(tjhziphelpset) \
 		-L gpl-3.0-standalone.html en \
 		--in-dir . \
-		--helpset-dir test-helpset
+		--helpset test-helpset
 
 html/index.shtml	: $(libdir)/texjavahelpmk.jar test.pdf
 		$(texjavahelpmk) --log test-html.log \
@@ -48,6 +49,12 @@ epub/test.epub	: $(libdir)/texjavahelpmk.jar test.pdf
 		--author-file-as "Author, Ann" \
 		test.tex -o epub
 
+flattened/test.tex      : $(libdir)/tjhflattendocsrc.jar $(testfiles)
+		$(tjhflattendocsrc) \
+		--in test.tex \
+		--image-dest images \
+		--output flattened
+
 $(libdir)/texjavahelpmk.jar	:
 		make -C $(srcdir)
 
@@ -56,7 +63,8 @@ $(libdir)/tjhflattendocsrc.jar	:
 
 clean	:
 	\rm -f test*.{aux,glstex,log,toc,pdf,glg}
-	\rm -f -r helpset
+	\rm -f -r test-helpset
 	\rm -f -r html
 	\rm -f -r epub
 	\rm -f test-helpset.tjh
+	\rm -f -r flattened
