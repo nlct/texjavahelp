@@ -612,32 +612,6 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
       return cliTeXHelpLib;
    }
 
-   protected void setCLIDebugModeOption(String option, String strValue)
-   throws InvalidSyntaxException
-   {
-      try
-      {
-         int val = Integer.parseInt(strValue);
-
-         if (val >= 0)
-         {
-            cliTeXHelpLib.setDebuggingLevel(val);
-         }
-      }
-      catch (NumberFormatException e)
-      {
-         try
-         {
-            cliTeXHelpLib.setDebuggingLevel(
-              TeXParser.getDebugLevelFromModeList(strValue.split(",")));
-         }
-         catch (TeXSyntaxException e2)
-         {
-            throw new InvalidSyntaxException(e2.getMessage(this), e2);
-         }
-      }
-   }
-
    @Override
    public void substituting(TeXParser parser, String original, String replacement)
    {
@@ -1008,6 +982,35 @@ class CLITeXHelpLib extends AbstractCLI
    protected String getShortVersionSwitch()
    {
       return cliTeXApp.getShortVersionSwitch();
+   }
+
+   @Override
+   protected boolean setCLIDebugModeOption(String option, String value)
+   throws InvalidSyntaxException
+   {
+      Integer level = null;
+      
+      if (value != null)
+      {
+         try
+         {
+            level = Integer.valueOf(value);
+         }
+         catch (NumberFormatException e)
+         {
+            try
+            {
+               level = Integer.valueOf(
+                 TeXParser.getDebugLevelFromModeList(value.trim().split("\\s*,\\s*")));      
+            }
+            catch (TeXSyntaxException e2)
+            {   
+               throw new InvalidSyntaxException(e2.getMessage(cliTeXApp), e2);
+            }
+         }  
+      }     
+   
+      return setCLIDebugOption(option, level);
    }
 
    @Override

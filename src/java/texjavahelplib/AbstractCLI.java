@@ -98,6 +98,28 @@ public abstract class AbstractCLI
       return true;
    }
 
+   protected boolean setCLIDebugModeOption(String option, String value)
+   throws InvalidSyntaxException
+   {
+      Integer level = null;
+      
+      if (value != null)
+      {
+         try
+         {
+            level = Integer.valueOf(value);
+         }
+         catch (NumberFormatException e)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.clisyntax.invalid.int_value", option, value),
+              e);
+         }
+      }
+   
+      return setCLIDebugOption(option, level);
+   }
+
    public void printSyntaxItem(String msg)
    {
       helpLib.printSyntaxItem(msg);
@@ -165,6 +187,13 @@ public abstract class AbstractCLI
          throws InvalidSyntaxException
          {
             return setCLIDebugOption(option, value);
+         }
+
+         @Override
+         public boolean setDebugModeOption(String option, String value)
+         throws InvalidSyntaxException
+         {
+            return setCLIDebugModeOption(option, value);
          }
 
          @Override
