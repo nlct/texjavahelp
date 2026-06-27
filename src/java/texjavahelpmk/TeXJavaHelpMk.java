@@ -85,6 +85,8 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    protected int getCLIArgCount(String arg)
    {
       if (arg.equals("--split")
+       || arg.equals("--add-css")
+       || arg.equals("--add-css-from-file")
        || arg.equals("--head")
        || arg.equals("--head-from-file")
        || arg.equals("--html-ext")
@@ -120,6 +122,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
        || arg.equals("--image-dest")
        || arg.equals("--image-preamble")
        || arg.equals("--image-preamble-from-file")
+       || arg.equals("--cover-image")
          )
       {
          return 1;
@@ -203,7 +206,7 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       {
          splitUseBaseNamePrefix = false;
       }
-      else if (arg.equals("--no-convert-images"))
+      else if (arg.equals("--noconvert-images") || arg.equals("--no-convert-images"))
       {
          convertImages = false;
       }
@@ -226,6 +229,40 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
          try
          {
             extraHead = getFileContents(new File(filename));
+         }
+         catch (IOException e)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.io_load", filename, e.getMessage()), e);
+         }
+      }
+      else if (cliParser.isArg(arg, "--add-css", returnVals))
+      {
+         if (extraCss == null)
+         {
+            extraCss = returnVals[0].toString();
+         }
+         else
+         {
+            extraCss = String.format("%s%n%s", extraCss, returnVals[0].toString());
+         }
+      }
+      else if (cliParser.isArg(arg, "--add-css-from-file", returnVals))
+      {
+         String filename = returnVals[0].toString();
+
+         try
+         {
+            String content = getFileContents(new File(filename));
+
+            if (extraCss == null)
+            {
+               extraCss = content;
+            }
+            else
+            {
+               extraCss = String.format("%s%n%s", extraCss, content);
+            }
          }
          catch (IOException e)
          {
@@ -463,6 +500,25 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       {
          outCharset = Charset.forName(returnVals[0].toString());
       }
+      else if (cliParser.isArg(arg, "--cover-image", returnVals))
+      {
+         String filename = returnVals[0].toString();
+
+         if (filename.isEmpty())
+         {
+            coverImage = null;
+         }
+         else
+         {
+            coverImage = new File(filename);
+
+            if (!coverImage.exists())
+            {
+               throw new InvalidSyntaxException(
+                  getMessage("error.file_not_found", coverImage));
+            }
+         }
+      }
       else if (cliParser.isArg(arg, "--pdf-to-image-converter", returnVals))
       {
          imageConverter = returnVals[0].toString();
@@ -554,24 +610,44 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
       printSyntaxItem(getMessage("syntax.output.options"));
       System.out.println();
       printSyntaxItem(getMessage("syntax.out", "--output", "-o"));
-      printSyntaxItem(getMessage("syntax.out.charset", "--out-charset"));
-      printSyntaxItem(getMessage("syntax.out.image-dest", "--image-dest"));
-      printSyntaxItem(getMessage("syntax.html-ext", "--html-ext"));
+      printSyntaxItem(getMessage("syntax.out_charset", "--out-charset"));
+      printSyntaxItem(getMessage("syntax.convert-images", "--[no]convert-images"));
+      printSyntaxItem(getMessage("syntax.image-dest", "--image-dest"));
+      printSyntaxItem(getMessage("syntax.image-preamble", "--image-preamble"));
+      printSyntaxItem(getMessage("syntax.image-preamble-from-file",
+         "--image-preamble-from-file"));
+      printSyntaxItem(getMessage("syntax.pdf-to-image-converter",
+        "--pdf-to-image-converter", imageConverter));
       System.out.println();
       printSyntaxItem(getMessage("syntax.html.options"));
       System.out.println();
-      printSyntaxItem(getMessage("syntax.head", "--head"));
-      printSyntaxItem(getMessage("syntax.helpset", "--[no]helpset"));
+      printSyntaxItem(getMessage("syntax.add-css", "--add-css"));
+      printSyntaxItem(getMessage("syntax.add-css-from-file", "--add-css-from-file"));
+      printSyntaxItem(getMessage("syntax.body-preamble", "--body-preamble"));
+      printSyntaxItem(getMessage("syntax.body-preamble-from-file",
+         "--body-preamble-from-file"));
+      printSyntaxItem(getMessage("syntax.body-postamble", "--body-postamble"));
+      printSyntaxItem(getMessage("syntax.body-postamble-from-file",
+         "--body-postamble-from-file"));
       printSyntaxItem(getMessage("syntax.breadcrumbtrail", "--[no]breadcrumbtrail"));
+      printSyntaxItem(getMessage("syntax.entities", "--[no]entities"));
+      printSyntaxItem(getMessage("syntax.head", "--head"));
+      printSyntaxItem(getMessage("syntax.head-from-file", "--head-from-file"));
+      printSyntaxItem(getMessage("syntax.helpset", "--[no]helpset"));
+      printSyntaxItem(getMessage("syntax.html-ext", "--html-ext"));
+      printSyntaxItem(getMessage("syntax.mathjax", "--[no]mathjax"));
       printSyntaxItem(getMessage("syntax.minitoc", "--[no]minitoc"));
       printSyntaxItem(getMessage("syntax.minitoc-div-class", "--minitoc-div-class"));
       printSyntaxItem(getMessage("syntax.minitoc-div-id", "--minitoc-div-id"));
       printSyntaxItem(getMessage("syntax.minitoc-preamble", "--minitoc-preamble"));
       printSyntaxItem(getMessage("syntax.minitoc-postamble", "--minitoc-postamble"));
-      printSyntaxItem(getMessage("syntax.mathjax", "--[no]mathjax"));
+      printSyntaxItem(getMessage("syntax.root-name", "--root-name"));
+      printSyntaxItem(getMessage("syntax.root-page-preamble",
+         "--root-page-preamble"));
+      printSyntaxItem(getMessage("syntax.root-page-preamble-from-file",
+         "--root-page-preamble-from-file"));
       printSyntaxItem(getMessage("syntax.support-unicode-script",
          "--[no]support-unicode-script"));
-      printSyntaxItem(getMessage("syntax.entities", "--[no]entities"));
       System.out.println();
 
       System.out.println();
@@ -684,7 +760,13 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    {
       TJHListener listener = new TJHListener(this, outCharset, docTargetType);
 
+      if (extraCss != null)
+      {
+         listener.addCssStyle(extraCss);
+      }
+
       listener.setOgUrlPath(ogUrlPath);
+      listener.setCoverImage(coverImage);
 
       listener.setKeywords(keywords);
       listener.setSubject(subject);
@@ -1152,9 +1234,11 @@ public class TeXJavaHelpMk extends CLITeXAppAdapter
    private int nameIdx=0;
    
    private String extraHead=null;
+   private String extraCss=null;
    private String htmlSuffix = "html";
 
    private String imagePreamble = null;
+   private File coverImage = null;
 
    public static final String NAME = "texjavahelpmk";
 }

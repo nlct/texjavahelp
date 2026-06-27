@@ -105,6 +105,18 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new HeadlessSection());
       registerControlSequence(new PreFrontMatterBlock());
 
+
+      registerControlSequence(new TJHMakeTitle());
+      registerControlSequence(new TextualContentCommand("@tjhpublisher", ""));
+      registerControlSequence(new TextualContentCommand("@tjheditionblurb", ""));
+      registerControlSequence(new TextualContentCommand("@tjhposttitleblock", ""));
+      registerControlSequence(new TextualContentCommand("@tjhtoclabel", "contents"));
+
+      registerControlSequence(new StoreDataCs("tjhpublisher"));
+      registerControlSequence(new StoreDataCs("tjheditionblurb"));
+      registerControlSequence(new StoreDataCs("tjhposttitleblock"));
+      registerControlSequence(new StoreDataCs("tjhtoclabel"));
+
       addCssStyles();
       addSemanticCommands();
 
@@ -143,6 +155,7 @@ public class TeXJavaHelpSty extends UserGuideSty
          registerControlSequence(new GenericCommand(true, "scenebreak", null,
            TeXParserUtils.createStack(listener,
              new TeXCsRef("fancybreak"), 
+             listener.getOther('*'),
              TeXParserUtils.createGroup(listener, new TeXCsRef("pfbreakdisplay"))
            )
          ));

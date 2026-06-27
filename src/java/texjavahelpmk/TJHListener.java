@@ -67,12 +67,15 @@ import com.dickimawbooks.texparserlib.latex.glossaries.GlossaryGroup;
 
 import com.dickimawbooks.texparserlib.html.L2HConverter;
 import com.dickimawbooks.texparserlib.html.L2HImage;
+import com.dickimawbooks.texparserlib.html.L2HItem;
+import com.dickimawbooks.texparserlib.html.L2HList;
 import com.dickimawbooks.texparserlib.html.DivisionNode;
 import com.dickimawbooks.texparserlib.html.DocumentBlockType;
 import com.dickimawbooks.texparserlib.html.FileData;
 import com.dickimawbooks.texparserlib.html.HtmlTag;
 import com.dickimawbooks.texparserlib.html.HtmlLiteral;
 import com.dickimawbooks.texparserlib.html.StartElement;
+import com.dickimawbooks.texparserlib.html.EndElement;
 import com.dickimawbooks.texparserlib.html.VoidElement;
 import com.dickimawbooks.texparserlib.auxfile.DivisionInfo;
 import com.dickimawbooks.texparserlib.auxfile.LabelInfo;
@@ -100,7 +103,7 @@ public class TJHListener extends L2HConverter
 
       this.generator = "TeXJavaHelpMk";
       this.documentTargetType = type;
-      this.isHtml5 = (type == DocumentTargetType.HTML);
+      this.isHtml5 = (type != DocumentTargetType.HELPSET);
       this.isXml = (type == DocumentTargetType.EPUB);
       setSeparateCss(true);
 
@@ -189,6 +192,11 @@ public class TJHListener extends L2HConverter
             setImageExtensions(".pdf", ".png", ".jpg", ".jpeg", ".tex");
          break;
          case EPUB:
+
+            addCssStyle("nav.toc ol { list-style-type: none; }");
+
+            createMainDiv = false;
+
             setImageExtensions(".png", ".jpg", ".jpeg");
 
             epubContents = new Vector<String>();
@@ -222,6 +230,23 @@ public class TJHListener extends L2HConverter
       putControlSequence(new Relax("cleardoublepage"));
       putControlSequence(new GobbleOpt("pagebreak"));
       putControlSequence(new GobbleOpt("nopagebreak"));
+
+      if (documentTargetType == DocumentTargetType.EPUB)
+      {
+         tocList = new L2HList("tjh@toclist",
+           new StartElement("ol", true, true),
+           new EndElement("ol", true, true)
+         );
+
+         putControlSequence(tocList);
+
+         tocListItem = new L2HItem("tjh@tocitem",
+           new StartElement("li", true, true),
+           new EndElement("li", true, true),
+          false);
+
+         putControlSequence(tocListItem);
+      }
    }
 
    public boolean isWriteOGMarkupOn()
@@ -282,6 +307,22 @@ public class TJHListener extends L2HConverter
       writeliteralln("<!DOCTYPE html>");
    }
 
+   @Override
+   /**   
+    * Writes the <code>&lt;html&gt;</code> start tag.
+    */   
+   protected void writeHtmlStart()
+     throws IOException
+   {     
+      if (documentTargetType == DocumentTargetType.EPUB)
+      {  
+         writeliteralln(HTML_EPUB_START);
+      }     
+      else
+      {  
+         writeliteralln("<html>");
+      }     
+   }  
 
    public void setBreadCrumbTrailEnabled(boolean on)
    {
@@ -385,6 +426,11 @@ public class TJHListener extends L2HConverter
       dcIdentifierScheme = scheme;
       dcIdentifierType = type;
       dcIdentifier = id;
+   }
+
+   public void setCoverImage(File file)
+   {
+      coverImage = file;
    }
 
    @Override
@@ -551,10 +597,85 @@ public class TJHListener extends L2HConverter
       inNavigation = false;
    }
 
+   protected void writeCoverPage(File file)
+    throws IOException
+   {
+      PrintWriter out = null;
+
+      try
+      {
+         Charset charset = getHtmlCharset();
+
+         out = new PrintWriter(
+           getTeXApp().createBufferedWriter(file.toPath(), charset));
+
+         out.println("<!DOCTYPE html>");
+         out.println(HTML_EPUB_START);
+         out.println("<head>");
+         out.format("<meta charset=\"%s\"/>%n", charset.name());
+         out.format("<meta name=\"generator\" content=\"%s\"/>%n",
+           getTeXApp().getApplicationName());
+
+         out.print("<title>");
+         out.print(coverImageTitle);
+         out.println("</title>");
+
+         out.println("<style type=\"text/css\" title=\"override_css\">");
+         out.println("@page {padding: 0pt; margin:0pt}");
+         out.println("body { text-align: center; padding:0pt; margin: 0pt; }");
+         out.println("div { margin: 0pt; padding: 0pt; }");
+         out.println("</style>");
+
+         out.println("</head>");
+         out.println("<body>");
+
+         out.format("<img src=\"%s\" alt=\"%s\" style=\"height: 100%%\" />%n",
+           HtmlTag.encodeAttributeValue(coverImage.getName(), true),
+           HtmlTag.encodeAttributeValue(coverImageTitle, false)
+         );
+
+         out.println("</body>");
+         out.println("</html>");
+      }
+      finally
+      {
+         if (out != null)
+         {
+            out.close();
+         }
+      }
+   }
+
    @Override
    protected void startBody(TeXObjectList stack) throws IOException
    {
       super.startBody(stack);
+
+      if (coverImage != null)
+      {
+         File imageFile = new File(getOutputDir(), coverImage.getName());
+
+         try
+         {
+            coverHtmlFile = new File(getOutputDir(), coverPageId+"."+getSuffix());
+
+            writeCoverPage(coverHtmlFile);
+
+            getTeXApp().copyFile(coverImage, imageFile);
+
+            addToManifest(new FileData(imageFile, coverImageId, 
+              Files.probeContentType(imageFile.toPath())));
+
+            addToManifest(new FileData(coverHtmlFile, coverPageId, 
+              MIME_TYPE_XHTML));
+         }
+         catch (Exception e)
+         {
+            getTeXApp().error(e);
+            coverImage = null;
+            coverHtmlFile = null;
+         }
+      }
 
       inNavigation = true;
 
@@ -746,26 +867,62 @@ public class TJHListener extends L2HConverter
       NavigationNode node = rootNode;
       int order = 1;
 
-      while ((node = node.getNextNode()) != null)
-      {
-         String id = processAnchorName(node.getKey());
+      String prevFileName = null;
 
+      if (coverHtmlFile != null)
+      {
          out.format((Locale)null,
-           "   <navPoint id=\"%s\" playOrder=\"%d\">%n", id, order);
+           "   <navPoint id=\"%s\" playOrder=\"%d\">%n", coverPageId, order);
 
          out.println("     <navLabel>");
 
          out.print("      <text>");
-         out.print(node.getTitle());
+         out.print(coverImageTitle);
          out.println("</text>");
 
          out.println("     </navLabel>");
 
-         out.format("     <content src=\"%s\" />", node.getRef());
+         out.format("     <content src=\"%s\" />%n", coverHtmlFile.getName());
 
          out.println("   </navPoint>");
 
          order++;
+
+         prevFileName = coverHtmlFile.getName();
+      }
+
+      while ((node = node.getNextNode()) != null)
+      {
+         String fileName = node.getFileName();
+
+         if (prevFileName != null && prevFileName.equals(fileName))
+         {
+            // don't include in play order
+            // may be a section that wasn't split
+         }
+         else
+         {
+            String id = processAnchorName(node.getKey());
+
+            out.format((Locale)null,
+              "   <navPoint id=\"%s\" playOrder=\"%d\">%n", id, order);
+
+            out.println("     <navLabel>");
+
+            out.print("      <text>");
+            out.print(node.getTitle());
+            out.println("</text>");
+
+            out.println("     </navLabel>");
+
+            out.format("     <content src=\"%s\" />%n", node.getRef());
+
+            out.println("   </navPoint>");
+
+            order++;
+         }
+
+         prevFileName = fileName;
       }
 
       out.println("  </navMap>");
@@ -867,6 +1024,8 @@ public class TJHListener extends L2HConverter
    protected void createDivisionTree(TeXObjectList stack)
       throws IOException
    {
+      if (divisionData == null || divisionData.isEmpty()) return;
+
       super.createDivisionTree(stack);
 
       GlossariesSty glossariesSty = tjhSty.getGlossariesSty();
@@ -1005,7 +1164,15 @@ public class TJHListener extends L2HConverter
 
          if (currentNode == null)
          {
-            getParser().warningMessage("error.no_current_node");
+            if (isSaveDivisionsEnabled())
+            {
+               getParser().warningMessage("error.no_current_node");
+            }
+            else if (!noDivisionWarningShown)
+            {
+               getParser().warningMessage("error.no_current_node_use_split", "--split");
+               noDivisionWarningShown = true;
+            }
          }
          else
          {
@@ -1118,6 +1285,72 @@ public class TJHListener extends L2HConverter
       }
    }
 
+   @Override
+   public String getTocLabel()
+   {
+      if (tocLabel == null)
+      {
+         ControlSequence cs = getParser().getControlSequence("@tjhtoclabel");
+
+         if (cs != null)
+         {
+            try
+            {
+               tocLabel = getParser().expandToString(cs, null);
+            }
+            catch (IOException e)
+            {
+               getTeXApp().error(e);
+            }
+         }
+
+         if (tocLabel == null)
+         {
+            tocLabel = "toc";
+         }
+      }
+
+      return tocLabel;
+   }
+
+   @Override
+   public L2HList createTocList()
+   {
+      if (tocList == null)
+      {
+         return super.createTocList();
+      }
+      else
+      {
+         return tocList;
+      }
+   }
+
+   @Override
+   public L2HItem createTocItem()
+   {
+      if (tocListItem == null)
+      {
+         return super.createTocItem();
+      }
+      else
+      {
+         return tocListItem;
+      }
+   }
+
+   @Override
+   public StartElement createTocStartElement()
+   {
+      StartElement elem = super.createTocStartElement();
+
+      if (documentTargetType != DocumentTargetType.HELPSET)
+      {
+         elem.putAttribute("epub:type", "toc");
+      }
+
+      return elem;
+   }
 
    protected void writeContentOPF() throws IOException
    {
@@ -1210,7 +1443,6 @@ public class TJHListener extends L2HConverter
                );
             }
 
-            out.format(">");
             out.println("</meta>");
          }
 
@@ -1243,9 +1475,10 @@ public class TJHListener extends L2HConverter
          }
 
          OffsetDateTime oft = OffsetDateTime.now(ZoneOffset.UTC);
+         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssX");
 
          out.format("<meta property=\"dcterms:modified\">%s</meta>%n",
-            oft.format(DateTimeFormatter.ISO_INSTANT)
+            oft.format(dtf)
           );
 
          out.println("</metadata>");
@@ -1255,6 +1488,11 @@ public class TJHListener extends L2HConverter
          Vector<FileData> manifest = getManifest();
 
          Vector<String> ncx = new Vector<String>();
+
+         if (coverHtmlFile != null)
+         {
+            ncx.add(coverPageId);
+         }
 
          Path outPath = getOutputPath();
 
@@ -1268,23 +1506,24 @@ public class TJHListener extends L2HConverter
                path = outPath.relativize(path);
             }
 
-            addToEpubContents(path);
-
-            String id = processAnchorName(fileData.getId());
-
-            out.format("   <item href=\"%s\" id=\"%s\" media-type=\"%s\" ",
-              path, id, fileData.getMimeType());
-
-            if (id.equals("toc"))
+            if (addToEpubContents(path))
             {
-               out.print("properties=\"nav\" ");
-            }
+               String id = processAnchorName(fileData.getId());
 
-            out.println("/>");
+               out.format("   <item href=\"%s\" id=\"%s\" media-type=\"%s\" ",
+                 path, id, fileData.getMimeType());
 
-            if (fileData.getNode() != null)
-            {
-               ncx.add(id);
+               if (id.equals(getTocLabel()))
+               {
+                  out.print("properties=\"nav\" ");
+               }
+
+               out.println("/>");
+
+               if (fileData.getNode() != null)
+               {
+                  ncx.add(id);
+               }
             }
          }
 
@@ -1329,7 +1568,7 @@ public class TJHListener extends L2HConverter
       }
    }
 
-   protected void addToEpubContents(Path path)
+   protected boolean addToEpubContents(Path path)
    {
       StringBuilder builder = new StringBuilder();
 
@@ -1343,7 +1582,15 @@ public class TJHListener extends L2HConverter
          builder.append(path.getName(i));
       }
 
-      epubContents.add(builder.toString());
+      String name = builder.toString();
+
+      if (!epubContents.contains(name))
+      {
+         epubContents.add(name);
+         return true;
+      }
+
+      return false;
    }
 
    protected void createEpubZip() throws IOException
@@ -1995,8 +2242,6 @@ public class TJHListener extends L2HConverter
       {
          setAfterHeading(true);
       }
-
-      setCurrentBlockType(DocumentBlockType.PARAGRAPH);
    }
 
    protected File navigationXmlFile;
@@ -2030,9 +2275,19 @@ public class TJHListener extends L2HConverter
    protected String dcIdentifier=null;
    protected String dcIdentifierType=null;
    protected String dcIdentifierScheme=null;
+   protected File coverImage = null;
+   protected File coverHtmlFile = null;
+   protected String coverImageId = "cover";
+   protected String coverPageId = "coverpage";
+   protected String coverImageTitle = "Cover";
+   protected String tocLabel;
    protected int tocDepth = 1;// TODO
    protected String rootPagePreMainContent = null;
    protected boolean inNavigation = false;
+   protected boolean noDivisionWarningShown=false;
+
+   protected L2HList tocList;
+   protected L2HItem tocListItem;
 
    protected Vector<String> epubContents;
 
@@ -2045,4 +2300,7 @@ public class TJHListener extends L2HConverter
 
    public static final String MIME_TYPE_EPUB = "application/epub+zip";
    public static final String MIME_TYPE_NCX = "application/x-dtbncx+xml";
+
+   public static final String HTML_EPUB_START = 
+      "<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\">";
 }

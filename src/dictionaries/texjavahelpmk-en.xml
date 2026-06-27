@@ -31,22 +31,45 @@ has have</entry>
 <entry key="syntax.timeout">{0} &lt;n&gt;	Timeout processes after &lt;n&gt; milliseconds.</entry>
 <entry key="syntax.output.options">Output Options:</entry>
 <entry key="syntax.out">{0} (or {1}) &lt;directory&gt;	Save output in &lt;directory&gt;.</entry>
-<entry key="syntax.out.charset">{0} &lt;charset&gt;	Set the character encoding to &lt;charset&gt; for the output files.</entry>
-<entry key="syntax.out.image-dest">{0} &lt;directory&gt;	Save output images in &lt;directory&gt; (relative to the output directory).</entry>
-<entry key="syntax.html-suffix">{0} &lt;ext&gt;	Set the file extension to &lt;ext&gt; (default "html").</entry>
+<entry key="syntax.out_charset">{0} &lt;charset&gt;	Set the character encoding to &lt;charset&gt; for the output files.</entry>
+
+<entry key="syntax.convert-images">{0}	Convert images (requires external processors).</entry>
+<entry key="syntax.image-dest">{0} &lt;directory&gt;	Save output images in &lt;directory&gt; (relative to the output directory).</entry>
+<entry key="syntax.image-preamble">{0} &lt;LaTeX&gt;	Use &lt;LaTeX&gt; code for the preamble of files used to generate images on-the-fly.</entry>
+<entry key="syntax.image-preamble-from-file">{0} &lt;file&gt;	Use the LaTeX code provided in &lt;file&gt; for the preamble of files used to generate images on-the-fly.</entry>
+<entry key="syntax.pdf-to-image-converter">{0} &lt;application&gt;	Use &lt;application&gt; to convert PDF files to PNG or JPEG. (Default: {1})</entry>
+
 <entry key="syntax.html.options">HTML Options:</entry>
+
+<entry key="syntax.add-css">{0} &lt;css&gt;	Add &lt;css&gt; code to CSS style sheet.</entry>
+<entry key="syntax.add-css-from-file">{0} &lt;file&gt;	Add CSS code provided in &lt;file&gt; to style sheet.</entry>
+
+<entry key="syntax.body-preamble">{0} &lt;html&gt;	Add &lt;html&gt; code to the start of the HTML body.</entry>
+<entry key="syntax.body-preamble-from-file">{0} &lt;file&gt;	Add HTML code provided in &lt;file&gt; to the start of the HTML body.</entry>
+
+<entry key="syntax.body-postamble">{0} &lt;html&gt;	Add &lt;html&gt; code to the end of the HTML body.</entry>
+<entry key="syntax.body-postamble-from-file">{0} &lt;file&gt;	Add HTML code provided in &lt;file&gt; to the end of the HTML body.</entry>
+
+<entry key="syntax.breadcrumbtrail">{0}	Add breadcrumb trail to the start of the HTML body.</entry>
+
+<entry key="syntax.entities">{0}	Use HTML entities for non-ASCII characters.</entry>
+
 <entry key="syntax.head">{0} &lt;html&gt;	Add &lt;html&gt; code to HTML header.</entry>
-<entry key="syntax.mathjax">{0}	Use MathJax.</entry>
+<entry key="syntax.head-from-file">{0} &lt;file&gt;	Add HTML code provided in &lt;file&gt; to HTML header.</entry>
+
 <entry key="syntax.helpset">{0}	Create helpset files.</entry>
-<entry key="syntax.breadcrumbtrail">{0}	Create breadcrumb trail.</entry>
+<entry key="syntax.html-ext">{0}	Set the extension for HTML files (default: html).</entry>
+
+<entry key="syntax.mathjax">{0}	Use MathJax.</entry>
 <entry key="syntax.minitoc">{0}	Create minitoc.</entry>
 <entry key="syntax.minitoc-div-class">{0} &lt;name&gt;	Encapsulate minitoc in div with given class name.</entry>
 <entry key="syntax.minitoc-div-id">{0} &lt;id&gt;	Encapsulate minitoc in div with given id.</entry>
 <entry key="syntax.minitoc-preamble">{0} &lt;html&gt;	Add &lt;html&gt; code before minitoc.</entry>
 <entry key="syntax.minitoc-postamble">{0} &lt;html&gt;	Add &lt;html&gt; code after minitoc.</entry>
+<entry key="syntax.root-name">{0} &lt;basename&gt;	Use &lt;basename&gt; for the root file name (without the extension). Default: basename of the input file.</entry>
+<entry key="syntax.root-page-preamble">{0} &lt;html&gt;	Add &lt;html&gt; code to the start of the HTML body for just the root page.</entry>
+<entry key="syntax.root-page-preamble-from-file">{0} &lt;html&gt;	Add &lt;html&gt; code to the end of the HTML body for just the root page.</entry>
 <entry key="syntax.support-unicode-script">{0}	Use Unicode superscripts or subscripts where available.</entry>
-<entry key="syntax.entities">{0}	Use HTML entities for non-ASCII characters.</entry>
-<entry key="syntax.html-ext">{0}	Set the extension for HTML files (default: html).</entry>
 
 <!--  Error messages -->
 
@@ -59,6 +82,7 @@ has have</entry>
 <entry key="error.unknown">Unknown error</entry>
 <entry key="error.no_aux_data">No aux data found! The document must be fully compiled first to ensure all auxiliary files are present.</entry>
 <entry key="error.no_current_node">No current node. The auxiliary files may be missing or not up-to-date.</entry>
+<entry key="error.no_current_node_use_split">No current node. Division data has been disabled. Use {0} with a value &gt; 0</entry>
 <entry key="error.no_division_data">No division data. The auxiliary files may be missing or not up-to-date or sectioning units may be missing a label.</entry>
 
 <entry key="error.exists">{0} already exists</entry>

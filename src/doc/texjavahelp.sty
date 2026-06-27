@@ -311,6 +311,14 @@
   }
 }
 
+% This is currently only implemented in texjavahelpmk:
+\newcommand{\@tjhpublisher}{}
+\newcommand{\tjhpublisher}[1]{\renewcommand{\@tjhpublisher}{#1}}
+\newcommand{\@tjheditionblurb}{}
+\newcommand{\tjheditionblurb}[1]{\renewcommand{\@tjheditionblurb}{#1}}
+\newcommand{\@tjhposttitleblock}{}
+\newcommand{\tjhposttitleblock}[1]{\renewcommand{\@tjhposttitleblock}{#1}}
+
 % Syntax: {unit}{prefix}{title}{target}{location}
 \providecommand \texparser@divisioninfo [ 5 ] { }
 
@@ -1077,6 +1085,10 @@
 \newcommand{\listofexampleslabel}{\label{listofexamples}}
 \newcommand{\listofexamplesheader}{}
 
+\newcommand{\@tjhtoclabel}{toc}
+\newcommand{\tjhtoclabel}[1]{\renewcommand{\@tjhtoclabel}{#1}}
+\@onlypreamble\tjhtoclabel
+
 \ifdef\chapter
 {
   \ifdef\titlepagestyle{\renewcommand{\titlepagestyle}{empty}}{}
@@ -1097,7 +1109,7 @@
   \ifdef\AfterTOCHead
    {
      \AfterTOCHead[toc]%
-      {\WriteTJHDivisionInfo{chapter}{}{\contentsname}{toc}{\thepage}}
+      {\WriteTJHDivisionInfo{chapter}{}{\contentsname}{\@tjhtoclabel}{\thepage}}
    }
    {}
 

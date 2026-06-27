@@ -1,5 +1,5 @@
 arara = arara --verbose
-texjavahelpmk=texjavahelpmk #--debug-mode sty-data --log texparser.log
+texjavahelpmk=texjavahelpmk #--debug-mode 'expansion,expansion-list,process,process-generic-cs,process-stack-list' 
 tjhziphelpset=tjhziphelpset
 tjhflattendocsrc=tjhflattendocsrc
 srcdir=../..
