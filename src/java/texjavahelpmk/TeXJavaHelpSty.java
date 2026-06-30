@@ -117,6 +117,15 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new StoreDataCs("tjhposttitleblock"));
       registerControlSequence(new StoreDataCs("tjhtoclabel"));
 
+      registerControlSequence(new LaTeXGenericCommand(false,
+       "tjhdivisiontitle", "mmm",
+        TeXParserUtils.createStack(listener,
+           listener.getParam(2),
+           listener.getSpace(),
+           listener.getParam(3)
+        )
+      ));
+
       addCssStyles();
       addSemanticCommands();
 

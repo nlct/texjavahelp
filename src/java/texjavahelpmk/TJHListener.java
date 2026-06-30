@@ -299,6 +299,51 @@ public class TJHListener extends L2HConverter
    }
 
    @Override
+   public String getDivisionTitle(DivisionNode node, TeXObjectList stack)
+   throws IOException
+   {
+      ControlSequence cs = getParser().getControlSequence("tjhdivisiontitle");
+
+      if (cs == null)
+      {
+         return node.getPrefixedTitle();
+      }
+      else
+      {
+         String unit = node.getUnit();
+
+         Group unitGrp;
+
+         if (unit == null || unit.isEmpty())
+         {
+            unitGrp = createGroup();
+         }
+         else
+         {
+            unitGrp = createGroup(unit);
+         }
+
+         String prefix = node.getPrefix();
+
+         Group prefixGrp;
+
+         if (prefix == null || prefix.isEmpty())
+         {
+            prefixGrp = createGroup();
+         }
+         else
+         {
+            prefixGrp = createGroup(prefix);
+         }
+
+         return processToString(TeXParserUtils.createStack(this,
+            cs, unitGrp, prefixGrp, createGroup(node.getTitle())
+          ),
+          stack);
+      }
+   }
+
+   @Override
    protected void writeDocType()
      throws IOException
    {
