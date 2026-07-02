@@ -202,6 +202,7 @@ public class TJHListener extends L2HConverter
             epubContents = new Vector<String>();
             epubContents.add("META-INF/container.xml");
             epubContents.add("content.opf");
+
          break;
       }
    }
@@ -704,6 +705,11 @@ public class TJHListener extends L2HConverter
          {
             coverHtmlFile = new File(getOutputDir(), coverPageId+"."+getSuffix());
 
+            if (coverImageTitle == null)
+            {
+               coverImageTitle = processToString(getControlSequence("coverpagename"), stack);
+            }
+
             writeCoverPage(coverHtmlFile);
 
             getTeXApp().copyFile(coverImage, imageFile);
@@ -745,6 +751,17 @@ public class TJHListener extends L2HConverter
       }
 
       inNavigation = false;
+   }
+
+   @Override
+   public String getTitleHeaderId()
+   {
+      if (documentTargetType == DocumentTargetType.EPUB)
+      {
+         return "Doc-Start";
+      }
+
+      return null;
    }
 
    protected void doMiniToc(TeXObjectList stack) throws IOException
@@ -2324,7 +2341,7 @@ public class TJHListener extends L2HConverter
    protected File coverHtmlFile = null;
    protected String coverImageId = "cover";
    protected String coverPageId = "coverpage";
-   protected String coverImageTitle = "Cover";
+   protected String coverImageTitle;
    protected String tocLabel;
    protected int tocDepth = 1;// TODO
    protected String rootPagePreMainContent = null;

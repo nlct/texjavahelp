@@ -587,6 +587,21 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new GenericCommand(true, "thedocdate", null,
         TeXParserUtils.createStack(listener, new TeXCsRef("nlct@date"))));
+
+      if (listener.getDocumentTargetType() == DocumentTargetType.EPUB)
+      {
+         registerControlSequence(new GenericCommand(true, "TeXParser@pre@toc@content",
+          null,
+          TeXParserUtils.createStack(listener,
+            new TeXCsRef("contentsline"),
+            listener.createGroup(listener.supportsChapter() ? "chapter" : "section"),
+            TeXParserUtils.createGroup(listener, new TeXCsRef("titlepagename")),
+            listener.createGroup(),
+            listener.createGroup("Doc-Start")
+          )
+        ));
+
+      }
    }
 
    protected void addLangCommands()
@@ -647,6 +662,8 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(createLangCs("listofexamples", "Examples"));
       registerControlSequence(createLangCs("contents", "Contents"));
+      registerControlSequence(createLangCs("titlepage", "Title Page"));
+      registerControlSequence(createLangCs("coverpage", "Cover"));
       registerControlSequence(createLangCs("glossary", "Glossary"));
       registerControlSequence(createLangCs("abbreviations", "Abbreviations"));
       registerControlSequence(createLangCs("glssymbolsgroup", "Symbols"));
