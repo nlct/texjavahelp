@@ -59,7 +59,7 @@ public class PlainFancyBreak extends ControlSequence
       popArg(parser, stack);// (num) ignore
       TeXObject ornament = popArg(parser, stack);
 
-      listener.writeScenebreak(ornament, stack, isStar);
+      listener.writeScenebreak(ornament, stack, !isStar);
    }
 
 }

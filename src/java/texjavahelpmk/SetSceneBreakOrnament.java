@@ -23,14 +23,14 @@ import java.io.IOException;
 
 import com.dickimawbooks.texparserlib.*;
 
-public class PlainBreak extends ControlSequence
+public class SetSceneBreakOrnament extends ControlSequence
 {
-   public PlainBreak()
+   public SetSceneBreakOrnament()
    {
-      this("plainbreak");
+      this("SetSceneBreakOrnament");
    }
 
-   public PlainBreak(String name)
+   public SetSceneBreakOrnament(String name)
    {
       super(name);
    }
@@ -38,7 +38,7 @@ public class PlainBreak extends ControlSequence
    @Override
    public Object clone()
    {
-      return new PlainBreak(getName());
+      return new SetSceneBreakOrnament(getName());
    }
 
    @Override
@@ -54,10 +54,11 @@ public class PlainBreak extends ControlSequence
    {
       TJHListener listener = (TJHListener)parser.getListener();
 
-      boolean isStar = popModifier(parser, stack, '*') == '*';
-      TeXObject numLines = popArg(parser, stack);// ignore
+      TeXObject ornament = popArg(parser, stack);
 
-      listener.writeScenebreak(stack, !isStar);
+      parser.putControlSequence(true,
+        new GenericCommand(true, "pfbreakdisplay", null, 
+         TeXParserUtils.toList(ornament, parser)));
    }
 
 }

@@ -158,13 +158,13 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(new Relax("pfbreakskip"));// ignore
       registerControlSequence(new TextualContentCommand("pfbreakdisplay", "* * *"));
       registerControlSequence(new PFBreak());
+      registerControlSequence(new SetSceneBreakOrnament());
 
       if (getParser().getControlSequence("scenebreak") == null)
       {
          registerControlSequence(new GenericCommand(true, "scenebreak", null,
            TeXParserUtils.createStack(listener,
              new TeXCsRef("fancybreak"), 
-             listener.getOther('*'),
              TeXParserUtils.createGroup(listener, new TeXCsRef("pfbreakdisplay"))
            )
          ));

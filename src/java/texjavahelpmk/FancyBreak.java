@@ -57,7 +57,7 @@ public class FancyBreak extends ControlSequence
       boolean isStar = popModifier(parser, stack, '*') == '*';
       TeXObject ornament = popArg(parser, stack);
 
-      listener.writeScenebreak(ornament, stack, isStar);
+      listener.writeScenebreak(ornament, stack, !isStar);
    }
 
 }

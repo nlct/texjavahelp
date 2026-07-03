@@ -2,7 +2,7 @@
 % in the TeX Java Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{texjavahelp}[2026/06/23 v1.3 (NLCT)]
+\ProvidesPackage{texjavahelp}[2026/07/03 v1.3 (NLCT)]
 
 \RequirePackage{pifont}
 \RequirePackage{fontawesome}
@@ -364,9 +364,20 @@
  {
    \int_set_eq:NN \l_texjavahelp_base_bookmark_level_int \c_one_int
  }
-\ExplSyntaxOff
 
-\providecommand{\scenebreak}{\par\medskip\par\@afterheading}
+\cs_if_exist:NTF \pfbreak
+ {
+   \providecommand{\scenebreak}{\pfbreak}
+   \ProvideDocumentCommand \SetSceneBreakOrnament { m }
+    {
+       \renewcommand \pfbreakdisplay { #1 }
+    }
+ }
+ {
+   \providecommand{\scenebreak}{\par\medskip\par\@afterheading}
+   \ProvideDocumentCommand \SetSceneBreakOrnament { m } { }
+ }
+\ExplSyntaxOff
 
 \newrobustcmd{\visiblespace}{%
   \texttt{\verbvisiblespace}%
