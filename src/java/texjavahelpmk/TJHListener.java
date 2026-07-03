@@ -2289,16 +2289,33 @@ public class TJHListener extends L2HConverter
    public void writeScenebreak(TeXObject ornament, TeXObjectList stack, boolean heading)
     throws IOException
    {
-      setCurrentBlockType(DocumentBlockType.BLOCK);
+      TeXObjectList substack = createStack();
 
-      writeliteralln("<div class=\"scenebreak\">");
+      StartElement elem = new StartElement("div");
+      elem.putAttribute("class", "scenebreak");
+
+      ControlSequence cs = getParser().getControlSequence("scenebreaktitlename");
+
+      if (cs != null)
+      {
+         String title = processToString(cs, stack);
+
+         if (!title.isEmpty())
+         {
+            elem.putAttribute("title", title);
+         }
+      }
+
+      substack.add(elem);
 
       if (ornament != null)
       {
-         TeXParserUtils.process(ornament, getParser(), stack);
+         substack.add(ornament);
       }
 
-      writeliteralln("</div>");
+      substack.add(new EndElement("div"));
+
+      TeXParserUtils.process(substack, getParser(), stack);
 
       if (heading)
       {

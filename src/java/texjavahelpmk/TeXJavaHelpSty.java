@@ -602,6 +602,9 @@ public class TeXJavaHelpSty extends UserGuideSty
         ));
 
       }
+
+      registerControlSequence(new IncludeImg());
+      registerControlSequence(new IncludeImg("includetimg", "topalign"));
    }
 
    protected void addLangCommands()
@@ -671,6 +674,7 @@ public class TeXJavaHelpSty extends UserGuideSty
       registerControlSequence(createLangCs("summary", "Summary"));
       registerControlSequence(createLangCs("section", "section"));
       registerControlSequence(createLangCs("seealso", "see also"));
+      registerControlSequence(createLangCs("scenebreaktitle", "Scene break"));
 
       registerControlSequence(createLangCs("example", "example"));
       registerControlSequence(createLangCs("Examplename",
@@ -808,9 +812,6 @@ public class TeXJavaHelpSty extends UserGuideSty
         "manualtext", "transcript", "Transcript"));
       registerControlSequence(createLangCs("transcriptdesc",
         "manualdesc", "transcript", "text in a transcript or log file or written to STDOUT or STDERR"));
-
-      registerControlSequence(new IncludeImg());
-      registerControlSequence(new IncludeImg("includetimg", "topalign"));
 
    }
 
