@@ -271,7 +271,8 @@ classes/com/dickimawbooks/tjhflattendocsrc	:
 
 lib/tjhziphelpset.jar	: java/tjhziphelpset/Manifest.txt \
 	classes/com/dickimawbooks/tjhziphelpset/ZipHelpset.class \
-	classes/com/dickimawbooks/tjhziphelpset/dictionaries/
+	classes/com/dickimawbooks/tjhziphelpset/dictionaries/ \
+	dictionaries/tjhziphelpset-en.xml
 	cp dictionaries/tjhziphelpset-*.xml classes/com/dickimawbooks/tjhziphelpset/dictionaries/
 	cd classes; \
 	jar cmf ../java/tjhziphelpset/Manifest.txt ../lib/tjhziphelpset.jar \
