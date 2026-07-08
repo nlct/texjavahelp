@@ -4297,7 +4297,15 @@ public class TeXJavaHelpLib
    public JRadioButton createJRadioButton(String parentTag, String action,
      boolean selected, ButtonGroup btnGrp, ActionListener listener)
    {
-      String tag = action == null ? parentTag : parentTag+"."+action;
+      return createJRadioButton(parentTag, action, selected, btnGrp,
+        listener, action);
+   }
+
+   public JRadioButton createJRadioButton(String parentTag, String childTag,
+     boolean selected, ButtonGroup btnGrp, ActionListener listener,
+     String actionCommand)
+   {
+      String tag = childTag == null ? parentTag : parentTag+"."+childTag;
 
       JRadioButton button = new JRadioButton(getMessage(tag), selected);
 
@@ -4324,7 +4332,7 @@ public class TeXJavaHelpLib
 
       if (listener != null)
       {
-         button.setActionCommand(action);
+         button.setActionCommand(actionCommand);
          button.addActionListener(listener);
       }
 
