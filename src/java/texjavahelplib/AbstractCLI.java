@@ -84,6 +84,10 @@ public abstract class AbstractCLI
    protected abstract boolean parseCLIArg(String arg, CLIArgValue[] returnVals)
      throws InvalidSyntaxException;
 
+   protected void preCLIProcess() throws InvalidSyntaxException
+   {
+   }
+
    protected abstract void postCLIProcess()
      throws InvalidSyntaxException;
 
@@ -260,6 +264,8 @@ public abstract class AbstractCLI
    protected void parseArgs(String[] args) throws InvalidSyntaxException
    {
       cliParser = createCLISyntaxParser(args);
+
+      preCLIProcess();
 
       cliParser.process();
 
