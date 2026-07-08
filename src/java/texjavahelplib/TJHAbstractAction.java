@@ -426,6 +426,16 @@ public abstract class TJHAbstractAction extends AbstractAction
       return defaultName;
    }
 
+   public void setSelected(boolean selectedState)
+   {
+      putValue(SELECTED_KEY, Boolean.valueOf(selectedState));
+   }
+
+   public boolean isSelected()
+   {
+      return Boolean.TRUE.equals(getValue(SELECTED_KEY));
+   }
+
    public abstract void doAction();
 
    @Override
