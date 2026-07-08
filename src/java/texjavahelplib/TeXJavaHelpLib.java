@@ -72,6 +72,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JRadioButton;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
@@ -4253,6 +4254,83 @@ public class TeXJavaHelpLib
       {
          button.setActionCommand(action);
          button.addActionListener(listener);
+      }
+
+      return button;
+   }
+
+   public JRadioButton createJRadioButton(String tag)
+   {
+      return createJRadioButton(tag, null, false);
+   }
+
+   public JRadioButton createJRadioButton(String parentTag, String action,
+     boolean selected)
+   {
+      return createJRadioButton(parentTag, action, selected, null, null);
+   }
+
+   public JRadioButton createJRadioButton(String parentTag, String action,
+     ActionListener listener)
+   {
+      return createJRadioButton(parentTag, action, false, listener);
+   }
+
+   public JRadioButton createJRadioButton(String parentTag, String action,
+     boolean selected, ActionListener listener)
+   {
+      return createJRadioButton(parentTag, action, selected, null, listener);
+   }
+
+   public JRadioButton createJRadioButton(String parentTag, String action,
+     ButtonGroup btnGrp)
+   {
+      return createJRadioButton(parentTag, action, false, btnGrp, null);
+   }
+
+   public JRadioButton createJRadioButton(String parentTag, String action,
+     boolean selected, ButtonGroup btnGrp)
+   {
+      return createJRadioButton(parentTag, action, selected, btnGrp, null);
+   }
+
+   public JRadioButton createJRadioButton(String parentTag, String action,
+     boolean selected, ButtonGroup btnGrp, ActionListener listener)
+   {
+      String tag = action == null ? parentTag : parentTag+"."+action;
+
+      JRadioButton button = new JRadioButton(getMessage(tag), selected);
+
+      int mnemonic = getMnemonic(tag+".mnemonic");
+
+      if (mnemonic > 0)
+      {
+         button.setMnemonic(mnemonic);
+      }
+
+      String tooltip = getMessageIfExists(tag+".tooltip");
+
+      if (tooltip != null)
+      {
+         button.setToolTipText(tooltip);
+      }
+
+      String desc = getMessageIfExists(tag+".description");
+
+      if (desc != null)
+      {
+         button.getAccessibleContext().setAccessibleDescription(desc);
+      }
+
+      if (listener != null)
+      {
+         button.setActionCommand(action);
+         button.addActionListener(listener);
+      }
+
+      if (btnGrp != null)
+      {
+         btnGrp.add(button);
       }
 
       return button;
