@@ -2764,6 +2764,14 @@ public class TeXJavaHelpLib
       return keyStroke;
    }
 
+   public String getIconPrefix(String parentTag, String childTag, String fallback)
+   {
+      String tag = childTag == null ? parentTag :
+        (parentTag == null ? childTag : parentTag+"."+childTag);
+
+      return getIconPrefix(tag, fallback);
+   }
+
    public String getIconPrefix(String property, String fallback)
    {
       String value = getMessageIfExists(property+".iconimage");
@@ -3995,7 +4003,8 @@ public class TeXJavaHelpLib
    public JButton createJButton(String parentTag, String actionName,
      ActionListener actionListener)
    {
-      return createJButton(parentTag, actionName, actionListener, actionName,
+      return createJButton(parentTag, actionName, actionListener, 
+        getIconPrefix(parentTag, actionName, actionName),
         buttonDefaultIconSmall, buttonDefaultOmitTextIfIcon);
    }
 
@@ -4014,7 +4023,8 @@ public class TeXJavaHelpLib
      ActionListener actionListener,  
      boolean smallIcon, boolean omitTextIfIcon)
    {
-      return createJButton(parentTag, actionName, actionListener, actionName,
+      return createJButton(parentTag, actionName, actionListener, 
+        getIconPrefix(parentTag, actionName, actionName),
         smallIcon, omitTextIfIcon);
    }
 
