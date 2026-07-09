@@ -25,6 +25,8 @@ import java.net.URL;
 
 import java.text.MessageFormat;
 
+import java.awt.Component;
+
 public abstract class AbstractCLI
 {
    public void initialiseHelpAndParse(String[] args)
@@ -492,11 +494,48 @@ public abstract class AbstractCLI
       }
    }
 
+   public void error(Component comp, String message, Throwable e)
+   {
+      if (helpLibApp != null)
+      {
+         helpLibApp.error(comp, message, e);
+      }
+      else
+      {
+         message("error", message, e);
+         setExitCode(getExitCode(e, false));
+      }
+   }
+
+   public void error(Component comp, String message)
+   {
+      if (helpLibApp != null)
+      {
+         helpLibApp.error(comp, message);
+      }
+      else
+      {
+         message("error", message, null);
+      }
+   }
+
    public void warning(String message)
    {
       if (helpLibApp != null)
       {
          helpLibApp.warning(message);
+      }
+      else
+      {
+         message("warning", message, null);
+      }
+   }
+
+   public void warning(Component comp, String message)
+   {
+      if (helpLibApp != null)
+      {
+         helpLibApp.warning(comp, message);
       }
       else
       {
