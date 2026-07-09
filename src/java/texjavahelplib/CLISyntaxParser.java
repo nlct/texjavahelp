@@ -404,6 +404,54 @@ public abstract class CLISyntaxParser
          CLIArgValueType.INT);
    }
 
+   public boolean isLongArg(String arg,
+     String longName, CLIArgValue[] returnVals)
+    throws InvalidSyntaxException
+   {
+      return isArg(arg, null, longName, returnVals,
+         CLIArgValueType.LONG);
+   }
+
+   public boolean isLongArg(String arg,
+     String shortName, String longName, CLIArgValue[] returnVals)
+    throws InvalidSyntaxException
+   {
+      return isArg(arg, shortName, longName, returnVals,
+         CLIArgValueType.LONG);
+   }
+
+   public boolean isFloatArg(String arg,
+     String longName, CLIArgValue[] returnVals)
+    throws InvalidSyntaxException
+   {
+      return isArg(arg, null, longName, returnVals,
+         CLIArgValueType.FLOAT);
+   }
+
+   public boolean isFloatArg(String arg,
+     String shortName, String longName, CLIArgValue[] returnVals)
+    throws InvalidSyntaxException
+   {
+      return isArg(arg, shortName, longName, returnVals,
+         CLIArgValueType.FLOAT);
+   }
+
+   public boolean isDoubleArg(String arg,
+     String longName, CLIArgValue[] returnVals)
+    throws InvalidSyntaxException
+   {
+      return isArg(arg, null, longName, returnVals,
+         CLIArgValueType.DOUBLE);
+   }
+
+   public boolean isDoubleArg(String arg,
+     String shortName, String longName, CLIArgValue[] returnVals)
+    throws InvalidSyntaxException
+   {
+      return isArg(arg, shortName, longName, returnVals,
+         CLIArgValueType.DOUBLE);
+   }
+
    public boolean isListArg(String arg,
      String longName, CLIArgValue[] returnVals)
     throws InvalidSyntaxException

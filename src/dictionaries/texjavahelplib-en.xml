@@ -705,6 +705,9 @@ Unable to open URL {0}</entry>
 <entry key="error.clisyntax.only_one_input">Only one input file permitted</entry>
 <entry key="error.clisyntax.invalid.syntax">Invalid syntax for: {0}</entry>
 <entry key="error.clisyntax.invalid.int_value">Invalid ''{0}'' value: {1} (integer required)</entry>
+<entry key="error.clisyntax.invalid.long_value">Invalid ''{0}'' value: {1} (long integer required)</entry>
+<entry key="error.clisyntax.invalid.float_value">Invalid ''{0}'' value: {1} (decimal required)</entry>
+<entry key="error.clisyntax.invalid.double_value">Invalid ''{0}'' value: {1} (double-precision decimal required)</entry>
 
 <entry key="error.clisyntax.unknown.arg">Unknown option: {0}
 Use {1} for help.</entry>

@@ -20,5 +20,5 @@ package com.dickimawbooks.texjavahelplib;
 
 public enum CLIArgValueType
 {
-   STRING, INT, LIST;
+   STRING, INT, LONG, FLOAT, DOUBLE, LIST;
 }

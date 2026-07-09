@@ -32,10 +32,10 @@ public class CLIArgValue
       stringValue = value;
    }
 
-   public CLIArgValue(String value, int intVal)
+   public CLIArgValue(String value, Number numValue)
    {
       this(value);
-      this.intValue = intVal;
+      this.numValue = numValue;
    }
 
    public static CLIArgValue create(TeXJavaHelpLib helpLib, String option,
@@ -56,12 +56,54 @@ public class CLIArgValue
 
            try
            {
-              argValue.intValue = Integer.parseInt(value);
+              argValue.numValue = Integer.valueOf(value);
            }
            catch (NumberFormatException e)
            {
               throw new InvalidSyntaxException(helpLib.getMessage(
                 "error.clisyntax.invalid.int_value", option, value));
+           }
+
+         break;
+
+         case LONG:
+
+           try
+           {
+              argValue.numValue = Long.valueOf(value);
+           }
+           catch (NumberFormatException e)
+           {
+              throw new InvalidSyntaxException(helpLib.getMessage(
+                "error.clisyntax.invalid.long_value", option, value));
+           }
+
+         break;
+
+         case FLOAT:
+
+           try
+           {
+              argValue.numValue = Float.valueOf(value);
+           }
+           catch (NumberFormatException e)
+           {
+              throw new InvalidSyntaxException(helpLib.getMessage(
+                "error.clisyntax.invalid.float_value", option, value));
+           }
+
+         break;
+
+         case DOUBLE:
+
+           try
+           {
+              argValue.numValue = Double.valueOf(value);
+           }
+           catch (NumberFormatException e)
+           {
+              throw new InvalidSyntaxException(helpLib.getMessage(
+                "error.clisyntax.invalid.double_value", option, value));
            }
 
          break;
@@ -81,9 +123,29 @@ public class CLIArgValue
       return stringValue;
    }
 
+   public Number numberValue()
+   {
+      return numValue;
+   }
+
    public int intValue()
    {
-      return intValue;
+      return numValue == null ? 0 : numValue.intValue();
+   }
+
+   public long longValue()
+   {
+      return numValue == null ? 0L : numValue.longValue();
+   }
+
+   public double doubleValue()
+   {
+      return numValue == null ? 0 : numValue.doubleValue();
+   }
+
+   public float floatValue()
+   {
+      return numValue == null ? 0f : numValue.floatValue();
    }
 
    public String[] listValue()
@@ -92,6 +154,6 @@ public class CLIArgValue
    }
 
    private String stringValue;
-   private int intValue;
+   private Number numValue;
    private String[] listValue;
 }
