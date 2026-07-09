@@ -3305,9 +3305,29 @@ public class TeXJavaHelpLib
    public JMenuItem createJMenuItem(String parentTag, String action,
      ActionListener actionListener, KeyStroke accelerator)
    {
+      return createJMenuItem(parentTag, action, actionListener,
+         accelerator, getIconPrefix(parentTag, action, action));
+   }
+
+   public JMenuItem createJMenuItem(String parentTag, String action,
+     ActionListener actionListener, KeyStroke accelerator,
+     String iconPrefix)
+   {
       String tag = action == null ? parentTag : parentTag+"."+action;
 
       JMenuItem item = new JMenuItem(getMessage(tag));
+
+      IconSet icSet = null;
+
+      if (iconPrefix != null)
+      {
+         icSet = getHelpIconSet(iconPrefix, true);
+
+         if (icSet != null)
+         {
+            item.setIcon(icSet.getDefaultIcon());
+         }
+      }
 
       if (action != null)
       {
