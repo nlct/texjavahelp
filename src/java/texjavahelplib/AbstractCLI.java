@@ -519,6 +519,32 @@ public abstract class AbstractCLI
       }
    }
 
+   public void internalError(Component owner, String message, Throwable e)
+   {
+      if (helpLibApp != null)
+      {
+         helpLibApp.internalError(owner, message, e);
+      }
+      else
+      {
+         message("internal error", message, e);
+         setExitCode(getExitCode(e, false));
+      }
+   }
+
+   public void fatalError(String message, Throwable e, int exitCode)
+   {  
+      if (helpLibApp != null)
+      {
+         fatalError(message, e, exitCode);
+      }
+      else
+      {
+         message("fatal error", message, e);
+         System.exit(exitCode);
+      }
+   }
+
    public void warning(String message)
    {
       if (helpLibApp != null)
