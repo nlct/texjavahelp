@@ -317,6 +317,48 @@ public abstract class AbstractCLI
       return cliParser.isIntArg(arg, shortName, longName, returnVals, defValue);
    }
 
+   public boolean isLongArg(String arg,
+     String longName, CLIArgValue[] returnVals)
+    throws InvalidSyntaxException
+   {
+      return cliParser.isLongArg(arg, longName, returnVals);
+   }
+
+   public boolean isLongArg(String arg,
+     String shortName, String longName, CLIArgValue[] returnVals)
+    throws InvalidSyntaxException
+   {
+      return cliParser.isLongArg(arg, shortName, longName, returnVals);
+   }
+
+   public boolean isFloatArg(String arg,
+     String longName, CLIArgValue[] returnVals)
+    throws InvalidSyntaxException
+   {
+      return cliParser.isFloatArg(arg, longName, returnVals);
+   }
+
+   public boolean isFloatArg(String arg,
+     String shortName, String longName, CLIArgValue[] returnVals)
+    throws InvalidSyntaxException
+   {
+      return cliParser.isFloatArg(arg, shortName, longName, returnVals);
+   }
+
+   public boolean isDoubleArg(String arg,
+     String longName, CLIArgValue[] returnVals)
+    throws InvalidSyntaxException
+   {
+      return cliParser.isDoubleArg(arg, longName, returnVals);
+   }
+
+   public boolean isDoubleArg(String arg,
+     String shortName, String longName, CLIArgValue[] returnVals)
+    throws InvalidSyntaxException
+   {
+      return cliParser.isDoubleArg(arg, shortName, longName, returnVals);
+   }
+
    public boolean isListArg(String arg,
      String longName, CLIArgValue[] returnVals)
     throws InvalidSyntaxException
@@ -391,6 +433,49 @@ public abstract class AbstractCLI
       {
          helpLibApp.stdOutMessage(msg);
       }
+   }
+
+   public boolean isErrorBufferOn()
+   {
+      return errorBuffer != null;
+   }
+
+   public void setErrorBuffering(boolean enable)
+   {
+      if (enable)
+      {
+         errorBuffer = new StringBuilder();
+      }
+      else
+      {
+         errorBuffer = null;
+      }
+   }
+
+   public void clearErrorBuffer()
+   {
+      if (errorBuffer != null)
+      {
+         errorBuffer.setLength(0);
+      }
+   }
+
+   public void bufferError(String message)
+   {
+      if (errorBuffer != null)
+      {
+         if (errorBuffer.length() >= 0)
+         {
+            errorBuffer.append(String.format("%n"));
+         }
+
+         errorBuffer.append(message);
+      }
+   }
+
+   public String getErrorBufferContent()
+   {
+      return errorBuffer == null ? null : errorBuffer.toString();
    }
 
    public TeXJavaHelpLib getHelpLib()
@@ -640,6 +725,19 @@ public abstract class AbstractCLI
           {
              publishMessage(msg);
           }
+
+          @Override
+          public void error(String message)
+          {
+             if (isErrorBufferOn())
+             {
+                bufferError(message);
+             }
+             else
+             {
+                error(null, message, null);
+             }
+          }
        };
    }
 
@@ -673,6 +771,7 @@ public abstract class AbstractCLI
    protected boolean shownVersion = false;
    protected int verboseLevel = 0;
    protected int exitCode = 0;
+   protected StringBuilder errorBuffer;
    protected TeXJavaHelpLib helpLib;
    protected TeXJavaHelpLibAppAdapter helpLibApp;
    protected CLISyntaxParser cliParser;
