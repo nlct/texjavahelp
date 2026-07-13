@@ -399,10 +399,10 @@ public class FlattenDocSrc extends CLITeXAppAdapter
 
       openLogWriter(parser, outCharset);
 
-      parser.setCatCode(false, '_', TeXParser.TYPE_OTHER);
-      parser.setCatCode(false, '^', TeXParser.TYPE_OTHER);
-      parser.setCatCode(false, '$', TeXParser.TYPE_OTHER);
-      parser.setCatCode(false, '~', TeXParser.TYPE_OTHER);
+      parser.setCategoryCode(false, '_', CategoryCode.OTHER);
+      parser.setCategoryCode(false, '^', CategoryCode.OTHER);
+      parser.setCategoryCode(false, '$', CategoryCode.OTHER);
+      parser.setCategoryCode(false, '~', CategoryCode.OTHER);
 
       try
       {
