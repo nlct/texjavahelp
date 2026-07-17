@@ -179,6 +179,9 @@ public class TeXJavaHelpSty extends UserGuideSty
              TeXParserUtils.createGroup(listener, listener.getParam(1))
             ))));
 
+      registerControlSequence(new WindowsOSPath());
+      registerControlSequence(new Symbol("windowsosfiledirsep", '\\'));
+
       addDiscretionaryCommands();
       addCrossRefCommands();
       addFootnoteCommands();

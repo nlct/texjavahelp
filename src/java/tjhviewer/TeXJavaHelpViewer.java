@@ -110,7 +110,7 @@ public class TeXJavaHelpViewer extends AbstractCLI
       printSyntaxItem(getMessage("syntax.in", "--in", "-i"));
       printSyntaxItem(getMessage("syntax.node", "--node", "-n"));
       printSyntaxItem(getMessage("syntax.anchor", "--anchor", "-a"));
-      printSyntaxItem(getMessage("syntax.helpsetdir", "--helpset-dir", "-d"));
+      printSyntaxItem(getMessage("syntax.helpset-dir", "--helpset-dir", "-d"));
 
       System.out.println();
 
@@ -255,14 +255,7 @@ public class TeXJavaHelpViewer extends AbstractCLI
 
       if (helpsetdir == null)
       {
-         helpsetdir = file.getName();
-
-         int idx = helpsetdir.lastIndexOf(".");
-
-         if (idx > 0)
-         {
-            helpsetdir = helpsetdir.substring(0, idx);
-         }
+         helpsetdir = "helpset";
       }
 
       helpLib.initHelpSet(helpsetdir);
