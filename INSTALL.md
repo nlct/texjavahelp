@@ -3,9 +3,11 @@
 The TeX Java Help (TJH) system requires the TeX Java Parser (TJP) library to be
 installed. If `TEXMF` is the TEXMF root, for example, `~/texmf`, then
 TJP needs to be installed as:
+
 ```
 TEXMF/scripts/texjavaparser/texjavaparserlib.jar
 ```
+
 The `jar` file includes the localisation support files. Language
 support can be added via pull request at https://github.com/nlct/texparser
 (The dictionary file source is in the `src/dictionaries`
@@ -28,6 +30,7 @@ TEXMF/scripts/texjavahelp/tjhxml2bib.sh
 TEXMF/scripts/texjavahelp/tjhziphelpset.jar
 TEXMF/scripts/texjavahelp/tjhziphelpset.tlu
 
+TEXMF/tex/latex/texjavahelp/texjavahelp.sty
 TEXMF/tex/latex/texjavahelp/texjavahelplibicons-16.def
 TEXMF/tex/latex/texjavahelp/texjavahelplibicons-16.pdf
 TEXMF/tex/latex/texjavahelp/texjavahelplibicons-20.def
@@ -38,6 +41,13 @@ TEXMF/tex/latex/texjavahelp/texjavahelplibicons-32.def
 TEXMF/tex/latex/texjavahelp/texjavahelplibicons-32.pdf
 TEXMF/tex/latex/texjavahelp/texjavahelplibicons-64.def
 TEXMF/tex/latex/texjavahelp/texjavahelplibicons-64.pdf
+
+TEXMF/doc/latex/texjavahelp/texjavahelp.pdf
+TEXMF/doc/latex/texjavahelp/texjavahelp.tex
+TEXMF/doc/latex/texjavahelp/texjavahelp.bib
+TEXMF/doc/latex/texjavahelp/texjavahelplib.bib
+TEXMF/doc/latex/texjavahelp/images/*.png
+TEXMF/doc/latex/texjavahelp/images/*.tex
 ```
 The `texjavahelplibicons-`_size_`.pdf` files contain an icon for the
 given size on each page. These correspond to icons embedded in
