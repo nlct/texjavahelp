@@ -12,6 +12,6 @@ Nicola Talbot
 <entry key="syntax.in">{0} (or {1}) &lt;tjh-file&gt;	The helpset file to view.</entry>
 <entry key="syntax.node">{0} (or {1}) &lt;name&gt;	The node to open on startup.</entry>
 <entry key="syntax.anchor">{0} (or {1}) &lt;name&gt;	The reference to open on startup.</entry>
-<entry key="syntax.helpset-dir">{0} (or {1}) &lt;name&gt;	The helpset root within the tjh file.</entry>
+<entry key="syntax.helpset-dir">{0} (or {1}) &lt;name&gt;	The helpset root within the tjh file. (This option will be overridden if the root is specified in manifest file.)</entry>
 
 </properties>
