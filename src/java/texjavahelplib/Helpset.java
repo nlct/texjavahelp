@@ -182,7 +182,9 @@ public class Helpset
       byte[] eol = String.format("%n").getBytes();
       out.write(eol, 0, eol.length);
 
-      byteArray = ("<"+MANIFEST_CONTAINER+">").getBytes();
+      byteArray = String.format("<%s root=\"%s\">",
+          MANIFEST_CONTAINER, helpLib.getHelpsetDirName()).getBytes();
+
       out.write(byteArray, 0, byteArray.length);
 
       out.write(eol, 0, eol.length);
@@ -747,6 +749,19 @@ class ManifestReader extends XMLReaderAdapter
          }
 
          manifestFound = true;
+
+         String root = attrs.getValue("root");
+
+         if (root != null && !root.equals(helpLib.getHelpsetDirName()))
+         {
+            helpLib.debug(helpLib.getMessageWithFallback(
+               "message.helpset.manifest_root_overriding_helpsetdir",
+               "Manifest root {0} overriding helpset dir {1}",
+                root, helpLib.getHelpsetDirName()
+             ));
+
+            helpLib.setHelpsetDirName(root);
+         }
       }
       else if (HelpsetFile.ELEMENT_NAME.equals(qName))
       {

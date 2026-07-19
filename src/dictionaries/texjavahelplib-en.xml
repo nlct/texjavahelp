@@ -622,6 +622,7 @@ code should appear in the PDF</entry>
 <entry key="message.helpset.search_not_found">No helpset file found</entry>
 <entry key="message.helpset.search_found">Found helpset file {0}</entry>
 <entry key="message.helpset.filtered_locales">{0} helpset {0,choice,0#locales|1#locale|1&lt;locales} established</entry>
+<entry key="message.helpset.manifest_root_overriding_helpsetdir">Manifest root {0} overriding helpset dir {1}</entry>
 
 <entry key="message.adding_doc_image">Adding documentation image {0} (resource path={1}, filename={2}, ext={3}, size={4})</entry>
 <entry key="message.added_doc_image">Added documentation image map {0} url={1}</entry>

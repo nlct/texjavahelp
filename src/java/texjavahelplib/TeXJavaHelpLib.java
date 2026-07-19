@@ -1647,6 +1647,11 @@ public class TeXJavaHelpLib
       return helpsetdir;
    }
 
+   public void setHelpsetDirName(String helpsetdir)
+   {
+      this.helpsetdir = helpsetdir;
+   }
+
    public void setHelpSetZipFile(File file)
    {
       helpsetZipFile = file;

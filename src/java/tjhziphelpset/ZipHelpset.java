@@ -383,6 +383,10 @@ public class ZipHelpset extends AbstractCLI
       {
          helpsetDirName = getHelpLib().getHelpsetDirName();
       }
+      else
+      {
+         getHelpLib().setHelpsetDirName(helpsetDirName);
+      }
 
       if (helpsetDirName.endsWith("/"))
       {
