@@ -18,6 +18,9 @@ in-application help.
    files created during the document build.
  - `tjhziphelpset` : bundles the HTML and XML helpset files into a
    `tjh` file (which is a special type of zip file).
+ - `tjhcreateiconpdf` creates a PDF file and def file containing all icon images
+   for a particular size to allow LaTeX to access icon images that
+   are bundled in a jar file.
  - `tjhviewer` : a `tjh` file viewer. (This allows the help to be
     viewed on its own without the burden of loading the application
     the helpset was created for.)
