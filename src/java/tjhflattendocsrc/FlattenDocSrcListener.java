@@ -44,7 +44,37 @@ public class FlattenDocSrcListener extends LaTeX2LaTeX
    {
       super(app, outDir, outCharset, replaceGraphicsPath);
 
+      app.logAndPrintMessage(app.getMessageWithFallback(
+         "message.set_output_path",
+         "Setting output path to {0}",
+          outPath));
+
       setImageExtensions(".pdf", ".png", ".jpg", ".jpeg");
+   }
+
+   @Override
+   public void setImageDestinationPath(Path p)
+   {
+      super.setImageDestinationPath(p);
+
+      FlattenDocSrc texApp = (FlattenDocSrc)getTeXApp();
+
+      texApp.logAndPrintMessage(texApp.getMessageWithFallback(
+         "message.set_image_dest_path",
+         "Setting image destination path to {0} (relative to {1})",
+          imageDestPath, outPath));
+   }
+
+   public void setOutputPath(Path path)
+   {
+      this.outPath = path;
+
+      FlattenDocSrc texApp = (FlattenDocSrc)getTeXApp();
+
+      texApp.logAndPrintMessage(texApp.getMessageWithFallback(
+         "message.set_output_path",
+         "Setting output path to {0}",
+          outPath));
    }
 
    @Override
@@ -210,79 +240,54 @@ public class FlattenDocSrcListener extends LaTeX2LaTeX
    public void endDocument(TeXObjectList stack)
      throws IOException
    {
-
       if (texImageFiles != null)
       {
-         parsingImageFile = true;
+         TeXParser parser = getParser();
+
+         SetOutputDirAction action = new SetOutputDirAction(this, outPath, imageDestPath);
+
+         TeXParserUtils.push(action, parser, stack);
 
          for (int i = 0; i < texImageFiles.size(); i++)
          {
-            input(texImageFiles.get(i), stack);
+            TeXPath texPath = texImageFiles.get(i);
+
+            if (stack == null || stack == parser)
+            {
+               parser.push(TeXParserActionObject.createInputAction(texPath, null));
+            }
+            else
+            {
+               parser.push(TeXParserActionObject.createInputAction(texPath, stack));
+            }
+
+            if (imageDestPath == null)
+            {
+               Path path = texPath.getRelativePath().getParent();
+
+               action = new SetOutputDirAction(this,
+                  outPath.resolve(path),
+                  (new File(".")).toPath()
+               );
+
+               TeXParserUtils.push(action, parser, stack);
+            }
          }
 
-         parsingImageFile = false;
+         if (imageDestPath != null)
+         {
+            action = new SetOutputDirAction(this,
+              outPath.resolve(imageDestPath), (new File(".")).toPath());
+
+            TeXParserUtils.push(action, parser, stack);
+         }
       }
 
       super.endDocument(stack);
    }
 
-   @Override
-   public void writeCodePoint(int charCode) throws IOException
-   {
-      if (!parsingImageFile)
-      {
-         super.writeCodePoint(charCode);
-      }
-   }
-
-   @Override
-   public void write(char c) throws IOException
-   {
-      if (!parsingImageFile)
-      {
-         super.write(c);
-      }
-   }
-
-   @Override
-   public void write(String string) throws IOException
-   {
-      if (!parsingImageFile)
-      {
-         super.write(string);
-      }
-   }
-
-   @Override
-   public void writeln(String string) throws IOException
-   {
-      if (!parsingImageFile)
-      {
-         super.writeln(string);
-      }
-   }
-
-   @Override
-   public void writeln(char c) throws IOException
-   {
-      if (!parsingImageFile)
-      {
-         super.writeln(c);
-      }
-   }
-
-   @Override
-   public void writeln() throws IOException
-   {
-      if (!parsingImageFile)
-      {
-         super.writeln();
-      }
-   }
-
    boolean graphicsUseKpsewhich = false;
 
    Vector<TeXPath> texImageFiles;
-   boolean parsingImageFile = false;
 }
 

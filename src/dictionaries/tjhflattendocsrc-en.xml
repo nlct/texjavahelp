@@ -18,6 +18,11 @@ Nicola Talbot
 <entry key="syntax.out.charset">{0} &lt;charset&gt;	Set the character encoding to &lt;charset&gt; for the output files. (Overrides default.)</entry>
 <entry key="syntax.out.image-dest">{0} &lt;directory&gt;	Save output images in &lt;directory&gt; (relative to the output directory).</entry>
 
+<!--  Messages -->
+
+<entry key="message.set_output_path">Setting output path to {0}</entry>
+<entry key="message.set_image_dest_path">Setting image destination path to {0} (relative to {1})</entry>
+
 <!--  Error messages -->
 
 <!--  tjhflattendocsrc error messages -->

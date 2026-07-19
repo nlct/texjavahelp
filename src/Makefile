@@ -296,20 +296,34 @@ classes/com/dickimawbooks/tjhziphelpset	:
 
 ../unstable/texjavahelp.zip	: lib/texjavahelplib.jar \
 	lib/texjavahelpmk.jar \
-	lib/tjhxml2bib.jar \
+	lib/tjhcreateiconpdf.jar \
 	lib/tjhflattendocsrc.jar \
+	lib/tjhviewer.jar \
+	lib/tjhxml2bib.jar \
 	lib/tjhziphelpset.jar \
+	bin/texjavahelpmk.tlu \
+	bin/tjhcreateiconpdf.tlu \
+	bin/tjhflattendocsrc.tlu \
+	bin/tjhviewer.sh \
+	bin/tjhxml2bib.sh \
+	bin/tjhziphelpset.tlu \
 	doc/texjavahelp.sty doc/texjavahelp.pdf ../LICENSE ../README.md
 	mkdir -p ../unstable/texjavahelp
 	cp lib/texjavahelplib.jar ../unstable/texjavahelp/
 	cp lib/texjavahelpmk.jar ../unstable/texjavahelp/
-	cp lib/tjhxml2bib.jar ../unstable/texjavahelp/
+	cp lib/tjhcreateiconpdf.jar ../unstable/texjavahelp/
 	cp lib/tjhflattendocsrc.jar ../unstable/texjavahelp/
+	cp lib/tjhviewer.jar ../unstable/texjavahelp/
+	cp lib/tjhxml2bib.jar ../unstable/texjavahelp/
 	cp lib/tjhziphelpset.jar ../unstable/texjavahelp/
 	cp bin/*.{sh,tlu} ../unstable/texjavahelp/
 	cp doc/texjavahelp.sty ../unstable/texjavahelp/
 	cp doc/texjavahelp.pdf ../unstable/texjavahelp/
-	$(tjhflattendocsrc) doc/texjavahelp.tex ../unstable/
+	cp doc/texjavahelplibicons-*.pdf ../unstable/texjavahelp/
+	cp doc/texjavahelplibicons-*.def ../unstable/texjavahelp/
+	$(tjhflattendocsrc) --verbose doc/texjavahelp.tex ../unstable/texjavahelp/
+	cp ../DEPENDS.txt ../unstable/texjavahelp
+	cp ../INSTALL.md ../unstable/texjavahelp
 	cp ../LICENSE ../unstable/texjavahelp
 	cp ../README.md ../unstable/texjavahelp
 	cd ../unstable ; zip -r texjavahelp.zip texjavahelp
