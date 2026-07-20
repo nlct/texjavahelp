@@ -281,48 +281,10 @@ the dictionary file `texjavahelplib-en.xml`:
 <entry key="button.okay.keystroke">shift ENTER</entry>
 <entry key="button.okay.defaultkeys">format=glsignore</entry>
 <entry key="button.okay.tooltip">Accept changes and close window</entry>
-```
-
-`tjhxml2bib` will convert this to:
-
-```
-@commonbutton{button.okay,
-  name={\buttonfmt{Okay}},
-  tooltip={Accept changes and close window},
-  mnemonic={O},
-  defaultkeys={format=glsignore},
-  keystroke={\keys{\keyref{shift}+\keyref{return}}}
-}
-```
-
-(The `defaultkeys` value `format=glsignore` indicates a common entry
-that is referenced too frequently to index every mention.)
-
-This entry doesn't include the `iconimage` field so TJH will look for an image
-based on the action name. An Okay button can be created with:
-
-```java
-TeXJavaHelpLib.createOkayButton(OkayAction, JComponent)
-```
-
-The action name is `okay`. The default icon size prefix is
-`-16` for small icons and `-32` for large icons. So the Okay button
-created with the `createOkayButton` method will look for the image `okay-16.png`.
-
-The button can be referenced in the LaTeX file with `\btn{okay}`
-which will display the text “Okay”.
-However, `texjavahelp.sty` can't access any files within the `jar`
-file and it won't associate an image with an entry unless the
-`iconimage` field is set. So, if you want `\btn` to also show the
-icon image, you need to set the `iconimage` field:
-
-```xml
 <entry key="button.okay.iconimage">okay</entry>
 ```
 
-(This can be done in your application's dictionary file, which can
-be used to add extra dictionary entries.) This ensures that the
-`iconimage` field will also be set:
+`tjhxml2bib` will convert this to:
 
 ```
 @commonbutton{button.okay,
@@ -335,7 +297,25 @@ be used to add extra dictionary entries.) This ensures that the
 }
 ```
 
-but you also need to provide a way for `\includegraphics` to access the image:
+(The `defaultkeys` value `format=glsignore` indicates a common entry
+that is referenced too frequently to index every mention.)
+
+An Okay button can be created with:
+
+```java
+TeXJavaHelpLib.createOkayButton(OkayAction, JComponent)
+```
+
+The default icon size prefix is
+`-16` for small icons and `-32` for large icons. So the Okay button
+created with the `createOkayButton` method will look for the image `okay-16.png`.
+
+The button can be referenced in the LaTeX file with `\btn{okay}`
+which will display the text “Okay”.  Since the `iconimage` field is
+also set, `\btn` will try to include the associated small icon
+image.  However, `texjavahelp.sty` can't access any files within the
+`jar` file so you also need to provide a way for `\includegraphics`
+to access the image:
 
 ```latex
 \TJHRequireIcons{texjavahelplibicons}{16}{24}
