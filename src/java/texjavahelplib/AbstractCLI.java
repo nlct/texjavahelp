@@ -25,6 +25,8 @@ import java.net.URL;
 
 import java.text.MessageFormat;
 
+import java.util.Locale;
+
 import java.awt.Component;
 
 public abstract class AbstractCLI
@@ -741,9 +743,52 @@ public abstract class AbstractCLI
        };
    }
 
+   public void setMessageLocale(Locale locale)
+   {
+      setMessageLocale(locale == null ? null : new HelpSetLocale(locale));
+   }
+
+   public void setMessageLocale(HelpSetLocale locale)
+   {
+      if (helpLib != null)
+      {
+         throw new IllegalArgumentException(getMessageWithFallback(
+            "error.too_late_to_set_locale",
+            "Too late to set message locale {0} (message system already initialised)",
+            locale));
+      }
+
+      msgLocale = locale;
+   }
+
+   public void setHelpSetLocale(Locale locale)
+   {
+      setHelpSetLocale(locale == null ? null : new HelpSetLocale(locale));
+   }
+
+   public void setHelpSetLocale(HelpSetLocale locale)
+   {
+      hsLocale = locale;
+
+      if (helpLib != null)
+      {
+         helpLib.setHelpSetLocale(locale);
+      }
+   }
+
    protected TeXJavaHelpLib createHelpLib() throws IOException
    {
-      helpLib = new TeXJavaHelpLib(helpLibApp);
+      if (msgLocale == null)
+      {
+         msgLocale = new HelpSetLocale(Locale.getDefault());
+      }
+
+      if (hsLocale == null)
+      {
+         hsLocale = new HelpSetLocale(Locale.getDefault());
+      }
+
+      helpLib = new TeXJavaHelpLib(helpLibApp, msgLocale, hsLocale);
 
       helpLibApp.setHelpLib(helpLib);
 
@@ -775,5 +820,6 @@ public abstract class AbstractCLI
    protected TeXJavaHelpLib helpLib;
    protected TeXJavaHelpLibAppAdapter helpLibApp;
    protected CLISyntaxParser cliParser;
+   protected HelpSetLocale msgLocale, hsLocale;
 }
 
