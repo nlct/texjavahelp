@@ -19,6 +19,71 @@
  syntax={\oargm{options} \meta{directory}}
 }
 
+@switch{switch.tjhziphelpset.help,
+  parent={app.tjhziphelpset},
+  name={\longargfmt{help}},
+  shortswitch={h},
+  description={Prints help and exits}
+}
+
+@switch{switch.tjhziphelpset.version,
+  parent={app.tjhziphelpset},
+  name={\longargfmt{version}},
+  shortswitch={v},
+  description={Prints version information and exits}
+}
+
+@switch{switch.tjhziphelpset.in-dir,
+  parent={app.tjhziphelpset},
+  name={\longargfmt{in-dir}},
+  shortswitch={i},
+  syntax={\meta{dir-name}},
+  description={Specifies the input directory}
+}
+
+@switch{switch.tjhziphelpset.output,
+  parent={app.tjhziphelpset},
+  name={\longargfmt{output}},
+  shortswitch={o},
+  syntax={\meta{tjh-file}},
+  description={Specifies the output file}
+}
+
+@switch{switch.tjhziphelpset.helpset,
+  parent={app.tjhziphelpset},
+  name={\longargfmt{helpset}},
+  syntax={\meta{name}},
+  defaultvalue={helpset},
+  description={Specifies the name of the helpset sub-directory
+within the input directory}
+}
+
+@switch{switch.tjhziphelpset.locales,
+  parent={app.tjhziphelpset},
+  name={\longargfmt{locales}},
+  shortswitch={l},
+  syntax={\meta{locale-list}},
+  description={The list of supported locales}
+}
+
+@switch{switch.tjhziphelpset.locale-prefix,
+  parent={app.tjhziphelpset},
+  name={\longargfmt{locale\dhyphen prefix}},
+  shortswitch={p},
+  syntax={\meta{prefix}},
+  description={The prefix used for the locale sub-directories}
+}
+
+@switch{switch.tjhziphelpset.license-file,
+  parent={app.tjhziphelpset},
+  name={\longargfmt{license\dhyphen file}},
+  shortswitch={L},
+  syntax={\meta{file} \meta{locale}},
+  description={The license file for the specified locale. The
+\meta{locale} may be empty if there is only one license file for all
+locales}
+}
+
 @application{app.tjhxml2bib,
  name={\appfmt{tjh\-xml\-2\-bib}},
  syntax={\oargm{options} \meta{XML-file}+}
@@ -55,6 +120,23 @@
   description={specifies \meta{BIB-file} as the output file}
 }
 
+@switch{switch.tjhxml2bib.resource,
+  parent={app.tjhxml2bib},
+  name={\longargfmt{resource}},
+  shortswitch={r},
+  syntax={\meta{name}},
+  description={add \gls{xml} resource to the list of input files
+(cumulative). These are always processed first.}
+}
+
+@switch{switch.tjhxml2bib.prop,
+  parent={app.tjhxml2bib},
+  name={\longargfmt{prop}},
+  syntax={\meta{filename}},
+  description={add \keyval\ property file to the list of input files
+(cumulative). These are always processed after \gls{xml} files.}
+}
+
 @switch{switch.tjhxml2bib.out-charset,
   parent={app.tjhxml2bib},
   name={\longargfmt{out\dhyphen charset}},
@@ -65,15 +147,36 @@
 @switch{switch.tjhxml2bib.provide-xml,
   parent={app.tjhxml2bib},
   name={\longargfmt{provide\dhyphen xml}},
-  description={copy XML source files from \app{tjhxml2bib}['s] resource
+  description={copy \gls{xml} source files from \app{tjhxml2bib}['s] resource
 directory if missing}
 }
 
 @switch{switch.tjhxml2bib.copy-overwrite-xml,
   parent={app.tjhxml2bib},
   name={\longargfmt{copy\dhyphen overwrite\dhyphen xml}},
-  description={copy XML source files from \app{tjhxml2bib}['s] resource
+  description={copy \gls{xml} source files from \app{tjhxml2bib}['s] resource
 directory if missing or if \app{tjhxml2bib}['s] file is newer}
+}
+
+@switch{switch.tjhxml2bib.auto-trim,
+  parent={app.tjhxml2bib},
+  name={\longargfmt{auto\dhyphen trim}},
+  description={automatically trim field values}
+}
+
+@switch{switch.tjhxml2bib.noauto-trim,
+  parent={app.tjhxml2bib},
+  name={\longargfmt{noauto\dhyphen trim}},
+  description={don't automatically trim field values}
+}
+
+@switch{switch.tjhxml2bib.encapless-field,
+  parent={app.tjhxml2bib},
+  name={\longargfmt{encapless-field}},
+  syntax={\meta{field}},
+  description={copy original \bibentryfield{name} value to the given \meta{field} if that
+field is not set and the \bibentryfield{name} field value is automatically
+encapsulated}
 }
 
 @switch{switch.tjhxml2bib.debug,
@@ -823,7 +926,11 @@ the document on).}
 % NAMED FILES
 
 @file{file.texjavahelplib.jar,
- name={\filefmt{tex\-java\-help\-lib.jar}}
+ name={\filefmt{tex\-java\-help\-lib\dfullstop jar}}
+}
+
+@file{file.texjavaparserlib.jar,
+  name={\filefmt{tex\-java\-parser\-lib\dfullstop jar}}
 }
 
 @file{file.index.xml}
@@ -945,6 +1052,10 @@ sub-figure}
 @command{paragraph}
 @command{subparagraph}
 
+@command{title}
+@command{author}
+@command{maketitle}
+
 @command{label}
 @command{ref}
 @command{vref}
@@ -953,6 +1064,7 @@ sub-figure}
 @command{multicolumn}
 @command{llap}
 @command{rlap}
+@command{input}
 
 @command{emph,
   syntax={\margm{text}}
@@ -988,6 +1100,14 @@ sub-figure}
  name={\csfmt{table\-of\-contents}}
 }
 
+@command{listoffigures,
+  name={\csfmt{list\-of\-figures}}
+}
+
+@command{listoftables,
+  name={\csfmt{list\-of\-tables}}
+}
+
 @command{clearpage,
   name={\csfmt{clear\-page}}
 }
@@ -1014,6 +1134,20 @@ sub-figure}
 
 @command{graphicspath,
  name={\csfmt{graphicspath}}
+}
+
+@command{frontmatter,
+  providedby={\sty{texjavahelp}},
+  description={indicates the start of the front matter, this command
+is provided with \csfmt{providecommand} in case the
+document class doesn't define it}
+}
+
+@command{mainmatter,
+  providedby={\sty{texjavahelp}},
+  description={indicates the start of the main matter, this command
+is provided with \csfmt{providecommand} in case the
+document class doesn't define it}
 }
 
 @command{glsquote,
@@ -2827,6 +2961,11 @@ does \code{\gls{frame}\margm{content}}}
   long = {hypertext markup language}
 }
 
+@commonabbreviation{css,
+  short = {CSS},
+  long = {cascading style sheets}
+}
+
 @commonabbreviation{xml,
   short = {XML},
   long = {extensible markup language}
@@ -2837,7 +2976,8 @@ does \code{\gls{frame}\margm{content}}}
   text={Java\-Help},
   description={a Java library provided by Sun that could be used by Java
 applications to a help system using Swing components. Its home page
-was \nolinkurl{http://java.sun.com/products/javahelp}, but is no longer available}
+was \nolinkurl{http://java.sun.com/products/javahelp}, but is now
+archived at \url{https://github.com/javaee/javahelp/}}
 }
 
 @abbreviation{TeXJavaHelp,
@@ -2851,6 +2991,13 @@ document.
 The library also provides methods to implement localisation support
 for both \gls{gui} and \gls{cli} applications, and a \code{TeXApp}
 class for applications that use the \gls{TeXParserLib}.}
+}
+
+@abbreviation{TeXJavaHelpLib,
+  short={TJHL},
+  long={\NoCaseChange{\TeX}\ Java Help Library},
+  description={the Java library \file{texjavahelplib.jar} provided
+by the \glsxtrlong{TeXJavaHelp} System}
 }
 
 @abbreviation{TeXParserLib,
