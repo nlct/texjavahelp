@@ -22,6 +22,7 @@ Nicola Talbot
 <entry key="button.help.tooltip">Open relevant section of the manual</entry>
 <entry key="button.help.keystroke">shift F1</entry>
 <entry key="button.help.defaultkeys">format=glsignore</entry>
+<entry key="button.help.iconimage">help</entry>
 
 <!-- Common Buttons -->
 
@@ -30,29 +31,34 @@ Nicola Talbot
 <entry key="button.okay.keystroke">shift ENTER</entry>
 <entry key="button.okay.defaultkeys">format=glsignore</entry>
 <entry key="button.okay.tooltip">Accept changes and close window</entry>
+<entry key="button.okay.iconimage">okay</entry>
 
 <entry key="button.cancel">Cancel</entry>
 <entry key="button.cancel.mnemonic">C</entry>
 <entry key="button.cancel.keystroke">ESCAPE</entry>
 <entry key="button.cancel.defaultkeys">format=glsignore</entry>
 <entry key="button.cancel.tooltip">Discard changes and close window</entry>
+<entry key="button.cancel.iconimage">cancel</entry>
 
 <entry key="button.apply">Apply</entry>
 <entry key="button.apply.mnemonic">A</entry>
 <entry key="button.apply.defaultkeys">format=glsignore</entry>
 <entry key="button.apply.tooltip">Apply changes</entry>
+<entry key="button.apply.iconimage">apply</entry>
 
 <entry key="button.close">Close</entry>
 <entry key="button.close.mnemonic">C</entry>
 <entry key="button.close.keystroke">ENTER</entry>
 <entry key="button.close.defaultkeys">format=glsignore</entry>
 <entry key="button.close.tooltip">Close window</entry>
+<entry key="button.close.iconimage">close</entry>
 
 <entry key="button.copy">Copy</entry>
 <entry key="button.copy.mnemonic">C</entry>
 <entry key="button.copy.keystroke">control C</entry>
 <entry key="button.copy.defaultkeys">format=glsignore</entry>
 <entry key="button.copy.tooltip">Copy selected</entry>
+<entry key="button.copy.iconimage">copy</entry>
 
 <entry key="button.copy_all">Copy All</entry>
 <entry key="button.copy_all.mnemonic">A</entry>
@@ -96,52 +102,61 @@ Nicola Talbot
 <entry key="menu.helpframe.navigation.home.description">Go to the first page</entry>
 <entry key="menu.helpframe.navigation.home.mnemonic">H</entry>
 <entry key="menu.helpframe.navigation.home.keystroke">alt HOME</entry>
+<entry key="menu.helpframe.navigation.home.iconimage">home</entry>
 
 <entry key="menu.helpframe.navigation.up">Up</entry>
 <entry key="menu.helpframe.navigation.up.mnemonic">U</entry>
 <entry key="menu.helpframe.navigation.up.tooltip">Up</entry>
 <entry key="menu.helpframe.navigation.up.description">Go up a section</entry>
 <entry key="menu.helpframe.navigation.up.keystroke">alt UP</entry>
+<entry key="menu.helpframe.navigation.up.iconimage">up</entry>
 
 <entry key="menu.helpframe.navigation.previous">Previous</entry>
 <entry key="menu.helpframe.navigation.previous.mnemonic">P</entry>
 <entry key="menu.helpframe.navigation.previous.tooltip">Previous Page</entry>
 <entry key="menu.helpframe.navigation.previous.description">Go to the previous page</entry>
 <entry key="menu.helpframe.navigation.previous.keystroke">alt LEFT</entry>
+<entry key="menu.helpframe.navigation.previous.iconimage">previous</entry>
 
 <entry key="menu.helpframe.navigation.next">Next</entry>
 <entry key="menu.helpframe.navigation.next.mnemonic">N</entry>
 <entry key="menu.helpframe.navigation.next.tooltip">Next Page</entry>
 <entry key="menu.helpframe.navigation.next.description">Go to the next page</entry>
 <entry key="menu.helpframe.navigation.next.keystroke">alt RIGHT</entry>
+<entry key="menu.helpframe.navigation.next.iconimage">next</entry>
 
 <entry key="menu.helpframe.navigation.search">Search...</entry>
 <entry key="menu.helpframe.navigation.search.mnemonic">S</entry>
 <entry key="menu.helpframe.navigation.search.tooltip">Search document</entry>
 <entry key="menu.helpframe.navigation.search.description">Open search dialogue</entry>
+<entry key="menu.helpframe.navigation.search.iconimage">search</entry>
 
 <entry key="menu.helpframe.navigation.index">Index...</entry>
 <entry key="menu.helpframe.navigation.index.mnemonic">I</entry>
 <entry key="menu.helpframe.navigation.index.tooltip">Open index page</entry>
 <entry key="menu.helpframe.navigation.index.description">Open index page in separate window</entry>
+<entry key="menu.helpframe.navigation.index.iconimage">index</entry>
 
 <entry key="menu.helpframe.navigation.history">History...</entry>
 <entry key="menu.helpframe.navigation.history.mnemonic">H</entry>
 <entry key="menu.helpframe.navigation.history.keystroke">ctrl shift H</entry>
 <entry key="menu.helpframe.navigation.history.tooltip">View History</entry>
 <entry key="menu.helpframe.navigation.history.description">View recent page list</entry>
+<entry key="menu.helpframe.navigation.history.iconimage">history</entry>
 
 <entry key="menu.helpframe.navigation.historyback">Back</entry>
 <entry key="menu.helpframe.navigation.historyback.mnemonic">B</entry>
 <entry key="menu.helpframe.navigation.historyback.keystroke">alt shift LEFT</entry>
 <entry key="menu.helpframe.navigation.historyback.tooltip">History Back</entry>
 <entry key="menu.helpframe.navigation.historyback.description">Go back</entry>
+<entry key="menu.helpframe.navigation.historyback.iconimage">historyback</entry>
 
 <entry key="menu.helpframe.navigation.historyforward">Forward</entry>
 <entry key="menu.helpframe.navigation.historyforward.mnemonic">F</entry>
 <entry key="menu.helpframe.navigation.historyforward.keystroke">alt shift RIGHT</entry>
 <entry key="menu.helpframe.navigation.historyforward.tooltip">History Forward</entry>
 <entry key="menu.helpframe.navigation.historyforward.description">Go forward</entry>
+<entry key="menu.helpframe.navigation.historyforward.iconimage">historyforward</entry>
 
 <entry key="menu.helpframe.navigation.close">Close</entry>
 <entry key="menu.helpframe.navigation.close.mnemonic">C</entry>
@@ -160,18 +175,21 @@ Nicola Talbot
 <entry key="menu.helpframe.settings.decrease.description">Decrease the font size for the help pages</entry>
 <entry key="menu.helpframe.settings.decrease.mnemonic">D</entry>
 <entry key="menu.helpframe.settings.decrease.keystroke">SUBTRACT</entry>
+<entry key="menu.helpframe.settings.decrease.iconimage">decrease</entry>
 
 <entry key="menu.helpframe.settings.increase">Font Increase</entry>
 <entry key="menu.helpframe.settings.increase.tooltip">Increase Font Size</entry>
 <entry key="menu.helpframe.settings.increase.description">Increase the font size for the help pages</entry>
 <entry key="menu.helpframe.settings.increase.mnemonic">I</entry>
 <entry key="menu.helpframe.settings.increase.keystroke">ADD</entry>
+<entry key="menu.helpframe.settings.increase.iconimage">increase</entry>
 
 <entry key="menu.helpframe.settings.font">Font...</entry>
 <entry key="menu.helpframe.settings.font.tooltip">Select Font</entry>
 <entry key="menu.helpframe.settings.font.description">Change the font used by the help pages</entry>
 <entry key="menu.helpframe.settings.font.mnemonic">F</entry>
 <entry key="menu.helpframe.settings.font.keystroke">ctrl F</entry>
+<entry key="menu.helpframe.settings.font.iconimage">font</entry>
 
 <entry key="menu.helpframe.settings.nav">Lower Navigation...</entry>
 <entry key="menu.helpframe.settings.nav.mnemonic">L</entry>
@@ -190,42 +208,49 @@ Nicola Talbot
 <entry key="menu.helppage.home.description">Go to the first page</entry>
 <entry key="menu.helppage.home.mnemonic">H</entry>
 <entry key="menu.helppage.home.keystroke">alt HOME</entry>
+<entry key="menu.helppage.home.iconimage">home</entry>
 
 <entry key="menu.helppage.reset">Reset</entry>
 <entry key="menu.helppage.reset.mnemonic">R</entry>
 <entry key="menu.helppage.reset.keystroke">alt HOME</entry>
 <entry key="menu.helppage.reset.tooltip">Back to page {0}</entry>
 <entry key="menu.helppage.reset.description">Go back to the topic''s page</entry>
+<entry key="menu.helppage.reset.iconimage">reset</entry>
 
 <entry key="menu.helppage.up">Up</entry>
 <entry key="menu.helppage.up.mnemonic">U</entry>
 <entry key="menu.helppage.up.tooltip">Up</entry>
 <entry key="menu.helppage.up.description">Go up a section</entry>
 <entry key="menu.helppage.up.keystroke">alt UP</entry>
+<entry key="menu.helppage.up.iconimage">up</entry>
 
 <entry key="menu.helppage.previous">Previous</entry>
 <entry key="menu.helppage.previous.mnemonic">P</entry>
 <entry key="menu.helppage.previous.tooltip">Previous Page</entry>
 <entry key="menu.helppage.previous.description">Go to the previous page</entry>
 <entry key="menu.helppage.previous.keystroke">alt LEFT</entry>
+<entry key="menu.helppage.previous.iconimage">previous</entry>
 
 <entry key="menu.helppage.next">Next</entry>
 <entry key="menu.helppage.next.mnemonic">N</entry>
 <entry key="menu.helppage.next.tooltip">Next Page</entry>
 <entry key="menu.helppage.next.description">Go to the next page</entry>
 <entry key="menu.helppage.next.keystroke">alt RIGHT</entry>
+<entry key="menu.helppage.next.iconimage">next</entry>
 
 <entry key="menu.helppage.historyback">Back</entry>
 <entry key="menu.helppage.historyback.mnemonic">B</entry>
 <entry key="menu.helppage.historyback.keystroke">alt shift LEFT</entry>
 <entry key="menu.helppage.historyback.tooltip">History Back</entry>
 <entry key="menu.helppage.historyback.description">Go back</entry>
+<entry key="menu.helppage.historyback.iconimage">historyback</entry>
 
 <entry key="menu.helppage.historyforward">Forward</entry>
 <entry key="menu.helppage.historyforward.mnemonic">F</entry>
 <entry key="menu.helppage.historyforward.keystroke">alt shift RIGHT</entry>
 <entry key="menu.helppage.historyforward.tooltip">History Forward</entry>
 <entry key="menu.helppage.historyforward.description">Go forward</entry>
+<entry key="menu.helppage.historyforward.iconimage">historyforward</entry>
 
 <!-- Secondary Help Dialogs  -->
 
@@ -243,42 +268,49 @@ Nicola Talbot
 <entry key="menu.helpdialog.navigation.reset.keystroke">alt HOME</entry>
 <entry key="menu.helpdialog.navigation.reset.tooltip">Back to page {0}</entry>
 <entry key="menu.helpdialog.navigation.reset.description">Go back to the topic''s page</entry>
+<entry key="menu.helpdialog.navigation.reset.iconimage">reset</entry>
 
 <entry key="menu.helpdialog.navigation.historyback">Back</entry>
 <entry key="menu.helpdialog.navigation.historyback.mnemonic">B</entry>
 <entry key="menu.helpdialog.navigation.historyback.keystroke">alt shift LEFT</entry>
 <entry key="menu.helpdialog.navigation.historyback.tooltip">History Back</entry>
 <entry key="menu.helpdialog.navigation.historyback.description">Go back</entry>
+<entry key="menu.helpdialog.navigation.historyback.iconimage">historyback</entry>
 
 <entry key="menu.helpdialog.navigation.historyforward">Forward</entry>
 <entry key="menu.helpdialog.navigation.historyforward.mnemonic">F</entry>
 <entry key="menu.helpdialog.navigation.historyforward.keystroke">alt shift RIGHT</entry>
 <entry key="menu.helpdialog.navigation.historyforward.tooltip">History Forward</entry>
 <entry key="menu.helpdialog.navigation.historyforward.description">Go forward</entry>
+<entry key="menu.helpdialog.navigation.historyforward.iconimage">historyforward</entry>
 
 <entry key="menu.helpdialog.navigation.previous">Previous</entry>
 <entry key="menu.helpdialog.navigation.previous.mnemonic">P</entry>
 <entry key="menu.helpdialog.navigation.previous.tooltip">Previous Page</entry>
 <entry key="menu.helpdialog.navigation.previous.description">Go to the previous page</entry>
 <entry key="menu.helpdialog.navigation.previous.keystroke">alt LEFT</entry>
+<entry key="menu.helpdialog.navigation.previous.iconimage">previous</entry>
 
 <entry key="menu.helpdialog.navigation.next">Next</entry>
 <entry key="menu.helpdialog.navigation.next.mnemonic">N</entry>
 <entry key="menu.helpdialog.navigation.next.tooltip">Next Page</entry>
 <entry key="menu.helpdialog.navigation.next.description">Go to the next page</entry>
 <entry key="menu.helpdialog.navigation.next.keystroke">alt RIGHT</entry>
+<entry key="menu.helpdialog.navigation.next.iconimage">next</entry>
 
 <entry key="menu.helpdialog.navigation.up">Up</entry>
 <entry key="menu.helpdialog.navigation.up.mnemonic">U</entry>
 <entry key="menu.helpdialog.navigation.up.tooltip">Up</entry>
 <entry key="menu.helpdialog.navigation.up.description">Go up a section</entry>
 <entry key="menu.helpdialog.navigation.up.keystroke">alt UP</entry>
+<entry key="menu.helpdialog.navigation.up.iconimage">up</entry>
 
 <entry key="menu.helpdialog.navigation.close">Close</entry>
 <entry key="menu.helpdialog.navigation.close.mnemonic">C</entry>
 <entry key="menu.helpdialog.navigation.close.tooltip">Close help window</entry>
 <entry key="menu.helpdialog.navigation.close.iconimage">close</entry>
 <entry key="menu.helpdialog.navigation.close.keystroke">ctrl W</entry>
+<entry key="menu.helpdialog.navigation.close.iconimage">close</entry>
 
 <!-- Index Frame -->
 
@@ -326,25 +358,30 @@ Nicola Talbot
 <entry key="menu.help_page_search.search_menu.search">Find</entry>
 <entry key="menu.help_page_search.search_menu.search.mnemonic">F</entry>
 <entry key="menu.help_page_search.search_menu.search.tooltip">Find keywords in document</entry>
+<entry key="menu.help_page_search.search_menu.search.iconimage">search</entry>
 
 <entry key="menu.help_page_search.search_menu.previous">Previous Result</entry>
 <entry key="menu.help_page_search.search_menu.previous.mnemonic">P</entry>
 <entry key="menu.help_page_search.search_menu.previous.keystroke">control shift F</entry>
 <entry key="menu.help_page_search.search_menu.previous.tooltip">Scroll to previous result</entry>
+<entry key="menu.help_page_search.search_menu.previous.iconimage">previous</entry>
 
 <entry key="menu.help_page_search.search_menu.next">Next Result</entry>
 <entry key="menu.help_page_search.search_menu.next.mnemonic">N</entry>
 <entry key="menu.help_page_search.search_menu.next.keystroke">control F</entry>
 <entry key="menu.help_page_search.search_menu.next.tooltip">Scroll to next result</entry>
+<entry key="menu.help_page_search.search_menu.next.iconimage">next</entry>
 
 <entry key="menu.help_page_search.search_menu.reset">Clear</entry>
 <entry key="menu.help_page_search.search_menu.reset.mnemonic">C</entry>
 <entry key="menu.help_page_search.search_menu.reset.keystroke">shift ESCAPE</entry>
 <entry key="menu.help_page_search.search_menu.reset.tooltip">Clear results and keywords</entry>
+<entry key="menu.help_page_search.search_menu.reset.iconimage">reset</entry>
 
 <entry key="menu.help_page_search.search_menu.stop">Stop</entry>
 <entry key="menu.help_page_search.search_menu.stop.mnemonic">T</entry>
 <entry key="menu.help_page_search.search_menu.stop.keystroke">ESCAPE</entry>
+<entry key="menu.help_page_search.search_menu.stop.iconimage">stop</entry>
 
 <!-- Font Settings Frame -->
 
@@ -369,6 +406,7 @@ Nicola Talbot
 
 <entry key="help_font_settings.choose_colour">Choose...</entry>
 <entry key="help_font_settings.choose_colour.mnemonic">S</entry>
+<entry key="help_font_settings.choose_colour.iconimage">choose_colour</entry>
 
 <entry key="help_font_settings.colour_chooser.title">Choose</entry>
 
@@ -393,20 +431,25 @@ Nicola Talbot
 
 <entry key="menu.imageviewer.fit_to_width">Fit to Width</entry>
 <entry key="menu.imageviewer.fit_to_width.mnemonic">W</entry>
+<entry key="menu.imageviewer.fit_to_width.iconimage">fit_to_width</entry>
 
 <entry key="menu.imageviewer.fit_to_height">Fit to Height</entry>
 <entry key="menu.imageviewer.fit_to_height.mnemonic">H</entry>
+<entry key="menu.imageviewer.fit_to_height.iconimage">fit_to_height</entry>
 
 <entry key="menu.imageviewer.fit_to_page">Fit to Page</entry>
 <entry key="menu.imageviewer.fit_to_page.mnemonic">P</entry>
+<entry key="menu.imageviewer.fit_to_page.iconimage">fit_to_page</entry>
 
 <entry key="menu.imageviewer.increase">Increase</entry>
 <entry key="menu.imageviewer.increase.mnemonic">I</entry>
 <entry key="menu.imageviewer.increase.keystroke">alt UP</entry>
+<entry key="menu.imageviewer.increase.iconimage">increase</entry>
 
 <entry key="menu.imageviewer.decrease">Decrease</entry>
 <entry key="menu.imageviewer.decrease.mnemonic">D</entry>
 <entry key="menu.imageviewer.decrease.keystroke">alt DOWN</entry>
+<entry key="menu.imageviewer.decrease.iconimage">decrease</entry>
 
 <entry key="menu.imageviewer.zoom_1">100%</entry>
 <entry key="menu.imageviewer.zoom_1.mnemonic">1</entry>
@@ -722,5 +765,7 @@ Use {0} for help.</entry>
 <entry key="error.exec_failed">Failed to execute: {0}</entry>
 <entry key="error.app_failed">{0} failed with exit code {1}</entry>
 <entry key="error.interrupted">Process interrupted</entry>
+
+<entry key="error.too_late_to_set_locale">Too late to set message locale {0} (message system already initialised)</entry>
 
 </properties>
