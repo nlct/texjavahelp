@@ -126,6 +126,7 @@ public class TeXJavaHelpSty extends UserGuideSty
         )
       ));
 
+      addExampleCommands();
       addCssStyles();
       addSemanticCommands();
 
@@ -421,6 +422,9 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new Btn(glossariesSty));
 
+      registerControlSequence(new StyFile(glossariesSty));
+      registerControlSequence(new ClsFile(glossariesSty));
+
       registerControlSequence(new Dglsfield("accelerator", glossariesSty,
          CaseChange.NO_CHANGE, "keystroke"));
 
@@ -608,6 +612,30 @@ public class TeXJavaHelpSty extends UserGuideSty
 
       registerControlSequence(new IncludeImg());
       registerControlSequence(new IncludeImg("includetimg", "topalign"));
+   }
+
+   @Override
+   protected void addExampleCommands()
+   {
+      registerControlSequence(
+        new TextualContentCommand("bkslnl", String.format("\\%n")));
+      registerControlSequence(
+        new TextualContentCommand("nl", String.format("%n")));
+      registerControlSequence(
+        new TextualContentCommand("nlsp", String.format("%n ")));
+      registerControlSequence(
+        new TextualContentCommand("dbspace", String.format("  ")));
+      registerControlSequence(
+        new TextualContentCommand("dbdbspace", String.format("    ")));
+      registerControlSequence(
+        new TextualContentCommand("dbdbdbspace", String.format("      ")));
+      registerControlSequence(
+        new TextualContentCommand("nldbsp", String.format("%n  ")));
+      registerControlSequence(
+        new TextualContentCommand("nldbdbsp", String.format("%n    ")));
+      registerControlSequence(
+        new TextualContentCommand("nldbdbdbsp", String.format("%n      ")));
+
    }
 
    protected void addLangCommands()
