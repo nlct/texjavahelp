@@ -117,7 +117,8 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
    {
       CLISyntaxParser cliParser = getSyntaxParser();
 
-      if (mayRequireTmpDir && arg.equals("--no-rm-tmp-dir"))
+      if (mayRequireTmpDir
+           && (arg.equals("--no-rm-tmp-dir") || arg.equals("--norm-tmp-dir")))
       {
          deleteTempDirOnExit = false;
       }
