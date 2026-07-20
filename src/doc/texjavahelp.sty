@@ -2,7 +2,7 @@
 % in the TeX Java Parser Library.
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{texjavahelp}[2026/07/17 v1.3 (NLCT)]
+\ProvidesPackage{texjavahelp}[2026/07/20 v1.3 (NLCT)]
 
 \RequirePackage{pifont}
 \RequirePackage{fontawesome}
@@ -2594,6 +2594,18 @@
 \glsxtrnewgls{switch.}{\switch}
 \newcommand{\swch}[2][]{\shortswitchref[#1]{switch.#2}}
 
+\NewDocumentCommand{\styfile}{om}{%
+ \IfValueTF{#1}%
+  {\glslink[#1]{pkg.#2}{\filefmt{#2.sty}}}%
+  {\glslink{pkg.#2}{\filefmt{#2.sty}}}%
+}
+
+\NewDocumentCommand{\clsfile}{om}{%
+ \IfValueTF{#1}%
+  {\glslink[#1]{cls.#2}{\filefmt{#2.cls}}}%
+  {\glslink{cls.#2}{\filefmt{#2.cls}}}%
+}
+
 \glsxtrnewgls{bibentry.}{\bibentry}
 \glsxtrnewgls{bibentryfield.}{\bibentryfield}
 
@@ -3313,6 +3325,7 @@ transcript or log file or written to STDOUT or STDERR}}
 {}{\par}\dbspace}\global\let\code@comment@dbsp\code@comment@dbsp}
 \newcommand{\araraline}[1]{\glspercentchar\ arara: #1}
 \newcommand{\araracont}{\araraline{-\/-> }}
+\newcommand\bkslnl{\glsbackslash}%
 
 \definecolor{cs}{rgb}{.328,.436,.1} % dark green
 \definecolor{styopt}{rgb}{.408,.132,.545} % DarkOrchid4
@@ -3340,6 +3353,7 @@ transcript or log file or written to STDOUT or STDERR}}
  \def\nldbsp{\nl\null\dbspace}%
  \def\nldbdbsp{\nl\null\dbdbspace}%
  \def\nlsbdbdbsp{\nl\null\dbdbdbspace}%
+ \def\bkslnl{\glsbackslash\nl}%
  \renewcommand*{\envfmt}[1]{##1}%
  \renewcommand*{\styfmt}[1]{##1}%
  \renewcommand*{\clsfmt}[1]{##1}%
