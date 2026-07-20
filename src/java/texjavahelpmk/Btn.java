@@ -55,28 +55,44 @@ public class Btn extends Dgls
 
       if (imgName != null)
       {
-         TJHListener listener = (TJHListener)parser.getListener();
+         String base = parser.expandToString(imgName, stack);
 
-         TeXObjectList list = listener.createStack();
-
-         listener.getSmallIcon(null, stack, imgName.toString(parser), list);
-
-         if (list.isEmpty())
+         if (!base.isEmpty())
          {
-            list.add(listener.getControlSequence("includegraphics"));
-            list.add(listener.getOther('['));
-            list.add(listener.createString("scale"));
-            list.add(listener.getOther('='));
-            list.add(new TeXFloatingPoint(0.5));
-            list.add(listener.getOther(']'));
-            Group grp = listener.createGroup();
-            grp.add(imgName, true);
-            list.add(grp);
+            TJHListener listener = (TJHListener)parser.getListener();
+
+            TeXObjectList list = listener.createStack();
+
+            listener.getSmallIcon(null, stack, base, list);
+
+            if (list.isEmpty())
+            {
+               list.add(listener.getControlSequence("includegraphics"));
+               list.add(listener.getOther('['));
+               list.add(listener.createString("scale"));
+               list.add(listener.getOther('='));
+               list.add(new TeXFloatingPoint(0.5));
+               list.add(listener.getOther(']'));
+               Group grp = listener.createGroup();
+               grp.add(imgName, true);
+               list.add(grp);
+
+               TeXJavaHelpMk app = (TeXJavaHelpMk)listener.getTeXApp();
+
+               if (app.isDebuggingOn())
+               {
+                  app.getHelpLib().debug(app.getMessageWithFallback(
+                    "message.no_small_icon_image_found",
+                    "No small icon image found for {0}, falling back on {1}",
+                    base, list.toString(parser)
+                  ));
+               }
+            }
+
+            list.add(listener.getControlSequence("btniconsep"));
+
+            TeXParserUtils.process(list, parser, stack);
          }
-
-         list.add(listener.getControlSequence("btniconsep"));
-
-         TeXParserUtils.process(list, parser, stack);
       }
    }
 
