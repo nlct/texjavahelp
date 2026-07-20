@@ -71,6 +71,10 @@ has have</entry>
 <entry key="syntax.root-page-preamble-from-file">{0} &lt;html&gt;	Add &lt;html&gt; code to the end of the HTML body for just the root page.</entry>
 <entry key="syntax.support-unicode-script">{0}	Use Unicode superscripts or subscripts where available.</entry>
 
+<!-- Messages -->
+
+<entry key="message.no_small_icon_image_found">No small icon image found for {0}, falling back on {1}</entry>
+
 <!--  Error messages -->
 
 <!--  texjavahelpmk error messages -->
