@@ -664,6 +664,38 @@ the document on).}
   alias={switch.nodebug}
 }
 
+@switch{switch.log,
+  parent={common-switch},
+  syntax={\meta{file}},
+  description={specify a log file}
+}
+
+@switch{switch.nolog,
+  parent={common-switch},
+  description={don't use a log file}
+}
+
+@switch{switch.charset,
+  parent={common-switch},
+  syntax={\meta{name}},
+  description={specify the default charset}
+}
+
+@switch{switch.rm-tmp-dir,
+  parent={common-switch},
+  description={remove temporary files on exit}
+}
+
+@switch{switch.norm-tmp-dir,
+  parent={common-switch},
+  description={don't remove temporary files on exit}
+}
+
+@switch{switch.no-rm-tmp-dir,
+  parent={common-switch},
+  alias={switch.norm-tmp-dir}
+}
+
 % LaTeX CLASSES
 
 @class{cls.scrbook,

@@ -592,18 +592,82 @@ manual:
 \gls{section}\marg{Settings Dialog}
 \gls{label}\marg{sec:settings}
 \end{codebox}
-then the okay, cancel and help buttons can be added:
+then the okay, cancel and help buttons can be added to that dialog:
 \begin{codebox}
 TeXJavaHelpLib helpLib = ...
 JDialog jdialog = ...
-JPanel buttonPanel = new JPanel();
-jdialog.getContentPane().add(buttonPanel, "South");
+JPanel btnP = new JPanel();
+jdialog.getContentPane().add(btnP, "South");
 \codepar
 OkayAction okayAction = ...
-buttonPanel.add(helpLib.createOkayButton(okayAction, jdialog.getRootPane()));
-buttonPanel.add(helpLib.createCancelButton(jdialog));
-buttonPanel.add(helpLib.createHelpDialogButton(jdialog, "sec:settings"));
+btnP.add(helpLib.createOkayButton(okayAction, jdialog.getRootPane()));
+btnP.add(helpLib.createCancelButton(jdialog));
+btnP.add(helpLib.createHelpDialogButton(jdialog, "sec:settings"));
 \end{codebox}
+
+If your application also needs to use the \gls{TeXParserLib} then
+you can subclass the \code{CLITeXAppAdapter} abstract class instead.
+The constructors are:
+\begin{codebox}
+public CLITeXAppAdapter()
+public CLITeXAppAdapter(boolean mayRequireTmpDir)
+\end{codebox}
+For the constructor without a parameter, true is assumed.
+This indicates that a process may be called that requires a
+temporary directory.
+
+The \code{CLITeXAppAdapter} has its own subclass of \code{AbstractCLI} called
+\code{CLITeXHelpLib} which can be accessed with:
+\begin{codebox}
+public CLITeXHelpLib getCLITeXHelpLib()
+\end{codebox}
+Instead of overriding the \code{CLITeXHelpLib} class, you now need
+to override the \code{CLITeXAppAdapter} methods.
+
+For example, to load your dictionaries:
+\begin{codebox}
+@Override
+protected void loadDictionaries(MessageSystem msgSys)
+throws IOException
+\marg{
+   super.loadDictionaries(msgSys);
+\codepar
+   msgSys.loadDictionary(
+     "/com/example/foobar/dictionaries/",
+     "foobar");
+}
+\end{codebox}
+(The \code{super.loadDictionaries} method loads
+the \gls{TeXParserLib} dictionary.)
+There are analogous methods to those provided by \code{AbstractCLI}:
+\begin{codebox}
+public String getCLIApplicationName()
+public String getCLIApplicationVersion()
+public String getCLIApplicationVersionDate()
+public void printCLISyntax()
+public void printCLIAbout()
+protected int getCLIArgCount(String arg)
+protected void parseNoSwitchCLIArg(String arg)
+  throws InvalidSyntaxException
+protected boolean parseCLIArg(String arg, CLIArgValue[] returnVals)
+  throws InvalidSyntaxException
+\end{codebox}
+There are some additional common switches that are automatically
+provided: \switch{debug-mode}, \switch{log}, \switch{nolog} and \switch{charset}.
+
+If the constructor \code{CLITeXAppAdapter(true)} was used, then 
+the switches \switch{rm-tmp-dir} and \switch{norm-tmp-dir}
+(or \switch{no-rm-tmp-dir}) will also be provided.
+This determines whether or not the temporary directory should be
+deleted on exit. (It's useful to retain it when debugging.)
+
+Make sure that you call the \code{parseCLIArg} super constructor after
+testing all your application's switches to make sure the common ones
+are also checked.
+
+The \code{CLITeXAppAdapter} class extends the \code{TeXAppAdapter}
+class (in the \gls{TeXParserLib}) and can be used as the
+\code{TeXApp} for classes that implement \code{TeXParserListener}.
 
 \chapter{The \stytext{texjavahelp} \LaTeX\ Package}
 \label{sec:texjavahelpsty}
