@@ -129,6 +129,8 @@ public class ZipHelpset extends AbstractCLI
 
       printSyntaxItem(getMessage("syntax.locale-prefix", "--locale-prefix", "-p"));
 
+      printSyntaxItem(getMessage("syntax.file-for-locale", "--file-for-locale", "-f"));
+
       printSyntaxItem(getMessage("syntax.license-file", "--license-file", "-L"));
 
       System.out.println();
@@ -156,7 +158,9 @@ public class ZipHelpset extends AbstractCLI
          return 1;
       }
 
-      if (arg.equals("--license-file") || arg.equals("-L"))
+      if (arg.equals("--license-file") || arg.equals("-L")
+       || arg.equals("--file-for-locale") || arg.equals("-f")
+         )
       {
          return 2;
       }
@@ -259,6 +263,11 @@ public class ZipHelpset extends AbstractCLI
          File file = new File(returnVals[0].toString());
          String localeTag = returnVals[1].toString();
 
+         if (localeTag.equals("*"))
+         {
+            localeTag = "";
+         }
+
          if (!file.exists())
          {
             throw new InvalidSyntaxException(
@@ -284,33 +293,16 @@ public class ZipHelpset extends AbstractCLI
             ref = ref.substring(idx+1);
          }
 
-         Locale locale = null;
+         HelpSetLocale hsl = null;
 
-         if (!localeTag.isEmpty() && !localeTag.equals("*"))
+         if (!localeTag.isEmpty())
          {
-            Locale.Builder builder = new Locale.Builder();
-
-            try
-            {
-               builder.setLanguageTag(localeTag);
-            }
-            catch (IllformedLocaleException e)
-            {
-               throw new InvalidSyntaxException(
-                  getMessage("error.illformed_locale", localeTag), e);
-            }
+            hsl = new HelpSetLocale(localeTag);
          }
 
          if (licenseFiles == null)
          {
             licenseFiles = new Vector<HelpsetFile>();
-         }
-
-         HelpSetLocale hsl = null;
-
-         if (localeTag != null)
-         {
-            hsl = new HelpSetLocale(localeTag, locale);
          }
 
          HelpsetFile hsf = new HelpsetFile(getHelpLib(), ref, HelpsetFile.TYPE_HTML, 
@@ -330,6 +322,30 @@ public class ZipHelpset extends AbstractCLI
          }
 
          licenseFiles.add(hsf);
+      }
+      else if (isArg(arg, "--file-for-locale", "-f", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.syntax.missing_file_after", arg));
+         }
+
+         if (returnVals[1] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.syntax.missing_locale_after", arg, returnVals[0]));
+         }
+
+         FileLocaleTag flt = new FileLocaleTag(
+            returnVals[0].toString(), returnVals[1].toString());
+
+         if (fileLocaleTagList == null)
+         {
+            fileLocaleTagList = new Vector<FileLocaleTag>();
+         }
+
+         fileLocaleTagList.add(flt);
       }
       else if (isArg(arg, "--output", "-o", returnVals))
       {
@@ -453,21 +469,28 @@ public class ZipHelpset extends AbstractCLI
 
                    HelpSetLocale hsl = null;
 
-                   if (localeNames != null)
+                   if (fileLocaleTagList != null)
+                   {
+                      for (FileLocaleTag flt : fileLocaleTagList)
+                      {
+                         if (flt.matches(path))
+                         {
+                            hsl = new HelpSetLocale(flt.getTag());
+
+                            break;
+                         }
+                      }
+                   }
+
+                   if (hsl == null && localeNames != null)
                    {
                       for (String tag : localeNames)
                       {
-                         String name = (localePrefix == null ? tag : localePrefix+tag);
-
-
-                         for (int i = 0; i < path.getNameCount()-1; i++)
+                         if (matches(path, tag))
                          {
-                            if (path.getName(i).toString().equals(name))
-                            {
-                               hsl = new HelpSetLocale(tag);
+                            hsl = new HelpSetLocale(tag);
 
-                               break;
-                            }
+                            break;
                          }
                       }
                    }
@@ -496,6 +519,21 @@ public class ZipHelpset extends AbstractCLI
       helpset.writeHelpset(zipFile);
    }
 
+   protected boolean matches(Path path, String tag)
+   {
+      String name = (localePrefix == null ? tag : localePrefix+tag);
+
+      for (int i = 0; i < path.getNameCount()-1; i++)
+      {
+         if (path.getName(i).toString().equals(name))
+         {
+            return true;
+         }
+      }
+
+      return false;
+   }
+
    public static void main(String[] args)
    {
       final ZipHelpset ziphelpset = new ZipHelpset();
@@ -517,6 +555,41 @@ public class ZipHelpset extends AbstractCLI
       System.exit(ziphelpset.getExitCode());
    }
 
+   static class FileLocaleTag
+   {
+      FileLocaleTag(String filename, String tag)
+      {
+         this.filename = filename;
+         this.tag = tag;
+      }
+
+      String getFilename()
+      {
+         return filename;
+      }
+
+      String getTag()
+      {
+         return tag;
+      }
+
+      boolean matches(Path path)
+      {
+         for (int i = 0; i < path.getNameCount()-1; i++)
+         {
+            if (path.getName(i).toString().equals(filename))
+            {
+               return true;
+            }
+         }
+
+         return false;
+      }
+
+      String filename;
+      String tag;
+   }
+
    public static final String NAME="tjhziphelpset";
 
    Path inPath = null, helpsetPath;
@@ -530,4 +603,5 @@ public class ZipHelpset extends AbstractCLI
    String localePrefix = null;
 
    Vector<HelpsetFile> licenseFiles;
+   Vector<FileLocaleTag> fileLocaleTagList;
 }
