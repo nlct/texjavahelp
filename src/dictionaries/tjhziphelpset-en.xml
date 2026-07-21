@@ -11,7 +11,7 @@ Nicola Talbot
 <entry key="syntax.title">Syntax:</entry>
 <entry key="syntax.options">{0} [&lt;option&gt;]+ &lt;resources dir&gt; [&lt;tjh-file&gt;]</entry>
 <entry key="syntax.in">{0} (or {1}) &lt;dir&gt;	The directory containing the helpset subdirectory.</entry>
-<entry key="syntax.license-file">{0} (or {1}) &lt;file&gt; &lt;locale&gt;	Include given license file the specified locale. The &lt;locale&gt; may be empty if there is only one license file for all locales.</entry>
+<entry key="syntax.license-file">{0} (or {1}) &lt;file&gt; &lt;locale&gt;	Include given license file the specified locale. The &lt;locale&gt; may be empty or ''*'' if there is only one license file for all locales.</entry>
 <entry key="syntax.locales">{0} (or {1}) &lt;locale-list&gt;	The list of supported locales (cumulative). Omit if no locale sub-directories.</entry>
 <entry key="syntax.locale-prefix">{0} (or {1}) &lt;prefix&gt;	The prefix used for the locale sub-directories.</entry>
 <entry key="syntax.helpset">{0} &lt;name&gt;	The name of the helpset sub-directory within the input directory (default: {1}).</entry>
