@@ -160,7 +160,7 @@ public class Xml2Bib extends AbstractCLI
          return 1;
       }
 
-      return 0;
+      return super.getCLIArgCount(arg);
    }
 
    @Override
@@ -205,7 +205,7 @@ public class Xml2Bib extends AbstractCLI
 
          noEncapField = returnVals[0].toString();
       }
-      else if (isArg(arg, "--in", "-i", returnVals))
+      else if (isArg(arg, "-i", "--in", returnVals))
       {
          if (returnVals[0] == null)
          {
@@ -230,7 +230,7 @@ public class Xml2Bib extends AbstractCLI
 
          propFileNames.add(returnVals[0].toString());
       }
-      else if (isArg(arg, "--resource", "-r", returnVals))
+      else if (isArg(arg, "-r", "--resource", returnVals))
       {
          if (returnVals[0] == null)
          {
@@ -245,7 +245,7 @@ public class Xml2Bib extends AbstractCLI
 
          resourceFileNames.add(returnVals[0].toString());
       }
-      else if (isArg(arg, "--output", "-o", returnVals))
+      else if (isArg(arg, "-o", "--output", returnVals))
       {
          if (outFile != null)
          {
@@ -278,7 +278,7 @@ public class Xml2Bib extends AbstractCLI
       }
       else
       {
-         return false;
+         return super.parseCLIArg(arg, returnVals);
       }
 
       return true;

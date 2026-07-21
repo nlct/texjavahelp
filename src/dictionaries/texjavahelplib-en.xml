@@ -735,7 +735,14 @@ Unable to open URL {0}</entry>
 <entry key="clisyntax.log">{0} &lt;file&gt;	Set log file.</entry>
 <entry key="clisyntax.nolog">{0}	Don''t log (default).</entry>
 <entry key="clisyntax.rmtmpdir">{0}	Remove temporary files on exit.</entry>
+
 <entry key="clisyntax.charset">{0} &lt;charset&gt;	Set the default character encoding.</entry>
+<entry key="clisyntax.charset2">{0} (or {1}) &lt;charset&gt;	Set the default character encoding.</entry>
+
+<entry key="clisyntax.msg-locale">{0} &lt;locale&gt;	Set the message system locale.</entry>
+<entry key="clisyntax.msg-locale2">{0} (or {1}) &lt;locale&gt;	Set the message system locale.</entry>
+<entry key="clisyntax.hs-locale">{0} &lt;locale&gt;	Set the helpset locale.</entry>
+<entry key="clisyntax.hs-locale2">{0} (or {1}) &lt;locale&gt;	Set the helpset locale.</entry>
 
 <entry key="clisyntax.bugreport">Report bugs to: {0}</entry>
 <entry key="clisyntax.homepage">{0} home page: {1}</entry>
@@ -748,6 +755,7 @@ Unable to open URL {0}</entry>
 <entry key="error.clisyntax.only_one">Only one {0} permitted</entry>
 <entry key="error.clisyntax.only_one_input">Only one input file permitted</entry>
 <entry key="error.clisyntax.invalid.syntax">Invalid syntax for: {0}</entry>
+<entry key="error.clisyntax.invalid.locale_tag">Invalid ''{0}'' value: {1} (BCP 47 locale tag required)</entry>
 <entry key="error.clisyntax.invalid.int_value">Invalid ''{0}'' value: {1} (integer required)</entry>
 <entry key="error.clisyntax.invalid.long_value">Invalid ''{0}'' value: {1} (long integer required)</entry>
 <entry key="error.clisyntax.invalid.float_value">Invalid ''{0}'' value: {1} (decimal required)</entry>

@@ -172,7 +172,7 @@ public abstract class CLISyntaxParser
 
    /**
     * May be used for special cases that need to be picked up before
-    * the main processing. The preparseIndex may be incremented if
+    * the main processing. The <code>preparseIndex</code> may be incremented if
     * the special case has an argument.
     * This method may add items to the deque, in which case it
     * should return true to prevent duplication.

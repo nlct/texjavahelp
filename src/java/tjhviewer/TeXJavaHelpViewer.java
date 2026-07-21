@@ -135,7 +135,7 @@ public class TeXJavaHelpViewer extends AbstractCLI
          return 1;
       }
 
-      return 0;
+      return super.getCLIArgCount(arg);
    }
 
    @Override
@@ -154,7 +154,7 @@ public class TeXJavaHelpViewer extends AbstractCLI
    protected boolean parseCLIArg(String arg, CLIArgValue[] returnVals)
      throws InvalidSyntaxException
    {
-      if (isArg(arg, "--in", "-i", returnVals))
+      if (isArg(arg, "-i", "--in", returnVals))
       {
          if (inFileName != null)
          {
@@ -170,7 +170,7 @@ public class TeXJavaHelpViewer extends AbstractCLI
 
          inFileName = returnVals[0].toString();
       }
-      else if (isArg(arg, "--node", "-n", returnVals))
+      else if (isArg(arg, "-n", "--node", returnVals))
       {
          if (nodeName != null)
          {
@@ -186,7 +186,7 @@ public class TeXJavaHelpViewer extends AbstractCLI
 
          nodeName = returnVals[0].toString();
       }
-      else if (isArg(arg, "--anchor", "-a", returnVals))
+      else if (isArg(arg, "-a", "--anchor", returnVals))
       {
          if (targetRefName != null)
          {
@@ -202,7 +202,7 @@ public class TeXJavaHelpViewer extends AbstractCLI
 
          targetRefName = returnVals[0].toString();
       }
-      else if (isArg(arg, "--helpset-dir", "-d", returnVals))
+      else if (isArg(arg, "-d", "--helpset-dir", returnVals))
       {
          if (returnVals[0] == null)
          {
@@ -214,7 +214,7 @@ public class TeXJavaHelpViewer extends AbstractCLI
       }
       else
       {
-         return false;
+         return super.parseCLIArg(arg, returnVals);
       }
 
       return true;

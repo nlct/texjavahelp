@@ -167,7 +167,7 @@ public class CreateIconPdf extends CLITeXAppAdapter
          return 1;
       }
 
-      return 0;
+      return super.getCLIArgCount(arg);
    }
 
    @Override
@@ -190,7 +190,7 @@ public class CreateIconPdf extends CLITeXAppAdapter
       {
          keepDocSrc = false;
       }
-      else if (cliParser.isArg(arg, "--in", "-i", returnVals))
+      else if (cliParser.isArg(arg, "-i", "--in", returnVals))
       {
          if (returnVals[0] == null)
          {
@@ -200,7 +200,7 @@ public class CreateIconPdf extends CLITeXAppAdapter
 
          inFileNames.add(returnVals[0].toString());
       }
-      else if (cliParser.isArg(arg, "--base", "-b", returnVals))
+      else if (cliParser.isArg(arg, "-b", "--base", returnVals))
       {
          if (returnVals[0] == null)
          {
@@ -210,7 +210,7 @@ public class CreateIconPdf extends CLITeXAppAdapter
 
          basename = returnVals[0].toString();
       }
-      else if (cliParser.isArg(arg, "--resource-path", "-p", returnVals))
+      else if (cliParser.isArg(arg, "-p", "--resource-path", returnVals))
       {
          if (returnVals[0] == null)
          {
@@ -220,7 +220,7 @@ public class CreateIconPdf extends CLITeXAppAdapter
 
          resourcePath = returnVals[0].toString();
       }
-      else if (cliParser.isArg(arg, "--out-dir", "-o", returnVals))
+      else if (cliParser.isArg(arg, "-o", "--out-dir", returnVals))
       {
          if (outDir != null)
          {
@@ -242,7 +242,7 @@ public class CreateIconPdf extends CLITeXAppAdapter
                getMessage("error.syntax.not_directory", outDir));
          }
       }
-      else if (cliParser.isArg(arg, "--size", "-s", returnVals))
+      else if (cliParser.isArg(arg, "-s", "--size", returnVals))
       {
          if (returnVals[0] == null)
          {

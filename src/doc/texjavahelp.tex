@@ -292,13 +292,15 @@ The abstract class \code{AbstractCLI} is provided for applications
 that can be started from a command prompt or terminal with switches
 (such as \longargfmt{in} or \shortargfmt{i}). This abstract class
 sets up the \code{CLISyntaxParser} with common switches
-such as \longargfmt{help} (print help and exit), 
-\longargfmt{version} (print version and exit),
-\longargfmt{verbose} (enable verbose mode), 
-\longargfmt{noverbose} (disable verbose mode) and 
-\longargfmt{debug} (debugging information).
+such as \switch{help} (print help and exit), 
+\switch{version} (print version and exit),
+\switch{msg-locale} (message system locale, overriding the default),
+\switch{hs-locale} (helpset locale, if applicable, overriding the default),
+\switch{verbose} (enable verbose mode), 
+\switch{noverbose} (disable verbose mode) and 
+\switch{debug} (debugging information).
 
-There are methods provided for these switches:
+There are methods provided for the \switch{help} and \switch{verbose} switches:
 \begin{codebox}
 public void printCLIAbout()
 public String getCLIApplicationName()
@@ -307,11 +309,20 @@ public String getCLIApplicationVersionDate()
 public void printCLISyntax()
 \end{codebox}
 
+The \switch{msg-locale} switch must be processed before the message
+system is initialised as it's necessary to know the required locale
+in order to load the applicable dictionary.
+The \switch{hs-locale} switch is only applicable if the application
+requires the helpset (that is, a \gls{gui} container with the manual).
+
 For additional switches, you will need to specify the number of
 arguments that should follow the switch. This is done by overriding:
 \begin{codebox}
 protected int getCLIArgCount(String arg)
 \end{codebox}
+Make sure that the super method is used to ensure the common
+switches still work.
+
 The \code{arg} argument will be the switch (for example, 
 \longargfmt{in} or \shortargfmt{i}). The return value should be the
 number of arguments that must follow the switch. For example:
@@ -325,12 +336,12 @@ protected int getCLIArgCount(String arg)
       return 1;
    }
 \codepar
-   return 0;
+   return super.getCLIArgCount(arg);
 }
 \end{codebox}
 This indicates that \longargfmt{in}, \shortargfmt{i},
-\longargfmt{output}, \shortargfmt{o} all require one argument and
-all other switches don't have an argument.
+\longargfmt{output}, \shortargfmt{o} all require one argument.
+You don't need to specify the switches that don't have arguments.
 
 If you have a switch that requires more than one argument, you will
 need to increase the maximum allowed number by overriding:
@@ -354,7 +365,9 @@ protected boolean parseCLIArg(String arg, CLIArgValue[] returnVals)
 \end{codebox}
 This should return true if the switch given by \code{arg} is valid
 and false otherwise. The \code{returnVals} argument contains the
-switch parameters.
+switch parameters. Rather than returning false, this method should
+return the super method to ensure that the common switches are
+retained.
 
 Valueless switches can simply use \code{arg.equals("\ldots")}
 but switches with values need to use one of the one of the provided 
@@ -373,7 +386,7 @@ throws InvalidSyntaxException
    \marg{
       guiMode = false;
    }
-   else if (isArg(arg, "--in", "-i", returnVals))
+   else if (isArg(arg, "-i", "--in", returnVals))
    \marg{
       if (returnVals[0] == null)
       \marg{
@@ -386,14 +399,12 @@ throws InvalidSyntaxException
 // ...
    else
    \marg{
-      false;
+      super.parseCLIArg(arg, returnVals);
    }
 \codepar
    return true;
 }
 \end{codebox}
-The \code{parseCLIArg} method should return true if the \code{arg}
-is known and false otherwise.
 
 An argument that doesn't follow a single or double-hyphen switch
 is processed with:
@@ -438,6 +449,9 @@ public boolean isGUIMode()
 \marg{
    return guiMode;
 }
+// ...
+// class variable:
+protected boolean guiMode;
 \end{codebox}
 
 The \code{AbstractCLI} class automatically defines an instance
@@ -503,6 +517,11 @@ public String getMessageWithFallback(String label,
 public String getMessageIfExists(String label, Object... params)
 public String getMessage(String label, Object... params)
 \end{codebox}
+These are convenience methods that call the corresponding
+\code{MessageSystem} method with the same name. However,
+\code{getMessageWithFallback} will use the provided fallback format
+if the message system hasn't yet been initialised when the method is called.
+
 The label is the value of the \xmlattr{key} attribute of the
 \xmlelem{entry} element provided in the language file.
 The element value should be formatted according to
@@ -525,11 +544,12 @@ This method should be called as soon as possible to ensure that the
 \code{TeXJavaHelpLib} variable has been initialised before it's needed. 
 
 There are two locale settings: for the message system (which
-determines the dictionary files to use) and for the helpset
-(the files within the \ext+{tjh} file). The default for both
-settings is the Java runtime environment's default locale.
-If there is no support for the locale, the fallback will be used
-instead.
+determines the dictionary files to use) and for the helpset (the
+files within the \ext+{tjh} file) if applicable. The default for the
+message system locale is the Java runtime environment's default
+locale.  The default for the helpset locale is the message system
+locale.  If there is no support for the locale, the fallback will be
+used instead.
 
 If the message system locale needs to be changed, the preferred
 locale can be set with one of the following \code{AbstractCLI} methods:
@@ -551,6 +571,12 @@ These methods may be used after the messaging system has been
 initialised but they must be used before the helpset is initialised
 with the \code{TeXJavaHelpLib} method \code{initHelpSet()}. If these
 methods are used too late, they will have no effect.
+
+For example, the application may load a properties file that
+identifies a preferred message system and helpset locale.
+If the \switch{msg-locale} and \switch{hs-locale} switches should override
+this preference, the properties file will need to be loaded 
+and the locales set before \code{initialiseHelpAndParse}.
 
 If the application's helpset has been bundled in the file called
 \filefmt{example-helpset.tjh} then you need to identify this before
@@ -673,7 +699,7 @@ provided by \code{CLITeXAppAdapter} are also checked.
 protected boolean parseCLIArg(String arg, CLIArgValue[] returnVals)
   throws InvalidSyntaxException
 \marg{ 
-   if (isArg(arg, "--in", "-i", returnVals))
+   if (isArg(arg, "-i", "--in", returnVals))
    \marg{
       if (returnVals[0] == null)
       \marg{

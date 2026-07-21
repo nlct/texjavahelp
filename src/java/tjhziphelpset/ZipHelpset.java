@@ -165,7 +165,7 @@ public class ZipHelpset extends AbstractCLI
          return 2;
       }
 
-      return 0;
+      return super.getCLIArgCount(arg);
    }
 
    @Override
@@ -196,7 +196,7 @@ public class ZipHelpset extends AbstractCLI
    protected boolean parseCLIArg(String arg, CLIArgValue[] returnVals)
      throws InvalidSyntaxException
    {
-      if (isArg(arg, "--in-dir", "-i", returnVals))
+      if (isArg(arg, "-i", "--in-dir", returnVals))
       {
          if (resourcePathName != null)
          {
@@ -216,7 +216,7 @@ public class ZipHelpset extends AbstractCLI
       {
          helpsetDirName = returnVals[0].toString();
       }
-      else if (isListArg(arg, "--locales", "-l", returnVals))
+      else if (isListArg(arg, "-l", "--locales", returnVals))
       {
          if (returnVals[0] == null)
          {
@@ -236,7 +236,7 @@ public class ZipHelpset extends AbstractCLI
             localeNames.add(name);
          }
       }
-      else if (isArg(arg, "--locale-prefix", "-p", returnVals))
+      else if (isArg(arg, "-p", "--locale-prefix", returnVals))
       {
          if (returnVals[0] == null)
          {
@@ -246,7 +246,7 @@ public class ZipHelpset extends AbstractCLI
 
          localePrefix = returnVals[0].toString();
       }
-      else if (isArg(arg, "--license-file", "-L", returnVals))
+      else if (isArg(arg, "-L", "--license-file", returnVals))
       {
          if (returnVals[0] == null)
          {
@@ -323,7 +323,7 @@ public class ZipHelpset extends AbstractCLI
 
          licenseFiles.add(hsf);
       }
-      else if (isArg(arg, "--file-for-locale", "-f", returnVals))
+      else if (isArg(arg, "-f", "--file-for-locale", returnVals))
       {
          if (returnVals[0] == null)
          {
@@ -347,7 +347,7 @@ public class ZipHelpset extends AbstractCLI
 
          fileLocaleTagList.add(flt);
       }
-      else if (isArg(arg, "--output", "-o", returnVals))
+      else if (isArg(arg, "-o", "--output", returnVals))
       {
          if (zipFile != null)
          {
@@ -365,7 +365,7 @@ public class ZipHelpset extends AbstractCLI
       }
       else
       {
-         return false;
+         return super.parseCLIArg(arg, returnVals);
       }
 
       return true;

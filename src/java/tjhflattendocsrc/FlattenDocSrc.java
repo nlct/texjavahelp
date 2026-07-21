@@ -104,7 +104,7 @@ public class FlattenDocSrc extends CLITeXAppAdapter
    {
       CLISyntaxParser cliParser = getSyntaxParser();
 
-      if (cliParser.isArg(arg, "--in", "-i", returnVals))
+      if (cliParser.isArg(arg, "-i", "--in", returnVals))
       {
          if (inFile != null)
          {
@@ -114,7 +114,7 @@ public class FlattenDocSrc extends CLITeXAppAdapter
 
          inFile = new File(returnVals[0].toString());
       }
-      else if (cliParser.isArg(arg, "--output", "-o", returnVals))
+      else if (cliParser.isArg(arg, "-o", "--output", returnVals))
       {
          if (outDir != null)
          {

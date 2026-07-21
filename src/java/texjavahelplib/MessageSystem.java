@@ -197,6 +197,8 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
       String tag, dict;
       URL url;
 
+      helpLib.debug("Searching for language files for locale "+hsLocale);
+
       Locale locale = hsLocale.getLocale();
       String lang = locale.getLanguage();
 
@@ -209,6 +211,8 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
 
       if (url != null)
       {
+         helpLib.debug("Found "+url);
+
          deque.addFirst(url);
          url = null;
       }
@@ -224,6 +228,8 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
          {
             if (!deque.contains(url))
             {
+               helpLib.debug("Found "+url);
+
                deque.addFirst(url);
             }
 
@@ -244,6 +250,8 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
          {
             if (!deque.contains(url))
             {
+               helpLib.debug("Found "+url);
+
                deque.addFirst(url);
             }
 
@@ -258,6 +266,8 @@ public class MessageSystem extends Hashtable<String,MessageFormat>
       {
          if (!deque.contains(url))
          {
+            helpLib.debug("Found "+url);
+
             deque.addFirst(url);
          }
 

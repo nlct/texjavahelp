@@ -96,11 +96,32 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
 
    public String getCharsetShortSwitch() { return "-c"; }
 
+   public String getMessageSystemLocaleCLILongSwitch()
+   {
+      return "--msg-locale";
+   }
+
+   public String getMessageSystemLocaleCLIShortSwitch()
+   {
+      return null;
+   }
+
+   public String getHelpSetLocaleCLILongSwitch()
+   {
+      return "--hs-locale";
+   }
+
+   public String getHelpSetLocaleCLIShortSwitch()
+   {
+      return null;
+   }
+
    protected int getCLIArgCount(String arg)
    {
       if (arg.equals("--debug-mode")
        || arg.equals("--log")
-       || arg.equals("--charset") || arg.equals(getCharsetShortSwitch())
+       || arg.equals("--charset")
+       || (getCharsetShortSwitch() != null && arg.equals(getCharsetShortSwitch()))
          )
       {
          return 1;
@@ -146,7 +167,7 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
       
          logFile = new File(returnVals[0].toString());
       }
-      else if (cliParser.isArg("--charset", getCharsetShortSwitch(), returnVals))
+      else if (cliParser.isArg(getCharsetShortSwitch(), "--charset", returnVals))
       {
          defaultCharset = Charset.forName(returnVals[0].toString());
       }
@@ -185,7 +206,18 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
       
       printSyntaxItem(getMessage("clisyntax.log", "--log"));
       printSyntaxItem(getMessage("clisyntax.nolog", "--nolog"));
-      printSyntaxItem(getMessage("clisyntax.charset", "--charset", getCharsetShortSwitch()));
+
+      String charsetShortSwitch = getCharsetShortSwitch();
+
+      if (charsetShortSwitch == null)
+      {
+         printSyntaxItem(getMessage("clisyntax.charset", "--charset"));
+      }
+      else
+      {
+         printSyntaxItem(getMessage("clisyntax.charset2",
+            "--charset", charsetShortSwitch));
+      }
 
       if (mayRequireTmpDir)
       {

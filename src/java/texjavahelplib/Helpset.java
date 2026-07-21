@@ -633,6 +633,18 @@ public class Helpset
           {
              filteredLocales.add(new HelpSetLocale(fallback));
           }
+
+          if (!filteredLocales.isEmpty())
+          {
+             if (!hsl.equals(filteredLocales.firstElement()))
+             {
+                if (filteredLocales.remove(hsl))
+                {
+                   // Ensure exact match is first if present
+                   filteredLocales.add(0, hsl);
+                }
+             }
+          }
       }
 
       if (helpLib.getApplication().isDebuggingOn())

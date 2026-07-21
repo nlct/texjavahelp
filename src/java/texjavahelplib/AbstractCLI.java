@@ -26,6 +26,7 @@ import java.net.URL;
 import java.text.MessageFormat;
 
 import java.util.Locale;
+import java.util.IllformedLocaleException;
 
 import java.awt.Component;
 
@@ -34,6 +35,16 @@ public abstract class AbstractCLI
    public void initialiseHelpAndParse(String[] args)
      throws IOException,InvalidSyntaxException
    {
+      try
+      {
+         preInitHelpProcess(args);
+      }
+      catch (InvalidSyntaxException e)
+      {
+         setExitCode(TeXJavaHelpLibAppAdapter.EXIT_SYNTAX);
+         throw e;
+      }
+
       initHelpLibrary();
 
       try
@@ -75,7 +86,163 @@ public abstract class AbstractCLI
 
    public abstract void printCLIAbout();
 
-   protected abstract int getCLIArgCount(String arg);
+   /**
+    * Returns long switch to set message locale or null if not supported.
+    * This method returns <code>"--msg-locale"</code> but may be
+    * overridden to use a different name or to drop support.
+    * @return the long switch for message system locale
+    */
+   public String getMessageSystemLocaleCLILongSwitch()
+   {
+      return "--msg-locale";
+   }
+
+   /**
+    * Returns short switch to set message locale or null if not supported.
+    * This method returns null but may be overridden to add support.
+    * @return the short switch for message system locale
+    */
+   public String getMessageSystemLocaleCLIShortSwitch()
+   {
+      return null;
+   }
+
+   /**
+    * Returns long switch to set helpset locale or null if not supported.
+    * This method returns <code>"--hs-locale"</code> but may be
+    * overridden to use a different name or to drop support.
+    * @return the long switch for helpset locale
+    */
+   public String getHelpSetLocaleCLILongSwitch()
+   {
+      return "--hs-locale";
+   }
+
+   /**
+    * Returns short switch to set helpset locale or null if not supported.
+    * This method returns null but may be overridden to add support.
+    * @return the short switch for helpset locale
+    */
+   public String getHelpSetLocaleCLIShortSwitch()
+   {
+      return null;
+   }
+
+   /**
+    * Parses command line args for message locale switch before
+    * message system is initialised. It's too late to set the
+    * message system locale when the CLISyntaxParser is parsing the
+    * arguments.
+    * @param args the command line arguments
+    * @throws InvalidSyntaxException if the syntax is not valid
+    */
+   protected void preInitHelpProcess(String[] args)
+     throws InvalidSyntaxException
+   {
+      String localeLongSwitch = getMessageSystemLocaleCLILongSwitch();
+      String localeShortSwitch = getMessageSystemLocaleCLIShortSwitch();
+
+      if (localeLongSwitch != null || localeShortSwitch != null)
+      {
+         for (int i = 0; i < args.length; i++)
+         {
+            if (
+                 ( localeLongSwitch != null && args[i].equals(localeLongSwitch) )
+               || 
+                 ( localeShortSwitch != null && args[i].equals(localeShortSwitch) )
+              )
+            {
+               String option = args[i];
+
+               i++;
+
+               if (i < args.length)
+               {
+                  String value = args[i];
+
+                  if (value.isEmpty())
+                  {
+                     setMessageLocale((HelpSetLocale)null);
+                  }
+                  else
+                  {
+                     try
+                     {
+                        setMessageLocale(new HelpSetLocale(value));
+                     }
+                     catch (IllformedLocaleException e)
+                     {
+                        throw new InvalidSyntaxException(
+                         String.format("invalid %s value %s", option, value));
+                     }
+                  }
+               }
+               else
+               {
+                  throw new InvalidSyntaxException(
+                   String.format("missing %s value", option));
+               }
+
+               break;
+            }
+            else if (
+                  localeLongSwitch != null && args[i].startsWith(localeLongSwitch+"=") 
+               )
+            {
+               String[] split = args[i].split("=", 2);
+               String option = split[0];
+               String value = split[1];
+
+               if (value.isEmpty())
+               {
+                  setMessageLocale((HelpSetLocale)null);
+               }
+               else
+               {
+                  try
+                  {
+                     setMessageLocale(new HelpSetLocale(value));
+                  }
+                  catch (IllformedLocaleException e)
+                  {
+                     throw new InvalidSyntaxException(
+                      String.format("invalid %s value %s", option, value));
+                  }
+               }
+
+               break;
+            }
+            else if (args[i].startsWith("-"))
+            {
+               i += getCLIArgCount(args[i]);
+            }
+         }
+      }
+   }
+
+   protected int getCLIArgCount(String arg)
+   {
+      String msgSysLocaleLongSwitch = getMessageSystemLocaleCLILongSwitch();
+      String msgSysLocaleShortSwitch = getMessageSystemLocaleCLIShortSwitch();
+
+      String hsLocaleLongSwitch = getHelpSetLocaleCLILongSwitch();
+      String hsLocaleShortSwitch = getHelpSetLocaleCLIShortSwitch();
+
+      if (
+          ( msgSysLocaleLongSwitch != null && arg.equals(msgSysLocaleLongSwitch) )
+         || 
+          ( msgSysLocaleShortSwitch != null && arg.equals(msgSysLocaleShortSwitch) )
+         || 
+          ( hsLocaleLongSwitch != null && arg.equals(hsLocaleLongSwitch) )
+         || 
+          ( hsLocaleShortSwitch != null && arg.equals(hsLocaleShortSwitch) )
+         )
+      {
+         return 1;
+      }
+
+      return 0;
+   }
 
    protected int getCLIMaxArgParams()
    {
@@ -85,8 +252,60 @@ public abstract class AbstractCLI
    protected abstract void parseNoSwitchCLIArg(String arg)
       throws InvalidSyntaxException;
 
-   protected abstract boolean parseCLIArg(String arg, CLIArgValue[] returnVals)
-     throws InvalidSyntaxException;
+   protected boolean parseCLIArg(String arg, CLIArgValue[] returnVals)
+     throws InvalidSyntaxException
+   {
+      String msgSysLocaleLongSwitch = getMessageSystemLocaleCLILongSwitch();
+      String msgSysLocaleShortSwitch = getMessageSystemLocaleCLIShortSwitch();
+
+      String hsLocaleLongSwitch = getHelpSetLocaleCLILongSwitch();
+      String hsLocaleShortSwitch = getHelpSetLocaleCLIShortSwitch();
+
+      if (
+           msgSysLocaleLongSwitch != null
+            && cliParser.isArg(arg, 
+                 msgSysLocaleShortSwitch, msgSysLocaleLongSwitch, returnVals)
+         )
+      {
+         // ignore, already parsed
+      }
+      else if (
+           hsLocaleLongSwitch != null
+            && cliParser.isArg(arg, hsLocaleShortSwitch, hsLocaleLongSwitch, returnVals)
+         )
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         String tag = returnVals[0].toString();
+
+         if (tag.isEmpty())
+         {
+            setHelpSetLocale((HelpSetLocale)null);
+         }
+         else
+         {
+            try
+            {
+               setHelpSetLocale(new HelpSetLocale(tag));
+            }
+            catch (IllformedLocaleException e)
+            {
+               throw new InvalidSyntaxException(
+                  getMessage("error.clisyntax.invalid.locale_tag", arg), e);
+            }
+         }
+      }
+      else
+      {
+         return false;
+      }
+
+      return true;
+   }
 
    protected void preCLIProcess() throws InvalidSyntaxException
    {
@@ -141,6 +360,43 @@ public abstract class AbstractCLI
 
    public void printCommonCLISyntax()
    {
+      String msgSysLocaleLongSwitch = getMessageSystemLocaleCLILongSwitch();
+      String msgSysLocaleShortSwitch = getMessageSystemLocaleCLIShortSwitch();
+
+      if (msgSysLocaleLongSwitch != null)
+      {
+         if (msgSysLocaleShortSwitch == null)
+         {
+            helpLib.printSyntaxItem(getMessage("clisyntax.msg-locale",
+               msgSysLocaleLongSwitch));
+         }
+         else
+         {
+            helpLib.printSyntaxItem(getMessage("clisyntax.msg-locale2",
+               msgSysLocaleLongSwitch, msgSysLocaleShortSwitch));
+         }
+      }
+
+      if (isGUIMode())
+      {
+         String hsLocaleLongSwitch = getHelpSetLocaleCLILongSwitch();
+         String hsLocaleShortSwitch = getHelpSetLocaleCLIShortSwitch();
+
+         if (hsLocaleLongSwitch != null)
+         {
+            if (hsLocaleShortSwitch == null)
+            {
+               helpLib.printSyntaxItem(getMessage("clisyntax.hs-locale",
+                  hsLocaleLongSwitch));
+            }
+            else
+            {
+               helpLib.printSyntaxItem(getMessage("clisyntax.hs-locale2",
+                  hsLocaleLongSwitch, hsLocaleShortSwitch));
+            }
+         }
+      }
+
       String shortVersion = getShortVersionSwitch();
 
       if (shortVersion == null)
@@ -785,7 +1041,7 @@ public abstract class AbstractCLI
 
       if (hsLocale == null)
       {
-         hsLocale = new HelpSetLocale(Locale.getDefault());
+         hsLocale = msgLocale;
       }
 
       helpLib = new TeXJavaHelpLib(helpLibApp, msgLocale, hsLocale);

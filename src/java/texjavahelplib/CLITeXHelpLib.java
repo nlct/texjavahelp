@@ -79,7 +79,16 @@ public class CLITeXHelpLib extends AbstractCLI
    @Override
    protected int getCLIArgCount(String arg)
    {
-      return cliTeXApp.getCLIArgCount(arg);
+      int n = super.getCLIArgCount(arg);
+
+      if (n == 0)
+      {
+         return cliTeXApp.getCLIArgCount(arg);
+      }
+      else
+      {
+         return n;
+      }
    }
 
    @Override
@@ -93,7 +102,14 @@ public class CLITeXHelpLib extends AbstractCLI
    protected boolean parseCLIArg(String arg, CLIArgValue[] returnVals)
      throws InvalidSyntaxException
    {
-      return cliTeXApp.parseCLIArg(arg, returnVals);
+      if (super.parseCLIArg(arg, returnVals))
+      {
+         return true;
+      }
+      else
+      {
+         return cliTeXApp.parseCLIArg(arg, returnVals);
+      }
    }
 
    @Override
@@ -114,6 +130,32 @@ public class CLITeXHelpLib extends AbstractCLI
    {
       return cliTeXApp.getShortVersionSwitch();
    }
+
+   @Override
+   public String getMessageSystemLocaleCLILongSwitch()
+   {
+      return cliTeXApp.getMessageSystemLocaleCLILongSwitch();
+   }
+
+   @Override
+   public String getMessageSystemLocaleCLIShortSwitch()
+   {
+      return cliTeXApp.getMessageSystemLocaleCLIShortSwitch();
+   }
+
+   @Override
+   public String getHelpSetLocaleCLILongSwitch()
+   {
+      return cliTeXApp.getHelpSetLocaleCLILongSwitch();
+   }
+
+   @Override
+   public String getHelpSetLocaleCLIShortSwitch()
+   {
+      return cliTeXApp.getHelpSetLocaleCLIShortSwitch();
+   }
+
+
 
    @Override
    protected boolean setCLIDebugModeOption(String option, String value)
