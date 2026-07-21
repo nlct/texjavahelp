@@ -286,7 +286,7 @@ public class ZipHelpset extends AbstractCLI
 
          Locale locale = null;
 
-         if (!localeTag.isEmpty())
+         if (!localeTag.isEmpty() && !localeTag.equals("*"))
          {
             Locale.Builder builder = new Locale.Builder();
 
