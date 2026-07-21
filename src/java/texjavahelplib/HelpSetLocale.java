@@ -26,6 +26,11 @@ public class HelpSetLocale implements Comparable<HelpSetLocale>
    public HelpSetLocale(String tag)
      throws IllformedLocaleException
    {
+      if (tag.isEmpty())
+      {
+         throw new IllformedLocaleException("Empty locale tag not permitted");
+      }
+
       this.tag = tag;
 
       locale = new Locale.Builder().setLanguageTag(tag).build();
@@ -38,6 +43,11 @@ public class HelpSetLocale implements Comparable<HelpSetLocale>
 
    public HelpSetLocale(String tag, Locale locale)
    {
+      if (tag.isEmpty())
+      {
+         throw new IllformedLocaleException("Empty locale tag not permitted");
+      }
+
       this.tag = tag;
       this.locale = locale;
    }
