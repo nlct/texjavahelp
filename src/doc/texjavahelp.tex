@@ -386,12 +386,15 @@ throws InvalidSyntaxException
 // ...
    else
    \marg{
-      return super.parseCLIArg(arg, returnVals);
+      false;
    }
 \codepar
    return true;
 }
 \end{codebox}
+The \code{parseCLIArg} method should return true if the \code{arg}
+is known and false otherwise.
+
 An argument that doesn't follow a single or double-hyphen switch
 is processed with:
 \begin{codebox}
@@ -661,9 +664,33 @@ the switches \switch{rm-tmp-dir} and \switch{norm-tmp-dir}
 This determines whether or not the temporary directory should be
 deleted on exit. (It's useful to retain it when debugging.)
 
-Make sure that you call the \code{parseCLIArg} super constructor after
+Make sure that you call the \code{CLITeXAppAdapter}
+\code{parseCLIArg} super method after
 testing all your application's switches to make sure the common ones
-are also checked.
+provided by \code{CLITeXAppAdapter} are also checked.
+\begin{codebox}
+@Override
+protected boolean parseCLIArg(String arg, CLIArgValue[] returnVals)
+  throws InvalidSyntaxException
+\marg{ 
+   if (isArg(arg, "--in", "-i", returnVals))
+   \marg{
+      if (returnVals[0] == null)
+      \marg{
+         throw new InvalidSyntaxException(
+            getMessage("error.clisyntax.missing\_value", arg));
+      }
+\codepar
+      inFile = new File(returnVals[0].toString());
+   }
+   else
+   \marg{
+      return super.parseCLIArg(arg, returnVals);
+   }
+\codepar
+   return true;
+}
+\end{codebox}
 
 The \code{CLITeXAppAdapter} class extends the \code{TeXAppAdapter}
 class (in the \gls{TeXParserLib}) and can be used as the
