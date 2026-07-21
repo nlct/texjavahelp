@@ -82,9 +82,16 @@ end
 
 function quote_if_spaced(str)
   
--- copied from runscript.tlu:
+-- adapted from runscript.tlu:
 
   str = string.gsub(str, '"', '') -- disallow embedded double quotes
+
+-- quote empty strings:
+
+  if str == '' then
+    return '""'
+  end
+
   return string.find(str, "%s") and '"'..str..'"' or str
   
 end
