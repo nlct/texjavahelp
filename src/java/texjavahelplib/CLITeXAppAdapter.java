@@ -61,10 +61,15 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
          "texjavaparserlib");
    }
 
+   protected void preparse() throws IOException
+   {
+   }
+
    public void initialiseHelpAndParse(String[] args)
      throws IOException,InvalidSyntaxException
    {
       cliTeXHelpLib = new CLITeXHelpLib(this);
+      preparse();
       cliTeXHelpLib.initialiseHelpAndParse(args);
    }
 
