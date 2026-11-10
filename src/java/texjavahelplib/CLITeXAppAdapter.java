@@ -634,9 +634,7 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
       }
 
       System.out.println();
-      System.out.println(getMessageWithFallback("about.library.version",
-        "{0} version {1} ({2})",
-        "texparserlib.jar", TeXParser.VERSION, TeXParser.VERSION_DATE));
+      System.out.println(getTeXParserVersionInfo());
       System.out.println("https://github.com/nlct/texparser");
    }
 
