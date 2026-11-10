@@ -546,6 +546,14 @@ public abstract class AbstractCLI
       return cliParser.isArg(arg, shortName, longName, returnVals);
    }
 
+   public boolean isArg(String arg,
+     String shortName, String longName, String altLongName, 
+     CLIArgValue[] returnVals)
+    throws InvalidSyntaxException
+   {
+      return cliParser.isArg(arg, shortName, longName, altLongName, returnVals);
+   }
+
    public boolean isIntArg(String arg,
      String longName, CLIArgValue[] returnVals)
     throws InvalidSyntaxException

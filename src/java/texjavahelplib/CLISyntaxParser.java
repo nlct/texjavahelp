@@ -388,6 +388,15 @@ public abstract class CLISyntaxParser
          CLIArgValueType.STRING);
    }
 
+   public boolean isArg(String arg,
+     String shortName, String longName, String altLongName,
+     CLIArgValue[] returnVals)
+    throws InvalidSyntaxException
+   {
+      return isArg(arg, shortName, longName, altLongName, returnVals,
+         CLIArgValueType.STRING);
+   }
+
    public boolean isIntArg(String arg,
      String longName, CLIArgValue[] returnVals)
     throws InvalidSyntaxException
@@ -546,6 +555,72 @@ public abstract class CLISyntaxParser
          else
          {
             returnVals[0] = CLIArgValue.create(helpLib, argName, deque.poll(), type);
+         }
+      }
+      else
+      {
+         return false;
+      }
+
+      for (int i = 1; i < n; i++)
+      {
+         returnVals[i] = CLIArgValue.create(helpLib, argName, deque.poll(), type);
+      }
+
+      argsFound = true;
+
+      return true;
+   }
+
+   public boolean isArgPrefix(String arg,
+     String namePrefix, CLIArgValue[] returnVals)
+    throws InvalidSyntaxException
+   {
+      return isArgPrefix(arg, namePrefix, returnVals, CLIArgValueType.STRING);
+   }
+
+   public boolean isArgPrefix(String arg,
+     String namePrefix,
+     CLIArgValue[] returnVals,
+     CLIArgValueType type)
+    throws InvalidSyntaxException
+   {
+      String[] split = arg.split("=", 2);
+      String argName = split[0];
+
+      int n = 0;
+
+      if (argName.startsWith(namePrefix))
+      {
+         n = argCount(argName);
+
+         if (n == 0)
+         {
+            returnVals[0] = null;
+         }
+         else if (split.length == 1)
+         {
+            if (n == -1)
+            {
+               String val = deque.peekFirst();
+
+               if (val != null && !val.startsWith("-"))
+               {
+                  returnVals[0] = CLIArgValue.create(helpLib, argName, deque.poll(), type);
+               }
+               else
+               {
+                  returnVals[0] = null;
+               }
+            }
+            else
+            {
+               returnVals[0] = CLIArgValue.create(helpLib, argName, deque.poll(), type);
+            }
+         }
+         else
+         {
+            returnVals[0] = CLIArgValue.create(helpLib, argName, split[1], type);
          }
       }
       else

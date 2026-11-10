@@ -135,6 +135,11 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
       return 0;
    }
 
+   protected int getCLIMaxArgParams()
+   {
+      return 1;
+   }
+
    protected abstract void parseNoSwitchCLIArg(String arg)
       throws InvalidSyntaxException;
 

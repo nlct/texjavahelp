@@ -92,6 +92,12 @@ public class CLITeXHelpLib extends AbstractCLI
    }
 
    @Override
+   protected int getCLIMaxArgParams()
+   {  
+      return cliTeXApp.getCLIMaxArgParams();
+   }
+
+   @Override
    protected void parseNoSwitchCLIArg(String arg)
       throws InvalidSyntaxException
    {
