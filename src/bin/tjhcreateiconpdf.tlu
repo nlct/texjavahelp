@@ -51,12 +51,28 @@ function run_jar(mainclass, jarlist, progname, isGUI)
       add_to_classpath(classpath, jarfile)
    end
 
+   local cmdArgs = ''
+   local i = 1
+
+   while (i <= #arg)
+   do
+     if arg[i] == '--add-to-classpath' then
+        assert(i < #arg, 'Missing value after ' .. arg[i])
+        i = i + 1
+        add_to_classpath(classpath, arg[i])
+     else
+        cmdArgs = cmdArgs .. ' ' .. quote_if_spaced(arg[i])
+     end
+     i = i + 1
+   end
+
    local cmd = quote_if_spaced(javacmd);
 
-   local cmdArgs = string.format('-classpath %s %s',
+   cmdArgs = string.format('-classpath %s %s',
            quote_if_spaced(table.concat(classpath, path_sep)),
            mainclass
          )
+         .. cmdArgs
 
    for _ , value in ipairs(arg)
    do

@@ -744,6 +744,8 @@ Unable to open URL {0}</entry>
 <entry key="clisyntax.hs-locale">{0} &lt;locale&gt;	Set the helpset locale.</entry>
 <entry key="clisyntax.hs-locale2">{0} (or {1}) &lt;locale&gt;	Set the helpset locale.</entry>
 
+<entry key="clisyntax.add-to-classpath">{0} &lt;jar&gt;	Add &lt;jar&gt; to the class path. If multiple jar files need to be added, use a separate {0} for each file. This option is only available when calling {1} via the {1}.tlu Lua script ({1} symbolic link for TeX Live on Unix-like or {1}.exe wrapper on Windows).</entry>
+
 <entry key="clisyntax.bugreport">Report bugs to: {0}</entry>
 <entry key="clisyntax.homepage">{0} home page: {1}</entry>
 
@@ -765,6 +767,8 @@ Unable to open URL {0}</entry>
 Use {1} for help.</entry>
 <entry key="error.clisyntax.toomany.arg">Too many arguments.
 Use {0} for help.</entry>
+
+<entry key="error.clisyntax.add-to-classpath">Option {0} is only available when calling {1} via the {1}.tlu Lua script ({1} symbolic link for TeX Live on Unix-like or {1}.exe wrapper on Windows).</entry>
 
 <!-- Other error messages -->
 

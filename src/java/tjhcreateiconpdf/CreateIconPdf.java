@@ -142,6 +142,9 @@ public class CreateIconPdf extends CLITeXAppAdapter
 
       printSyntaxItem(getMessage("syntax.out", "--out-dir", "-o"));
 
+      printSyntaxItem(getMessage("clisyntax.add-to-classpath", "--add-to-classpath",
+        getCLIApplicationName()));
+
       System.out.println();
       System.out.println(getMessage("clisyntax.other.options"));
       System.out.println();
@@ -162,6 +165,7 @@ public class CreateIconPdf extends CLITeXAppAdapter
        || arg.equals("--size") || arg.equals("-s")
        || arg.equals("--base") || arg.equals("-b")
        || arg.equals("--resource-path") || arg.equals("-p")
+       || arg.equals("--add-to-classpath")
          )
       {
          return 1;
@@ -284,6 +288,11 @@ public class CreateIconPdf extends CLITeXAppAdapter
             throw new InvalidSyntaxException(
               getMessage("error.error.syntax.positive_value_required", arg, height));
          }
+      }
+      else if (cliParser.isArg(arg, "--add-to-classpath", returnVals))
+      {
+         throw new InvalidSyntaxException(
+            getMessage("error.clisyntax.add-to-classpath", arg, getCLIApplicationName()));
       }
       else
       {
