@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import java.util.HashMap;
 import java.util.Properties;
@@ -438,7 +439,7 @@ public class Xml2Bib extends AbstractCLI
                  "Reading file {0}", file));
 
                in = new FileInputStream(file);
-               props.load(in);
+               props.load(in); // ISO 8859-1
                in.close();
                in = null;
             }
@@ -872,7 +873,13 @@ public class Xml2Bib extends AbstractCLI
 
    protected File outFile;
    protected Vector<String> inFileNames, propFileNames, resourceFileNames;
-   private Charset outCharset = Charset.defaultCharset();
+
+   /*
+      Lua doesn't pick up the system encoding so Charset.defaultCharset()
+      will end up as US-ASCII. Since LaTeX now defaults to UTF-8 use that as the default. 
+    */
+
+   private Charset outCharset = StandardCharsets.UTF_8;
    protected boolean copyXml = false, replaceXml = false;
    protected String noEncapField=null;// field to save non-encapsulated value
    protected boolean autoTrim = true;
