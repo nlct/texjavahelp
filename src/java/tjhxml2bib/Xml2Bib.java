@@ -136,6 +136,9 @@ public class Xml2Bib extends AbstractCLI
 
       printSyntaxItem(getMessage("syntax.auto-trim", "--[no]auto-trim"));
 
+      printSyntaxItem(getMessage("clisyntax.add-to-classpath", "--add-to-classpath",
+        getCLIApplicationName()));
+
       System.out.println();
 
       printCommonCLISyntax();
@@ -155,6 +158,7 @@ public class Xml2Bib extends AbstractCLI
        || arg.equals("--prop")
        || arg.equals("--resource") || arg.equals("-r")
        || arg.equals("--out-charset")
+       || arg.equals("--add-to-classpath")
          )
       {
          return 1;
@@ -276,6 +280,11 @@ public class Xml2Bib extends AbstractCLI
 
          outCharset = Charset.forName(returnVals[0].toString());
       }
+      else if (isArg(arg, "--add-to-classpath", returnVals))
+      {
+         throw new InvalidSyntaxException(
+            getMessage("error.clisyntax.add-to-classpath", arg, getCLIApplicationName()));
+      }
       else
       {
          return super.parseCLIArg(arg, returnVals);
@@ -377,6 +386,16 @@ public class Xml2Bib extends AbstractCLI
             for (String name : resourceFileNames)
             {
                in = getClass().getResourceAsStream(name);
+
+               if (in == null)
+               {
+                  throw new FileNotFoundException(getMessageWithFallback(
+                    "error.resource_not_found", "Resource file ''{0}'' not found", name));
+               }
+
+               publishMessage(getMessageWithFallback("message.reading_resource",
+                 "Reading resource {0}", name));
+
                props.loadFromXML(in);
                in.close();
                in = null;
@@ -385,7 +404,18 @@ public class Xml2Bib extends AbstractCLI
 
          for (String filename : inFileNames)
          {
-            in = new FileInputStream(getXmlFile(filename));
+            File file = getXmlFile(filename);
+
+            if (!file.exists())
+            {
+               throw new FileNotFoundException(getMessageWithFallback(
+                 "error.file_not_found", "File not found: ''{0}''", file));
+            }
+
+            publishMessage(getMessageWithFallback("message.reading_file",
+              "Reading file {0}", file));
+
+            in = new FileInputStream(file);
             props.loadFromXML(in);
             in.close();
             in = null;
@@ -396,7 +426,18 @@ public class Xml2Bib extends AbstractCLI
          {
             for (String filename : propFileNames)
             {
-               in = new FileInputStream(new File(filename));
+               File file = new File(filename);
+
+               if (!file.exists())
+               {
+                  throw new FileNotFoundException(getMessageWithFallback(
+                    "error.file_not_found", "File not found: ''{0}''", file));
+               }
+
+               publishMessage(getMessageWithFallback("message.reading_file",
+                 "Reading file {0}", file));
+
+               in = new FileInputStream(file);
                props.load(in);
                in.close();
                in = null;

@@ -10,6 +10,8 @@ Nicola Talbot
 <!--  Messages -->
 <entry key="message.copying">Copying {0} -> {1}</entry>
 <entry key="message.charset">Encoding: {0}</entry>
+<entry key="message.reading_file">Reading file {0}</entry>
+<entry key="message.reading_resource">Reading resource {0}</entry>
 
 <!--  Syntax -->
 <entry key="syntax.title">Syntax:</entry>
