@@ -74,11 +74,6 @@ function run_jar(mainclass, jarlist, progname, isGUI)
          )
          .. cmdArgs
 
-   for _ , value in ipairs(arg)
-   do
-     cmdArgs = cmdArgs .. ' ' .. quote_if_spaced(value)
-   end
-
    local fullcmd = cmd .. ' ' .. cmdArgs
 
    if string.len(fullcmd) > 8191
