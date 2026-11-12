@@ -889,6 +889,15 @@ public abstract class TeXJavaHelpLibAppAdapter implements TeXJavaHelpLibApp
    {
       if (e instanceof InvalidSyntaxException)
       {
+         Throwable cause = e.getCause();
+
+         if (cause != null)
+         {
+            int code = getExitCode(cause, false);
+
+            if (code != EXIT_OTHER) return code; 
+         }
+
          return EXIT_SYNTAX;
       }
       else if ((e instanceof HelpSetNotInitialisedException)

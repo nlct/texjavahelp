@@ -782,6 +782,15 @@ public abstract class AbstractCLI
       }
       else if (e instanceof InvalidSyntaxException)
       {
+         Throwable cause = e.getCause();
+
+         if (cause != null)
+         {
+            int code = getExitCode(cause, false);
+
+            if (code != TeXJavaHelpLibAppAdapter.EXIT_OTHER) return code; 
+         }
+
          return TeXJavaHelpLibAppAdapter.EXIT_SYNTAX;
       }
       else if (e instanceof IOException)

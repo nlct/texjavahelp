@@ -284,6 +284,15 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
       }
       else if (e instanceof InvalidSyntaxException)
       {
+         Throwable cause = e.getCause();
+
+         if (cause != null)
+         {
+            int code = getExitCode(cause, false);
+
+            if (code != TeXJavaHelpLibAppAdapter.EXIT_OTHER) return code; 
+         }
+
          return TeXJavaHelpLibAppAdapter.EXIT_SYNTAX;
       }
       else if (e instanceof IOException)
@@ -444,6 +453,22 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
       }
    }
 
+   public void logMessage(Throwable e, String message)
+   {
+      if (logWriter != null)
+      {
+         if (message != null)
+         {
+            logWriter.println(message);
+         }
+
+         if (e != null)
+         {
+            e.printStackTrace(logWriter);
+         }
+      }
+   }
+
    protected void openLogWriter(TeXParser parser, Charset logCharset)
       throws IOException
    {
@@ -457,9 +482,23 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
          
          if (parser != null)
          {
-            parser.setDebugMode(cliTeXHelpLib.getDebuggingLevel(), logWriter);
+            setParserDebugging(parser);
          }
       } 
+   }
+
+   public void ensureLogOpenIfSet() throws IOException
+   {
+      if (logWriter == null && logFile != null)
+      {
+         logWriter = new PrintWriter(
+           createBufferedWriter(logFile.toPath(), defaultCharset));
+      }
+   }
+
+   public void setParserDebugging(TeXParser parser)
+   {
+      parser.setDebugMode(cliTeXHelpLib.getDebuggingLevel(), logWriter);
    }
 
    protected void closeLogWriter() throws IOException
@@ -473,7 +512,17 @@ public abstract class CLITeXAppAdapter extends TeXAppAdapter
 
    public boolean isDebuggingOn()
    {
-      return cliTeXHelpLib.isDebuggingModeOn();
+      return cliTeXHelpLib == null ? false : cliTeXHelpLib.isDebuggingModeOn();
+   }
+
+   public int getDebuggingLevel()
+   {
+      return cliTeXHelpLib == null ? 0 : cliTeXHelpLib.getDebuggingLevel();
+   }
+
+   public void setDebuggingLevel(int level)
+   {
+      cliTeXHelpLib.setDebuggingLevel(level);
    }
 
    public Dimension getImageFileDimensions(TeXParser parser, File file,
